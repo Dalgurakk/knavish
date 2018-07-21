@@ -1,0 +1,30 @@
+.btn-action { height: 22px !important; width: 22px !important; padding: 0; }
+.btn-action-icon { font-size: 12px; color: #666; }
+.dt-active { font-size: 16px; }
+.dt-active-1{ color: #36c6d3; }
+.dt-active-0{ color: #ed6b75; }
+.no-margin-bottom { margin-bottom: 0; }
+.search-footer { text-align: right; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+.search-section { display: none; margin-bottom: 20px; margin-top: 15px; }
+.car-image { width: 344px; height: 260px; }
+.car-image-container { width:100px; height:78px; text-align: center; vertical-align: middle; }
+.car-image-thumbnail { max-height: 100%; max-width: 100%; }
+.thumbnail { border: 1px solid #c2cad8; }
+.btn-dropdown { padding: 4px 6px 2px !important; font-weight: bold; }
+.dropdown-options { min-width:unset; left: -5px; }
+.jstree-default .jstree-icon:empty { line-height: 19px; }
+.sa-button-container { display: -webkit-flex; display: flex; -webkit-justify-content: center; justify-content: center; }
+.sa-button-container .cancel { -webkit-order: 2; order: 2; margin-left: 5px; }
+.sa-button-container .sa-confirm-button-container { -webkit-order: 1; order: 1; }
+.sweet-alert .btn { padding: 6px 12px; }
+.vakata-context li a { padding: 0 2em; }
+.show-icon { text-align: center; padding: 0; }
+.master-logo-container { float: left;margin-left: 20px;margin-top: 9px; }
+#logo2 { display: none; }
+@media (max-width: 767px) {
+    #logo1{ display: none; }
+    #logo2{ display: block; }
+    .hide-in-small { display: none; }
+    /*#tree-container { width: 100%; }
+    #node-data { display: block; }*/
+}

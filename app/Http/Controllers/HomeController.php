@@ -32,24 +32,4 @@ class HomeController extends Controller
         $data['menuDashboard'] = 'selected';
         return view('home')->with($data);
     }
-
-    public function rangeCalendar(Request $request) {
-        $request->user()->authorizeRoles(['commercial', 'administrator']);
-
-        $breadcrumb = array(
-            0 => 'Range Calendar'
-        );
-        $data['breadcrumb'] = $breadcrumb;
-        $data['menuDashboard'] = 'selected';
-
-        //$startDate = date_create("01/01/2018");
-        $startDate = "2018-10-15";
-        //$endDate = date_create("31/12/2018");
-        //$endDate = "2018-01-30";
-        $endDate = "2019-11-30";
-        //echo date_format($date,"Y/m/d");die;
-        $data['startDate'] = $startDate;
-        $data['endDate'] = $endDate;
-        return view('rangecalendar')->with($data);
-    }
 }

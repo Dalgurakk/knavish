@@ -13,7 +13,6 @@
 <link href="{{ asset('assets/global/plugins/jquery-file-upload/blueimp-gallery/blueimp-gallery.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/jquery-file-upload/css/jquery.fileupload.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/jquery-file-upload/css/jquery.fileupload-ui.css') }}" rel="stylesheet" type="text/css" />
-<style></style>
 @stop
 
 @section('page-title','Manage Hotels')
@@ -168,7 +167,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Hotel Chain</label>
-                                    <select class="form-control" name="hotel-chain-id">
+                                    <select class="form-control hotel-chain" name="hotel-chain-id">
                                         <option value="">Hotel Chain</option>
                                     @foreach ($hotelsChain as $h)
                                         <option value="{{ $h->id }}">{{ $h->name }}</option>
@@ -260,9 +259,9 @@
                     <div class="portlet-body">
                         <div class="row">
                             <div class="col-md-12 col-sm-12">
-                                <label for="select2-button-addons-single-input-group-md" class="control-label">Search Room Type</label>
+                                <label class="control-label">Search Room Type</label>
                                 <div class="input-group input-group-md select2-bootstrap-append">
-                                    <select id="select2-button-addons-single-input-group-md" class="form-control js-data-ajax" multiple></select>
+                                    <select class="form-control js-data-ajax" multiple></select>
                                 </div>
                             </div>
                         </div>
@@ -570,7 +569,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Hotel Chain</label>
-                                    <select class="form-control" name="hotel-chain-id">
+                                    <select class="form-control hotel-chain" name="hotel-chain-id">
                                         <option value="">Hotel Chain</option>
                                     @foreach ($hotelsChain as $h)
                                         <option value="{{ $h->id }}">{{ $h->name }}</option>
@@ -907,6 +906,10 @@
         var needUpdate = false;
         var inputSelected;
         var inputSelectedHidden;
+
+        $(".hotel-chain").select2({
+            width: "off"
+        });
 
          // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload({
@@ -1812,9 +1815,9 @@
             tableEditRoomType.api().columns.adjust().draw();
 
             var htmlSelect =
-                '<label for="select2-button-addons-single-input-group-md" class="control-label">Search Room Type</label>' +
+                '<label class="control-label">Search Room Type</label>' +
                 '<div class="input-group input-group-md select2-bootstrap-append">' +
-                    '<select id="select2-button-addons-single-input-group-md" class="form-control js-data-ajax" multiple></select>' +
+                    '<select class="form-control js-data-ajax" multiple></select>' +
                 '</div>';
 
             $('.parent-select').append(htmlSelect);

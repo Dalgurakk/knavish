@@ -369,4 +369,12 @@ class HotelController extends Controller
         $this->response = $result;
         echo json_encode($this->response);
     }
+
+    public function hotelActive() {
+        $hotels = DB::table('hotels')
+            ->where('hotels.active', '=', '1')
+            ->orderBy('hotels.name', 'asc')
+            ->get();
+        return $hotels;
+    }
 }

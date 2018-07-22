@@ -14,7 +14,6 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/range/calendar', 'HomeController@rangeCalendar')->name('range.calendar');
 
 //User
 Route::get('/user', 'UserController@index')->name('user.index');
@@ -77,3 +76,6 @@ Route::post('/hotel/delete', 'HotelController@delete')->name('hotel.delete');
 Route::post('/hotel/upload/image', 'HotelController@uploadImage')->name('hotel.upload.image');
 Route::post('/hotel/delete/image', 'HotelController@deleteImage')->name('hotel.delete.image');
 Route::post('/hotel/images', 'HotelController@images')->name('hotel.images');
+//Manage
+Route::get('/manage/hotel', 'ManageHotelController@index')->name('manage.hotel');
+Route::get('/range/calendar', 'ManageHotelController@rangeCalendar')->name('range.calendar');

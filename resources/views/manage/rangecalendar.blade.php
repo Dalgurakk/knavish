@@ -1,4 +1,4 @@
-@extends('layouts.master2')
+@extends('...layouts.master2')
 @section('title','Categories')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />

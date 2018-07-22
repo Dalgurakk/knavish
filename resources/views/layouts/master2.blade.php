@@ -86,11 +86,11 @@ License: You must have a valid license purchased only from themeforest(the above
                                     <i class="fa fa-angle-down"></i>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-default">
-                                    <li>
+                                    <!--li>
                                         <a href="#">
                                             <i class="icon-user"></i> My Profile </a>
                                     </li>
-                                    <li class="divider"> </li>
+                                    <li class="divider"> </li-->
                                     <li>
                                         <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             <i class="icon-key"></i> Log Out </a>
@@ -215,17 +215,33 @@ License: You must have a valid license purchased only from themeforest(the above
                                 <!--span class="arrow"></span-->
                             </a>
                         </li>
-                        <li class="nav-item ">
-                            <!--a href="javascript:;" class="nav-link nav-toggle"-->
-                            <a href="{{ route('range.calendar') }}" class="nav-link nav-toggle">
+                        <li class="nav-item {{ isset($menuManage) ? 'active open' : '' }}">
+                            <a href="{{ route('manage.hotel') }}" class="nav-link nav-toggle">
                                 <i class="icon-settings"></i>
-                                <span class="title">Settings</span>
-                                <!--span class="arrow"></span-->
+                                <span class="title">Manage</span>
+                                <span class="{{ isset($menuManage) ? 'selected' : '' }}"></span>
+                                <span class="arrow"></span>
                             </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item start {{ isset($submenuManageHotel) ? 'active open' : '' }}">
+                                    <a href="{{ route('manage.hotel') }}" class="nav-link ">
+                                        <i class="fa fa-building-o"></i>
+                                        <span class="title">Hotel</span>
+                                        <span class="{{ isset($submenuManageHotel) ? 'selected' : '' }}"></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start {{ isset($submenuRangeCalendar) ? 'active open' : '' }}">
+                                    <a href="{{ route('range.calendar') }}" class="nav-link ">
+                                        <i class="fa fa-calendar"></i>
+                                        <span class="title">Range Calendar</span>
+                                        <span class="{{ isset($submenuRangeCalendar) ? 'selected' : '' }}"></span>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         @if(Auth::user()->hasRole('administrator'))
                         <li class="nav-item {{ isset($menuAdministration) ? 'active open' : '' }}">
-                            <a href="javascript:;" class="nav-link nav-toggle">
+                            <a href="{{ route('user.index') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-lock"></i>
                                 <span class="title">Administration</span>
                                 <span class="{{ isset($menuAdministration) ? 'selected' : '' }}"></span>

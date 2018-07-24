@@ -1494,7 +1494,7 @@
 
             $('#modal-edit .js-data-ajax').on('select2:select select2:unselect', function (e) {
                 var values = e.params.data;
-                console.log(values);
+                //console.log(values);
                 if(values.selected) {
                     tableEditRoomType.api().row.add([
                         values.id,
@@ -1777,16 +1777,11 @@
         var tableEditRoomType = $('#modal-edit .table-room-type').dataTable({
             "sDom": "t",
             "lengthMenu": [[-1], ["All"]],
-            "order": [[ 1, "asc" ]],
+            "ordering": false,
             "autoWidth": false,
             "columnDefs": [
                 { 'visible': false, 'targets': [0] },
-                { 'width': '35%', 'targets': [1] },
-                { 'orderable': false, 'targets': [2] },
-                { 'orderable': false, 'targets': [3] },
-                { 'orderable': false, 'targets': [4] },
-                { 'orderable': false, 'targets': [5] },
-                { 'orderable': false, 'targets': [6] }
+                { 'width': '35%', 'targets': [1] }
             ],
             "language": {
                 "emptyTable": "No room type selected"

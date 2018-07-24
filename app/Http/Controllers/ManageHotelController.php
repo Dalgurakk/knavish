@@ -26,7 +26,7 @@ class ManageHotelController extends Controller
             1 => 'Hotel'
         );
 
-        $hotels = $this->hotelController->hotelActive();
+        $hotels = $this->hotelController->actives();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuManage'] = 'selected';

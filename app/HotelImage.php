@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HotelImage extends Model
 {
-    protected $table = 'hotel_hotel_image';
+    protected $table = 'hotel_images';
 
     public function category() {
         return $this->belongsTo('App\Hotel');

@@ -9,7 +9,7 @@ class HotelBoardType extends Model
     public function hotels()
     {
         return $this
-            ->belongsToMany('App\Hotel')
+            ->belongsToMany('App\Contract', 'hotel_contract_board_type')
             ->withTimestamps();
     }
 }

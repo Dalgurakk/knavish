@@ -195,6 +195,7 @@ class HotelRoomTypeController extends Controller
         $query = '%' . Input::get('q') . '%';
         $roomTypes = DB::table('hotel_room_types')
             ->select('hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name', 'hotel_room_types.maxpax', 'hotel_room_types.minpax', 'hotel_room_types.minadult', 'hotel_room_types.minchildren', 'hotel_room_types.maxinfant', 'hotel_room_types.active')
+            ->where('hotel_room_types.active', '=', '1')
             ->where('hotel_room_types.code', 'like', $query)
             ->orWhere('hotel_room_types.name', 'like', $query)
             ->orderBy('hotel_room_types.code', 'asc')

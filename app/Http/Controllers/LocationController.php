@@ -78,53 +78,6 @@ class LocationController extends Controller
         echo json_encode($nodes);
     }
 
-    public function readActive(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $parentId = Input::get('id');
-        $nodes = array();
-
-        try {
-            if ($parentId == '#') {
-                $locations = Location::whereIsRoot()->get();
-                foreach ($locations as $l) {
-                    if ($l->active == 1) {
-                        $item = array(
-                            'id' => $l->id,
-                            'text' => $l->name,
-                            'data' => $l,
-                            'children' => ($l->_rgt - $l->_lft > 1) ? true : false,
-                            'icon' => $l->icon
-                        );
-                        $nodes[] = (object)$item;
-                    }
-                }
-            }
-            else {
-                $locations = DB::table('locations')
-                    ->select('locations.id', 'locations.code', 'locations.name', 'locations.active', 'locations._rgt', 'locations._lft', 'locations.icon')
-                    ->where('locations.parent_id', '=', $parentId)
-                    ->where('locations.active', '=', '1')
-                    ->get();
-
-                foreach ($locations as $l) {
-                    $item = array(
-                        'id' => $l->id,
-                        'text' => $l->name,
-                        'data' => $l,
-                        'children' => ($l->_rgt - $l->_lft > 1) ? true : false,
-                        'icon' => $l->icon
-                    );
-                    $nodes[] = (object)$item;
-                }
-            }
-        }
-        catch (QueryException $e) {
-            $nodes = array();
-        }
-        echo json_encode($nodes);
-    }
-
     public function create(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
@@ -219,5 +172,52 @@ class LocationController extends Controller
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);
+    }
+
+    public function actives(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $parentId = Input::get('id');
+        $nodes = array();
+
+        try {
+            if ($parentId == '#') {
+                $locations = Location::whereIsRoot()->get();
+                foreach ($locations as $l) {
+                    if ($l->active == 1) {
+                        $item = array(
+                            'id' => $l->id,
+                            'text' => $l->name,
+                            'data' => $l,
+                            'children' => ($l->_rgt - $l->_lft > 1) ? true : false,
+                            'icon' => $l->icon
+                        );
+                        $nodes[] = (object)$item;
+                    }
+                }
+            }
+            else {
+                $locations = DB::table('locations')
+                    ->select('locations.id', 'locations.code', 'locations.name', 'locations.active', 'locations._rgt', 'locations._lft', 'locations.icon')
+                    ->where('locations.parent_id', '=', $parentId)
+                    ->where('locations.active', '=', '1')
+                    ->get();
+
+                foreach ($locations as $l) {
+                    $item = array(
+                        'id' => $l->id,
+                        'text' => $l->name,
+                        'data' => $l,
+                        'children' => ($l->_rgt - $l->_lft > 1) ? true : false,
+                        'icon' => $l->icon
+                    );
+                    $nodes[] = (object)$item;
+                }
+            }
+        }
+        catch (QueryException $e) {
+            $nodes = array();
+        }
+        echo json_encode($nodes);
     }
 }

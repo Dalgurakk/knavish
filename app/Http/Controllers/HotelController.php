@@ -15,8 +15,6 @@ class HotelController extends Controller
 {
     private $response;
     private $hotelChainController;
-    private $hotelPaxTypeController;
-    private $hotelBoardTypeController;
     private $uploadPath;
     private $uploadThumbnailPath;
     private $publishPath;
@@ -25,8 +23,6 @@ class HotelController extends Controller
     public function __construct() {
         $this->middleware('auth');
         $this->hotelChainController = new HotelChainController();
-        $this->hotelPaxTypeController = new HotelPaxTypeController();
-        $this->hotelBoardTypeController = new HotelBoardTypeController();
         $this->uploadPath = public_path().'/assets/pages/img/hotel/uploads/';
         $this->uploadThumbnailPath = public_path().'/assets/pages/img/hotel/uploads/thumbnails/';
         $this->publishPath = asset('assets/pages/img/hotel/uploads');
@@ -41,16 +37,12 @@ class HotelController extends Controller
             1 => 'Hotels'
         );
 
-        $hotelsChain = $this->hotelChainController->hotelChainActive();
-        $paxTypes = $this->hotelPaxTypeController->paxTypeActive();
-        $boardTypes = $this->hotelBoardTypeController->boardTypeActive();
+        $hotelsChain = $this->hotelChainController->actives();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
-        $data['submenuHotels'] = 'selected';
+        $data['submenuHotel'] = 'selected';
         $data['hotelsChain'] = $hotelsChain;
-        $data['paxTypes'] = $paxTypes;
-        $data['boardTypes'] = $boardTypes;
         $data['publishPath'] = $this->publishPath;
         $data['publishThumbnailPath'] = $this->publishThumbnailPath;
 
@@ -72,11 +64,11 @@ class HotelController extends Controller
 
         $query = DB::table('hotels')
             ->select(
-            'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
-            'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
-            'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
-            'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
-            'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
+                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
+                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
+                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
+                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
+                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
             ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
             ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
             ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
@@ -96,12 +88,6 @@ class HotelController extends Controller
         $result = $query->get();
 
         foreach ($result as $r) {
-            $hotel = Hotel::find($r->id);
-            $r->paxTypes = $hotel->paxTypes;
-            $r->boardTypes = $hotel->boardTypes;
-            $r->roomTypes = $hotel->roomTypes;
-            $r->images = $hotel->images;
-
             $item = array(
                 'id' => $r->id,
                 'name' => $r->name,
@@ -128,10 +114,7 @@ class HotelController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $rules = array(
-            'name' => 'required',
-            'roomTypes' => 'required|json',
-            'boardTypes' => 'required|json',
-            'paxTypes' => 'required|json'
+            'name' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -158,34 +141,17 @@ class HotelController extends Controller
             $hotel->active = Input::get('active') == 1 ? true : false;
             $hotel->email = Input::get('email');
 
-            DB::transaction(function() use ($hotel){
-                try {
-                    $hotel->save();
-                    $roomTypes = json_decode(Input::get('roomTypes'), true);
-                    $boardTypes = json_decode(Input::get('boardTypes'));
-                    $paxTypes = json_decode(Input::get('paxTypes'));
-
-                    foreach ($roomTypes as $r) {
-                        $hotel->roomTypes()->attach($r);
-                    }
-                    foreach ($paxTypes as $p) {
-                        $hotel->paxTypes()->attach($p);
-                    }
-                    foreach ($boardTypes as $b) {
-                        $hotel->boardTypes()->attach($b);
-                    }
-
-                    $this->response['status'] = 'success';
-                    $this->response['message'] = 'Hotel ' . $hotel->name . ' created successfully.';
-                    $this->response['data'] = $hotel;
-                }
-                catch (QueryException $e) {
-                    DB::rollback();
-                    $this->response['status'] = 'error';
-                    $this->response['message'] = 'Database error.';
-                    $this->response['errors'] = $e->errorInfo[2];
-                }
-            });
+            try {
+                $hotel->save();
+                $this->response['status'] = 'success';
+                $this->response['message'] = 'Hotel ' . $hotel->name . ' created successfully.';
+                $this->response['data'] = $hotel;
+            }
+            catch (QueryException $e) {
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Database error.';
+                $this->response['errors'] = $e->errorInfo[2];
+            }
         }
         echo json_encode($this->response);
     }
@@ -195,10 +161,7 @@ class HotelController extends Controller
 
         $id = Input::get('id');
         $rules = array(
-            'name' => 'required',
-            'roomTypes' => 'required|json',
-            'boardTypes' => 'required|json',
-            'paxTypes' => 'required|json'
+            'name' => 'required'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -225,28 +188,17 @@ class HotelController extends Controller
             $hotel->active = Input::get('active') == 1 ? true : false;
             $hotel->email = Input::get('email');
 
-            DB::transaction(function() use ($hotel){
-                try {
-                    $hotel->save();
-                    $roomTypes = json_decode(Input::get('roomTypes'), true);
-                    $boardTypes = json_decode(Input::get('boardTypes'));
-                    $paxTypes = json_decode(Input::get('paxTypes'));
-
-                    $hotel->roomTypes()->sync($roomTypes);
-                    $hotel->boardTypes()->sync($boardTypes);
-                    $hotel->paxTypes()->sync($paxTypes);
-
-                    $this->response['status'] = 'success';
-                    $this->response['message'] = 'Hotel updated successfully.';
-                    $this->response['data'] = $hotel;
-                }
-                catch (QueryException $e) {
-                    DB::rollback();
-                    $this->response['status'] = 'error';
-                    $this->response['message'] = 'Database error.';
-                    $this->response['errors'] = $e->errorInfo[2];
-                }
-            });
+            try {
+                $hotel->save();
+                $this->response['status'] = 'success';
+                $this->response['message'] = 'Hotel updated successfully.';
+                $this->response['data'] = $hotel;
+            }
+            catch (QueryException $e) {
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Database error.';
+                $this->response['errors'] = $e->errorInfo[2];
+            }
         }
         echo json_encode($this->response);
     }
@@ -257,23 +209,17 @@ class HotelController extends Controller
         $id = Input::get('id');
         $hotel = Hotel::find($id);
 
-        DB::transaction(function() use ($hotel){
-            try {
-                $hotel->paxTypes()->detach();
-                $hotel->boardTypes()->detach();
-                $hotel->roomTypes()->detach();
-                $hotel->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Hotel ' . $hotel->name . ' deleted successfully.';
-                $this->response['data'] = $hotel;
-            }
-            catch (QueryException $e) {
-                DB::rollback();
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
-            }
-        });
+        try {
+            $hotel->delete();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Hotel ' . $hotel->name . ' deleted successfully.';
+            $this->response['data'] = $hotel;
+        }
+        catch (QueryException $e) {
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Database error.';
+            $this->response['errors'] = $e->errorInfo[2];
+        }
         echo json_encode($this->response);
     }
 
@@ -370,11 +316,60 @@ class HotelController extends Controller
         echo json_encode($this->response);
     }
 
-    public function hotelActive() {
+    public function actives() {
         $hotels = DB::table('hotels')
+            ->select(
+                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
+                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
+                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
+                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
+                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
+            ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
+            ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
+            ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
+            ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id')
             ->where('hotels.active', '=', '1')
             ->orderBy('hotels.name', 'asc')
             ->get();
         return $hotels;
+    }
+
+    public function searchActive(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $query = '%' . Input::get('q') . '%';
+        $hotels = DB::table('hotels')
+            ->select(
+                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
+                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
+                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
+                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
+                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
+            ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
+            ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
+            ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
+            ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id')
+            ->where('hotels.active', '=', '1')
+            ->where('hotels.name', 'like', $query)
+            ->orderBy('hotels.name', 'asc')
+            ->get();
+        echo json_encode($hotels);
+    }
+
+    public function getById($id) {
+        $hotel = DB::table('hotels')
+            ->select(
+                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
+                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
+                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
+                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
+                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
+            ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
+            ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
+            ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
+            ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id')
+            ->where('hotels.id', '=', $id)
+            ->get();
+        return $hotel;
     }
 }

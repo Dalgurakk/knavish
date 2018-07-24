@@ -146,7 +146,7 @@ class HotelBoardTypeController extends Controller
         echo json_encode($this->response);
     }
 
-    public function boardTypeActive() {
+    public function actives() {
         $boardTypes = DB::table('hotel_board_types')
             ->select('hotel_board_types.id', 'hotel_board_types.code', 'hotel_board_types.name', 'hotel_board_types.description', 'hotel_board_types.active')
             ->where('hotel_board_types.active', '=', '1')

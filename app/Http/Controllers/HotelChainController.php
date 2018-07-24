@@ -142,7 +142,7 @@ class HotelChainController extends Controller
         echo json_encode($this->response);
     }
 
-    public function hotelChainActive() {
+    public function actives() {
         $hotelsChain = DB::table('hotel_hotels_chain')
             ->select('hotel_hotels_chain.id', 'hotel_hotels_chain.name', 'hotel_hotels_chain.description', 'hotel_hotels_chain.active')
             ->where('hotel_hotels_chain.active', '=', '1')

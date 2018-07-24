@@ -16,7 +16,7 @@
         <div class="portlet light custom-container">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa icon-note"></i>Board Types List </div>
+                    <i class="fa fa-cutlery"></i>Board Types List </div>
                 <div class="actions">
                     <a class="btn btn-circle btn-icon-only btn-default search" href="javascript:;">
                         <i class="fa fa-search"></i>
@@ -98,7 +98,7 @@
 <div id="modal-add" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="icon-note"></i> Add Board Type</h4>
+        <h4 class="modal-title"><i class="fa fa-cutlery"></i> Add Board Type</h4>
     </div>
     <form id="form-add">
     <div class="modal-body">
@@ -138,7 +138,7 @@
 <div id="modal-info" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="icon-note"></i> Board Type Data</h4>
+        <h4 class="modal-title"><i class="fa fa-cutlery"></i> Board Type Data</h4>
     </div>
     <div class="modal-body">
         <div class="row">
@@ -174,7 +174,7 @@
 <div id="modal-edit" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="icon-note"></i> Edit Board Type</h4>
+        <h4 class="modal-title"><i class="fa fa-cutlery"></i> Edit Board Type</h4>
     </div>
     <form id="form-edit">
     <div class="modal-body">

@@ -109,221 +109,94 @@
     <form id="form-add">
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-12">
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-building-o"></i> General Data </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label>Denomination</label>
-                                    <input type="text" class="form-control" placeholder="Denomination" name="name">
-                                </div>
-                                <div class="form-group">
-                                    <label>Country</label>
-                                    <input type="text" class="form-control trigger-location" placeholder="Country" name="country-text">
-                                    <input type="hidden" name="country-id">
-                                </div>
-                                <div class="form-group">
-                                    <label>State</label>
-                                    <input type="text" class="form-control trigger-location" placeholder="State" name="state-text">
-                                    <input type="hidden" name="state-id">
-                                </div>
-                                <div class="form-group">
-                                    <label>City</label>
-                                    <input type="text" class="form-control trigger-location" placeholder="City" name="city-text">
-                                    <input type="hidden" name="city-id">
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <input type="text" class="form-control" placeholder="Address" name="address">
-                                    <!--textarea class="form-control" name="address" rows="4" placeholder="Address" style="resize: none;height: 72px;"></textarea-->
-                                </div>
-                                <div class="form-group">
-                                    <label>Postal Code</label>
-                                    <input type="text" class="form-control" placeholder="Postal Code" name="postal-code">
-                                </div>
-                                <div class="form-group">
-                                    <label>Turistic License</label>
-                                    <input type="text" class="form-control" placeholder="Turistic License" name="turistic-licence">
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label style="margin-bottom: 11px;">Category</label>
-                                    <select class="hotel-category" name="category">
-                                      <option value="">Select Category</option>
-                                      <option value="1">1</option>
-                                      <option value="2">2</option>
-                                      <option value="3">3</option>
-                                      <option value="4">4</option>
-                                      <option value="5">5</option>
-                                      <option value="6">6</option>
-                                      <option value="7">7</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Hotel Chain</label>
-                                    <select class="form-control hotel-chain" name="hotel-chain-id">
-                                        <option value="">Hotel Chain</option>
-                                    @foreach ($hotelsChain as $h)
-                                        <option value="{{ $h->id }}">{{ $h->name }}</option>
-                                    @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control" placeholder="Email" name="email">
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Phone</label>
-                                    <input type="text" class="form-control" placeholder="Admin. Phone" name="admin-phone">
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Fax</label>
-                                    <input type="text" class="form-control" placeholder="Admin. Fax" name="admin-fax">
-                                </div>
-                                <div class="form-group">
-                                    <label>Web Site</label>
-                                    <input type="text" class="form-control" placeholder="Web Site" name="web-site">
-                                </div>
-                                <div class="form-group">
-                                    <div class="mt-checkbox-list">
-                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
-                                            <input type="checkbox" value="1" name="active"/>
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label>Commercial Description</label>
-                                    <textarea class="form-control" name="description" rows="4" placeholder="Commercial Description" style="resize: none;"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label>Denomination</label>
+                    <input type="text" class="form-control" placeholder="Denomination" name="name">
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-male"></i> Pax Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="form-group">
-                            <input type="hidden" class="hotel-type" name="count-pax-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-pax-type" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="group-checkable" data-set=".table-pax-type .checkboxes" />
-                                                <span></span>
-                                            </label>
-                                        </th>
-                                        <th> Id </th>
-                                        <th> Pax Type </th>
-                                        <th> From </th>
-                                        <th> To </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($paxTypes as $p)
-                                    <tr class="odd gradeX">
-                                        <td>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="checkboxes" value="1" />
-                                                <span></span>
-                                            </label>
-                                        </td>
-                                        <td> {{ $p->id  }} </td>
-                                        <td> {{ $p->code . ': ' . $p->name }} </td>
-                                        <td> {{ $p->agefrom }} </td>
-                                        <td> {{ $p->ageto }} </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" class="form-control trigger-location" placeholder="Country" name="country-text">
+                    <input type="hidden" name="country-id">
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-hotel"></i> Room Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
-                                <label class="control-label">Search Room Type</label>
-                                <div class="input-group input-group-md select2-bootstrap-append">
-                                    <select class="form-control js-data-ajax" multiple></select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" name="count-room-type" class="hotel-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0" style="margin-top: 33px !important;">
-                                <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Room Type </th>
-                                        <th> Max Pax </th>
-                                        <th> Min Pax </th>
-                                        <th> Min AD </th>
-                                        <th> Min CH </th>
-                                        <th> Min INF </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" class="form-control trigger-location" placeholder="State" name="state-text">
+                    <input type="hidden" name="state-id">
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="icon-note"></i> Board Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="form-group">
-                            <input type="hidden" class="hotel-type" name="count-board-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-board-type" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="group-checkable" data-set=".table-board-type .checkboxes" />
-                                                <span></span>
-                                            </label>
-                                        </th>
-                                        <th> Id </th>
-                                        <th> Board Type </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($boardTypes as $b)
-                                    <tr class="odd gradeX">
-                                        <td>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="checkboxes" value="1" />
-                                                <span></span>
-                                            </label>
-                                        </td>
-                                        <td> {{ $b->id }} </td>
-                                        <td> {{ $b->code . ': ' . $b->name }} </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" class="form-control trigger-location" placeholder="City" name="city-text">
+                    <input type="hidden" name="city-id">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" class="form-control" placeholder="Address" name="address">
+                    <!--textarea class="form-control" name="address" rows="4" placeholder="Address" style="resize: none;height: 72px;"></textarea-->
+                </div>
+                <div class="form-group">
+                    <label>Postal Code</label>
+                    <input type="text" class="form-control" placeholder="Postal Code" name="postal-code">
+                </div>
+                <div class="form-group">
+                    <label>Turistic License</label>
+                    <input type="text" class="form-control" placeholder="Turistic License" name="turistic-licence">
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label style="margin-bottom: 11px;">Category</label>
+                    <select class="hotel-category" name="category">
+                      <option value="">Select Category</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hotel Chain</label>
+                    <select class="form-control hotel-chain" name="hotel-chain-id">
+                        <option value="">Hotel Chain</option>
+                    @foreach ($hotelsChain as $h)
+                        <option value="{{ $h->id }}">{{ $h->name }}</option>
+                    @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" placeholder="Email" name="email">
+                </div>
+                <div class="form-group">
+                    <label>Admin. Phone</label>
+                    <input type="text" class="form-control" placeholder="Admin. Phone" name="admin-phone">
+                </div>
+                <div class="form-group">
+                    <label>Admin. Fax</label>
+                    <input type="text" class="form-control" placeholder="Admin. Fax" name="admin-fax">
+                </div>
+                <div class="form-group">
+                    <label>Web Site</label>
+                    <input type="text" class="form-control" placeholder="Web Site" name="web-site">
+                </div>
+                <div class="form-group">
+                    <div class="mt-checkbox-list">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
+                            <span></span>
+                        </label>
                     </div>
                 </div>
             </div>
+            <!--div class="col-md-12 col-sm-12">
+                <div class="form-group">
+                    <label>Commercial Description</label>
+                    <textarea class="form-control" name="description" rows="4" placeholder="Commercial Description" style="resize: none;"></textarea>
+                </div>
+            </div-->
         </div>
     </div>
     <div class="modal-footer">
@@ -341,161 +214,85 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-12">
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-building-o"></i> General Data </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label>Denomination</label>
-                                    <input type="text" class="form-control" name="name" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Country</label>
-                                    <input type="text" class="form-control" name="country-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>State</label>
-                                    <input type="text" class="form-control" name="state-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>City</label>
-                                    <input type="text" class="form-control" name="city-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <input type="text" class="form-control" name="address" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Postal Code</label>
-                                    <input type="text" class="form-control" name="postal-code" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Turistic License</label>
-                                    <input type="text" class="form-control" name="turistic-licence" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label style="margin-bottom: 11px;">Category</label>
-                                    <select class="hotel-category" name="category">
-                                      <option value="">Select Category</option>
-                                      <option value="1">1</option>
-                                      <option value="2">2</option>
-                                      <option value="3">3</option>
-                                      <option value="4">4</option>
-                                      <option value="5">5</option>
-                                      <option value="6">6</option>
-                                      <option value="7">7</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Hotel Chain</label>
-                                    <input type="text" class="form-control" name="hotel-chain" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control" name="email" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Phone</label>
-                                    <input type="text" class="form-control" name="admin-phone" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Fax</label>
-                                    <input type="text" class="form-control" name="admin-fax" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Web Site</label>
-                                    <input type="text" class="form-control" name="web-site" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <div class="mt-checkbox-list">
-                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
-                                            <input type="checkbox" value="1" name="active" onclick="return false;"/>
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label>Commercial Description</label>
-                                    <textarea class="form-control" name="description" rows="4" readonly style="resize: none;"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label>Denomination</label>
+                    <input type="text" class="form-control" name="name" readonly>
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-male"></i> Pax Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="form-group">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-pax-type" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Pax Type </th>
-                                        <th> From </th>
-                                        <th> To </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" class="form-control" name="country-text" readonly>
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-hotel"></i> Room Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="form-group">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Room Type </th>
-                                        <th> Max Pax </th>
-                                        <th> Min Pax </th>
-                                        <th> Min AD </th>
-                                        <th> Min CH </th>
-                                        <th> Min INF </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" class="form-control" name="state-text" readonly>
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="icon-note"></i> Board Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="form-group">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-board-type" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Board Type </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" class="form-control" name="city-text" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" class="form-control" name="address" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Postal Code</label>
+                    <input type="text" class="form-control" name="postal-code" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Turistic License</label>
+                    <input type="text" class="form-control" name="turistic-licence" readonly>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label style="margin-bottom: 11px;">Category</label>
+                    <select class="hotel-category" name="category">
+                      <option value="">Select Category</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hotel Chain</label>
+                    <input type="text" class="form-control" name="hotel-chain" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" name="email" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Admin. Phone</label>
+                    <input type="text" class="form-control" name="admin-phone" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Admin. Fax</label>
+                    <input type="text" class="form-control" name="admin-fax" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Web Site</label>
+                    <input type="text" class="form-control" name="web-site" readonly>
+                </div>
+                <div class="form-group">
+                    <div class="mt-checkbox-list">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
+                            <input type="checkbox" value="1" name="active" onclick="return false;"/>
+                            <span></span>
+                        </label>
                     </div>
                 </div>
             </div>
+            <!--div class="col-md-12 col-sm-12">
+                <div class="form-group">
+                    <label>Commercial Description</label>
+                    <textarea class="form-control" name="description" rows="4" readonly style="resize: none;"></textarea>
+                </div>
+            </div-->
         </div>
     </div>
     <div class="modal-footer">
@@ -511,216 +308,94 @@
     <form id="form-edit">
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-12">
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-building-o"></i> General Data </div>
-                    </div>
-                    <div class="portlet-body">
-                        <input type="hidden" name="id">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label>Denomination</label>
-                                    <input type="text" class="form-control" placeholder="Denomination" name="name">
-                                </div>
-                                <div class="form-group">
-                                    <label>Country</label>
-                                    <input type="text" class="form-control trigger-location" placeholder="Country" name="country-text">
-                                    <input type="hidden" name="country-id">
-                                </div>
-                                <div class="form-group">
-                                    <label>State</label>
-                                    <input type="text" class="form-control trigger-location" placeholder="State" name="state-text">
-                                    <input type="hidden" name="state-id">
-                                </div>
-                                <div class="form-group">
-                                    <label>City</label>
-                                    <input type="text" class="form-control trigger-location" placeholder="City" name="city-text">
-                                    <input type="hidden" name="city-id">
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <input type="text" class="form-control" placeholder="Address" name="address">
-                                </div>
-                                <div class="form-group">
-                                    <label>Postal Code</label>
-                                    <input type="text" class="form-control" placeholder="Postal Code" name="postal-code">
-                                </div>
-                                <div class="form-group">
-                                    <label>Turistic License</label>
-                                    <input type="text" class="form-control" placeholder="Turistic License" name="turistic-licence">
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label style="margin-bottom: 11px;">Category</label>
-                                    <select class="hotel-category" name="category">
-                                      <option value="">Select Category</option>
-                                      <option value="1">1</option>
-                                      <option value="2">2</option>
-                                      <option value="3">3</option>
-                                      <option value="4">4</option>
-                                      <option value="5">5</option>
-                                      <option value="6">6</option>
-                                      <option value="7">7</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Hotel Chain</label>
-                                    <select class="form-control hotel-chain" name="hotel-chain-id">
-                                        <option value="">Hotel Chain</option>
-                                    @foreach ($hotelsChain as $h)
-                                        <option value="{{ $h->id }}">{{ $h->name }}</option>
-                                    @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control" placeholder="Email" name="email">
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Phone</label>
-                                    <input type="text" class="form-control" placeholder="Admin. Phone" name="admin-phone">
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Fax</label>
-                                    <input type="text" class="form-control" placeholder="Admin. Fax" name="admin-fax">
-                                </div>
-                                <div class="form-group">
-                                    <label>Web Site</label>
-                                    <input type="text" class="form-control" placeholder="Web Site" name="web-site">
-                                </div>
-                                <div class="form-group">
-                                    <div class="mt-checkbox-list">
-                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
-                                            <input type="checkbox" value="1" name="active"/>
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    <label>Commercial Description</label>
-                                    <textarea class="form-control" name="description" rows="4" placeholder="Commercial Description" style="resize: none;"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <input type="hidden" name="id" value="0">
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label>Denomination</label>
+                    <input type="text" class="form-control" placeholder="Denomination" name="name">
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-male"></i> Pax Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="form-group">
-                            <input type="hidden" class="hotel-type" name="count-pax-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-pax-type" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="group-checkable" data-set=".table-pax-type .checkboxes" />
-                                                <span></span>
-                                            </label>
-                                        </th>
-                                        <th> Id </th>
-                                        <th> Pax Type </th>
-                                        <th> From </th>
-                                        <th> To </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($paxTypes as $p)
-                                    <tr class="odd gradeX">
-                                        <td>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="checkboxes" value="1" />
-                                                <span></span>
-                                            </label>
-                                        </td>
-                                        <td> {{ $p->id  }} </td>
-                                        <td> {{ $p->code . ': ' . $p->name }} </td>
-                                        <td> {{ $p->agefrom }} </td>
-                                        <td> {{ $p->ageto }} </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" class="form-control trigger-location" placeholder="Country" name="country-text">
+                    <input type="hidden" name="country-id">
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="fa fa-hotel"></i> Room Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12 parent-select"></div>
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" name="count-room-type" class="hotel-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0" style="margin-top: 33px !important;">
-                                <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Room Type </th>
-                                        <th> Max Pax </th>
-                                        <th> Min Pax </th>
-                                        <th> Min AD </th>
-                                        <th> Min CH </th>
-                                        <th> Min INF </th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>State</label>
+                    <input type="text" class="form-control trigger-location" placeholder="State" name="state-text">
+                    <input type="hidden" name="state-id">
                 </div>
-                <div class="portlet box green ">
-                    <div class="portlet-title">
-                        <div class="caption">
-                            <i class="icon-note"></i> Board Types </div>
-                    </div>
-                    <div class="portlet-body">
-                        <div class="form-group">
-                            <input type="hidden" class="hotel-type" name="count-board-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-board-type" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="group-checkable" data-set=".table-board-type .checkboxes" />
-                                                <span></span>
-                                            </label>
-                                        </th>
-                                        <th> Id </th>
-                                        <th> Board Type </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($boardTypes as $b)
-                                    <tr class="odd gradeX">
-                                        <td>
-                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                                <input type="checkbox" class="checkboxes" value="1" />
-                                                <span></span>
-                                            </label>
-                                        </td>
-                                        <td> {{ $b->id }} </td>
-                                        <td> {{ $b->code . ': ' . $b->name }} </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" class="form-control trigger-location" placeholder="City" name="city-text">
+                    <input type="hidden" name="city-id">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" class="form-control" placeholder="Address" name="address">
+                </div>
+                <div class="form-group">
+                    <label>Postal Code</label>
+                    <input type="text" class="form-control" placeholder="Postal Code" name="postal-code">
+                </div>
+                <div class="form-group">
+                    <label>Turistic License</label>
+                    <input type="text" class="form-control" placeholder="Turistic License" name="turistic-licence">
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label style="margin-bottom: 11px;">Category</label>
+                    <select class="hotel-category" name="category">
+                      <option value="">Select Category</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Hotel Chain</label>
+                    <select class="form-control hotel-chain" name="hotel-chain-id">
+                        <option value="">Hotel Chain</option>
+                    @foreach ($hotelsChain as $h)
+                        <option value="{{ $h->id }}">{{ $h->name }}</option>
+                    @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" class="form-control" placeholder="Email" name="email">
+                </div>
+                <div class="form-group">
+                    <label>Admin. Phone</label>
+                    <input type="text" class="form-control" placeholder="Admin. Phone" name="admin-phone">
+                </div>
+                <div class="form-group">
+                    <label>Admin. Fax</label>
+                    <input type="text" class="form-control" placeholder="Admin. Fax" name="admin-fax">
+                </div>
+                <div class="form-group">
+                    <label>Web Site</label>
+                    <input type="text" class="form-control" placeholder="Web Site" name="web-site">
+                </div>
+                <div class="form-group">
+                    <div class="mt-checkbox-list">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
+                            <span></span>
+                        </label>
                     </div>
                 </div>
             </div>
+            <!--div class="col-md-12 col-sm-12">
+                <div class="form-group">
+                    <label>Commercial Description</label>
+                    <textarea class="form-control" name="description" rows="4" placeholder="Commercial Description" style="resize: none;"></textarea>
+                </div>
+            </div-->
         </div>
     </div>
     <div class="modal-footer">
@@ -907,9 +582,9 @@
         var inputSelected;
         var inputSelectedHidden;
 
-        $(".hotel-chain").select2({
+        /*$(".hotel-chain").select2({
             width: "off"
-        });
+        });*/
 
          // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload({
@@ -947,340 +622,6 @@
                     .appendTo('#fileupload');
             });
         }
-
-        function countSelectedRecords(table) {
-            var selected = $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).size();
-            return selected;
-        }
-
-        function getSelectedRows(table) {
-            var rows = [];
-            $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).each(function() {
-                var data = table.api().row( $(this).parents('tr') ).data();
-                rows.push(data[1]);
-            });
-            return rows;
-        }
-
-        function desactiveRows(table) {
-            $('tbody > tr', table).each(function() {
-                $(this).removeClass('active');
-            });
-        }
-
-        var tableAddPaxType = $('#modal-add .table-pax-type').dataTable({
-            "sDom": "t",
-            "autoWidth": false,
-            "columnDefs": [
-                { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
-                { 'visible': false, 'targets': [1] }
-            ],
-            "order": [[ 3, "asc" ]],
-            "lengthMenu": [[-1], ["All"]]
-        });
-
-        tableAddPaxType.find('.group-checkable').change(function () {
-            var set = jQuery(this).attr("data-set");
-            var checked = jQuery(this).is(":checked");
-            jQuery(set).each(function () {
-                if (checked) {
-                    $(this).prop("checked", true);
-                    $(this).parents('tr').addClass("active");
-                } else {
-                    $(this).prop("checked", false);
-                    $(this).parents('tr').removeClass("active");
-                }
-            });
-            $('#modal-add :input[name=count-pax-type]').val(countSelectedRecords(tableAddPaxType));
-        });
-
-        tableAddPaxType.on('change', 'tbody tr .checkboxes', function () {
-            $(this).parents('tr').toggleClass("active");
-            $('#modal-add :input[name=count-pax-type]').val(countSelectedRecords(tableAddPaxType));
-        });
-
-        var tableAddBoardType = $('#modal-add .table-board-type').dataTable({
-            "sDom": "t",
-            "columnDefs": [
-                { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
-                { 'visible': false, 'targets': [1] }
-            ],
-            "order": [[ 2, "asc" ]],
-            "autoWidth": false,
-            "lengthMenu": [[-1], ["All"]]
-        });
-
-        tableAddBoardType.find('.group-checkable').change(function () {
-            var set = jQuery(this).attr("data-set");
-            var checked = jQuery(this).is(":checked");
-            jQuery(set).each(function () {
-                if (checked) {
-                    $(this).prop("checked", true);
-                    $(this).parents('tr').addClass("active");
-                } else {
-                    $(this).prop("checked", false);
-                    $(this).parents('tr').removeClass("active");
-                }
-            });
-            $('#modal-add :input[name=count-board-type]').val(countSelectedRecords(tableAddBoardType));
-        });
-
-        tableAddBoardType.on('change', 'tbody tr .checkboxes', function () {
-            $(this).parents('tr').toggleClass("active");
-            $('#modal-add :input[name=count-board-type]').val(countSelectedRecords(tableAddBoardType));
-        });
-
-        var tableAddRoomType = $('#modal-add .table-room-type').dataTable({
-            "sDom": "t",
-            "lengthMenu": [[-1], ["All"]],
-            "order": [[ 1, "asc" ]],
-            "autoWidth": false,
-            "columnDefs": [
-                { 'visible': false, 'targets': [0] },
-                { 'targets': [1], width: '35%' },
-                { 'orderable': false, 'targets': [2] },
-                { 'orderable': false, 'targets': [3] },
-                { 'orderable': false, 'targets': [4] },
-                { 'orderable': false, 'targets': [5] },
-                { 'orderable': false, 'targets': [6] }
-            ],
-            "language": {
-                "emptyTable": "No room type selected"
-            }
-        });
-
-        var tableInfoPaxType = $('#modal-info .table-pax-type').dataTable({
-            "sDom": "t",
-            "columnDefs": [
-                { 'visible': false, 'targets': [0] }
-            ],
-            "order": [[ 2, "asc" ]],
-            "lengthMenu": [[-1], ["All"]]
-        });
-
-        var tableInfoBoardType = $('#modal-info .table-board-type').dataTable({
-            "sDom": "t",
-            "columnDefs": [
-                { 'visible': false, 'targets': [0] }
-            ],
-            "order": [[ 1, "asc" ]],
-            "lengthMenu": [[-1], ["All"]]
-        });
-
-        var tableInfoRoomType = $('#modal-info .table-room-type').dataTable({
-            "sDom": "t",
-            "lengthMenu": [[-1], ["All"]],
-            "order": [[ 1, "asc" ]],
-            "autoWidth": false,
-            "columnDefs": [
-                { 'visible': false, 'targets': [0] },
-                { 'targets': [1], width: '35%' },
-                { 'orderable': false, 'targets': [2] },
-                { 'orderable': false, 'targets': [3] },
-                { 'orderable': false, 'targets': [4] },
-                { 'orderable': false, 'targets': [5] },
-                { 'orderable': false, 'targets': [6] }
-            ],
-            "language": {
-                "emptyTable": "No room type selected"
-            }
-        });
-
-        var tableEditPaxType = $('#modal-edit .table-pax-type').dataTable({
-            "sDom": "t",
-            "autoWidth": false,
-            "columnDefs": [
-                { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
-                { 'visible': false, 'targets': [1] }
-            ],
-            "order": [[ 3, "asc" ]],
-            "lengthMenu": [[-1], ["All"]]
-        });
-
-        tableEditPaxType.find('.group-checkable').change(function () {
-            var set = jQuery(this).attr("data-set");
-            var checked = jQuery(this).is(":checked");
-            jQuery(set).each(function () {
-                if (checked) {
-                    $(this).prop("checked", true);
-                    $(this).parents('tr').addClass("active");
-                } else {
-                    $(this).prop("checked", false);
-                    $(this).parents('tr').removeClass("active");
-                }
-            });
-            $('#modal-edit :input[name=count-pax-type]').val(countSelectedRecords(tableEditPaxType));
-        });
-
-        tableEditPaxType.on('change', 'tbody tr .checkboxes', function () {
-            $(this).parents('tr').toggleClass("active");
-            $('#modal-edit :input[name=count-pax-type]').val(countSelectedRecords(tableEditPaxType));
-        });
-
-        var tableEditBoardType = $('#modal-edit .table-board-type').dataTable({
-            "sDom": "t",
-            "autoWidth": false,
-            "columnDefs": [
-                { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
-                { 'visible': false, 'targets': [1] }
-            ],
-            "order": [[ 2, "asc" ]],
-            "lengthMenu": [[-1], ["All"]]
-        });
-
-        tableEditBoardType.find('.group-checkable').change(function () {
-            var set = jQuery(this).attr("data-set");
-            var checked = jQuery(this).is(":checked");
-            jQuery(set).each(function () {
-                if (checked) {
-                    $(this).prop("checked", true);
-                    $(this).parents('tr').addClass("active");
-                } else {
-                    $(this).prop("checked", false);
-                    $(this).parents('tr').removeClass("active");
-                }
-            });
-            $('#modal-edit :input[name=count-board-type]').val(countSelectedRecords(tableEditBoardType));
-        });
-
-        tableEditBoardType.on('change', 'tbody tr .checkboxes', function () {
-            $(this).parents('tr').toggleClass("active");
-            $('#modal-edit :input[name=count-board-type]').val(countSelectedRecords(tableEditBoardType));
-        });
-
-        var tableEditRoomType = $('#modal-edit .table-room-type').dataTable({
-            "sDom": "t",
-            "lengthMenu": [[-1], ["All"]],
-            "order": [[ 1, "asc" ]],
-            "autoWidth": false,
-            "columnDefs": [
-                { 'visible': false, 'targets': [0] },
-                { 'width': '35%', 'targets': [1] },
-                { 'orderable': false, 'targets': [2] },
-                { 'orderable': false, 'targets': [3] },
-                { 'orderable': false, 'targets': [4] },
-                { 'orderable': false, 'targets': [5] },
-                { 'orderable': false, 'targets': [6] }
-            ],
-            "language": {
-                "emptyTable": "No room type selected"
-            }
-        });
-
-        function formatRepo(repo) {
-            if (repo.loading) return repo.text;
-            var markup =
-                "<div class=''>" +
-                    "<div class=''>" + repo.code + ": " + repo.name + "</div>"+
-                "</div>";
-            return markup;
-        }
-
-        function formatRepoSelection(repo) {
-            return repo.code + ": " + repo.name;
-        }
-
-        $("#modal-add .js-data-ajax").select2({
-            width: "off",
-            ajax: {
-                url: "{{ route('hotel.roomtype.searchActive') }}",
-                "type": "POST",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        q: params.term,
-                        page: params.page
-                    };
-                },
-                processResults: function(data, page) {
-                    return {
-                        results: data
-                    };
-                },
-                cache: true
-            },
-            escapeMarkup: function(markup) {
-                return markup;
-            },
-            minimumInputLength: 3,
-            templateResult: formatRepo,
-            templateSelection: formatRepoSelection
-        });
-
-        $('#modal-add .js-data-ajax').on('select2:select select2:unselect', function (e) {
-            var values = e.params.data;
-            if(values.selected) {
-                tableAddRoomType.api().row.add([
-                    values.id,
-                    values.code + ': ' + values.name,
-                    values.maxpax,
-                    values.minpax,
-                    values.minadult,
-                    values.minchildren,
-                    values.minchildren
-                ]).draw( false );
-                tableAddRoomType.api().columns.adjust().draw();
-            }
-            else {
-                var onTanble = false;
-                var array = $(this).val();
-                if (array != null) {
-                    for (var i = 0; i < array.length; i++) {
-                        if (array[i] == values.id) {
-                            onTanble = true;
-                            break;
-                        }
-                    }
-                }
-                if (!onTanble) {
-                    tableAddRoomType
-                        .api().rows( function ( idx, data, node ) {
-                            return data[0] == values.id;
-                        } )
-                        .remove()
-                        .draw();
-                }
-            }
-            $('#modal-add :input[name=count-room-type]').val(tableAddRoomType.api().rows().count());
-        });
-
-        /*$("#modal-info .js-data-ajax").select2({
-            width: "off",
-            disabled: true
-        });*/
-
-        var editSelect = $("#modal-edit .js-data-ajax").select2({
-            width: "off",
-            ajax: {
-                url: "{{ route('hotel.roomtype.searchActive') }}",
-                "type": "POST",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        q: params.term,
-                        page: params.page
-                    };
-                },
-                processResults: function(data, page) {
-                    return {
-                        results: data
-                    };
-                },
-                cache: true
-            },
-            escapeMarkup: function(markup) {
-                return markup;
-            },
-            minimumInputLength: 3,
-            templateResult: formatRepo,
-            templateSelection: formatRepoSelection
-        });
-
-        $("button[data-select2-open]").click(function() {
-            $("#" + $(this).data("select2-open")).select2("open");
-        });
 
         $('.trigger-location').on('click, focus', function(e) {
             inputSelected = $(this);
@@ -1419,10 +760,7 @@
             formAdd.validate().resetForm();
             formAdd[0].reset();
             $('#modal-add :input[name=category]').barrating('set', '');
-            tableAddRoomType.api().clear().draw();
             $('#modal-add .js-data-ajax').val(null).trigger('change');
-            desactiveRows(tableAddBoardType);
-            desactiveRows(tableAddPaxType);
         });
 
         $('.lenght-option').on('click', function () {
@@ -1446,15 +784,6 @@
             rules: {
                 name: {
                     required: true
-                },
-                "count-board-type": {
-                    greaterThanZero: true
-                },
-                "count-pax-type": {
-                    greaterThanZero: true
-                },
-                "count-room-type": {
-                    greaterThanZero: true
                 }
             },
             errorPlacement: function (error, element) {
@@ -1502,9 +831,6 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 var formData = new FormData(formAdd[0]);
-                formData.append('paxTypes', JSON.stringify(getSelectedRows(tableAddPaxType)));
-                formData.append('boardTypes', JSON.stringify(getSelectedRows(tableAddBoardType)));
-                formData.append('roomTypes', JSON.stringify($('#modal-add .js-data-ajax').val()));
                 $.ajax({
                     "url": "{{ route('hotel.create') }}",
                     "type": "POST",
@@ -1529,10 +855,6 @@
                                 if (option == 'accept') {
                                     $(form).find("button.cancel-form").click();
                                 }
-                                tableAddRoomType.api().clear().draw();
-                                $('.js-data-ajax').val(null).trigger('change');
-                                desactiveRows(tableAddBoardType);
-                                desactiveRows(tableAddPaxType);
                             }
                             else {
                                 toastr['error'](response.message, "Error");
@@ -1560,15 +882,6 @@
             rules: {
                 name: {
                     required: true
-                },
-                "count-board-type": {
-                    greaterThanZero: true
-                },
-                "count-pax-type": {
-                    greaterThanZero: true
-                },
-                "count-room-type": {
-                    greaterThanZero: true
                 }
             },
             errorPlacement: function (error, element) {
@@ -1616,9 +929,6 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 var formData = new FormData(formEdit[0]);
-                formData.append('paxTypes', JSON.stringify(getSelectedRows(tableEditPaxType)));
-                formData.append('boardTypes', JSON.stringify(getSelectedRows(tableEditBoardType)));
-                formData.append('roomTypes', JSON.stringify($('#modal-edit .js-data-ajax').val()));
                 $.ajax({
                     "url": "{{ route('hotel.update') }}",
                     "type": "POST",
@@ -1646,8 +956,6 @@
                             else {
                                 toastr['error'](response.message, "Error");
                             }
-                            desactiveRows(tableEditBoardType);
-                            desactiveRows(tableEditPaxType);
                         }
                     }
                 });
@@ -1664,8 +972,9 @@
             $('#modal-info :input[name=city-text]').val(hotel.city);
             $('#modal-info :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-info :input[name=address]').val(hotel.address);
-            $('#modal-info :input[name=category]').barrating('set', hotel.category);
             $('#modal-info :input[name=category]').barrating('readonly', true);
+            var category = hotel.category != null ? hotel.category : '';
+            $('#modal-info :input[name=category]').barrating('set', category);
             $('#modal-info :input[name=hotel-chain]').val(hotel.chain);
             $('#modal-info :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-info :input[name=admin-fax]').val(hotel.admin_fax);
@@ -1681,60 +990,11 @@
                 $('#modal-info :input[name=active]').prop('checked', '');
                 $('#modal-info :input[name=active]').val(0);
             }
-
-            tableInfoPaxType.api().clear();
-            for (var i = 0; i < hotel.paxTypes.length; i++) {
-                tableInfoPaxType.api().row.add([
-                    hotel.paxTypes[i].id,
-                    hotel.paxTypes[i].code + ': ' + hotel.paxTypes[i].name,
-                    hotel.paxTypes[i].agefrom,
-                    hotel.paxTypes[i].ageto,
-                ]).draw( false );
-            }
-            tableInfoPaxType.api().columns.adjust().draw();
-
-            tableInfoBoardType.api().clear();
-            for (var i = 0; i < hotel.boardTypes.length; i++) {
-                tableInfoBoardType.api().row.add([
-                    hotel.boardTypes[i].id,
-                    hotel.boardTypes[i].code + ': ' + hotel.boardTypes[i].name
-                ]).draw( false );
-            }
-            tableInfoBoardType.api().columns.adjust().draw();
-
-            //var selectedValues = [];
-            tableInfoRoomType.api().clear();
-            for (var i = 0; i < hotel.roomTypes.length; i++) {
-                tableInfoRoomType.api().row.add([
-                    hotel.roomTypes[i].id,
-                    hotel.roomTypes[i].code + ': ' + hotel.roomTypes[i].name,
-                    hotel.roomTypes[i].maxpax,
-                    hotel.roomTypes[i].minpax,
-                    hotel.roomTypes[i].minadult,
-                    hotel.roomTypes[i].minchildren,
-                    hotel.roomTypes[i].minchildren
-                ]).draw( false );
-
-                /*var data = {
-                    id: hotel.roomTypes[i].id,
-                    text: hotel.roomTypes[i].code + ': ' + hotel.roomTypes[i].name
-                };
-
-                var newOption = new Option(data.text, data.id, false, false);
-                selectedValues.push(hotel.roomTypes[i].id);
-                $('#modal-info .js-data-ajax').append(newOption).trigger('change');*/
-            }
-            tableInfoRoomType.api().columns.adjust().draw();
-            /*$('#modal-info .js-data-ajax').val(selectedValues);
-            $('#modal-info .js-data-ajax').trigger('change');*/
-
             e.preventDefault();
         });
 
         $('#table tbody').on( 'click', '.dt-edit', function (e) {
             $('.parent-select').html('');
-            desactiveRows(tableEditBoardType);
-            desactiveRows(tableEditPaxType);
             formEdit.validate().resetForm();
             formEdit[0].reset();
             var data = table.row( $(this).parents('tr') ).data();
@@ -1750,7 +1010,8 @@
             $('#modal-edit :input[name=city-id]').val(hotel.city_id);
             $('#modal-edit :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-edit :input[name=address]').val(hotel.address);
-            $('#modal-edit :input[name=category]').barrating('set', hotel.category);
+            var category = hotel.category != null ? hotel.category : '';
+            $('#modal-edit :input[name=category]').barrating('set', category);
             $('#modal-edit :input[name=hotel-chain-id]').val(hotel.chain_id);
             $('#modal-edit :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-edit :input[name=admin-fax]').val(hotel.admin_fax);
@@ -1766,130 +1027,6 @@
                 $('#modal-edit :input[name=active]').prop('checked', '');
                 $('#modal-edit :input[name=active]').val(0);
             }
-
-            for (var i = 0; i < hotel.paxTypes.length; i++) {
-                $('tbody > tr > td:nth-child(1) input[type="checkbox"]', tableEditPaxType).each(function() {
-                    var data = tableEditPaxType.api().row( $(this).parents('tr') ).data();
-                    if (data[1] == hotel.paxTypes[i].id) {
-                        $(this).prop('checked', 'checked');
-                    }
-                });
-            }
-            $('#modal-edit :input[name=count-pax-type]').val(countSelectedRecords(tableEditPaxType));
-            tableEditPaxType.api().columns.adjust().draw();
-
-            for (var i = 0; i < hotel.boardTypes.length; i++) {
-                $('tbody > tr > td:nth-child(1) input[type="checkbox"]', tableEditBoardType).each(function() {
-                    var data = tableEditBoardType.api().row( $(this).parents('tr') ).data();
-                    if (data[1] == hotel.boardTypes[i].id) {
-                        $(this).prop('checked', 'checked');
-                    }
-                });
-            }
-
-            $('#modal-edit :input[name=count-board-type]').val(countSelectedRecords(tableEditBoardType));
-            tableEditBoardType.api().columns.adjust().draw();
-
-            var selected = [];
-            var initials = [];
-            tableEditRoomType.api().clear();
-            for (var i = 0; i < hotel.roomTypes.length; i++) {
-                tableEditRoomType.api().row.add([
-                    hotel.roomTypes[i].id,
-                    hotel.roomTypes[i].code + ': ' + hotel.roomTypes[i].name,
-                    hotel.roomTypes[i].maxpax,
-                    hotel.roomTypes[i].minpax,
-                    hotel.roomTypes[i].minadult,
-                    hotel.roomTypes[i].minchildren,
-                    hotel.roomTypes[i].minchildren
-                ]).draw( false );
-
-                initials.push({id: hotel.roomTypes[i].id, code: hotel.roomTypes[i].code, name: hotel.roomTypes[i].name});
-                selected.push(hotel.roomTypes[i].id);
-
-                //var newOption = new Option(hotel.roomTypes[i].id, hotel.roomTypes[i].code, hotel.roomTypes[i].name);
-                // Append it to the select
-                //$('#modal-edit .js-data-ajax').append(newOption).trigger('change');
-            }
-            $('#modal-edit :input[name=count-room-type]').val(hotel.roomTypes.length);
-            tableEditRoomType.api().columns.adjust().draw();
-
-            var htmlSelect =
-                '<label class="control-label">Search Room Type</label>' +
-                '<div class="input-group input-group-md select2-bootstrap-append">' +
-                    '<select class="form-control js-data-ajax" multiple></select>' +
-                '</div>';
-
-            $('.parent-select').append(htmlSelect);
-
-            $("#modal-edit .js-data-ajax").select2({
-                data: initials,
-                width: "off",
-                ajax: {
-                    url: "{{ route('hotel.roomtype.searchActive') }}",
-                    "type": "POST",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            q: params.term,
-                            page: params.page
-                        };
-                    },
-                    processResults: function(data, page) {
-                        return {
-                            results: data
-                        };
-                    },
-                    cache: true
-                },
-                escapeMarkup: function(markup) {
-                    return markup;
-                },
-                minimumInputLength: 3,
-                templateResult: formatRepo,
-                templateSelection: formatRepoSelection
-            });
-
-            $('#modal-edit .js-data-ajax').on('select2:select select2:unselect', function (e) {
-                var values = e.params.data;
-                console.log(values);
-                if(values.selected) {
-                    tableEditRoomType.api().row.add([
-                        values.id,
-                        values.code + ': ' + values.name,
-                        values.maxpax,
-                        values.minpax,
-                        values.minadult,
-                        values.minchildren,
-                        values.minchildren
-                    ]).draw( false );
-                    tableEditRoomType.api().columns.adjust().draw();
-                }
-                else {
-                    var onTanble = false;
-                    var array = $(this).val();
-                    if (array != null) {
-                        for (var i = 0; i < array.length; i++) {
-                            if (array[i] == values.id) {
-                                onTanble = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!onTanble) {
-                        tableEditRoomType
-                            .api().rows( function ( idx, data, node ) {
-                                return data[0] == values.id;
-                            } )
-                            .remove()
-                            .draw();
-                    }
-                }
-                $('#modal-edit :input[name=count-room-type]').val(tableEditRoomType.api().rows().count());
-            });
-            $("#modal-edit .js-data-ajax").val(selected).trigger('change');
-
             e.preventDefault();
         });
 

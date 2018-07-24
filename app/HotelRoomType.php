@@ -9,7 +9,7 @@ class HotelRoomType extends Model
     public function hotels()
     {
         return $this
-            ->belongsToMany('App\Hotel')
+            ->belongsToMany('App\Contract', 'hotel_contract_room_type')
             ->withTimestamps();
     }
 }

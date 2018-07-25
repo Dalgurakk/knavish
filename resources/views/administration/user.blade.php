@@ -617,6 +617,7 @@
             e.preventDefault();
             $('#search-section :input[name=username]').val('');
             $('#search-section :input[name=role]').val('');
+            $('#search-section :input[name=market]').val('');
             $('#search-section :input[name=name]').val('');
             $('#search-section :input[name=email]').val('');
             $('#search-section :input[name=active]').val('');
@@ -636,6 +637,7 @@
                 .columns('name:name').search($('#search-section :input[name=name]').val())
                 .columns('email:name').search($('#search-section :input[name=email]').val())
                 .columns('active:name').search($('#search-section :input[name=active]').val())
+                .columns('market_id:name').search($('#search-section :input[name=market]').val())
             .draw();
         });
 

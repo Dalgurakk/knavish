@@ -1,17 +1,14 @@
-@extends('...layouts.master2')
-@section('title','Users')
+@extends('layouts.master2')
+@section('title','Markets')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css" />
 @stop
 
-@section('page-title','Manage Users')
-@section('page-sub-title','show, insert, update and delete users')
+@section('page-title','Manage Markets')
+@section('page-sub-title','show, insert, update and delete markets')
 
 @section('content')
 <div class="row">
@@ -19,7 +16,7 @@
         <div class="portlet light custom-container">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-users "></i>Users List </div>
+                    <i class="fa fa-star"></i>Markets List </div>
                 <div class="actions">
                     <a class="btn btn-circle btn-icon-only btn-default search" href="javascript:;">
                         <i class="fa fa-search"></i>
@@ -47,52 +44,17 @@
                 </div>
             </div>
             <div class="portlet-body">
-                <div id="search-section" class="search-section">
-                    <form id="form-search">
+                <div id="search-section" style="display: none;">
+                    <form>
                         <div class="row">
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
-                                    <div class="input-icon">
-                                        <i class="fa fa-user"></i>
-                                        <input type="text" class="form-control" name="username" placeholder="Username"> </div>
+                                    <input type="text" class="form-control" name="code" placeholder="Code">
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
-                                    <div class="input-icon left">
-                                        <i class="fa fa-graduation-cap"></i>
-                                        <select class="form-control" name="role">
-                                            <option value="">Select a role</option>
-                                        @foreach($roles as $r)
-                                            <option value="{{ $r->id }}">{{ $r->description }}</option>
-                                        @endforeach
-                                        </select> </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <div class="input-icon left">
-                                        <i class="fa fa-star"></i>
-                                        <select class="form-control" name="market">
-                                            <option value="">Select a market</option>
-                                        @foreach($markets as $m)
-                                            <option value="{{ $m->id }}">{{ $m->code . ': ' . $m->name }}</option>
-                                        @endforeach
-                                        </select> </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <div class="input-icon">
-                                        <i class="fa fa-user"></i>
-                                        <input type="text" class="form-control" name="name" placeholder="Name"> </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <div class="input-icon">
-                                        <i class="fa fa-envelope"></i>
-                                        <input type="text" class="form-control" name="email" placeholder="Email"> </div>
+                                    <input type="text" class="form-control" name="name" placeholder="Denomination">
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -119,14 +81,10 @@
                     <thead>
                         <tr role="row" class="heading">
                             <th class="">Id</th>
-                            <th class="">Username</th>
-                            <th class="">Role</th>
-                            <th class="">Role Id</th>
-                            <th class="">Name</th>
-                            <th class="">Email</th>
-                            <th class="">Market</th>
-                            <th class="">Market Id</th>
-                            <th class="">Enabled</th>
+                            <th class="">Code</th>
+                            <th class="">Denomination</th>
+                            <th class="">Description</th>
+                            <th class="">Enable</th>
                             <th class="" style="min-width: 140px;">Actions</th>
                         </tr>
                     </thead>
@@ -137,73 +95,31 @@
     </div>
 </div>
 
-<div id="modal-add" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
+<div id="modal-add" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-user-plus"></i> Add User</h4>
+        <h4 class="modal-title"><i class="fa fa-star"></i> Add Market</h4>
     </div>
     <form id="form-add">
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="form-group">
-                    <label>Name</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-user"></i>
-                        <input type="text" class="form-control" placeholder="Name" name="name"> </div>
+                    <label>Code</label>
+                    <input type="text" class="form-control" placeholder="Code" name="code">
                 </div>
                 <div class="form-group">
-                    <label>Email Address</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-envelope"></i>
-                        <input type="text" class="form-control" placeholder="Email Address" name="email"> </div>
+                    <label>Denomination</label>
+                    <input type="text" class="form-control" placeholder="Denomination" name="name">
                 </div>
                 <div class="form-group">
-                    <label>Role</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-graduation-cap"></i>
-                        <select class="form-control" name="role-id">
-                            <option value="">Select a role</option>
-                        @foreach($roles as $r)
-                            <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
-                        @endforeach
-                        </select> </div>
-                </div>
-                <div class="form-group">
-                    <label>Market</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-star"></i>
-                        <select class="form-control" name="market">
-                            <option value="0">Select a market</option>
-                        @foreach($markets as $m)
-                            <option value="{{ $m->id }}">{{ $m->code . ': ' . $m->name }}</option>
-                        @endforeach
-                        </select> </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>Username</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-user"></i>
-                        <input type="text" class="form-control" placeholder="Username" name="username"> </div>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-lock"></i>
-                        <input type="password" class="form-control" placeholder="Password" name="password"> </div>
-                </div>
-                <div class="form-group">
-                    <label>Confirm Password</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-lock"></i>
-                        <input type="password" class="form-control" placeholder="Confirm Password" name="confirm_password"> </div>
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" rows="3" placeholder="Description" style="resize: none;"></textarea>
                 </div>
                 <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
-                            <input type="checkbox" value="0" name="active"/>
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
                             <span></span>
                         </label>
                     </div>
@@ -219,50 +135,30 @@
     </form>
 </div>
 
-<div id="modal-info" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
+<div id="modal-info" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-user"></i> User Data</h4>
+        <h4 class="modal-title"><i class="fa fa-star"></i> Market Data</h4>
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="form-group">
-                    <label>Name</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-user"></i>
-                        <input type="text" class="form-control" name="name" readonly> </div>
+                    <label>Code</label>
+                    <input type="text" class="form-control" name="code" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Email Address</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-envelope"></i>
-                        <input type="text" class="form-control" name="email" readonly> </div>
+                    <label>Denomination</label>
+                    <input type="text" class="form-control" name="name" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Market</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-star"></i>
-                        <input type="text" class="form-control" name="market" readonly> </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>Username</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-user"></i>
-                        <input type="text" class="form-control" name="username" readonly> </div>
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-graduation-cap"></i>
-                        <input type="text" class="form-control" name="role-id" readonly> </div>
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" rows="3" style="resize: none;" readonly onclick="return false;"></textarea>
                 </div>
                 <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
-                            <input type="checkbox" value="0" name="active" onclick="return false;"/>
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                            <input type="checkbox" value="1" name="active" readonly onclick="return false;"/>
                             <span></span>
                         </label>
                     </div>
@@ -271,82 +167,36 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" data-dismiss="modal" class="btn btn-outline dark"><i class="fa fa-close"></i> Cancel</button>
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
     </div>
 </div>
 
-<div id="modal-edit" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
+<div id="modal-edit" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-user"></i> Edit User</h4>
+        <h4 class="modal-title"><i class="fa fa-star"></i> Edit Market</h4>
     </div>
     <form id="form-edit">
     <div class="modal-body">
         <div class="row">
+            <input type="hidden" name="id">
             <div class="col-md-12">
-                <input type="hidden" name="id">
-                <div class="note note-info">
-                    <p>If the password field is empty it will not be updated.</p>
-                </div>
-            </div>
-            <div class="col-md-6">
                 <div class="form-group">
-                    <label>Name</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-user"></i>
-                        <input type="text" class="form-control" placeholder="Name" name="name"> </div>
+                    <label>Code</label>
+                    <input type="text" class="form-control" placeholder="Code" name="code">
                 </div>
                 <div class="form-group">
-                    <label>Email Address</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-envelope"></i>
-                        <input type="text" class="form-control" placeholder="Email Address" name="email"> </div>
+                    <label>Denomination</label>
+                    <input type="text" class="form-control" placeholder="Denomination" name="name">
                 </div>
                 <div class="form-group">
-                    <label>Role</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-graduation-cap"></i>
-                        <select class="form-control" name="role-id">
-                        @foreach($roles as $r)
-                            <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
-                        @endforeach
-                        </select> </div>
-                </div>
-                <div class="form-group">
-                    <label>Market</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-star"></i>
-                        <select class="form-control" name="market">
-                            <option value="0">Select a market</option>
-                        @foreach($markets as $m)
-                            <option value="{{ $m->id }}">{{ $m->code . ': ' . $m->name }}</option>
-                        @endforeach
-                        </select> </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label>Username</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-user"></i>
-                        <input type="text" class="form-control" placeholder="Username" name="username"> </div>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-lock"></i>
-                        <input type="password" class="form-control" placeholder="Password" name="password"> </div>
-                </div>
-                <div class="form-group">
-                    <label>Confirm Password</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-lock"></i>
-                        <input type="password" class="form-control" placeholder="Confirm Password" name="confirm_password"> </div>
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" rows="3" placeholder="Description" style="resize: none;"></textarea>
                 </div>
                 <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
-                            <input type="checkbox" value="0" name="active"/>
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
                             <span></span>
                         </label>
                     </div>
@@ -372,10 +222,8 @@
 <script src="{{ asset('assets/global/plugins/jquery-ui/jquery-ui.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/jquery-validation/js/additional-methods.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-confirmation/bootstrap-confirmation.min.js') }}" type="text/javascript"></script>
 @stop
 
@@ -383,29 +231,6 @@
 <script>
     $(document).ready(function () {
         var needUpdate = false;
-
-        $('#modal-add :input[name=market]').attr('disabled', 'disabled');
-        $('#modal-edit :input[name=market]').attr('disabled', 'disabled');
-
-        $('#modal-add :input[name=role-id]').on('change', function() {
-            if ($('#modal-add :input[name=role-id] option:selected').attr('data') == 'client') {
-                $('#modal-add :input[name=market]').removeAttr('disabled');
-            }
-            else {
-                $('#modal-add :input[name=market]').attr('disabled', 'disabled');
-                $('#modal-add :input[name=market]').val('0');
-            }
-        });
-
-        $('#modal-edit :input[name=role-id]').on('change', function() {
-            if ($('#modal-edit :input[name=role-id] option:selected').attr('data') == 'client') {
-                $('#modal-edit :input[name=market]').removeAttr('disabled');
-            }
-            else {
-                $('#modal-edit :input[name=market]').attr('disabled', 'disabled');
-                $('#modal-edit :input[name=market]').val('0');
-            }
-        });
 
         $.fn.dataTable.ext.errMode = 'none';
         var table = $('#table').on('error.dt', function(e, settings, techNote, message) {
@@ -422,7 +247,7 @@
             "sDom": "ltip",
             "iDisplayLength" : 25,
             "ajax": {
-                "url": "{{ route('user.read') }}",
+                "url": "{{ route('market.read') }}",
                 "type": "POST",
                 "complete": function(xhr, textStatus) {
                     if (xhr.status != '200') {
@@ -433,20 +258,9 @@
             "order": [[ 1, "asc" ]],
             columns: [
                 {data: 'id', name: 'id', visible: false},
-                {data: 'username', name: 'username'},
-                {data: 'role', name: 'role'},
-                {data: 'role_id', name: 'role_id', visible: false},
-                {data: 'name', name: 'name', visible: false},
-                {
-                    targets: 'email',
-                    name: 'email',
-                    "data": function ( row, type, val, meta ) {
-                        var data = '<a href="mailto:' + row.email + '">' + row.email + '</a>';
-                        return data;
-                    }
-                },
-                {data: 'market', name: 'market'},
-                {data: 'market_id', name: 'market_id', visible: false},
+                {data: 'code', name: 'code'},
+                {data: 'name', name: 'name'},
+                {data: 'description', name: 'description', visible: false},
                 {
                     data: 'active',
                     name: 'active',
@@ -503,13 +317,6 @@
             select.change();
         });
 
-        $.validator.addMethod('addRequiredMarket', function (value, element, param) {
-            if ($('#modal-add :input[name=role-id] option:selected').attr('data') == 'client') {
-                return $('#modal-add :input[name=market]').val() != '0';
-            }
-            return true;
-        }, 'This field is required.');
-
         var formAdd = $('#form-add');
         formAdd.validate({
             errorElement: 'span',
@@ -518,28 +325,10 @@
             ignore: "",
             rules: {
                 name: {
-                    minlength: 2,
                     required: true
                 },
-                email: {
-                    required: true,
-                    email: true
-                },
-                password: {
+                code: {
                     required: true
-                },
-                username: {
-                    required: true
-                },
-                confirm_password: {
-                    required: true,
-                    equalTo: "#modal-add :input[name=password]"
-                },
-                "role-id": {
-                    required: true
-                },
-                market: {
-                    addRequiredMarket: true
                 }
             },
             errorPlacement: function (error, element) {
@@ -583,7 +372,7 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 $.ajax({
-                    "url": "{{ route('user.create') }}",
+                    "url": "{{ route('market.create') }}",
                     "type": "POST",
                     "data": formAdd.serialize(),
                     "beforeSend": function() {
@@ -613,32 +402,6 @@
             }
         });
 
-        $('.btn-search-reset').on('click', function (e) {
-            e.preventDefault();
-            $('#search-section :input[name=username]').val('');
-            $('#search-section :input[name=role]').val('');
-            $('#search-section :input[name=name]').val('');
-            $('#search-section :input[name=email]').val('');
-            $('#search-section :input[name=active]').val('');
-        });
-
-        $('.btn-search-cancel').on('click', function (e) {
-            e.preventDefault();
-            $('#search-section').slideToggle();
-        });
-
-        $('.btn-search-submit').on( 'click', function (e) {
-            e.preventDefault();
-            var role = $('#search-section :input[name=role]').val() != "" ? $('#search-section :input[name=role] option:selected').text() : '';
-            table
-                .columns('username:name').search($('#search-section :input[name=username]').val())
-                .columns('role:name').search(role)
-                .columns('name:name').search($('#search-section :input[name=name]').val())
-                .columns('email:name').search($('#search-section :input[name=email]').val())
-                .columns('active:name').search($('#search-section :input[name=active]').val())
-            .draw();
-        });
-
         $('.mt-checkbox').change(function () {
             var checkbox = $('.mt-checkbox > input[type=checkbox]');
             if (checkbox.is(':checked'))
@@ -646,87 +409,6 @@
             else
                 $('.mt-checkbox > input[type=checkbox]').val(0);
         });
-
-        $('#table tbody').on( 'click', '.dt-view', function (e) {
-            var data = table.row( $(this).parents('tr') ).data();
-            $('#modal-info :input[name=name]').val(data['name']);
-            $('#modal-info :input[name=email]').val(data['email']);
-            $('#modal-info :input[name=username]').val(data['username']);
-            $('#modal-info :input[name=role-id]').val(data['role']);
-            $('#modal-info :input[name=market]').val(data['market']);
-            if (data['active'] == 1) {
-                $('#modal-info :input[name=active]').prop('checked', 'checked');
-                $('#modal-info :input[name=active]').val(1);
-            }
-            else {
-                $('#modal-info :input[name=active]').prop('checked', '');
-                $('#modal-info :input[name=active]').val(0);
-            }
-            e.preventDefault();
-        });
-
-        $('#table tbody').on( 'click', '.dt-edit', function (e) {
-            formEdit.validate().resetForm();
-            formEdit[0].reset();
-            var data = table.row( $(this).parents('tr') ).data();
-            $('#modal-edit :input[name=id]').val(data['id']);
-            $('#modal-edit :input[name=name]').val(data['name']);
-            $('#modal-edit :input[name=email]').val(data['email']);
-            $('#modal-edit :input[name=username]').val(data['username']);
-            $('#modal-edit :input[name=role-id]').val(data['role_id']).trigger('change');
-            var market = data['market_id'] === null ? '0' : data['market_id'];
-            $('#modal-edit :input[name=market]').val(market);
-            if (data['active'] == 1) {
-                $('#modal-edit :input[name=active]').prop('checked', 'checked');
-                $('#modal-edit :input[name=active]').val(1);
-            }
-            else {
-                $('#modal-edit :input[name=active]').prop('checked', '');
-                $('#modal-edit :input[name=active]').val(0);
-            }
-            e.preventDefault();
-        });
-
-        $('#table tbody').on( 'click', '.dt-delete', function (e) {
-            var data = table.row( $(this).parents('tr') ).data();
-            $(this).confirmation('show');
-            $(this).on('confirmed.bs.confirmation', function () {
-                $.ajax({
-                    url: "{{ route('user.delete') }}",
-                    "type": "POST",
-                    "data":  {
-                        id: data['id']
-                    },
-                    "beforeSend": function() {
-                        App.showMask(true, formAdd);
-                    },
-                    "complete": function(xhr, textStatus) {
-                        App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                        }
-                        else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                table.draw();
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
-                        }
-                    }
-                });
-            });
-            e.preventDefault();
-        });
-
-        $.validator.addMethod('editRequiredMarket', function (value, element, param) {
-            if ($('#modal-edit :input[name=role-id] option:selected').attr('data') == 'client') {
-                return $('#modal-edit :input[name=market]').val() != '0';
-            }
-            return true;
-        }, 'This field is required.');
 
         var formEdit = $('#form-edit');
         formEdit.validate({
@@ -736,24 +418,10 @@
             ignore: "",
             rules: {
                 name: {
-                    minlength: 2,
                     required: true
                 },
-                email: {
-                    required: true,
-                    email: true
-                },
-                username: {
+                code: {
                     required: true
-                },
-                confirm_password: {
-                    equalTo: "#modal-edit :input[name=password]"
-                },
-                "role-id": {
-                    required: true
-                },
-                market: {
-                    editRequiredMarket: true
                 }
             },
             errorPlacement: function (error, element) {
@@ -797,7 +465,7 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 $.ajax({
-                    "url": "{{ route('user.update') }}",
+                    "url": "{{ route('market.update') }}",
                     "type": "POST",
                     "data": formEdit.serialize(),
                     "beforeSend": function() {
@@ -826,11 +494,107 @@
             }
         });
 
+        $('#table tbody').on( 'click', '.dt-view', function (e) {
+            var data = table.row( $(this).parents('tr') ).data();
+            $('#modal-info :input[name=code]').val(data['code']);
+            $('#modal-info :input[name=name]').val(data['name']);
+            $('#modal-info :input[name=description]').val(data['description']);
+            if (data['active'] == 1) {
+                $('#modal-info :input[name=active]').prop('checked', 'checked');
+                $('#modal-info :input[name=active]').val(1);
+            }
+            else {
+                $('#modal-info :input[name=active]').prop('checked', '');
+                $('#modal-info :input[name=active]').val(0);
+            }
+            e.preventDefault();
+        });
+
+        $('#table tbody').on( 'click', '.dt-edit', function (e) {
+            formEdit.validate().resetForm();
+            formEdit[0].reset();
+            var data = table.row( $(this).parents('tr') ).data();
+            $('#modal-edit :input[name=id]').val(data['id']);
+            $('#modal-edit :input[name=code]').val(data['code']);
+            $('#modal-edit :input[name=name]').val(data['name']);
+            $('#modal-edit :input[name=description]').val(data['description']);
+            if (data['active'] == 1) {
+                $('#modal-edit :input[name=active]').prop('checked', 'checked');
+                $('#modal-edit :input[name=active]').val(1);
+            }
+            else {
+                $('#modal-edit :input[name=active]').prop('checked', '');
+                $('#modal-edit :input[name=active]').val(0);
+            }
+            e.preventDefault();
+        });
+
+        $('#table tbody').on( 'click', '.dt-delete', function (e) {
+            var data = table.row( $(this).parents('tr') ).data();
+            $(this).confirmation('show');
+            var sendRequest = false;
+            $(this).on('confirmed.bs.confirmation', function () {
+                if(!sendRequest){
+                    $.ajax({
+                        url: "{{ route('market.delete') }}",
+                        "type": "POST",
+                        "data":  {
+                            id: data['id']
+                        },
+                        "beforeSend": function() {
+                            App.showMask(true, formAdd);
+                        },
+                        "complete": function(xhr, textStatus) {
+                            App.showMask(false, formAdd);
+                            if (xhr.status != '200') {
+                                toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                            }
+                            else {
+                                var response = $.parseJSON(xhr.responseText);
+                                if (response.status == 'success') {
+                                    toastr['success'](response.message, "Success");
+                                    table.draw();
+                                }
+                                else {
+                                    toastr['error'](response.message, "Error");
+                                }
+                            }
+                        },
+                        success: function () {
+                            sendRequest = true;
+                        }
+                    });
+                }
+            });
+            e.preventDefault();
+        });
+
         $('.cancel-form').on('click', function(e) {
             if(needUpdate) {
                 table.draw();
                 needUpdate = false;
             }
+        });
+
+        $('.btn-search-reset').on('click', function (e) {
+            e.preventDefault();
+            $('#search-section :input[name=code]').val('');
+            $('#search-section :input[name=name]').val('');
+            $('#search-section :input[name=active]').val('');
+        });
+
+        $('.btn-search-cancel').on('click', function (e) {
+            e.preventDefault();
+            $('#search-section').slideToggle();
+        });
+
+        $('.btn-search-submit').on( 'click', function (e) {
+            e.preventDefault();
+            table
+                .columns('code:name').search($('#search-section :input[name=code]').val())
+                .columns('name:name').search($('#search-section :input[name=name]').val())
+                .columns('active:name').search($('#search-section :input[name=active]').val())
+            .draw();
         });
     });
 </script>

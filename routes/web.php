@@ -21,6 +21,12 @@ Route::post('/user/read', 'UserController@read')->name('user.read');
 Route::post('/user/create', 'UserController@create')->name('user.create');
 Route::post('/user/update', 'UserController@update')->name('user.update');
 Route::post('/user/delete', 'UserController@delete')->name('user.delete');
+//Market
+Route::get('/market', 'MarketController@index')->name('market.index');
+Route::post('/market/read', 'MarketController@read')->name('market.read');
+Route::post('/market/create', 'MarketController@create')->name('market.create');
+Route::post('/market/update', 'MarketController@update')->name('market.update');
+Route::post('/market/delete', 'MarketController@delete')->name('market.delete');
 //Location
 Route::get('/location', 'LocationController@index')->name('location.index');
 Route::post('/location/read', 'LocationController@read')->name('location.read');

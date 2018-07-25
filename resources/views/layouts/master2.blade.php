@@ -254,11 +254,18 @@ License: You must have a valid license purchased only from themeforest(the above
                                 <span class="arrow"></span>
                             </a>
                             <ul class="sub-menu">
-                                <li class="nav-item start {{ isset($submenuUsers) ? 'active open' : '' }}">
+                                <li class="nav-item start {{ isset($submenuUser) ? 'active open' : '' }}">
                                     <a href="{{ route('user.index') }}" class="nav-link ">
                                         <i class="fa fa-user"></i>
                                         <span class="title">Users</span>
-                                        <span class="{{ isset($submenuUsers) ? 'selected' : '' }}"></span>
+                                        <span class="{{ isset($submenuUser) ? 'selected' : '' }}"></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start {{ isset($submenuMarket) ? 'active open' : '' }}">
+                                    <a href="{{ route('market.index') }}" class="nav-link ">
+                                        <i class="fa fa-star"></i>
+                                        <span class="title">Markets</span>
+                                        <span class="{{ isset($submenuMarket) ? 'selected' : '' }}"></span>
                                     </a>
                                 </li>
                                 <li class="nav-item start {{ isset($submenuLocations) ? 'active open' : '' }}">

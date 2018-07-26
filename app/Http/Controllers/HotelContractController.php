@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\HotelContract;
-use App\HotelImage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\Hotel;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -286,106 +284,5 @@ class HotelContractController extends Controller
             }
         });
         echo json_encode($this->response);
-    }
-
-    public function uploadImage(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $rules = array(
-            'files' => 'required',
-            'files.*' => 'image|mimes:jpeg,png,jpg'
-        );
-        $validator = Validator::make(Input::all(), $rules);
-
-        if ($validator->fails()) {
-            $this->response['status'] = 'error';
-            $this->response['message'] = 'Validation errors.';
-            $this->response['errors'] = $validator->errors();
-        }
-        else {
-            $files = array();
-            if($request->hasfile('files')) {
-                foreach($request->file('files') as $file) {
-                    $hotelImage = new HotelImage();
-                    $hotelImage->hotel_id = Input::get('id');
-                    $hotelImage->name = $file->getClientOriginalName();
-                    $hotelImage->image = uniqid() . '.' . $file->getClientOriginalExtension();
-                    $hotelImage->size = $file->getClientSize();
-                    $path = public_path('assets/pages/img/hotel/uploads/thumbnails/' . $hotelImage->image);
-                    $thumbnail = Image::make($file->getRealPath());
-                    $thumbnail->resize(100, 78)->save($path);
-                    $hotelImage->mime = $thumbnail->mime();
-                    $hotelImage->save();
-                    $file->move($this->uploadPath, $hotelImage->image);
-
-                    $item = new \stdClass();
-                    $item->name = $hotelImage->name;
-                    $item->size = $hotelImage->size;
-                    $item->type = $hotelImage->mime;
-                    $item->url = $this->publishPath . '/' . $hotelImage->image;
-                    $item->thumbnailUrl = $this->publishThumbnailPath . '/' . $hotelImage->image;
-                    $item->deleteUrl = route('hotel.delete.image') . '?id=' . $hotelImage->image;
-                    $item->deleteType = "POST";
-                    $files[] = $item;
-
-                    $result = new \stdClass();
-                    $result->files = $files;
-                    $this->response = $result;
-                }
-            }
-            echo json_encode($this->response);
-        }
-    }
-
-    public function deleteImage(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $image = Input::get('id');
-        $hotelImage = HotelImage::where('image', $image)->first();
-        $hotelImage->delete();
-
-        if ($hotelImage->image != null && file_exists($this->uploadPath . $hotelImage->image)) {
-            unlink($this->uploadPath . $hotelImage->image);
-        }
-        if ($hotelImage->image != null && file_exists($this->uploadThumbnailPath . $hotelImage->image)) {
-            unlink($this->uploadThumbnailPath . $hotelImage->image);
-        }
-        $result = array(
-            $hotelImage->image => true
-        );
-        $this->response = $result;
-        echo json_encode($this->response);
-    }
-
-    public function images(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $id = Input::get('id');
-        $hotel = Hotel::find($id);
-        $hotelImages = $hotel->images;
-        $files = array();
-        foreach ($hotelImages as $hotelImage) {
-            $item = new \stdClass();
-            $item->name = $hotelImage->name;
-            $item->size = $hotelImage->size;
-            $item->type = $hotelImage->mime;
-            $item->url = $this->publishPath . '/' . $hotelImage->image;
-            $item->thumbnailUrl = $this->publishThumbnailPath . '/' . $hotelImage->image;
-            $item->deleteUrl = route('hotel.delete.image') . '?id=' . $hotelImage->image;
-            $item->deleteType = "POST";
-            $files[] = $item;
-        }
-        $result = new \stdClass();
-        $result->files = $files;
-        $this->response = $result;
-        echo json_encode($this->response);
-    }
-
-    public function hotelActive() {
-        $hotels = DB::table('hotels')
-            ->where('hotels.active', '=', '1')
-            ->orderBy('hotels.name', 'asc')
-            ->get();
-        return $hotels;
     }
 }

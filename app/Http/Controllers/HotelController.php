@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\HotelContract;
 use App\HotelImage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -371,5 +372,38 @@ class HotelController extends Controller
             ->where('hotels.id', '=', $id)
             ->get();
         return $hotel;
+    }
+
+    public function getContractsById($id) {
+        $contracts = DB::table('hotel_contracts')
+            ->where('hotel_contracts.hotel_id', '=', $id)
+            ->get();
+        return $contracts;
+    }
+
+    public function searchContractActive(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $temp = '%' . Input::get('q') . '%';
+        $hotels = DB::table('hotels')
+            ->whereIn('hotels.id', function($query)
+            {
+                $query->select(DB::raw('hotel_contracts.hotel_id'))
+                    ->from('hotel_contracts')
+                    ->whereRaw('hotel_contracts.hotel_id = hotels.id');
+            })
+            ->where('hotels.name', 'like', $temp)
+            ->orderBy('hotels.name', 'asc')
+            ->get();
+
+        foreach ($hotels as $h) {
+            $contracts = $this->getContractsById($h->id);
+            foreach ($contracts as $c) {
+                $contract = HotelContract::find($c->id);
+                $c->roomTypes = $contract->roomTypes;
+            }
+            $h->contracts = $contracts;
+        }
+        echo json_encode($hotels);
     }
 }

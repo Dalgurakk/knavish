@@ -83,6 +83,7 @@ Route::post('/hotel/upload/image', 'HotelController@uploadImage')->name('hotel.u
 Route::post('/hotel/delete/image', 'HotelController@deleteImage')->name('hotel.delete.image');
 Route::post('/hotel/images', 'HotelController@images')->name('hotel.images');
 Route::post('/hotel/search/active', 'HotelController@searchActive')->name('hotel.search.active');
+Route::post('/hotel/search/contract/active', 'HotelController@searchContractActive')->name('hotel.search.contract.active');
 //HotelContract
 Route::get('/hotel/contract', 'HotelContractController@index')->name('hotel.contract.index');
 Route::post('/hotel/contract/read', 'HotelContractController@read')->name('hotel.contract.read');

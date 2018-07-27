@@ -7,14 +7,16 @@
 <style>
 .table-setting td { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
 .table-setting th { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
-.table-setting { margin-bottom: 0; table-layout: fixed !important; min-width: 900px; }
+.table-setting { margin-bottom: 0; table-layout: fixed !important; min-width: 900px; border-bottom: 0;}
 .porlet-title-setting { min-height: 0 !important; height: 30px; }
 .caption-setting { font-size: 13px !important; padding: 6px 0 5px !important; font-weight: 600; }
 .tools-setting { font-size: 13px !important; padding: 6px 0 0 !important; }
 .table-setting .item-setting:hover { background-color: #f2f2f2; cursor: pointer; }
 .column-setting { width: 2.9%; }
 .head-setting { vertical-align: top !important; background-color: #e8f0fc; border:1px solid #fff !important; }
-.room-name { word-wrap:break-word;width: 10.1%; color: #fff; background-color: #6d90c4;white-space: normal !important; }
+.head-setting-invalid { background-color: #fff !important; border: 1px solid #fff !important;}
+.room-name { word-wrap:break-word;width: 10.1%; color: #fff; background-color: #6d90c4;white-space: normal !important; vertical-align: middle !important;}
+.item-variable { /*font-weight: 600;background-color: #e8f0fc; border:1px solid #fff !important;*/}
 /*.room-name { word-wrap:break-word;width: 10.1%;}*/
 .select2-selection__rendered { margin-left: 20px; }
 .mt-checkbox-row { margin-bottom: 5px !important; }
@@ -119,36 +121,7 @@
                                 <div class="scroller" style="height:175px">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="mt-checkbox-list mt-checkbox-list-row">
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Price
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Allotment
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Release
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Offer
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Stop Sale
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Restriction
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Supplement
-                                                    <span></span>
-                                                </label>
-                                            </div>
+                                            <div class="mt-checkbox-list mt-checkbox-list-row rows-list"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -166,36 +139,7 @@
                                 <div class="scroller" style="height:175px">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="mt-checkbox-list mt-checkbox-list-row">
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Price
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Allotment
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Release
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Offer
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Stop Sale
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Restriction
-                                                    <span></span>
-                                                </label>
-                                                <label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">
-                                                    <input type="checkbox" checked> Supplement
-                                                    <span></span>
-                                                </label>
-                                            </div>
+                                            <div class="mt-checkbox-list mt-checkbox-list-row room-types-list"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -216,893 +160,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-12">
-        <div class="portlet box green">
-            <div class="portlet-title porlet-title-setting">
-                <div class="caption caption-setting">
-                    <!--i class="fa fa-calendar"></i-->June 2018 </div>
-                <div class="tools tools-setting">
-                    <a href="" class="fullscreen"> </a>
-                    <a href="javascript:;" class="collapse"> </a>
-                </div>
-            </div>
-            <div class="portlet-body" style="padding: 0;">
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-setting">
-                        <thead>
-                            <tr>
-                                <th class="room-name head-setting">DOUBLE SUPERIOR</th>
-                                <th class="column-setting head-setting">D88</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="column-setting">Price</td>
-                                <td class="column-setting item-setting">152</td>
-                                <td class="column-setting item-setting">152</td>
-                                <td class="column-setting item-setting">152</td>
-                                <td class="column-setting item-setting">1152</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Allotment</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Release</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped table-bordered table-setting">
-                        <thead>
-                            <tr>
-                                <th class="room-name head-setting">SINGLE</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="column-setting">Price</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Allotment</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Release</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped table-bordered table-setting">
-                        <thead>
-                            <tr>
-                                <th class="room-name head-setting">BUNGALOW SUPERIOR 3AD</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="column-setting">Price</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Allotment</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Release</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="portlet box green">
-            <div class="portlet-title porlet-title-setting">
-                <div class="caption caption-setting">
-                    <!--i class="fa fa-calendar"></i-->June 2018 </div>
-                <div class="tools tools-setting">
-                    <a href="" class="fullscreen"> </a>
-                    <a href="javascript:;" class="collapse"> </a>
-                </div>
-            </div>
-            <div class="portlet-body" style="padding: 0;">
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-setting">
-                        <thead>
-                            <tr>
-                                <th class="room-name head-setting">DOUBLE SUPERIOR</th>
-                                <th class="column-setting head-setting">D88</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="column-setting">Price</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Allotment</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Release</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped table-bordered table-setting">
-                        <thead>
-                            <tr>
-                                <th class="room-name head-setting">SINGLE</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="column-setting">Price</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Allotment</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Release</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped table-bordered table-setting">
-                        <thead>
-                            <tr>
-                                <th class="room-name head-setting">BUNGALOW SUPERIOR 3AD</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                                <th class="column-setting head-setting">D1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="column-setting">Price</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-                                <td class="column-setting item-setting">52</td>
-
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Allotment</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                            <tr>
-                                <td class="column-setting">Release</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                                <td class="column-setting item-setting">5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="col-xs-12 result-container"></div>
 </div>
 
 
@@ -1117,67 +175,261 @@
 @section('custom-scripts')
 <script>
     $(document).ready(function () {
-         $('.item-setting').on('click', function() {
+        /*M = Monday
+        T = Tuesday
+        W = Wednesday
+        R = Thursday
+        F = Friday
+        S = Saturday
+        U = Sunday (That's right, U for Sunday).*/
+
+        var roomTypes = [];
+        //var rows = ['Price', 'Allotment', 'Release', 'Offer', 'Stop Sale', 'Restriction', 'Supplement'];
+        var rows = [
+            { id: 'price', name: 'Price'},
+            { id: 'allotment', name: 'Allotment'},
+            { id: 'release', name: 'Release'},
+            { id: 'offer', name: 'Offer'},
+            { id: 'stop_sale', name: 'Stop Sale'},
+            { id: 'restriction', name: 'Restriction'},
+            { id: 'supplement', name: 'Supplement'}
+        ];
+
+        $.each(rows, function (i, item) {
+            if(i == 0) {
+                $('.rows-list').html('');
+                $.each(rows, function (i, item) {
+                    var row =
+                        '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
+                            '<input type="checkbox" checked name="row-selected" value="' + rows[i].id + '"> ' + rows[i].name +
+                            '<span></span>' +
+                        '</label>';
+                    $('.rows-list').append(row);
+                });
+            }
+        });
+
+        $('input[name=row-selected]').on('click', function() {
+            var $items = $('tr[data-row="' + $(this).val() + '"]');
+            if ($(this).is(':checked')) {
+                $items.each(function(){
+                    $(this).show();
+                });
+            }
+            else {
+                $items.each(function(){
+                    $(this).hide();
+                });
+            }
+        });
+
+        $('.btn-search-submit').on('click', function(e) {
+            e.preventDefault();
+            $('.result-container').html('');
+            var dateFrom = $('input[name=from]').datepicker('getDate');
+            var dateTo = $('input[name=to]').datepicker('getDate');
+            var start = moment(dateFrom, 'YYYY-MM-DD').startOf('month');
+            var end = moment(dateTo, 'YYYY-MM-DD').endOf('month');
+            var html = '';
+
+            for (var m = start; m.isSameOrBefore(end); m.add(1, 'month')) {
+                html =
+                '<div class="portlet box green">' +
+                    '<div class="portlet-title porlet-title-setting">' +
+                        '<div class="caption caption-setting">' +
+                            '<!--i class="fa fa-calendar"></i-->' + m.format("MMMM YYYY") + '</div>' +
+                        '<div class="tools tools-setting">' +
+                            '<a href="" class="fullscreen"> </a>' +
+                            '<a href="javascript:;" class="collapse"> </a>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="portlet-body" style="padding: 0;">' +
+                        '<div class="table-responsive">';
+
+                for (var r = 0; r < roomTypes.length; r++) {
+                    html +=
+                            '<table class="table table-striped table-bordered table-setting" data-room="' + roomTypes[r].id + '">' +
+                                '<thead>' +
+                                    '<tr>' +
+                                        '<th class="room-name head-setting">' + roomTypes[r].name + '</th>';
+
+                    var monthStart = moment(m, 'YYYY-MM-DD').startOf('month');
+                    var monthEnd = moment(m, 'YYYY-MM-DD').endOf('month');
+                    var count = 0;
+
+                    for (var d = monthStart; d.isSameOrBefore(monthEnd); d.add(1, 'days')) {
+                        html +=
+                                        //'<th class="column-setting head-setting">' + d.format('D') + '<br>' + d.format('dd') + '</th>';
+                                        '<th class="column-setting head-setting">' + d.format('D') + '</th>';
+                        count ++;
+                    }
+                    if (count < 31) {
+                        for (var z = count; z < 31; z++) {
+                            html +=
+                                        '<th class="column-setting head-setting-invalid"></th>';
+                        }
+                    }
+                    html +=
+                                    '</tr>' +
+                                '</thead>' +
+                                '<tbody>';
+
+                    for (var v = 0; v < rows.length; v++) {
+                        html +=
+                                    '<tr data-row="' + rows[v].id + '">' +
+                                        '<td class="column-setting item-variable">' + rows[v].name + '</td>';
+
+                        monthStart = moment(m, 'YYYY-MM-DD').startOf('month');
+                        monthEnd = moment(m, 'YYYY-MM-DD').endOf('month');
+
+                        for (var i = monthStart; i.isSameOrBefore(monthEnd); i.add(1, 'days')) {
+                            html +=
+                                        '<td class="column-setting item-setting" data-date="' + i.format('YYYY-MM-DD') + '" data-row="' + rows[v].id + '" data-room-type="' + roomTypes[r].name + '">' + '5' + '</td>';
+                        }
+                        html +=
+                                    '</tr>';
+                    }
+                    html +=
+                                '</tbody>' +
+                            '</table>';
+                }
+                html +=
+                        '</div' +
+                    '</div' +
+                '</div>';
+
+                $('.result-container').append(html);
+
+                $('input[name="room-selected"]').on('click', function() {
+                    var $items = $('table[data-room="' + $(this).val() + '"]');
+                    if ($(this).is(':checked')) {
+                        $items.each(function(){
+                            $(this).show();
+                        });
+                    }
+                    else {
+                        $items.each(function(){
+                            $(this).hide();
+                        });
+                    }
+                });
+            }
+
+            $('input[name=row-selected]:checked').each(function() {
+                var $items = $('tr[data-row="' + $(this).val() + '"]');
+                $items.each(function(){
+                    $(this).show();
+                });
+            });
+
+            $('input[name=row-selected]:not(:checked)').each(function() {
+                var $items = $('tr[data-row="' + $(this).val() + '"]');
+                $items.each(function(){
+                    $(this).hide();
+                });
+            });
+
+            $('input[name=room-selected]:checked').each(function() {
+                var $items = $('table[data-room="' + $(this).val() + '"]');
+                $items.each(function(){
+                    $(this).show();
+                });
+            });
+
+            $('input[name=room-selected]:not(:checked)').each(function() {
+                var $items = $('table[data-room="' + $(this).val() + '"]');
+                $items.each(function(){
+                    $(this).hide();
+                });
+            });
+
+
+            //$('[data-date="2018-07-02"][data-row="Stop Sale"]').html('es');
+        });
+
+        $('.item-setting').on('click', function() {
             alert($(this).html());
-         });
+        });
 
-         /*$('.date-picker').datepicker({
-             rtl: App.isRTL(),
-             orientation: "left",
-             autoclose: true,
-             format: 'dd-mm-yyyy'
-         });*/
-
-         $(".date-picker").datepicker({
+        $(".date-picker").datepicker({
             format: "MM yyyy",
             viewMode: "months",
             minViewMode: "months",
             autoclose: true
-         });
+        });
 
+        var currentDate = new Date();
+        $(".date-picker").datepicker( "setDate" , currentDate );
 
+        function formatHotel(repo) {
+            if (repo.loading) return repo.text;
+            var markup =
+                "<div class=''>" +
+                    "<div class=''>" + repo.name + "</div>"+
+                "</div>";
+            return markup;
+        }
 
-         function formatHotel(repo) {
-             if (repo.loading) return repo.text;
-             var markup =
-                 "<div class=''>" +
-                     "<div class=''>" + repo.name + "</div>"+
-                 "</div>";
-             return markup;
-         }
+        function formatHotelSelection(repo) {
+            return repo.name;
+        }
 
-         function formatHotelSelection(repo) {
-             return repo.name;
-         }
+        $("#search-accomodation :input[name=hotel]").select2({
+            width: "off",
+            placeholder: "<i class='icon-group'></i> &nbsp;&nbsp; inout your tags...",
+            ajax: {
+                url: "{{ route('hotel.search.contract.active') }}",
+                "type": "POST",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term,
+                        page: params.page
+                    };
+                },
+                processResults: function(data, page) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            minimumInputLength: 3,
+            templateResult: formatHotel,
+            templateSelection: formatHotelSelection
+        });
 
-         $("#search-accomodation :input[name=hotel]").select2({
-             width: "off",
-             placeholder: "<i class='icon-group'></i> &nbsp;&nbsp; inout your tags...",
-             ajax: {
-                 url: "{{ route('hotel.search.active') }}",
-                 "type": "POST",
-                 dataType: 'json',
-                 delay: 250,
-                 data: function(params) {
-                     return {
-                         q: params.term,
-                         page: params.page
-                     };
-                 },
-                 processResults: function(data, page) {
-                     return {
-                         results: data
-                     };
-                 },
-                 cache: true
-             },
-             escapeMarkup: function(markup) {
-                 return markup;
-             },
-             minimumInputLength: 3,
-             templateResult: formatHotel,
-             templateSelection: formatHotelSelection
-         });
+        $("#search-accomodation :input[name=hotel]").on('select2:select select2:unselect', function (e) {
+            var values = e.params.data;
+            //console.log(values);
+            if(values.selected) {
+                var contracts = values.contracts;
+                $('#search-accomodation :input[name=contract]').empty();
+                $.each(contracts, function (i, item) {
+                    if(i == 0) {
+                        roomTypes = contracts[i].roomTypes;
+                        $('.room-types-list').html('');
+                        $.each(roomTypes, function (i, item) {
+                            var roomType =
+                                '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
+                                    '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
+                                    '<span></span>' +
+                                '</label>';
+                            $('.room-types-list').append(roomType);
+                        });
+                    }
+
+                    $('#search-accomodation :input[name=contract]').append($('<option>', {
+                        value: item.id,
+                        text : item.name
+                    }));
+                });
+            }
+        });
     });
 </script>
 @stop

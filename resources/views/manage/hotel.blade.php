@@ -184,15 +184,15 @@
         U = Sunday (That's right, U for Sunday).*/
 
         var roomTypes = [];
-        //var rows = ['Price', 'Allotment', 'Release', 'Offer', 'Stop Sale', 'Restriction', 'Supplement'];
+        var contracts = [];
         var rows = [
-            { id: 'price', name: 'Price'},
-            { id: 'allotment', name: 'Allotment'},
-            { id: 'release', name: 'Release'},
-            { id: 'offer', name: 'Offer'},
-            { id: 'stop_sale', name: 'Stop Sale'},
-            { id: 'restriction', name: 'Restriction'},
-            { id: 'supplement', name: 'Supplement'}
+            { id: 'price', name: 'Price', selected: true},
+            { id: 'allotment', name: 'Allotment', selected: true},
+            { id: 'release', name: 'Release', selected: true},
+            { id: 'offer', name: 'Offer', selected: true},
+            { id: 'stop_sale', name: 'Stop Sale', selected: true},
+            { id: 'restriction', name: 'Restriction', selected: true},
+            { id: 'supplement', name: 'Supplement', selected: true}
         ];
 
         $.each(rows, function (i, item) {
@@ -302,6 +302,7 @@
 
                 $('input[name="room-selected"]').on('click', function() {
                     var $items = $('table[data-room="' + $(this).val() + '"]');
+
                     if ($(this).is(':checked')) {
                         $items.each(function(){
                             $(this).show();
@@ -312,6 +313,10 @@
                             $(this).hide();
                         });
                     }
+                });
+
+                $('.item-setting').on('click', function() {
+                    alert($(this).html());
                 });
             }
 
@@ -342,13 +347,7 @@
                     $(this).hide();
                 });
             });
-
-
             //$('[data-date="2018-07-02"][data-row="Stop Sale"]').html('es');
-        });
-
-        $('.item-setting').on('click', function() {
-            alert($(this).html());
         });
 
         $(".date-picker").datepicker({
@@ -357,9 +356,6 @@
             minViewMode: "months",
             autoclose: true
         });
-
-        var currentDate = new Date();
-        $(".date-picker").datepicker( "setDate" , currentDate );
 
         function formatHotel(repo) {
             if (repo.loading) return repo.text;
@@ -403,24 +399,46 @@
             templateSelection: formatHotelSelection
         });
 
+        function fillContract(contract) {
+            roomTypes = contract.roomTypes;
+            $('.room-types-list').html('');
+            $.each(roomTypes, function (i, item) {
+                var roomType =
+                    '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
+                        '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
+                        '<span></span>' +
+                    '</label>';
+                $('.room-types-list').append(roomType);
+            });
+
+            var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
+            var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
+            var currentDate = moment();
+
+            if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
+                var tempStart = currentDate.startOf('month');
+                var tempEnd = currentDate.startOf('month');
+                $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
+                $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
+            }
+            else {
+                var tempStart = startDate.startOf('month');
+                var tempEnd = endDate.startOf('month');
+                $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
+                $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
+            }
+        }
+
         $("#search-accomodation :input[name=hotel]").on('select2:select select2:unselect', function (e) {
             var values = e.params.data;
             //console.log(values);
+            contracts = [];
             if(values.selected) {
-                var contracts = values.contracts;
+                contracts = values.contracts;
                 $('#search-accomodation :input[name=contract]').empty();
                 $.each(contracts, function (i, item) {
                     if(i == 0) {
-                        roomTypes = contracts[i].roomTypes;
-                        $('.room-types-list').html('');
-                        $.each(roomTypes, function (i, item) {
-                            var roomType =
-                                '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                                    '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
-                                    '<span></span>' +
-                                '</label>';
-                            $('.room-types-list').append(roomType);
-                        });
+                        fillContract(contracts[i]);
                     }
 
                     $('#search-accomodation :input[name=contract]').append($('<option>', {
@@ -428,6 +446,15 @@
                         text : item.name
                     }));
                 });
+            }
+        });
+
+        $('#search-accomodation :input[name=contract]').change(function() {
+            for(var i = 0; i < contracts.length; i++) {
+                if(contracts[i].id == $(this).val()) {
+                    fillContract(contracts[i]);
+                    break;
+                }
             }
         });
     });

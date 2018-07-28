@@ -29,6 +29,6 @@ class CreateTableHotelsChain extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('hotel_hotels_chain');
     }
 }

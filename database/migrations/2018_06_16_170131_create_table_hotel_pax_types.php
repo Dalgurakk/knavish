@@ -32,6 +32,6 @@ class CreateTableHotelPaxTypes extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('hotel_pax_types');
     }
 }

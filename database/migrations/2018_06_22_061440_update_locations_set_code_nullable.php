@@ -25,6 +25,8 @@ class UpdateLocationsSetCodeNullable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('locations', function (Blueprint $table) {
+            $table->string('code')->nullable(false)->change();
+        });
     }
 }

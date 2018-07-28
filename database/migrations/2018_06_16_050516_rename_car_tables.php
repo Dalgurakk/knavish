@@ -24,6 +24,7 @@ class RenameCarTables extends Migration
      */
     public function down()
     {
-        //
+        Schema::rename('car_brands', 'brands');
+        Schema::rename('car_categories', 'categories');
     }
 }

@@ -25,6 +25,8 @@ class UpdateUsersAddMarketId extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('users', function($table) {
+            $table->dropColumn('market_id');
+        });
     }
 }

@@ -25,6 +25,8 @@ class AddCategoryIdToBrands extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('brands', function($table) {
+            $table->dropColumn('category_id');
+        });
     }
 }

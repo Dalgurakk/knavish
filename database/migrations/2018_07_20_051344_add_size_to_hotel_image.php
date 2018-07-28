@@ -25,6 +25,8 @@ class AddSizeToHotelImage extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('hotel_hotel_image', function($table) {
+            $table->dropColumn('size');
+        });
     }
 }

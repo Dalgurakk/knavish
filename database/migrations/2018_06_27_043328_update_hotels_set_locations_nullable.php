@@ -27,6 +27,10 @@ class UpdateHotelsSetLocationsNullable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('hotels', function (Blueprint $table) {
+            $table->integer('country_id')->default(0)->nullable(false)->change();
+            $table->integer('state_id')->default(0)->nullable(false)->change();
+            $table->integer('city_id')->default(0)->nullable(false)->change();
+        });
     }
 }

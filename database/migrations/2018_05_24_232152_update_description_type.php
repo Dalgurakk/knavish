@@ -29,6 +29,12 @@ class UpdateDescriptionType extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('brands', function (Blueprint $table) {
+            $table->string('description')->nullable()->change();
+        });
+
+        Schema::table('categories', function (Blueprint $table) {
+            $table->string('description')->nullable()->change();
+        });
     }
 }

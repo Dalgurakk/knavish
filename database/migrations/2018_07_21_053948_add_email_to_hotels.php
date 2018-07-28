@@ -25,6 +25,8 @@ class AddEmailToHotels extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('hotels', function($table) {
+            $table->dropColumn('email');
+        });
     }
 }

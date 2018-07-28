@@ -30,6 +30,6 @@ class CreateTableMarkets extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('markets');
     }
 }

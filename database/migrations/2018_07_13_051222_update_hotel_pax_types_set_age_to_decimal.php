@@ -26,6 +26,9 @@ class UpdateHotelPaxTypesSetAgeToDecimal extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('hotel_pax_types', function (Blueprint $table) {
+            $table->integer('agefrom')->change();
+            $table->integer('ageto')->change();
+        });
     }
 }

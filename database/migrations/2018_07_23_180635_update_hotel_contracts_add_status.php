@@ -25,6 +25,8 @@ class UpdateHotelContractsAddStatus extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('hotel_contracts', function($table) {
+            $table->dropColumn('status');
+        });
     }
 }

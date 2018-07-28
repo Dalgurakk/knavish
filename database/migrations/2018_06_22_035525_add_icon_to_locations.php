@@ -25,6 +25,8 @@ class AddIconToLocations extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('locations', function($table) {
+            $table->dropColumn('icon');
+        });
     }
 }

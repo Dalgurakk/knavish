@@ -25,6 +25,8 @@ class CarBrandsRenameCategoryId extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('car_brands', function (Blueprint $table) {
+            $table->renameColumn('car_category_id', 'category_id');
+        });
     }
 }

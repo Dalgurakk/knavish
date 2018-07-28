@@ -25,6 +25,8 @@ class AddImageToBrands extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('brands', function($table) {
+            $table->dropColumn('image');
+        });
     }
 }

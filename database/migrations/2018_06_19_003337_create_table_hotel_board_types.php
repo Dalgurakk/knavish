@@ -30,6 +30,6 @@ class CreateTableHotelBoardTypes extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('hotel_board_types');
     }
 }

@@ -89,22 +89,8 @@
                             <div class="portlet-body">
                                 <div class="scroller" style="height:175px">
                                     <div class="row">
-                                        <div class="col-md-12" style="margin-top: 15px;">
-                                            <label>From</label>
-                                            <div class="form-group">
-                                                <div class="input-icon">
-                                                    <i class="fa fa-calendar"></i>
-                                                    <input class="form-control date-picker" name="from"> </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label>To</label>
-                                            <div class="form-group">
-                                                <div class="input-icon">
-                                                    <i class="fa fa-calendar"></i>
-                                                    <input class="form-control date-picker" name="to"> </div>
-                                            </div>
-                                        </div>
+                                        <div class="col-md-12 datepicker-from-container" style="margin-top: 15px;"></div>
+                                        <div class="col-md-12 datepicker-to-container"></div>
                                     </div>
                                 </div>
                             </div>
@@ -350,13 +336,6 @@
             //$('[data-date="2018-07-02"][data-row="Stop Sale"]').html('es');
         });
 
-        $(".date-picker").datepicker({
-            format: "MM yyyy",
-            viewMode: "months",
-            minViewMode: "months",
-            autoclose: true
-        });
-
         function formatHotel(repo) {
             if (repo.loading) return repo.text;
             var markup =
@@ -411,22 +390,56 @@
                 $('.room-types-list').append(roomType);
             });
 
+            $('input[name=from]').datepicker( "destroy" );
+            $('input[name=to]').datepicker( "destroy" );
+
+            $('.datepicker-from-container').html('');
+            $('.datepicker-to-container').html('');
+            var html =
+                '<label>From</label>' +
+                '<div class="form-group">' +
+                    '<div class="input-icon">' +
+                        '<i class="fa fa-calendar"></i>' +
+                        '<input class="form-control datepicker" name="from"> </div>' +
+                '</div>';
+            $('.datepicker-from-container').append(html);
+            html =
+                '<label>To</label>' +
+                '<div class="form-group">' +
+                    '<div class="input-icon">' +
+                        '<i class="fa fa-calendar"></i>' +
+                        '<input class="form-control datepicker" name="to"> </div>' +
+                '</div>';
+            $('.datepicker-to-container').append(html);
+
+            $(".datepicker").datepicker({
+                format: "MM yyyy",
+                viewMode: "months",
+                minViewMode: "months",
+                autoclose: true
+            });
+
             var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
             var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
             var currentDate = moment();
 
             if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
-                var tempStart = currentDate.startOf('month');
-                var tempEnd = currentDate.startOf('month');
+                var tempStart = moment(currentDate).startOf('month');
+                var tempEnd = moment(currentDate).endOf('month');
                 $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
                 $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
             }
             else {
-                var tempStart = startDate.startOf('month');
-                var tempEnd = endDate.startOf('month');
+                var tempStart = moment(startDate).startOf('month');
+                var tempEnd = moment(endDate).endOf('month');
                 $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
                 $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
             }
+
+            $('input[name=from]').datepicker( "setStartDate" , new Date(startDate));
+            $('input[name=from]').datepicker( "setEndDate" , new Date(endDate));
+            $('input[name=to]').datepicker( "setStartDate" , new Date(startDate));
+            $('input[name=to]').datepicker( "setEndDate" , new Date(endDate));
         }
 
         $("#search-accomodation :input[name=hotel]").on('select2:select select2:unselect', function (e) {

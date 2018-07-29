@@ -49,7 +49,6 @@ class HotelRoomTypeController extends Controller
         $searchCode = Input::get('columns')['1']['search']['value'];
         $searchName = Input::get('columns')['2']['search']['value'];
         $searchActive = Input::get('columns')['8']['search']['value'];
-        $roomTypes = array();
 
         $query = DB::table('hotel_room_types')
             ->select(

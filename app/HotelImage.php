@@ -8,7 +8,7 @@ class HotelImage extends Model
 {
     protected $table = 'hotel_images';
 
-    public function category() {
+    public function hotel() {
         return $this->belongsTo('App\Hotel');
     }
 }

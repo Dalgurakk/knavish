@@ -79,7 +79,7 @@
                                         <input type="text" class="form-control" name="valid-to" placeholder="To"> </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
+                            <!--div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <div class="input-icon left">
                                         <i class="fa fa-check"></i>
@@ -89,7 +89,7 @@
                                             <option value="0">Disabled</option>
                                         </select> </div>
                                 </div>
-                            </div>
+                            </div-->
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <button type="submit" class="btn green btn-search-submit"><i class="fa fa-search"></i> Search</button>
@@ -1269,23 +1269,23 @@
         $('#table tbody').on( 'click', '.dt-view', function (e) {
             var data = table.row( $(this).parents('tr') ).data();
             var contract = data['contract'];
-            var hotel = contract.hotelData;
-            var paxTypes = contract.paxTypes;
-            var boardTypes = contract.boardTypes;
-            var roomTypes = contract.roomTypes;
+            var hotel = contract.hotel;
+            var paxTypes = contract.pax_types;
+            var boardTypes = contract.board_types;
+            var roomTypes = contract.room_types;
 
             $('#modal-info :input[name=name]').val(contract.name);
             $('#modal-info :input[name=status]').val(contract.status_text);
-            $('#modal-info :input[name=valid-from]').val(contract.valid_from);
-            $('#modal-info :input[name=valid-to]').val(contract.valid_to);
+            $('#modal-info :input[name=valid-from]').val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD-MM-YYYY'));
+            $('#modal-info :input[name=valid-to]').val(moment(contract.valid_to, 'YYYY-MM-DD').format('DD-MM-YYYY'));
             $('#modal-info :input[name=hotel]').val(hotel.name);
-            $('#modal-info :input[name=country-text]').val(hotel.country);
-            $('#modal-info :input[name=state-text]').val(hotel.state);
-            $('#modal-info :input[name=city-text]').val(hotel.city);
+            $('#modal-info :input[name=country-text]').val(hotel.country.name);
+            $('#modal-info :input[name=state-text]').val(hotel.state.name);
+            $('#modal-info :input[name=city-text]').val(hotel.city.name);
             $('#modal-info :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-info :input[name=address]').val(hotel.address);
             $('#modal-info :input[name=category]').barrating('set', hotel.category);
-            $('#modal-info :input[name=hotel-chain]').val(hotel.chain);
+            $('#modal-info :input[name=hotel-chain]').val(hotel.hotel_chain.name);
             $('#modal-info :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-info :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-info :input[name=web-site]').val(hotel.web_site);
@@ -1361,15 +1361,15 @@
             if(values.selected) {
                 $('#modal-edit .show-hotel :input[name=hotel-id]').val(values.id);
                 $('#modal-edit .show-hotel :input[name=name]').val(values.name);
-                $('#modal-edit .show-hotel :input[name=country-text]').val(values.country);
-                $('#modal-edit .show-hotel :input[name=state-text]').val(values.state);
-                $('#modal-edit .show-hotel :input[name=city-text]').val(values.city);
+                $('#modal-edit .show-hotel :input[name=country-text]').val(values.country.name);
+                $('#modal-edit .show-hotel :input[name=state-text]').val(values.state.name);
+                $('#modal-edit .show-hotel :input[name=city-text]').val(values.city.name);
                 $('#modal-edit .show-hotel :input[name=postal-code]').val(values.postal_code);
                 $('#modal-edit .show-hotel :input[name=address]').val(values.address);
                 $('#modal-edit .show-hotel :input[name=category]').barrating('readonly', true);
                 var category = values.category != null ? values.category : '';
                 $('#modal-edit .show-hotel :input[name=category]').barrating('set', category);
-                $('#modal-edit .show-hotel :input[name=hotel-chain]').val(values.chain);
+                $('#modal-edit .show-hotel :input[name=hotel-chain]').val(values.hotel_chain.name);
                 $('#modal-edit .show-hotel :input[name=admin-phone]').val(values.admin_phone);
                 $('#modal-edit .show-hotel :input[name=admin-fax]').val(values.admin_fax);
                 $('#modal-edit .show-hotel :input[name=web-site]').val(values.web_site);
@@ -1386,10 +1386,10 @@
             formEdit[0].reset();
             var data = table.row( $(this).parents('tr') ).data();
             var contract = data['contract'];
-            var hotel = contract.hotelData;
-            var paxTypes = contract.paxTypes;
-            var boardTypes = contract.boardTypes;
-            var roomTypes = contract.roomTypes;
+            var hotel = contract.hotel;
+            var paxTypes = contract.pax_types;
+            var boardTypes = contract.board_types;
+            var roomTypes = contract.room_types;
 
             $('#modal-edit :input[name=id]').val(contract.id);
             $('#modal-edit :input[name=hotel-id]').val(hotel.id);
@@ -1397,15 +1397,15 @@
             $("#modal-edit .select2-selection__rendered").html(hotel.name);
             $('#modal-edit :input[name=name]').val(contract.name);
             $('#modal-edit :input[name=status]').val(contract.status);
-            $('#modal-edit :input[name=valid-from]').datepicker("setDate" , contract.valid_from);
-            $('#modal-edit :input[name=valid-to]').datepicker("setDate" , contract.valid_to);
-            $('#modal-edit :input[name=country-text]').val(hotel.country);
-            $('#modal-edit :input[name=state-text]').val(hotel.state);
-            $('#modal-edit :input[name=city-text]').val(hotel.city);
+            $('#modal-edit :input[name=valid-from]').datepicker("setDate" , new Date(moment(contract.valid_from, 'YYYY-MM-DD')));
+            $('#modal-edit :input[name=valid-to]').datepicker("setDate" , new Date(moment(contract.valid_to, 'YYYY-MM-DD')));
+            $('#modal-edit :input[name=country-text]').val(hotel.country.name);
+            $('#modal-edit :input[name=state-text]').val(hotel.state.name);
+            $('#modal-edit :input[name=city-text]').val(hotel.city.name);
             $('#modal-edit :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-edit :input[name=address]').val(hotel.address);
             $('#modal-edit :input[name=category]').barrating('set', hotel.category);
-            $('#modal-edit :input[name=hotel-chain]').val(hotel.chain);
+            $('#modal-edit :input[name=hotel-chain]').val(hotel.hotel_chain.name);
             $('#modal-edit :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-edit :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-edit :input[name=web-site]').val(hotel.web_site);
@@ -1847,15 +1847,15 @@
             if(values.selected) {
                 $('#modal-add .show-hotel :input[name=hotel-id]').val(values.id);
                 $('#modal-add .show-hotel :input[name=name]').val(values.name);
-                $('#modal-add .show-hotel :input[name=country-text]').val(values.country);
-                $('#modal-add .show-hotel :input[name=state-text]').val(values.state);
-                $('#modal-add .show-hotel :input[name=city-text]').val(values.city);
+                $('#modal-add .show-hotel :input[name=country-text]').val(values.country.name);
+                $('#modal-add .show-hotel :input[name=state-text]').val(values.state.name);
+                $('#modal-add .show-hotel :input[name=city-text]').val(values.city.name);
                 $('#modal-add .show-hotel :input[name=postal-code]').val(values.postal_code);
                 $('#modal-add .show-hotel :input[name=address]').val(values.address);
                 $('#modal-add .show-hotel :input[name=category]').barrating('readonly', true);
                 var category = values.category != null ? values.category : '';
                 $('#modal-add .show-hotel :input[name=category]').barrating('set', category);
-                $('#modal-add .show-hotel :input[name=hotel-chain]').val(values.chain);
+                $('#modal-add .show-hotel :input[name=hotel-chain]').val(values.hotel_chain.name);
                 $('#modal-add .show-hotel :input[name=admin-phone]').val(values.admin_phone);
                 $('#modal-add .show-hotel :input[name=admin-fax]').val(values.admin_fax);
                 $('#modal-add .show-hotel :input[name=web-site]').val(values.web_site);

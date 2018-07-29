@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\HotelChain;
 use App\HotelContract;
 use App\HotelImage;
 use Illuminate\Database\QueryException;
@@ -15,7 +16,6 @@ use Image;
 class HotelController extends Controller
 {
     private $response;
-    private $hotelChainController;
     private $uploadPath;
     private $uploadThumbnailPath;
     private $publishPath;
@@ -23,7 +23,6 @@ class HotelController extends Controller
 
     public function __construct() {
         $this->middleware('auth');
-        $this->hotelChainController = new HotelChainController();
         $this->uploadPath = public_path().'/assets/pages/img/hotel/uploads/';
         $this->uploadThumbnailPath = public_path().'/assets/pages/img/hotel/uploads/thumbnails/';
         $this->publishPath = asset('assets/pages/img/hotel/uploads');
@@ -37,8 +36,7 @@ class HotelController extends Controller
             0 => 'Hotel',
             1 => 'Hotels'
         );
-
-        $hotelsChain = $this->hotelChainController->actives();
+        $hotelsChain = HotelChain::where('active', '=', '1')->orderBy('name', 'asc')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
@@ -65,14 +63,7 @@ class HotelController extends Controller
 
         $query = DB::table('hotels')
             ->select(
-                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
-                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
-                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
-                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
-                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
-            ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
-            ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
-            ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
+                'hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name as chain', 'hotels.active')
             ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id');
 
         if(isset($searchName) && $searchName != '') {
@@ -89,13 +80,17 @@ class HotelController extends Controller
         $result = $query->get();
 
         foreach ($result as $r) {
+            $query = Hotel::with(['hotelChain', 'country', 'state', 'city'])
+                ->where('id', $r->id)->get();
+
+            $hotel = $query[0];
             $item = array(
                 'id' => $r->id,
                 'name' => $r->name,
                 'category' => $r->category,
                 'chain' => $r->chain,
                 'active' => $r->active,
-                'hotel' => $r
+                'hotel' => $hotel
             );
             $hotels[] = $item;
         }
@@ -297,8 +292,7 @@ class HotelController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $id = Input::get('id');
-        $hotel = Hotel::find($id);
-        $hotelImages = $hotel->images;
+        $hotelImages = HotelImage::where('hotel_id', $id)->get();
         $files = array();
         foreach ($hotelImages as $hotelImage) {
             $item = new \stdClass();
@@ -318,76 +312,33 @@ class HotelController extends Controller
     }
 
     public function actives() {
-        $hotels = DB::table('hotels')
-            ->select(
-                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
-                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
-                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
-                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
-                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
-            ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
-            ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
-            ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
-            ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id')
+        $query = Hotel::with(['hotelChain', 'country', 'state', 'city'])
             ->where('hotels.active', '=', '1')
             ->orderBy('hotels.name', 'asc')
             ->get();
+        $hotels = $query;
         return $hotels;
     }
 
-    public function searchActive(Request $request) {
+    public function getActivesByName(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        $query = '%' . Input::get('q') . '%';
-        $hotels = DB::table('hotels')
-            ->select(
-                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
-                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
-                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
-                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
-                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
-            ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
-            ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
-            ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
-            ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id')
+        $name = '%' . Input::get('q') . '%';
+        $query = Hotel::with(['hotelChain', 'country', 'state', 'city'])
             ->where('hotels.active', '=', '1')
-            ->where('hotels.name', 'like', $query)
+            ->where('hotels.name', 'like',  $name)
             ->orderBy('hotels.name', 'asc')
             ->get();
+        $hotels = $query;
         echo json_encode($hotels);
     }
 
-    public function getById($id) {
-        $hotel = DB::table('hotels')
-            ->select(
-                'hotels.id', 'hotels.name', 'hotels.country_id', 'hotels.state_id',
-                'hotels.city_id', 'country.name as country', 'state.name as state', 'city.name as city',
-                'hotels.postal_code', 'hotels.address', 'hotels.category', 'hotels.hotel_chain_id as chain_id',
-                'hotel_hotels_chain.name as chain', 'hotels.admin_phone', 'hotels.admin_fax', 'hotels.web_site',
-                'hotels.turistic_licence', 'hotels.active', 'hotels.email', 'hotels.description')
-            ->leftJoin('locations as country', 'country.id', '=', 'hotels.country_id')
-            ->leftJoin('locations as state', 'state.id', '=', 'hotels.state_id')
-            ->leftJoin('locations as city', 'city.id', '=', 'hotels.city_id')
-            ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id')
-            ->where('hotels.id', '=', $id)
-            ->get();
-        return $hotel;
-    }
-
-    public function getContractsById($id) {
-        $contracts = DB::table('hotel_contracts')
-            ->where('hotel_contracts.hotel_id', '=', $id)
-            ->get();
-        return $contracts;
-    }
-
-    public function searchContractActive(Request $request) {
+    public function getContractsByName(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $temp = '%' . Input::get('q') . '%';
         $hotels = DB::table('hotels')
-            ->whereIn('hotels.id', function($query)
-            {
+            ->whereIn('hotels.id', function($query) {
                 $query->select(DB::raw('hotel_contracts.hotel_id'))
                     ->from('hotel_contracts')
                     ->whereRaw('hotel_contracts.hotel_id = hotels.id');
@@ -397,11 +348,7 @@ class HotelController extends Controller
             ->get();
 
         foreach ($hotels as $h) {
-            $contracts = $this->getContractsById($h->id);
-            foreach ($contracts as $c) {
-                $contract = HotelContract::find($c->id);
-                $c->roomTypes = $contract->roomTypes;
-            }
+            $contracts = HotelContract::with('roomTypes')->where('hotel_id', $h->id)->get();
             $h->contracts = $contracts;
         }
         echo json_encode($hotels);

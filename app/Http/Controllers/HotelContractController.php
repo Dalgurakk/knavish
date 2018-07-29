@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\HotelBoardType;
 use App\HotelContract;
+use App\HotelPaxType;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -14,15 +16,9 @@ use Carbon;
 class HotelContractController extends Controller
 {
     private $response;
-    private $hotelController;
-    private $hotelPaxTypeController;
-    private $hotelBoardTypeController;
 
     public function __construct() {
         $this->middleware('auth');
-        $this->hotelController = new HotelController();
-        $this->hotelPaxTypeController = new HotelPaxTypeController();
-        $this->hotelBoardTypeController = new HotelBoardTypeController();
     }
 
     public function index(Request $request) {
@@ -33,14 +29,12 @@ class HotelContractController extends Controller
             1 => 'Hotels'
         );
 
-        $hotels = $this->hotelController->actives();
-        $paxTypes = $this->hotelPaxTypeController->actives();
-        $boardTypes = $this->hotelBoardTypeController->actives();
+        $paxTypes = HotelPaxType::where('active', '1')->get();
+        $boardTypes = HotelBoardType::where('active', '1')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
         $data['submenuContract'] = 'selected';
-        $data['hotels'] = $hotels;
         $data['paxTypes'] = $paxTypes;
         $data['boardTypes'] = $boardTypes;
 
@@ -66,8 +60,8 @@ class HotelContractController extends Controller
         $query = DB::table('hotel_contracts')
             ->select(
                 'hotel_contracts.id', 'hotel_contracts.name', 'hotels.name as hotel', 'hotel_contracts.valid_from',
-                'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.hotel_id', 'hotel_contracts.status')
-            ->leftJoin('hotels', 'hotels.id', '=', 'hotel_contracts.hotel_id');
+                'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.status')
+            ->join('hotels', 'hotels.id', '=', 'hotel_contracts.hotel_id');
 
         if(isset($searchName) && $searchName != '') {
             $query->where('hotel_contracts.name', 'like', '%' . $searchName . '%');
@@ -94,24 +88,21 @@ class HotelContractController extends Controller
         $result = $query->get();
 
         foreach ($result as $r) {
-            $hotel = $this->hotelController->getById($r->hotel_id)[0];
-            $r->hotelData = $hotel;
+            $query = HotelContract::with([
+                'hotel', 'hotel.hotelChain', 'hotel.country', 'hotel.state', 'hotel.city',
+                'roomTypes', 'paxTypes', 'boardTypes'])
+                ->where('id', $r->id)->get();
 
+            $contract = $query[0];
+            $status_text = '';
             if ($r->status == '0')
-                $r->status_text = 'Draft';
+                $status_text = 'Draft';
             else if ($r->status == '1')
-                $r->status_text = 'Signed';
-            else $r->status_text = '';
+                $status_text = 'Signed';
+            $contract->status_text = $status_text;
 
-            $validFrom = Carbon::createFromFormat('Y-m-d', $r->valid_from);
-            $r->valid_from = $validFrom->format('d-m-Y');
-            $validTo = Carbon::createFromFormat('Y-m-d', $r->valid_to);
-            $r->valid_to = $validTo->format('d-m-Y');
-
-            $contract = HotelContract::find($r->id);
-            $r->paxTypes = $contract->paxTypes;
-            $r->boardTypes = $contract->boardTypes;
-            $r->roomTypes = $contract->roomTypes;
+            $r->valid_from = Carbon::createFromFormat('Y-m-d', $r->valid_from)->format('d-m-Y');
+            $r->valid_to = Carbon::createFromFormat('Y-m-d', $r->valid_to)->format('d-m-Y');
 
             $item = array(
                 'id' => $r->id,
@@ -120,7 +111,7 @@ class HotelContractController extends Controller
                 'valid_from' => $r->valid_from,
                 'valid_to' => $r->valid_to,
                 'active' => $r->active,
-                'contract' => $r
+                'contract' => $contract
             );
             $contracts[] = $item;
         }
@@ -283,6 +274,83 @@ class HotelContractController extends Controller
                 $this->response['errors'] = $e->errorInfo[2];
             }
         });
+        echo json_encode($this->response);
+    }
+
+    public function settings(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $rules = array(
+            'id' => 'required',
+            'from' => 'required|date',
+            'to' => 'required|date'
+            //'to' => 'required|date|before:from'
+        );
+        $validator = Validator::make(Input::all(), $rules);
+
+        if ($validator->fails()) {
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Invalid parameters.';
+            $this->response['errors'] = $validator->errors();
+        }
+        else {
+            $id = Input::get('id');
+            $from = Input::get('from');
+            $to = Input::get('to');
+            $contract = HotelContract::find($id);
+
+            if ($contract === null) {
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Invalid contract.';
+                $this->response['errors'] = $validator->errors();
+            }
+            else {
+                //$settings = $contract->settings;
+                $settings_json = '{
+                "data":
+                    [
+                        {
+                            "date": "2018-01-01",
+                            "price": "52",
+                            "allotment": "5",
+                            "release": "7",
+                            "offer": "2",
+                            "stop_sale": "0",
+                            "restriction": "0",
+                            "supplement":  "0"
+                        },
+                        {
+                            "date": "2018-01-02",
+                            "price": "52",
+                            "allotment": "5",
+                            "release": "7",
+                            "offer": "2",
+                            "stop_sale": "0",
+                            "restriction": "0",
+                            "supplement":  "0"
+                        },
+                        {
+                            "date": "2018-01-03",
+                            "price": "52",
+                            "allotment": "5",
+                            "release": "7",
+                            "offer": "2",
+                            "stop_sale": "0",
+                            "restriction": "0",
+                            "supplement":  "0"
+                        }
+                    ]
+                }';
+                $settings = json_decode($settings_json);
+                //$settings = new \stdClass();
+                //$settings->data = array(
+
+                //);
+                //print_r($settings);die;
+                $this->response['status'] = 'success';
+                $this->response['data'] = $settings;
+            }
+        }
         echo json_encode($this->response);
     }
 }

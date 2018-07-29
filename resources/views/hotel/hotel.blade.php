@@ -967,15 +967,15 @@
             var hotel = data['hotel'];
 
             $('#modal-info :input[name=name]').val(hotel.name);
-            $('#modal-info :input[name=country-text]').val(hotel.country);
-            $('#modal-info :input[name=state-text]').val(hotel.state);
-            $('#modal-info :input[name=city-text]').val(hotel.city);
+            $('#modal-info :input[name=country-text]').val(hotel.country.name);
+            $('#modal-info :input[name=state-text]').val(hotel.state.name);
+            $('#modal-info :input[name=city-text]').val(hotel.city.name);
             $('#modal-info :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-info :input[name=address]').val(hotel.address);
             $('#modal-info :input[name=category]').barrating('readonly', true);
             var category = hotel.category != null ? hotel.category : '';
             $('#modal-info :input[name=category]').barrating('set', category);
-            $('#modal-info :input[name=hotel-chain]').val(hotel.chain);
+            $('#modal-info :input[name=hotel-chain]').val(hotel.hotel_chain.name);
             $('#modal-info :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-info :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-info :input[name=web-site]').val(hotel.web_site);
@@ -1002,17 +1002,17 @@
 
             $('#modal-edit :input[name=id]').val(data['id']);
             $('#modal-edit :input[name=name]').val(hotel.name);
-            $('#modal-edit :input[name=country-text]').val(hotel.country);
-            $('#modal-edit :input[name=state-text]').val(hotel.state);
-            $('#modal-edit :input[name=city-text]').val(hotel.city);
-            $('#modal-edit :input[name=country-id]').val(hotel.country_id);
-            $('#modal-edit :input[name=state-id]').val(hotel.state_id);
-            $('#modal-edit :input[name=city-id]').val(hotel.city_id);
+            $('#modal-edit :input[name=country-text]').val(hotel.country.name);
+            $('#modal-edit :input[name=state-text]').val(hotel.state.name);
+            $('#modal-edit :input[name=city-text]').val(hotel.city.name);
+            $('#modal-edit :input[name=country-id]').val(hotel.country.id);
+            $('#modal-edit :input[name=state-id]').val(hotel.state.id);
+            $('#modal-edit :input[name=city-id]').val(hotel.city.id);
             $('#modal-edit :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-edit :input[name=address]').val(hotel.address);
             var category = hotel.category != null ? hotel.category : '';
             $('#modal-edit :input[name=category]').barrating('set', category);
-            $('#modal-edit :input[name=hotel-chain-id]').val(hotel.chain_id);
+            $('#modal-edit :input[name=hotel-chain-id]').val(hotel.hotel_chain.id);
             $('#modal-edit :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-edit :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-edit :input[name=web-site]').val(hotel.web_site);

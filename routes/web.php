@@ -60,7 +60,7 @@ Route::post('/hotel/room/create', 'HotelRoomTypeController@create')->name('hotel
 Route::post('/hotel/room/update', 'HotelRoomTypeController@update')->name('hotel.roomtype.update');
 Route::post('/hotel/room/delete', 'HotelRoomTypeController@delete')->name('hotel.roomtype.delete');
 Route::post('/hotel/room/duplicate', 'HotelRoomTypeController@duplicate')->name('hotel.roomtype.duplicate');
-Route::post('/hotel/room/search/active', 'HotelRoomTypeController@searchActive')->name('hotel.roomtype.search.active');
+Route::post('/hotel/room/search/active', 'HotelRoomTypeController@getActivesByCodeOrName')->name('hotel.roomtype.search.active');
 //HotelBoardType
 Route::get('/hotel/board', 'HotelBoardTypeController@index')->name('hotel.boardtype.index');
 Route::post('/hotel/board/read', 'HotelBoardTypeController@read')->name('hotel.boardtype.read');
@@ -82,14 +82,15 @@ Route::post('/hotel/delete', 'HotelController@delete')->name('hotel.delete');
 Route::post('/hotel/upload/image', 'HotelController@uploadImage')->name('hotel.upload.image');
 Route::post('/hotel/delete/image', 'HotelController@deleteImage')->name('hotel.delete.image');
 Route::post('/hotel/images', 'HotelController@images')->name('hotel.images');
-Route::post('/hotel/search/active', 'HotelController@searchActive')->name('hotel.search.active');
-Route::post('/hotel/search/contract/active', 'HotelController@searchContractActive')->name('hotel.search.contract.active');
+Route::post('/hotel/search/active', 'HotelController@getActivesByName')->name('hotel.search.active');
+Route::post('/hotel/search/contract/active', 'HotelController@getContractsByName')->name('hotel.search.contract.active');
 //HotelContract
 Route::get('/hotel/contract', 'HotelContractController@index')->name('hotel.contract.index');
 Route::post('/hotel/contract/read', 'HotelContractController@read')->name('hotel.contract.read');
 Route::post('/hotel/contract/create', 'HotelContractController@create')->name('hotel.contract.create');
 Route::post('/hotel/contract/update', 'HotelContractController@update')->name('hotel.contract.update');
 Route::post('/hotel/contract/delete', 'HotelContractController@delete')->name('hotel.contract.delete');
+Route::post('/hotel/contract/settings', 'HotelContractController@settings')->name('hotel.contract.settings');
 //Manage
 Route::get('/manage/hotel', 'ManageHotelController@index')->name('manage.hotel');
 Route::get('/range/calendar', 'ManageHotelController@rangeCalendar')->name('range.calendar');

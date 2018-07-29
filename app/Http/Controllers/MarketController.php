@@ -144,12 +144,4 @@ class MarketController extends Controller
         }
         echo json_encode($this->response);
     }
-
-    public function actives() {
-        $markets = DB::table('markets')
-            ->select('markets.id', 'markets.code', 'markets.name', 'markets.description', 'markets.active')
-            ->where('markets.active', '=', '1')
-            ->get();
-        return $markets;
-    }
 }

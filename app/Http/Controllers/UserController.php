@@ -16,11 +16,9 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     private $response;
-    private $marketController;
 
     public function __construct() {
         $this->middleware('auth');
-        $this->marketController = new MarketController();
     }
 
     public function index(Request $request) {
@@ -35,7 +33,7 @@ class UserController extends Controller
             ->select('roles.id', 'roles.description', 'roles.name')
             ->get();
 
-        $markets = $this->marketController->actives();
+        $markets = Market::where('active', '1')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuAdministration'] = 'selected';

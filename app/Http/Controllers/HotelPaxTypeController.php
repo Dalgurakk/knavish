@@ -152,12 +152,4 @@ class HotelPaxTypeController extends Controller
         }
         echo json_encode($this->response);
     }
-
-    public function actives() {
-        $paxTypes = DB::table('hotel_pax_types')
-            ->select('hotel_pax_types.id', 'hotel_pax_types.code', 'hotel_pax_types.name', 'hotel_pax_types.agefrom', 'hotel_pax_types.ageto', 'hotel_pax_types.active')
-            ->where('hotel_pax_types.active', '=', '1')
-            ->get();
-        return $paxTypes;
-    }
 }

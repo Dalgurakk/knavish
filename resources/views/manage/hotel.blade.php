@@ -171,6 +171,7 @@
 
         var roomTypes = [];
         var contracts = [];
+        var contract;
         var rows = [
             { id: 'price', name: 'Price', selected: true},
             { id: 'allotment', name: 'Allotment', selected: true},
@@ -209,8 +210,170 @@
             }
         });
 
+        var formSearch = $('#search-accomodation');
         $('.btn-search-submit').on('click', function(e) {
             e.preventDefault();
+            if(contract == null) {
+                toastr['error']('Invalid contract.', "Error");
+            }
+            else {
+                $.ajax({
+                    "url": "{{ route('hotel.contract.settings') }}",
+                    "type": "POST",
+                    "data": {
+                        id: contract.id,
+                        from:  $('input[name=from]').datepicker("getDate"),
+                        to: $('input[name=to]').datepicker("getDate")
+                    },
+                    "beforeSend": function() {
+                        App.showMask(true, formSearch);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        App.showMask(false, formSearch);
+                        renderTable();
+                    }
+                });
+            }
+        });
+
+        function formatHotel(repo) {
+            if (repo.loading) return repo.text;
+            var markup =
+                "<div class=''>" +
+                    "<div class=''>" + repo.name + "</div>"+
+                "</div>";
+            return markup;
+        }
+
+        function formatHotelSelection(repo) {
+            return repo.name;
+        }
+
+        $("#search-accomodation :input[name=hotel]").select2({
+            width: "off",
+            placeholder: "<i class='icon-group'></i> &nbsp;&nbsp; inout your tags...",
+            ajax: {
+                url: "{{ route('hotel.search.contract.active') }}",
+                "type": "POST",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term,
+                        page: params.page
+                    };
+                },
+                processResults: function(data, page) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            minimumInputLength: 3,
+            templateResult: formatHotel,
+            templateSelection: formatHotelSelection
+        });
+
+        function fillContract(c) {
+            roomTypes = c.room_types;
+            contract = c;
+            $('.room-types-list').html('');
+            $.each(roomTypes, function (i, item) {
+                var roomType =
+                    '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
+                        '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
+                        '<span></span>' +
+                    '</label>';
+                $('.room-types-list').append(roomType);
+            });
+
+            $('input[name=from]').datepicker( "destroy" );
+            $('input[name=to]').datepicker( "destroy" );
+
+            $('.datepicker-from-container').html('');
+            $('.datepicker-to-container').html('');
+            var html =
+                '<label>From</label>' +
+                '<div class="form-group">' +
+                    '<div class="input-icon">' +
+                        '<i class="fa fa-calendar"></i>' +
+                        '<input class="form-control datepicker" name="from"> </div>' +
+                '</div>';
+            $('.datepicker-from-container').append(html);
+            html =
+                '<label>To</label>' +
+                '<div class="form-group">' +
+                    '<div class="input-icon">' +
+                        '<i class="fa fa-calendar"></i>' +
+                        '<input class="form-control datepicker" name="to"> </div>' +
+                '</div>';
+            $('.datepicker-to-container').append(html);
+
+            $(".datepicker").datepicker({
+                //format: "yyyy-mm-dd",
+                format: "MM yyyy",
+                viewMode: "months",
+                minViewMode: "months",
+                autoclose: true
+            });
+
+            var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
+            var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
+            var currentDate = moment();
+
+            if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
+                var tempStart = moment(currentDate).startOf('month');
+                var tempEnd = moment(currentDate).endOf('month');
+                $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
+                $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
+            }
+            else {
+                var tempStart = moment(startDate).startOf('month');
+                var tempEnd = moment(endDate).endOf('month');
+                $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
+                $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
+            }
+            $('input[name=from]').datepicker( "setStartDate" , new Date(startDate));
+            $('input[name=from]').datepicker( "setEndDate" , new Date(endDate));
+            $('input[name=to]').datepicker( "setStartDate" , new Date(startDate));
+            $('input[name=to]').datepicker( "setEndDate" , new Date(endDate));
+            //console.log($('input[name=from]').datepicker("getDate") + ' ---- ' + $('input[name=to]').datepicker("getDate"));
+        }
+
+        $("#search-accomodation :input[name=hotel]").on('select2:select select2:unselect', function (e) {
+            var values = e.params.data;
+            //console.log(values);
+            contracts = [];
+            if(values.selected) {
+                contracts = values.contracts;
+                $('#search-accomodation :input[name=contract]').empty();
+                $.each(contracts, function (i, item) {
+                    if(i == 0) {
+                        fillContract(contracts[i]);
+                    }
+
+                    $('#search-accomodation :input[name=contract]').append($('<option>', {
+                        value: item.id,
+                        text : item.name
+                    }));
+                });
+            }
+        });
+
+        $('#search-accomodation :input[name=contract]').change(function() {
+            for(var i = 0; i < contracts.length; i++) {
+                if(contracts[i].id == $(this).val()) {
+                    fillContract(contracts[i]);
+                    break;
+                }
+            }
+        });
+
+        function renderTable() {
             $('.result-container').html('');
             var dateFrom = $('input[name=from]').datepicker('getDate');
             var dateTo = $('input[name=to]').datepicker('getDate');
@@ -285,26 +448,26 @@
                 '</div>';
 
                 $('.result-container').append(html);
-
-                $('input[name="room-selected"]').on('click', function() {
-                    var $items = $('table[data-room="' + $(this).val() + '"]');
-
-                    if ($(this).is(':checked')) {
-                        $items.each(function(){
-                            $(this).show();
-                        });
-                    }
-                    else {
-                        $items.each(function(){
-                            $(this).hide();
-                        });
-                    }
-                });
-
-                $('.item-setting').on('click', function() {
-                    alert($(this).html());
-                });
             }
+
+            $('input[name="room-selected"]').on('click', function() {
+                var $items = $('table[data-room="' + $(this).val() + '"]');
+
+                if ($(this).is(':checked')) {
+                    $items.each(function(){
+                        $(this).show();
+                    });
+                }
+                else {
+                    $items.each(function(){
+                        $(this).hide();
+                    });
+                }
+            });
+
+            $('.item-setting').on('click', function() {
+                alert($(this).html());
+            });
 
             $('input[name=row-selected]:checked').each(function() {
                 var $items = $('tr[data-row="' + $(this).val() + '"]');
@@ -334,142 +497,7 @@
                 });
             });
             //$('[data-date="2018-07-02"][data-row="Stop Sale"]').html('es');
-        });
-
-        function formatHotel(repo) {
-            if (repo.loading) return repo.text;
-            var markup =
-                "<div class=''>" +
-                    "<div class=''>" + repo.name + "</div>"+
-                "</div>";
-            return markup;
         }
-
-        function formatHotelSelection(repo) {
-            return repo.name;
-        }
-
-        $("#search-accomodation :input[name=hotel]").select2({
-            width: "off",
-            placeholder: "<i class='icon-group'></i> &nbsp;&nbsp; inout your tags...",
-            ajax: {
-                url: "{{ route('hotel.search.contract.active') }}",
-                "type": "POST",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        q: params.term,
-                        page: params.page
-                    };
-                },
-                processResults: function(data, page) {
-                    return {
-                        results: data
-                    };
-                },
-                cache: true
-            },
-            escapeMarkup: function(markup) {
-                return markup;
-            },
-            minimumInputLength: 3,
-            templateResult: formatHotel,
-            templateSelection: formatHotelSelection
-        });
-
-        function fillContract(contract) {
-            roomTypes = contract.roomTypes;
-            $('.room-types-list').html('');
-            $.each(roomTypes, function (i, item) {
-                var roomType =
-                    '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                        '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
-                        '<span></span>' +
-                    '</label>';
-                $('.room-types-list').append(roomType);
-            });
-
-            $('input[name=from]').datepicker( "destroy" );
-            $('input[name=to]').datepicker( "destroy" );
-
-            $('.datepicker-from-container').html('');
-            $('.datepicker-to-container').html('');
-            var html =
-                '<label>From</label>' +
-                '<div class="form-group">' +
-                    '<div class="input-icon">' +
-                        '<i class="fa fa-calendar"></i>' +
-                        '<input class="form-control datepicker" name="from"> </div>' +
-                '</div>';
-            $('.datepicker-from-container').append(html);
-            html =
-                '<label>To</label>' +
-                '<div class="form-group">' +
-                    '<div class="input-icon">' +
-                        '<i class="fa fa-calendar"></i>' +
-                        '<input class="form-control datepicker" name="to"> </div>' +
-                '</div>';
-            $('.datepicker-to-container').append(html);
-
-            $(".datepicker").datepicker({
-                format: "MM yyyy",
-                viewMode: "months",
-                minViewMode: "months",
-                autoclose: true
-            });
-
-            var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
-            var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
-            var currentDate = moment();
-
-            if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
-                var tempStart = moment(currentDate).startOf('month');
-                var tempEnd = moment(currentDate).endOf('month');
-                $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
-                $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
-            }
-            else {
-                var tempStart = moment(startDate).startOf('month');
-                var tempEnd = moment(endDate).endOf('month');
-                $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
-                $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
-            }
-
-            $('input[name=from]').datepicker( "setStartDate" , new Date(startDate));
-            $('input[name=from]').datepicker( "setEndDate" , new Date(endDate));
-            $('input[name=to]').datepicker( "setStartDate" , new Date(startDate));
-            $('input[name=to]').datepicker( "setEndDate" , new Date(endDate));
-        }
-
-        $("#search-accomodation :input[name=hotel]").on('select2:select select2:unselect', function (e) {
-            var values = e.params.data;
-            //console.log(values);
-            contracts = [];
-            if(values.selected) {
-                contracts = values.contracts;
-                $('#search-accomodation :input[name=contract]').empty();
-                $.each(contracts, function (i, item) {
-                    if(i == 0) {
-                        fillContract(contracts[i]);
-                    }
-
-                    $('#search-accomodation :input[name=contract]').append($('<option>', {
-                        value: item.id,
-                        text : item.name
-                    }));
-                });
-            }
-        });
-
-        $('#search-accomodation :input[name=contract]').change(function() {
-            for(var i = 0; i < contracts.length; i++) {
-                if(contracts[i].id == $(this).val()) {
-                    fillContract(contracts[i]);
-                    break;
-                }
-            }
-        });
     });
 </script>
 @stop

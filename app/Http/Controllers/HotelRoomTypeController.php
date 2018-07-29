@@ -36,11 +36,52 @@ class HotelRoomTypeController extends Controller
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        $roomTypes = DB::table('hotel_room_types')
-            ->select('hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name', 'hotel_room_types.maxpax', 'hotel_room_types.minpax', 'hotel_room_types.minadult', 'hotel_room_types.minchildren', 'hotel_room_types.maxinfant', 'hotel_room_types.active')
-            ->get();
+        $records = DB::table('hotel_room_types')->count();
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array(
+            'hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name',
+            'hotel_room_types.maxpax', 'hotel_room_types.minpax', 'hotel_room_types.minadult',
+            'hotel_room_types.minchildren', 'hotel_room_types.maxinfant', 'hotel_room_types.active'
+        );
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchCode = Input::get('columns')['1']['search']['value'];
+        $searchName = Input::get('columns')['2']['search']['value'];
+        $searchActive = Input::get('columns')['8']['search']['value'];
+        $roomTypes = array();
 
-        return DataTables::of($roomTypes)->make(true);
+        $query = DB::table('hotel_room_types')
+            ->select(
+                'hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name',
+                'hotel_room_types.maxpax', 'hotel_room_types.minpax', 'hotel_room_types.minadult',
+                'hotel_room_types.minchildren', 'hotel_room_types.maxinfant', 'hotel_room_types.active');
+
+        if(isset($searchCode) && $searchCode != '') {
+            $query->where('hotel_room_types.code', 'like', '%' . $searchCode . '%');
+        }
+        if(isset($searchName) && $searchName != '') {
+            $query->where('hotel_room_types.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('hotel_room_types.active', '=', $searchActive);
+        }
+        $query
+            ->orderBy($columns[$orderBy], $orderDirection)
+            ->offset($offset)
+            ->limit($limit);
+
+        $roomTypes = $query->get();
+
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $roomTypes
+        );
+        echo json_encode($data);
     }
 
     public function create(Request $request) {

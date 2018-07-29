@@ -62,8 +62,7 @@ class HotelController extends Controller
         $hotels = array();
 
         $query = DB::table('hotels')
-            ->select(
-                'hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name as chain', 'hotels.active')
+            ->select('hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name as chain', 'hotels.active')
             ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id');
 
         if(isset($searchName) && $searchName != '') {

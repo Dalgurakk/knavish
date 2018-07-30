@@ -295,8 +295,11 @@ class HotelContractController extends Controller
         }
         else {
             $id = Input::get('id');
-            $from = Input::get('from');
-            $to = Input::get('to');
+            $from = Carbon::createFromFormat('d-m-Y', Input::get('from'));
+            $to = Carbon::createFromFormat('d-m-Y', Input::get('to'));
+
+            /*$from = Input::get('from');
+            $to = Input::get('to');*/
             $contract = HotelContract::find($id);
 
             if ($contract === null) {
@@ -306,8 +309,7 @@ class HotelContractController extends Controller
             }
             else {
                 //$settings = $contract->settings;
-                $settings_json = '{
-                "data":
+                $settings_json = '
                     [
                         {
                             "date": "2018-01-01",
@@ -339,15 +341,19 @@ class HotelContractController extends Controller
                             "restriction": "0",
                             "supplement":  "0"
                         }
-                    ]
-                }';
+                    ]';
                 $settings = json_decode($settings_json);
+
                 //$settings = new \stdClass();
                 //$settings->data = array(
 
                 //);
+                //$temp = $settings->data;
+
                 //print_r($settings);die;
                 $this->response['status'] = 'success';
+                $this->response['from'] = $from->format('d-m-Y');
+                $this->response['to'] = $to->format('d-m-Y');
                 $this->response['data'] = $settings;
             }
         }

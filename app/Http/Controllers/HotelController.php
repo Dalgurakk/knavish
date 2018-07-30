@@ -335,20 +335,39 @@ class HotelController extends Controller
     public function getContractsByName(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        $temp = '%' . Input::get('q') . '%';
-        $hotels = DB::table('hotels')
-            ->whereIn('hotels.id', function($query) {
-                $query->select(DB::raw('hotel_contracts.hotel_id'))
-                    ->from('hotel_contracts')
-                    ->whereRaw('hotel_contracts.hotel_id = hotels.id');
-            })
-            ->where('hotels.name', 'like', $temp)
-            ->orderBy('hotels.name', 'asc')
-            ->get();
+        $hotels = array();
+        $first = Input::get('first');
 
-        foreach ($hotels as $h) {
-            $contracts = HotelContract::with('roomTypes')->where('hotel_id', $h->id)->get();
-            $h->contracts = $contracts;
+        if($first == "true") {
+            $hotel = DB::table('hotels')
+                ->whereIn('hotels.id', function($query) {
+                    $query->select(DB::raw('hotel_contracts.hotel_id'))
+                        ->from('hotel_contracts')
+                        ->whereRaw('hotel_contracts.hotel_id = hotels.id');
+                })
+                ->orderBy('hotels.name', 'asc')
+                ->first();
+
+            $contracts = HotelContract::with('roomTypes')->where('hotel_id', '=', $hotel->id)->get();
+            $hotel->contracts = $contracts;
+            $hotels[] = $hotel;
+        }
+        else {
+            $temp = '%' . Input::get('q') . '%';
+            $hotels = DB::table('hotels')
+                ->whereIn('hotels.id', function($query) {
+                    $query->select(DB::raw('hotel_contracts.hotel_id'))
+                        ->from('hotel_contracts')
+                        ->whereRaw('hotel_contracts.hotel_id = hotels.id');
+                })
+                ->where('hotels.name', 'like', $temp)
+                ->orderBy('hotels.name', 'asc')
+                ->get();
+
+            foreach ($hotels as $h) {
+                $contracts = HotelContract::with('roomTypes')->where('hotel_id', $h->id)->get();
+                $h->contracts = $contracts;
+            }
         }
         echo json_encode($hotels);
     }

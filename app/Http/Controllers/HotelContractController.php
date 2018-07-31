@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\CarBrand;
 use App\HotelBoardType;
 use App\HotelContract;
 use App\HotelMeasure;
@@ -14,7 +13,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
-use PHPUnit\Framework\Exception;
 
 class HotelContractController extends Controller
 {
@@ -35,7 +33,6 @@ class HotelContractController extends Controller
         $paxTypes = HotelPaxType::where('active', '1')->get();
         $boardTypes = HotelBoardType::where('active', '1')->get();
         $measures = HotelMeasure::where('active', '1')->get();
-        //$measures = HotelMeasure::where('active', '1')->where('id', '>', '2')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';

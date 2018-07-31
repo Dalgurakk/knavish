@@ -79,7 +79,7 @@
                                         <input type="text" class="form-control" name="valid-to" placeholder="To"> </div>
                                 </div>
                             </div>
-                            <!--div class="col-lg-3 col-md-4 col-sm-6">
+                            <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <div class="input-icon left">
                                         <i class="fa fa-check"></i>
@@ -89,7 +89,7 @@
                                             <option value="0">Disabled</option>
                                         </select> </div>
                                 </div>
-                            </div-->
+                            </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <button type="submit" class="btn green btn-search-submit"><i class="fa fa-search"></i> Search</button>
@@ -107,6 +107,7 @@
                             <th class="">Hotel</th>
                             <th class="">Valid From</th>
                             <th class="">Valid To</th>
+                            <th class="">Status</th>
                             <th class="">Enable</th>
                             <th class="" style="min-width: 140px;">Actions</th>
                         </tr>
@@ -142,6 +143,20 @@
                                         <input type="text" class="form-control" placeholder="Denomination" name="name">
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <div class="mt-checkbox-list margin-top-15">
+                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                                            <input type="checkbox" value="1" name="active"/>
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
                                 <div class="form-group">
                                     <label class="control-label">Valid From</label>
                                     <div class="input-icon left">
@@ -152,30 +167,12 @@
                             </div>
                             <div class="col-md-6 col-sm-6">
                                 <div class="form-group">
-                                    <label class="control-label">Status</label>
-                                    <div class="input-icon left">
-                                        <i class="icon-note"></i>
-                                        <select class="form-control" name="status">
-                                            <option value="">Select Status</option>
-                                            <option value="0">Draft</option>
-                                            <option value="1">Signed</option>
-                                        </select> </div>
-                               </div>
-                                <div class="form-group">
                                     <label class="control-label">Valid To</label>
                                     <div class="input-icon left">
                                         <i class="fa fa-calendar"></i>
                                         <input class="form-control date-picker" placeholder="Valid From" type="text" value="" name="valid-to"/>
                                     </div>
                                 </div>
-                                <!--div class="form-group">
-                                    <div class="mt-checkbox-list">
-                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
-                                            <input type="checkbox" value="1" name="active"/>
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </div-->
                             </div>
                         </div>
                     </div>
@@ -337,7 +334,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="icon-note"></i> Board Types </div>
+                            <i class="fa fa-cutlery"></i> Board Types </div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -370,6 +367,35 @@
                                 @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet box green ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-tachometer"></i> Variables </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="note note-info">
+                                    <p>The variables Price and Allotment are added by default.</p>
+                                </div>
+                            </div>
+                            <div class="mt-checkbox-list">
+                            @foreach($measures as $m)
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <label class="mt-checkbox mt-checkbox-outline">
+                                    @if($m->id == 1 || $m->id == 2)
+                                        <input type="checkbox" name="check-measures[]" data="{{ $m->id }}" value="{{ $m->id }}" checked onclick="return false;"> {{ $m->name }}
+                                    @else
+                                        <input type="checkbox" name="check-measures[]" data="{{ $m->id }}" value="{{ $m->id }}"> {{ $m->name }}
+                                    @endif
+                                        <span></span>
+                                    </label>
+                                </div>
+                            @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -407,6 +433,20 @@
                                         <input type="text" class="form-control" name="name" readonly>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <div class="mt-checkbox-list margin-top-15">
+                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                                            <input type="checkbox" value="1" name="active" onclick="return false;" readonly/>
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
                                 <div class="form-group">
                                     <label class="control-label">Valid From</label>
                                     <div class="input-icon left">
@@ -416,13 +456,6 @@
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label">Status</label>
-                                    <div class="input-icon left">
-                                        <i class="icon-note"></i>
-                                        <input class="form-control" type="text" value="" name="status" readonly/>
-                                    </div>
-                                </div>
                                 <div class="form-group">
                                     <label class="control-label">Valid To</label>
                                     <div class="input-icon left">
@@ -560,7 +593,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="icon-note"></i> Board Types </div>
+                            <i class="fa fa-cutlery"></i> Board Types </div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -574,6 +607,26 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet box green ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-tachometer"></i> Variables </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="mt-checkbox-list">
+                            @foreach($measures as $m)
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <label class="mt-checkbox mt-checkbox-outline">
+                                        <input type="checkbox" name="check-measures[]" data="{{ $m->id }}" value="{{ $m->id }}" onclick="return false;"> {{ $m->name }}
+                                        <span></span>
+                                    </label>
+                                </div>
+                            @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -609,6 +662,20 @@
                                         <input type="text" class="form-control" placeholder="Denomination" name="name">
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <div class="mt-checkbox-list margin-top-15">
+                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                                            <input type="checkbox" value="1" name="active"/>
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
                                 <div class="form-group">
                                     <label class="control-label">Valid From</label>
                                     <div class="input-icon left">
@@ -618,16 +685,6 @@
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label">Status</label>
-                                    <div class="input-icon left">
-                                        <i class="icon-note"></i>
-                                        <select class="form-control" name="status">
-                                            <option value="">Select Status</option>
-                                            <option value="0">Draft</option>
-                                            <option value="1">Signed</option>
-                                        </select> </div>
-                               </div>
                                 <div class="form-group">
                                     <label class="control-label">Valid To</label>
                                     <div class="input-icon left">
@@ -792,7 +849,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="icon-note"></i> Board Types </div>
+                            <i class="fa fa-cutlery"></i> Board Types </div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -825,6 +882,35 @@
                                 @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet box green ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-tachometer"></i> Variables </div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="note note-info">
+                                    <p>The variables Price and Allotment are added by default.</p>
+                                </div>
+                            </div>
+                            <div class="mt-checkbox-list">
+                            @foreach($measures as $m)
+                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                    <label class="mt-checkbox mt-checkbox-outline">
+                                    @if($m->id == 1 || $m->id == 2)
+                                        <input type="checkbox" name="check-measures[]" data="{{ $m->id }}" value="{{ $m->id }}" checked onclick="return false;"> {{ $m->name }}
+                                    @else
+                                        <input type="checkbox" name="check-measures[]" data="{{ $m->id }}" value="{{ $m->id }}"> {{ $m->name }}
+                                    @endif
+                                        <span></span>
+                                    </label>
+                                </div>
+                            @endforeach
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -867,21 +953,21 @@
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
-            format: 'dd-mm-yyyy'
+            format: 'dd.mm.yyyy'
         });
 
         $('#search-section :input[name=valid-from]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
-            format: 'dd-mm-yyyy'
+            format: 'dd.mm.yyyy'
         });
 
         $('#search-section :input[name=valid-to]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
-            format: 'dd-mm-yyyy'
+            format: 'dd.mm.yyyy'
         });
 
         $('.hotel-category').barrating({
@@ -943,15 +1029,29 @@
             },
             "order": [[ 1, "asc" ]],
             columns: [
-                {data: 'id', name: 'id', visible: false},
-                {data: 'name', name: 'name'},
-                {data: 'hotel', name: 'hotel'},
-                {data: 'valid_from', name: 'valid_from'},
-                {data: 'valid_to', name: 'valid_to'},
+                { data: 'id', name: 'id', visible: false },
+                { data: 'name', name: 'name' },
+                { data: 'hotel', name: 'hotel' },
+                { data: 'valid_from', name: 'valid_from' },
+                { data: 'valid_to', name: 'valid_to' },
+                {
+                    data: 'status',
+                    name: 'status',
+                    orderable: false,
+                    "data": function (row, type, val, meta ) {
+                        var data = '';
+                        if (row.status == '3')
+                            data = '<span class="label label-sm label-danger"> Finished </span>';
+                        else if (row.status == '2')
+                            data = '<span class="label label-sm label-success"> In Progress </span>';
+                        else if (row.status == '1')
+                            data = '<span class="label label-sm label-warning"> Pending </span>';
+                        return data;
+                    }
+                },
                 {
                     data: 'active',
                     name: 'active',
-                    visible: false,
                     "className": "dt-center",
                     "data": function ( row, type, val, meta ) {
                         var data = '<span><i class="fa fa-close dt-active dt-active-0"></i></span>';
@@ -995,6 +1095,7 @@
             formAdd.validate().resetForm();
             formAdd[0].reset();
             $('#modal-add :input[name=category]').barrating('set', '');
+            $('#modal-add .date-picker').datepicker('clearDates');
             tableAddRoomType.api().clear().draw();
             $('#modal-add .js-data-ajax').val(null).trigger('change');
             $('#modal-add .select-hotel').val(null).trigger('change');
@@ -1015,8 +1116,8 @@
         }, 'At least one element is required.');
 
         jQuery.validator.addMethod("validDate", function(value, element) {
-            return this.optional(element) || moment(value,"DD-MM-YYYY",true).isValid();
-        }, "Invalid date, use dd-mm-yyyy.");
+            return this.optional(element) || moment(value,"DD.MM.YYYY",true).isValid();
+        }, "Invalid date, use dd.mm.yyyy.");
 
         var formAdd = $('#form-add');
         formAdd.validate({
@@ -1099,9 +1200,15 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 var formData = new FormData(formAdd[0]);
+                var measures = [];
+                $('#modal-add [name="check-measures[]"]').each(function () {
+                    if($(this).prop('checked'))
+                        measures.push($(this).attr("data"));
+                });
                 formData.append('paxTypes', JSON.stringify(getSelectedRows(tableAddPaxType)));
                 formData.append('boardTypes', JSON.stringify(getSelectedRows(tableAddBoardType)));
                 formData.append('roomTypes', JSON.stringify($('#modal-add .js-data-ajax').val()));
+                formData.append('measures', JSON.stringify(measures));
                 $.ajax({
                     "url": "{{ route('hotel.contract.create') }}",
                     "type": "POST",
@@ -1228,9 +1335,15 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 var formData = new FormData(formEdit[0]);
+                var measures = [];
+                $('#modal-edit [name="check-measures[]"]').each(function () {
+                    if($(this).prop('checked'))
+                        measures.push($(this).attr("data"));
+                });
                 formData.append('paxTypes', JSON.stringify(getSelectedRows(tableEditPaxType)));
                 formData.append('boardTypes', JSON.stringify(getSelectedRows(tableEditBoardType)));
                 formData.append('roomTypes', JSON.stringify($('#modal-edit .js-data-ajax').val()));
+                formData.append('measures', JSON.stringify(measures));
                 $.ajax({
                     "url": "{{ route('hotel.contract.update') }}",
                     "type": "POST",
@@ -1273,11 +1386,12 @@
             var paxTypes = contract.pax_types;
             var boardTypes = contract.board_types;
             var roomTypes = contract.room_types;
+            var measures = contract.measures;
+            //console.log(measures);
 
             $('#modal-info :input[name=name]').val(contract.name);
-            $('#modal-info :input[name=status]').val(contract.status_text);
-            $('#modal-info :input[name=valid-from]').val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD-MM-YYYY'));
-            $('#modal-info :input[name=valid-to]').val(moment(contract.valid_to, 'YYYY-MM-DD').format('DD-MM-YYYY'));
+            $('#modal-info :input[name=valid-from]').val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY'));
+            $('#modal-info :input[name=valid-to]').val(moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
             $('#modal-info :input[name=hotel]').val(hotel.name);
             $('#modal-info :input[name=country-text]').val(hotel.country.name);
             $('#modal-info :input[name=state-text]').val(hotel.state.name);
@@ -1291,6 +1405,18 @@
             $('#modal-info :input[name=web-site]').val(hotel.web_site);
             $('#modal-info :input[name=turistic-licence]').val(hotel.turistic_licence);
             $('#modal-info :input[name=email]').val(hotel.email);
+            if (data['active'] == 1) {
+                $('#modal-info :input[name=active]').prop('checked', 'checked');
+                $('#modal-info :input[name=active]').val(1);
+            }
+            else {
+                $('#modal-info :input[name=active]').prop('checked', '');
+                $('#modal-info :input[name=active]').val(0);
+            }
+            $('#modal-info [name="check-measures[]"]').prop('checked', '');
+            for (var i = 0; i < measures.length; i++) {
+                $('#modal-info [name="check-measures[]"][data="' + measures[i].id + '"]').prop('checked', 'checked');
+            }
 
             tableInfoPaxType.api().clear();
             for (var i = 0; i < paxTypes.length; i++) {
@@ -1390,13 +1516,12 @@
             var paxTypes = contract.pax_types;
             var boardTypes = contract.board_types;
             var roomTypes = contract.room_types;
+            var measures = contract.measures;
 
             $('#modal-edit :input[name=id]').val(contract.id);
             $('#modal-edit :input[name=hotel-id]').val(hotel.id);
-
-            $("#modal-edit .select2-selection__rendered").html(hotel.name);
+            $("#modal-edit .select2-selection__rendered").html(hotel.name + '<span class="select2-selection__placeholder"></span>');
             $('#modal-edit :input[name=name]').val(contract.name);
-            $('#modal-edit :input[name=status]').val(contract.status);
             $('#modal-edit :input[name=valid-from]').datepicker("setDate" , new Date(moment(contract.valid_from, 'YYYY-MM-DD')));
             $('#modal-edit :input[name=valid-to]').datepicker("setDate" , new Date(moment(contract.valid_to, 'YYYY-MM-DD')));
             $('#modal-edit :input[name=country-text]').val(hotel.country.name);
@@ -1411,7 +1536,17 @@
             $('#modal-edit :input[name=web-site]').val(hotel.web_site);
             $('#modal-edit :input[name=turistic-licence]').val(hotel.turistic_licence);
             $('#modal-edit :input[name=email]').val(hotel.email);
-
+            if (data['active'] == 1) {
+                $('#modal-edit :input[name=active]').prop('checked', 'checked');
+                $('#modal-edit :input[name=active]').val(1);
+            }
+            else {
+                $('#modal-edit :input[name=active]').prop('checked', '');
+                $('#modal-edit :input[name=active]').val(0);
+            }
+            for (var i = 0; i < measures.length; i++) {
+                $('#modal-edit [name="check-measures[]"][data="' + measures[i].id + '"]').prop('checked', 'checked');
+            }
             for (var i = 0; i < paxTypes.length; i++) {
                 $('tbody > tr > td:nth-child(1) input[type="checkbox"]', tableEditPaxType).each(function() {
                     var data = tableEditPaxType.api().row( $(this).parents('tr') ).data();
@@ -1431,7 +1566,6 @@
                     }
                 });
             }
-
             $('#modal-edit :input[name=count-board-type]').val(countSelectedRecords(tableEditBoardType));
             tableEditBoardType.api().columns.adjust().draw();
 
@@ -1772,6 +1906,37 @@
         tableEditBoardType.on('change', 'tbody tr .checkboxes', function () {
             $(this).parents('tr').toggleClass("active");
             $('#modal-edit :input[name=count-board-type]').val(countSelectedRecords(tableEditBoardType));
+        });
+
+        var tableEditMeasure = $('#modal-edit .table-measure').dataTable({
+            "sDom": "t",
+            "autoWidth": false,
+            "columnDefs": [
+                { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
+                { 'visible': false, 'targets': [1] }
+            ],
+            "order": [[ 2, "asc" ]],
+            "lengthMenu": [[-1], ["All"]]
+        });
+
+        tableEditMeasure.find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).prop("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).prop("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            $('#modal-edit :input[name=count-measure]').val(countSelectedRecords(tableEditMeasure));
+        });
+
+        tableEditMeasure.on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+            $('#modal-edit :input[name=count-measure]').val(countSelectedRecords(tableEditMeasure));
         });
 
         var tableEditRoomType = $('#modal-edit .table-room-type').dataTable({

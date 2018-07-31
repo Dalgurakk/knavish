@@ -24,6 +24,12 @@ class HotelContract extends Model
             ->withTimestamps();
     }
 
+    public function measures() {
+        return $this
+            ->belongsToMany('App\HotelMeasure', 'hotel_contract_measure')
+            ->withTimestamps();
+    }
+
     public function settings() {
         return $this->hasOne('App\HotelContractSetting');
     }

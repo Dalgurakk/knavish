@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\CarBrand;
 use App\HotelBoardType;
 use App\HotelContract;
+use App\HotelMeasure;
 use App\HotelPaxType;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
+use PHPUnit\Framework\Exception;
 
 class HotelContractController extends Controller
 {
@@ -31,12 +34,15 @@ class HotelContractController extends Controller
 
         $paxTypes = HotelPaxType::where('active', '1')->get();
         $boardTypes = HotelBoardType::where('active', '1')->get();
+        $measures = HotelMeasure::where('active', '1')->get();
+        //$measures = HotelMeasure::where('active', '1')->where('id', '>', '2')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
         $data['submenuContract'] = 'selected';
         $data['paxTypes'] = $paxTypes;
         $data['boardTypes'] = $boardTypes;
+        $data['measures'] = $measures;
 
         return view('hotel.contract')->with($data);
     }
@@ -54,13 +60,13 @@ class HotelContractController extends Controller
         $searchHotel = Input::get('columns')['2']['search']['value'];
         $searchValidFrom = Input::get('columns')['3']['search']['value'];
         $searchValidTo = Input::get('columns')['4']['search']['value'];
-        $searchActive = Input::get('columns')['5']['search']['value'];
+        $searchActive = Input::get('columns')['6']['search']['value'];
         $contracts = array();
 
         $query = DB::table('hotel_contracts')
             ->select(
                 'hotel_contracts.id', 'hotel_contracts.name', 'hotels.name as hotel', 'hotel_contracts.valid_from',
-                'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.status')
+                'hotel_contracts.valid_to', 'hotel_contracts.active')
             ->join('hotels', 'hotels.id', '=', 'hotel_contracts.hotel_id');
 
         if(isset($searchName) && $searchName != '') {
@@ -73,11 +79,11 @@ class HotelContractController extends Controller
             $query->where('hotel_contracts.active', '=', $searchActive);
         }
         if(isset($searchValidFrom) && $searchValidFrom != '') {
-            $validFrom = Carbon::createFromFormat('d-m-Y', $searchValidFrom);
+            $validFrom = Carbon::createFromFormat('d.m.Y', $searchValidFrom);
             $query->where('hotel_contracts.valid_from', '>=', $validFrom->format('Y-m-d'));
         }
         if(isset($searchValidTo) && $searchValidTo != '') {
-            $validTo = Carbon::createFromFormat('d-m-Y', $searchValidTo);
+            $validTo = Carbon::createFromFormat('d.m.Y', $searchValidTo);
             $query->where('hotel_contracts.valid_to', '<=', $validTo->format('Y-m-d'));
         }
         $query
@@ -90,19 +96,24 @@ class HotelContractController extends Controller
         foreach ($result as $r) {
             $query = HotelContract::with([
                 'hotel', 'hotel.hotelChain', 'hotel.country', 'hotel.state', 'hotel.city',
-                'roomTypes', 'paxTypes', 'boardTypes'])
+                'roomTypes', 'paxTypes', 'boardTypes', 'measures'])
                 ->where('id', $r->id)->get();
 
             $contract = $query[0];
-            $status_text = '';
-            if ($r->status == '0')
-                $status_text = 'Draft';
-            else if ($r->status == '1')
-                $status_text = 'Signed';
-            $contract->status_text = $status_text;
 
-            $r->valid_from = Carbon::createFromFormat('Y-m-d', $r->valid_from)->format('d-m-Y');
-            $r->valid_to = Carbon::createFromFormat('Y-m-d', $r->valid_to)->format('d-m-Y');
+            $currentDate = Carbon::today();
+            $validFrom = Carbon::createFromFormat('!Y-m-d', $r->valid_from);
+            $validTo = Carbon::createFromFormat('!Y-m-d', $r->valid_to);
+            $r->valid_from = $validFrom->format('d.m.Y');
+            $r->valid_to = $validTo->format('d.m.Y');
+
+            $status = 0;
+            if ($currentDate->greaterThan($validTo))
+                $status = 3; //Old
+            else if ($currentDate->greaterThanOrEqualTo($validFrom) && $currentDate->lessThanOrEqualTo($validTo))
+                $status = 2; //In Progress
+            else if ($currentDate->lessThan($validFrom))
+                $status = 1; //Waiting
 
             $item = array(
                 'id' => $r->id,
@@ -111,6 +122,7 @@ class HotelContractController extends Controller
                 'valid_from' => $r->valid_from,
                 'valid_to' => $r->valid_to,
                 'active' => $r->active,
+                'status' => $status,
                 'contract' => $contract
             );
             $contracts[] = $item;
@@ -133,10 +145,9 @@ class HotelContractController extends Controller
         $rules = array(
             'name' => 'required',
             'hotel-id' => 'required',
-            'valid-from' => 'required|date|date_format:"d-m-Y"|before:valid-to',
-            'valid-to' => 'required|date|date_format:"d-m-Y"|after:valid-from',
+            'valid-from' => 'required|date|date_format:"d.m.Y"|before:valid-to',
+            'valid-to' => 'required|date|date_format:"d.m.Y"|after:valid-from',
             'hotel' => 'required',
-            'status' => 'required',
             'roomTypes' => 'required|json',
             'boardTypes' => 'required|json',
             'paxTypes' => 'required|json'
@@ -152,41 +163,47 @@ class HotelContractController extends Controller
             $contract = new HotelContract();
             $contract->name = Input::get('name');
             $contract->hotel_id = Input::get('hotel-id');
-            $validFrom = Carbon::createFromFormat('d-m-Y', Input::get('valid-from'));
-            $validTo = Carbon::createFromFormat('d-m-Y', Input::get('valid-to'));
-            $contract->valid_from = $validFrom->format('Y-m-d');
-            $contract->valid_to = $validTo->format('Y-m-d');
+            $contract->valid_from = Carbon::createFromFormat('!d.m.Y', Input::get('valid-from'))->format('Y-m-d');
+            $contract->valid_to = Carbon::createFromFormat('!d.m.Y', Input::get('valid-to'))->format('Y-m-d');
             $contract->active = Input::get('active') == 1 ? true : false;
             $contract->status = Input::get('status');
 
-            DB::transaction(function() use ($contract){
-                try {
-                    $contract->save();
-                    $roomTypes = json_decode(Input::get('roomTypes'), true);
-                    $boardTypes = json_decode(Input::get('boardTypes'));
-                    $paxTypes = json_decode(Input::get('paxTypes'));
-
-                    foreach ($roomTypes as $r) {
-                        $contract->roomTypes()->attach($r);
-                    }
-                    foreach ($paxTypes as $p) {
-                        $contract->paxTypes()->attach($p);
-                    }
-                    foreach ($boardTypes as $b) {
-                        $contract->boardTypes()->attach($b);
-                    }
-
-                    $this->response['status'] = 'success';
-                    $this->response['message'] = 'Contract ' . $contract->name . ' created successfully.';
-                    $this->response['data'] = $contract;
+            DB::beginTransaction();
+            try {
+                $contract->save();
+                $roomTypes = json_decode(Input::get('roomTypes'), true);
+                $boardTypes = json_decode(Input::get('boardTypes'));
+                $paxTypes = json_decode(Input::get('paxTypes'));
+                $temp = json_decode(Input::get('measures'));
+                $measures = array(1, 2);
+                foreach ($temp as $key => $val) {
+                    if($val == 1 || $val == 2) continue;
+                    else $measures[] = $val;
                 }
-                catch (QueryException $e) {
-                    DB::rollback();
-                    $this->response['status'] = 'error';
-                    $this->response['message'] = 'Database error.';
-                    $this->response['errors'] = $e->errorInfo[2];
+                foreach ($roomTypes as $r) {
+                    $contract->roomTypes()->attach($r);
                 }
-            });
+                foreach ($paxTypes as $p) {
+                    $contract->paxTypes()->attach($p);
+                }
+                foreach ($boardTypes as $b) {
+                    $contract->boardTypes()->attach($b);
+                }
+                foreach ($measures as $m) {
+                    $contract->measures()->attach($m);
+                }
+                DB::commit();
+
+                $this->response['status'] = 'success';
+                $this->response['message'] = 'Contract ' . $contract->name . ' created successfully.';
+                $this->response['data'] = $contract;
+            }
+            catch (QueryException $e) {
+                DB::rollBack();
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Database error.';
+                $this->response['errors'] = $e->errorInfo[2];
+            }
         }
         echo json_encode($this->response);
     }
@@ -199,12 +216,12 @@ class HotelContractController extends Controller
             'name' => 'required',
             'id' => 'required',
             'hotel-id' => 'required',
-            'valid-from' => 'required|date|date_format:"d-m-Y"|before:valid-to',
-            'valid-to' => 'required|date|date_format:"d-m-Y"|after:valid-from',
-            'status' => 'required',
+            'valid-from' => 'required|date|date_format:"d.m.Y"|before:valid-to',
+            'valid-to' => 'required|date|date_format:"d.m.Y"|after:valid-from',
             'roomTypes' => 'required|json',
             'boardTypes' => 'required|json',
-            'paxTypes' => 'required|json'
+            'paxTypes' => 'required|json',
+            'measures' => 'required|json'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -217,36 +234,39 @@ class HotelContractController extends Controller
             $contract = HotelContract::find($id);
             $contract->name = Input::get('name');
             $contract->hotel_id = Input::get('hotel-id');
-
-            $validFrom = Carbon::createFromFormat('d-m-Y', Input::get('valid-from'));
-            $validTo = Carbon::createFromFormat('d-m-Y', Input::get('valid-to'));
-            $contract->valid_from = $validFrom->format('Y-m-d');
-            $contract->valid_to = $validTo->format('Y-m-d');
+            $contract->valid_from = Carbon::createFromFormat('d.m.Y', Input::get('valid-from'))->format('Y-m-d');
+            $contract->valid_to = Carbon::createFromFormat('d.m.Y', Input::get('valid-to'))->format('Y-m-d');
             $contract->active = Input::get('active') == 1 ? true : false;
             $contract->status = Input::get('status');
 
-            DB::transaction(function() use ($contract){
-                try {
-                    $contract->save();
-                    $roomTypes = json_decode(Input::get('roomTypes'), true);
-                    $boardTypes = json_decode(Input::get('boardTypes'));
-                    $paxTypes = json_decode(Input::get('paxTypes'));
-
-                    $contract->roomTypes()->sync($roomTypes);
-                    $contract->boardTypes()->sync($boardTypes);
-                    $contract->paxTypes()->sync($paxTypes);
-
-                    $this->response['status'] = 'success';
-                    $this->response['message'] = 'Contract updated successfully.';
-                    $this->response['data'] = $contract;
+            DB::beginTransaction();
+            try {
+                $contract->save();
+                $roomTypes = json_decode(Input::get('roomTypes'), true);
+                $boardTypes = json_decode(Input::get('boardTypes'));
+                $paxTypes = json_decode(Input::get('paxTypes'));
+                $temp = json_decode(Input::get('measures'));
+                $measures = array(1, 2);
+                foreach ($temp as $key => $val) {
+                    if($val == 1 || $val == 2) continue;
+                    else $measures[] = $val;
                 }
-                catch (QueryException $e) {
-                    DB::rollback();
-                    $this->response['status'] = 'error';
-                    $this->response['message'] = 'Database error.';
-                    $this->response['errors'] = $e->errorInfo[2];
-                }
-            });
+                $contract->roomTypes()->sync($roomTypes);
+                $contract->boardTypes()->sync($boardTypes);
+                $contract->paxTypes()->sync($paxTypes);
+                $contract->measures()->sync($measures);
+
+                DB::commit();
+                $this->response['status'] = 'success';
+                $this->response['message'] = 'Contract updated successfully.';
+                $this->response['data'] = $contract;
+            }
+            catch (QueryException $e) {
+                DB::rollback();
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Database error.';
+                $this->response['errors'] = $e->errorInfo[2];
+            }
         }
         echo json_encode($this->response);
     }
@@ -257,23 +277,25 @@ class HotelContractController extends Controller
         $id = Input::get('id');
         $contract = HotelContract::find($id);
 
-        DB::transaction(function() use ($contract){
-            try {
-                $contract->paxTypes()->detach();
-                $contract->boardTypes()->detach();
-                $contract->roomTypes()->detach();
-                $contract->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
-                $this->response['data'] = $contract;
-            }
-            catch (QueryException $e) {
-                DB::rollback();
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
-            }
-        });
+        DB::beginTransaction();
+        try {
+            $contract->paxTypes()->detach();
+            $contract->boardTypes()->detach();
+            $contract->roomTypes()->detach();
+            $contract->measures()->detach();
+            $contract->delete();
+            DB::commit();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
+            $this->response['data'] = $contract;
+        }
+        catch (QueryException $e) {
+            DB::rollback();
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Database error.';
+            $this->response['errors'] = $e->errorInfo[2];
+        }
+
         echo json_encode($this->response);
     }
 
@@ -295,8 +317,8 @@ class HotelContractController extends Controller
         }
         else {
             $id = Input::get('id');
-            $from = Carbon::createFromFormat('d-m-Y', Input::get('from'));
-            $to = Carbon::createFromFormat('d-m-Y', Input::get('to'));
+            $from = Carbon::createFromFormat('d.m.Y', Input::get('from'));
+            $to = Carbon::createFromFormat('d.m.Y', Input::get('to'));
 
             /*$from = Input::get('from');
             $to = Input::get('to');*/
@@ -352,8 +374,8 @@ class HotelContractController extends Controller
 
                 //print_r($settings);die;
                 $this->response['status'] = 'success';
-                $this->response['from'] = $from->format('d-m-Y');
-                $this->response['to'] = $to->format('d-m-Y');
+                $this->response['from'] = $from->format('d.m.Y');
+                $this->response['to'] = $to->format('d.m.Y');
                 $this->response['data'] = $settings;
             }
         }

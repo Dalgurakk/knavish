@@ -11,11 +11,9 @@ use Illuminate\Support\Facades\DB;
 class ManageHotelController extends Controller
 {
     private $response;
-    private $hotelController;
 
     public function __construct() {
         $this->middleware('auth');
-        $this->hotelController = new HotelController();
     }
 
     public function index(Request $request) {
@@ -29,24 +27,6 @@ class ManageHotelController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuManage'] = 'selected';
         $data['submenuManageHotel'] = 'selected';
-
-        return view('manage.hotel')->with($data);
-    }
-
-    public function index2(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $breadcrumb = array(
-            0 => 'Manage',
-            1 => 'Hotel'
-        );
-
-        $hotels = $this->hotelController->actives();
-
-        $data['breadcrumb'] = $breadcrumb;
-        $data['menuManage'] = 'selected';
-        $data['submenuManageHotel'] = 'selected';
-        $data['hotels'] = $hotels;
 
         return view('manage.hotel')->with($data);
     }

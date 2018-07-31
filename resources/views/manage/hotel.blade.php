@@ -175,7 +175,6 @@
 
         var roomTypes = [];
         var contracts = [];
-        var contract;
         var rows = [
             { id: 'cost', name: 'Cost', selected: true},
             { id: 'price', name: 'Price', selected: true},
@@ -206,7 +205,7 @@
                     var hotel = response[0];
                     contracts = hotel.contracts;
 
-                    $(".select2-selection__rendered").html(hotel.name);
+                    $(".select2-selection__rendered").html(hotel.name + '<span class="select2-selection__placeholder"></span>');
                     if(contracts.length >= 1) {
                         fillContract(contracts[0]);
 
@@ -217,7 +216,6 @@
                             }));
                         }
                     }
-                    
                     $('.filter-content').show();
                 }
             }
@@ -336,7 +334,6 @@
         $("#search-accomodation :input[name=hotel]").on('select2:select select2:unselect', function (e) {
             var values = e.params.data;
             //console.log(values);
-            contracts = [];
             if(values.selected) {
                 contracts = values.contracts;
                 $('#search-accomodation :input[name=contract]').empty();

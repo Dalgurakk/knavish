@@ -292,12 +292,65 @@ class HotelContractController extends Controller
             $this->response['message'] = 'Database error.';
             $this->response['errors'] = $e->errorInfo[2];
         }
-
         echo json_encode($this->response);
     }
 
     public function settings(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $breadcrumb = array(
+            0 => 'Hotel',
+            1 => 'Settings'
+        );
+        $data['breadcrumb'] = $breadcrumb;
+        $data['menuHotel'] = 'selected';
+        $data['submenuSettings'] = 'selected';
+        $data['contract_id'] = null;
+
+        $id = Input::get('id');
+        if ($id != '') {
+            $data['contract_id'] = $id;
+        }
+        return view('hotel.setting')->with($data);
+    }
+
+    public function getContract(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $id = Input::get('contractId');
+        $query = HotelContract::with(['hotel', 'roomTypes', 'measures']);
+
+        if($id != '') {
+            $query->where('id', $id);
+        }
+        try {
+            $contract = $query->first();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
+            $this->response['data'] = $contract;
+        }
+        catch (QueryException $e) {
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Database error.';
+            $this->response['errors'] = $e->errorInfo[2];
+        }
+        echo json_encode($this->response);
+    }
+
+    public function getByName(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $string = '%' . Input::get('q') . '%';
+        $contracts = HotelContract::with(['hotel', 'roomTypes', 'measures'])
+            ->where('name', 'like', $string)
+            ->orderBy('name', 'asc')
+            ->get();
+        echo json_encode($contracts);
+    }
+
+    public function settingsByContract(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
 
         $rules = array(
             'id' => 'required',

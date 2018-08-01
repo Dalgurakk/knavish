@@ -411,6 +411,13 @@ var App = function() {
             title: 'Image',
             placement: 'top'
         });
+
+        $('.dt-custom-datatable .dt-setting').tooltip({
+            trigger: 'hover',
+            container: 'body',
+            title: 'Settings',
+            placement: 'top'
+        });
     };
 
     // Handles Bootstrap Dropdowns

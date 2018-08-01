@@ -1066,15 +1066,23 @@
                     name: 'actions',
                     "className": "dt-center",
                     "data": function ( row, type, val, meta ) {
-                        var data = '<div class="dt-actions">' +
-                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info">' +
-                            '<i class="glyphicon glyphicon-eye-open btn-action-icon"></i></a>'+
-                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-edit" data-toggle="modal" href="#modal-edit">' +
-                            '<i class="icon-pencil btn-action-icon"></i></a>' +
-                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-delete" href="javascript:;" data-popout="true" data-placement="left"' +
-                            'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success"  data-btn-ok-icon-content="check" ' +
-                            'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
-                            '<i class="icon-trash btn-action-icon"></i></a>';
+                        //var contract = row.contract;
+                        var data =
+                        '<form method="get" action="{{ route("hotel.contract.settings") }}">' +
+                            '<input type="hidden" name="id" value="' + row.id + '">' +
+                            '<div class="dt-actions">' +
+                            '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info">' +
+                                '<i class="glyphicon glyphicon-eye-open btn-action-icon"></i></a>'+
+                            '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-edit" data-toggle="modal" href="#modal-edit">' +
+                                '<i class="icon-pencil btn-action-icon"></i></a>' +
+                            '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-delete" href="javascript:;" data-popout="true" data-placement="left"' +
+                                'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success"  data-btn-ok-icon-content="check" ' +
+                                'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
+                                '<i class="icon-trash btn-action-icon"></i></a>' +
+                            '<button type="submit" class="btn btn-default btn-circle btn-icon-only btn-action dt-setting">' +
+                                '<i class="icon-settings btn-action-icon"></i></button>' +
+                            '</div>' +
+                        '</form>';
                         return data;
                     }
                 }

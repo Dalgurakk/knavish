@@ -81,7 +81,7 @@ License: You must have a valid license purchased only from themeforest(the above
                             <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
                             <li class="dropdown dropdown-user" style="/*height: 45px;*/">
                                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="/*padding: 11px;*/">
-                                    <img alt="" class="img-circle" src="../assets/layouts/layout2/img/avatar3_small.jpg" />
+                                    <img alt="" class="img-circle" src="{{ asset('assets/layouts/layout2/img/avatar3_small.jpg') }}" />
                                     <span class="username username-hide-on-mobile"> {{ Auth::user()->name }} </span>
                                     <i class="fa fa-angle-down"></i>
                                 </a>
@@ -212,25 +212,32 @@ License: You must have a valid license purchased only from themeforest(the above
                                         <span class="{{ isset($submenuContract) ? 'selected' : '' }}"></span>
                                     </a>
                                 </li>
+                                <li class="nav-item {{ isset($submenuSettings) ? 'active open' : '' }}">
+                                    <a href="{{ route('hotel.contract.settings') }}" class="nav-link ">
+                                        <i class="icon-settings"></i>
+                                        <span class="title">Settings</span>
+                                        <span class="{{ isset($submenuSettings) ? 'selected' : '' }}"></span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
-                        <li class="nav-item ">
+                        <!--li class="nav-item ">
                             <a href="javascript:;" class="nav-link nav-toggle">
                                 <i class="fa fa-microphone "></i>
                                 <span class="title">Tranfer</span>
-                                <!--span class="arrow"></span-->
+                                <span class="arrow"></span>
                             </a>
-                        </li>
-                        <li class="nav-item {{ isset($menuManage) ? 'active open' : '' }}">
-                            <a href="{{ route('manage.hotel') }}" class="nav-link nav-toggle">
+                        </li-->
+                        <!--li class="nav-item {{ isset($menuManage) ? 'active open' : '' }}">
+                            <a href="{{ route('hotel.contract.settings') }}" class="nav-link nav-toggle">
                                 <i class="icon-settings"></i>
-                                <span class="title">Manage</span>
+                                <span class="title">Settings</span>
                                 <span class="{{ isset($menuManage) ? 'selected' : '' }}"></span>
                                 <span class="arrow"></span>
                             </a>
                             <ul class="sub-menu">
                                 <li class="nav-item start {{ isset($submenuManageHotel) ? 'active open' : '' }}">
-                                    <a href="{{ route('manage.hotel') }}" class="nav-link ">
+                                    <a href="{{ route('hotel.contract.settings') }}" class="nav-link ">
                                         <i class="fa fa-building-o"></i>
                                         <span class="title">Hotel</span>
                                         <span class="{{ isset($submenuManageHotel) ? 'selected' : '' }}"></span>
@@ -244,7 +251,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li-->
                         @if(Auth::user()->hasRole('administrator'))
                         <li class="nav-item {{ isset($menuAdministration) ? 'active open' : '' }}">
                             <a href="{{ route('user.index') }}" class="nav-link nav-toggle">

@@ -83,14 +83,17 @@ Route::post('/hotel/upload/image', 'HotelController@uploadImage')->name('hotel.u
 Route::post('/hotel/delete/image', 'HotelController@deleteImage')->name('hotel.delete.image');
 Route::post('/hotel/images', 'HotelController@images')->name('hotel.images');
 Route::post('/hotel/search/active', 'HotelController@getActivesByName')->name('hotel.search.active');
-Route::post('/hotel/search/contract/active', 'HotelController@getContractsByName')->name('hotel.search.contract.active');
+Route::post('/hotel/search/contract', 'HotelController@getContractsByName')->name('hotel.search.contract');
 //HotelContract
 Route::get('/hotel/contract', 'HotelContractController@index')->name('hotel.contract.index');
 Route::post('/hotel/contract/read', 'HotelContractController@read')->name('hotel.contract.read');
 Route::post('/hotel/contract/create', 'HotelContractController@create')->name('hotel.contract.create');
 Route::post('/hotel/contract/update', 'HotelContractController@update')->name('hotel.contract.update');
 Route::post('/hotel/contract/delete', 'HotelContractController@delete')->name('hotel.contract.delete');
-Route::post('/hotel/contract/settings', 'HotelContractController@settings')->name('hotel.contract.settings');
+Route::get('/hotel/contract/settings', 'HotelContractController@settings')->name('hotel.contract.settings');
+Route::post('/hotel/contract', 'HotelContractController@getContract')->name('hotel.contract');
+Route::post('/hotel/contract/search', 'HotelContractController@getByName')->name('hotel.contract.search');
+Route::post('/hotel/contract/settings', 'HotelContractController@settingsByContract')->name('hotel.contract.settings.data');
 //Manage
 Route::get('/manage/hotel', 'ManageHotelController@index')->name('manage.hotel');
 Route::get('/range/calendar', 'ManageHotelController@rangeCalendar')->name('range.calendar');

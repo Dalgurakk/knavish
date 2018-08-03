@@ -93,7 +93,8 @@ Route::post('/hotel/contract/delete', 'HotelContractController@delete')->name('h
 Route::get('/hotel/contract/settings', 'HotelContractController@settings')->name('hotel.contract.settings');
 Route::post('/hotel/contract', 'HotelContractController@getContract')->name('hotel.contract');
 Route::post('/hotel/contract/search', 'HotelContractController@getByName')->name('hotel.contract.search');
-Route::post('/hotel/contract/settings', 'HotelContractController@settingsByContract')->name('hotel.contract.settings.data');
+Route::post('/hotel/contract/settings/save', 'HotelContractController@saveSettings')->name('hotel.contract.settings.save');
+Route::post('/hotel/contract/settings/data', 'HotelContractController@settingsByContract')->name('hotel.contract.settings.data');
 //Manage
 Route::get('/manage/hotel', 'ManageHotelController@index')->name('manage.hotel');
 Route::get('/range/calendar', 'ManageHotelController@rangeCalendar')->name('range.calendar');

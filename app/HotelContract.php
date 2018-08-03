@@ -31,7 +31,7 @@ class HotelContract extends Model
     }
 
     public function settings() {
-        return $this->hasOne('App\HotelContractSetting');
+        return $this->hasMany('App\HotelContractSetting');
     }
 
     public function hotel() {

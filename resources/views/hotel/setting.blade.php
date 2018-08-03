@@ -4,6 +4,8 @@
 <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
 <style>
 .table-setting td { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
 .table-setting th { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
@@ -46,19 +48,19 @@
                         <div class="portlet box green">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
-                                    <i class="fa fa-building-o"></i>Hotel</div>
+                                    <i class="fa fa-building-o"></i>Contract</div>
                             </div>
                             <div class="portlet-body">
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4">
+                                    <!--div class="col-lg-4 col-md-4">
                                         <label>Hotel</label>
                                         <div class="form-group">
                                             <div class="input-icon">
                                                 <i class="fa fa-building-o"></i>
                                                 <select class="form-control" name="hotel"></select> </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4">
+                                    </div-->
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
                                         <label>Contract</label>
                                         <div class="form-group">
                                             <div class="input-icon">
@@ -66,7 +68,7 @@
                                                 <select class="form-control" name="contract"></select> </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-4">
+                                    <!--div class="col-lg-4 col-md-4">
                                         <div class="form-group">
                                             <div class="mt-checkbox-list">
                                                 <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Load old contracts
@@ -75,7 +77,32 @@
                                                 </label>
                                             </div>
                                         </div>
+                                    </div-->
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            <label>Hotel</label>
+                                            <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
+                                        </div>
                                     </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                        <div class="form-group">
+                                            <label>Valid Period</label>
+                                            <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
+                                        </div>
+                                    </div>
+                                    <!--div class="col-lg-4 col-md-4">
+                                        <label>State</label>
+                                        <div class="form-group">
+                                            <div class="input-icon">
+                                                <i class="fa fa-building-o"></i>
+                                                <select class="form-control" name="state">
+                                                    <option value="2"><span class="label label-sm label-success"> In Progress </span></option>
+                                                    <option value="1"><span class="label label-sm label-warning"> Pending </span></option>
+                                                    <option value="3"><span class="label label-sm label-danger"> Finished </span></option>
+                                                    <option value="0"><span class="label label-sm label-primary"> All </span></option>
+                                                </select> </div>
+                                        </div>
+                                    </div-->
                                 </div>
                             </div>
                         </div>
@@ -151,13 +178,58 @@
     <div class="col-xs-12 result-container"></div>
 </div>
 
+<div id="modal-setting" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="icon-settings"></i> Settings</h4>
+    </div>
+    <form id="form-add">
+    <div class="modal-body">
+        <input type="hidden" name="contract-id" value="0">
+        <input type="hidden" name="room-type-id" value="0">
+        <div class="row">
+            <div class="col-md-12" style="margin-bottom: 20px;">
+                <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label>From</label>
+                    <div class="input-icon left">
+                        <i class="fa fa-calendar"></i>
+                        <input type="text" class="form-control date-picker" name="setting-from">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    <label>To</label>
+                    <div class="input-icon left">
+                        <i class="fa fa-calendar"></i>
+                        <input type="text" class="form-control date-picker" name="setting-to">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row measures-container"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+    </form>
+</div>
 
 @stop
 
 @section('page-plugins')
+<script src="{{ asset('assets/global/plugins/morris/morris.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/my-moment.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery-validation/js/additional-methods.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('custom-scripts')
@@ -172,9 +244,18 @@
         S = Saturday
         U = Sunday (That's right, U for Sunday).*/
 
+        var needUpdate = false;
         var formSearch = $('#search-accomodation');
         var contractId = '{{ $contract_id }}';
         var contract = null;
+        var initials = [];
+
+        $('.date-picker').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy'
+        });
 
         function searchFormat(repo) {
             if (repo.loading) return repo.text;
@@ -188,44 +269,6 @@
         function searchFormatSelection(repo) {
             return repo.name;
         }
-
-        $("#search-accomodation :input[name=hotel]").select2({
-            width: "off",
-            ajax: {
-                url: "{{ route('hotel.search.contract') }}",
-                "type": "POST",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        q: params.term,
-                        page: params.page
-                    };
-                },
-                processResults: function(data, page) {
-                    return {
-                        results: data
-                    };
-                },
-                cache: true
-            },
-            escapeMarkup: function(markup) {
-                return markup;
-            },
-            minimumInputLength: 3,
-            templateResult: searchFormat,
-            templateSelection: searchFormatSelection
-        });
-
-        $("#search-accomodation :input[name=hotel]").on('select2:select select2:unselect', function (e) {
-            var values = e.params.data;
-            //console.log(values);
-            if(values.selected) {
-                contracts = values.contracts;
-                $('#search-accomodation :input[name=contract]').empty();
-                fillHotel(contracts);
-            }
-        });
 
         $("#search-accomodation :input[name=contract]").select2({
             width: "off",
@@ -286,11 +329,16 @@
                 else {
                     var response = JSON.parse(xhr.responseText);
                     contract = response.data;
-                    //console.log(contract);
-                    $("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
-                    $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
-                    fillContract(contract);
-                    $('.filter-content').show();
+                    if (contract == null) {
+                        toastr['warning'](response.message, "Warning");
+                    }
+                    else {
+                        //console.log(contract);
+                        $("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
+                        $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
+                        fillContract(contract);
+                        $('.filter-content').show();
+                    }
                 }
             }
         });
@@ -329,7 +377,18 @@
                         else {
                             var response = $.parseJSON(xhr.responseText);
                             if (response.status == 'success') {
-                                renderTable(response.from, response.to, contract, response.data);
+                                var table = response.table;
+                                $('.result-container').html('');
+                                $('.result-container').append(table);
+                                renderTable(response.from, response.to, contract);
+                                /*$.when(
+                                    renderTable(response.from, response.to, contract)
+                                ).then(setValues(response.data));*/
+
+                                /*for (var i = 0; i < response.data.length; i++) {
+                                    console.log(response.data[i].date)
+                                    $('[data-date=' + response.data.date + '][data-measure=' + response.data.measure + '][data-room-type=' + response.data.room + ']').html(response.data.value);
+                                }*/
                             }
                             else {
                                 toastr['error'](response.message, "Error");
@@ -340,13 +399,10 @@
             }
         });
 
-        function fillHotel(item) {
-            $.each(contracts, function (i, item) {
-                $('#search-accomodation :input[name=contract]').append($('<option>', {
-                    value: item.id,
-                    text : item.name
-                }));
-            });
+        function setValues(data) {
+            for (var i = 0; i < data.length; i++) {
+                $('[data-date=' + data[i].date + '][data-measure=' + data[i].measure + '][data-room-type=' + data[i].room + ']').html(data[i].value);
+            }
         }
 
         function fillContract(c) {
@@ -354,7 +410,10 @@
             var measures = c.measures;
             var contract = c;
 
-            $("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
+            $("#modal-setting :input[name=contract-id]").val(contract.id);
+            $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
+            $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
+            //$("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
             $('.measures-list').html('');
             $.each(measures, function (i, item) {
                 var measure =
@@ -439,84 +498,55 @@
             $('input[name=from]').datepicker( "setEndDate" , new Date(endDate));
             $('input[name=to]').datepicker( "setStartDate" , new Date(startDate));
             $('input[name=to]').datepicker( "setEndDate" , new Date(endDate));
+
+            $('#modal-setting :input[name=setting-from]').datepicker( "setStartDate" , new Date(startDate));
+            $('#modal-setting :input[name=setting-from]').datepicker( "setEndDate" , new Date(endDate));
+            $('#modal-setting :input[name=setting-to]').datepicker( "setStartDate" , new Date(startDate));
+            $('#modal-setting :input[name=setting-to]').datepicker( "setEndDate" , new Date(endDate));
+
+            $('.measures-container').html('');
+            for (var i = 0; i < contract.measures.length; i++) {
+                var html =
+                '<div class="row">' +
+                    '<div class="col-md-12">' +
+                        '<div class="col-md-6 col-sm-6 col-xs-6">' +
+                            '<div class="form-group">' +
+                                '<label>' + contract.measures[i].name + '</label>' +
+                                '<input type="text" class="form-control" name="' + contract.measures[i].code + '" readonly>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="col-md-6 col-sm-6 col-xs-6">' +
+                            '<div class="mt-checkbox-list">' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15"> Set' +
+                                    '<input type="checkbox" value="" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
+                                    '<span></span>' +
+                                '</label>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+                $('.measures-container').append(html);
+                $('input[name="set-' + contract.measures[i].code + '"]').change(function() {
+                    var name = $(this).attr('data-set');
+                    if($(this).is(":checked")) {
+                        $('input[name=' + name + ']').prop('readonly', '');
+                        $(this).val($(this).attr('data-measure-id'));
+                    }
+                    else {
+                        $(this).val('0');
+                        $('input[name=' + name + ']').prop('readonly', true);
+                        $('input[name=' + name + ']').val('');
+                    }
+                });
+            }
         }
 
-        function renderTable(from, to, contract, data) {
-            $('.result-container').html('');
+        function renderTable(from, to, contract) {
             var start = moment(from, 'DD.MM.YYYY').startOf('month');
             var end = moment(to, 'DD.MM.YYYY').endOf('month');
             var html = '';
             var roomTypes = contract.room_types;
             var rows = contract.measures;
-
-            for (var m = start; m.isSameOrBefore(end); m.add(1, 'month')) {
-                html =
-                '<div class="portlet box green">' +
-                    '<div class="portlet-title porlet-title-setting">' +
-                        '<div class="caption caption-setting">' +
-                            '<!--i class="fa fa-calendar"></i-->' + m.format("MMMM YYYY") + '</div>' +
-                        '<div class="tools tools-setting">' +
-                            '<a href="" class="fullscreen"> </a>' +
-                            '<a href="javascript:;" class="collapse"> </a>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="portlet-body" style="padding: 0;">' +
-                        '<div class="table-responsive">';
-
-                for (var r = 0; r < roomTypes.length; r++) {
-                    html +=
-                            '<table class="table table-striped table-bordered table-setting" data-room="' + roomTypes[r].id + '">' +
-                                '<thead>' +
-                                    '<tr>' +
-                                        '<th class="room-name head-setting">' + roomTypes[r].name.toUpperCase() + '</th>';
-
-                    var monthStart = moment(m, 'YYYY-MM-DD').startOf('month');
-                    var monthEnd = moment(m, 'YYYY-MM-DD').endOf('month');
-                    var count = 0;
-
-                    for (var d = monthStart; d.isSameOrBefore(monthEnd); d.add(1, 'days')) {
-                        html +=
-                                        //'<th class="column-setting head-setting">' + d.format('D') + '<br>' + d.format('dd') + '</th>';
-                                        '<th class="column-setting head-setting">' + d.format('D') + '</th>';
-                        count ++;
-                    }
-                    if (count < 31) {
-                        for (var z = count; z < 31; z++) {
-                            html +=
-                                        '<th class="column-setting head-setting-invalid"></th>';
-                        }
-                    }
-                    html +=
-                                    '</tr>' +
-                                '</thead>' +
-                                '<tbody>';
-
-                    for (var v = 0; v < rows.length; v++) {
-                        html +=
-                                    '<tr data-row="' + rows[v].id + '">' +
-                                        '<td class="column-setting item-variable">' + rows[v].name.toUpperCase() + '</td>';
-
-                        monthStart = moment(m, 'YYYY-MM-DD').startOf('month');
-                        monthEnd = moment(m, 'YYYY-MM-DD').endOf('month');
-
-                        for (var i = monthStart; i.isSameOrBefore(monthEnd); i.add(1, 'days')) {
-                            html +=
-                                        '<td class="column-setting item-setting" data-date="' + i.format('YYYY-MM-DD') + '" data-row="' + rows[v].id + '" data-room-type="' + roomTypes[r].name + '">' + '5' + '</td>';
-                        }
-                        html +=
-                                    '</tr>';
-                    }
-                    html +=
-                                '</tbody>' +
-                            '</table>';
-                }
-                html +=
-                        '</div' +
-                    '</div' +
-                '</div>';
-
-                $('.result-container').append(html);
-            }
 
             $('input[name="room-selected"]').on('click', function() {
                 var $items = $('table[data-room="' + $(this).val() + '"]');
@@ -534,7 +564,31 @@
             });
 
             $('.item-setting').on('click', function() {
-                alert($(this).html());
+                formAdd.validate().resetForm();
+                formAdd[0].reset();
+                var room = $(this).parents('table').find('th:first').html();
+                $('#modal-setting .room-name-header').html(room);
+
+                var date = $(this).attr('data-date');
+                $('#modal-setting :input[name=setting-from]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
+                $('#modal-setting :input[name=setting-to]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
+
+                $('#modal-setting .measures-container :input').prop('readonly', true);
+                $('#modal-setting .measures-container :input').prop('checked', '');
+                var measure = $(this).parents('tr').find('td:first').attr('data-measure-code');
+                $('#modal-setting :input[name=' + measure + ']').prop('readonly', false);
+                $('#modal-setting :input[data-set=' + measure + ']').prop('checked', 'checked');
+                $('#modal-setting :input[data-set=' + measure + ']').val($('#modal-setting :input[data-set=' + measure + ']').attr('data-measure-id'));
+
+                $("#modal-setting :input[name=room-type-id]").val($(this).attr('data-room-type-id'));
+
+                for (var i = 0; i < contract.measures.length; i++) {
+                    var date = $(this).attr('data-date');
+                    var measureId = contract.measures[i].id;
+                    var value = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]').html();
+                    $('#modal-setting :input[name="' + contract.measures[i].code + '"]').val(value);
+                }
+                $('#modal-setting').modal('show');
             });
 
             $('input[name=row-selected]:checked').each(function() {
@@ -564,9 +618,99 @@
                     $(this).hide();
                 });
             });
-            //$('[data-date="2018-07-02"][data-row="Stop Sale"]').html('es');
         }
 
+        var formAdd = $('#form-add');
+        formAdd.validate({
+            errorElement: 'span',
+            errorClass: 'help-block help-block-error',
+            focusInvalid: false,
+            ignore: "",
+            rules: {
+                "setting-from" : {
+                    required: true
+                },
+                "setting-to" : {
+                    required: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
+                    if (element.parents('.mt-radio-list').size() > 0) {
+                        error.appendTo(element.parents('.mt-radio-list')[0]);
+                    }
+                    if (element.parents('.mt-checkbox-list').size() > 0) {
+                        error.appendTo(element.parents('.mt-checkbox-list')[0]);
+                    }
+                } else if (element.parents('.mt-radio-inline').size() > 0 || element.parents('.mt-checkbox-inline').size() > 0) {
+                    if (element.parents('.mt-radio-inline').size() > 0) {
+                        error.appendTo(element.parents('.mt-radio-inline')[0]);
+                    }
+                    if (element.parents('.mt-checkbox-inline').size() > 0) {
+                        error.appendTo(element.parents('.mt-checkbox-inline')[0]);
+                    }
+                } else if (element.parent(".input-group").size() > 0) {
+                    error.insertAfter(element.parent(".input-group"));
+                } else if (element.attr("data-error-container")) {
+                    error.appendTo(element.attr("data-error-container"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            invalidHandler: function (event, validator) {
+                toastr['error']("Please check the entry fields.", "Error");
+            },
+            highlight: function (element) {
+               $(element)
+                    .closest('.form-group').addClass('has-error');
+            },
+            unhighlight: function (element) {
+                $(element)
+                    .closest('.form-group').removeClass('has-error');
+            },
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error');
+            },
+            submitHandler: function (form) {
+                var option = $(form).find("button[type=submit]:focus").attr('data');
+                $.ajax({
+                    "url": "{{ route('hotel.contract.settings.save') }}",
+                    "type": "POST",
+                    "data": formAdd.serialize(),
+                    "beforeSend": function() {
+                        App.showMask(true, formAdd);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        App.showMask(false, formAdd);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                        }
+                        else {
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                formAdd[0].reset();
+                                needUpdate = true;
+                                if (option == 'accept') {
+                                    $(form).find("button.cancel-form").click();
+                                }
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        $('.cancel-form').on('click', function(e) {
+            if(needUpdate) {
+                $(".btn-search-submit").click();
+                needUpdate = false;
+            }
+        });
     });
 </script>
 @stop

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\HotelBoardType;
 use App\HotelContract;
+use App\HotelContractSetting;
 use App\HotelMeasure;
 use App\HotelPaxType;
 use Illuminate\Database\QueryException;
@@ -32,7 +33,7 @@ class HotelContractController extends Controller
 
         $paxTypes = HotelPaxType::where('active', '1')->get();
         $boardTypes = HotelBoardType::where('active', '1')->get();
-        $measures = HotelMeasure::where('active', '1')->get();
+        $measures = HotelMeasure::where('active', '1')->orderBy('id', 'asc')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
@@ -280,6 +281,7 @@ class HotelContractController extends Controller
             $contract->boardTypes()->detach();
             $contract->roomTypes()->detach();
             $contract->measures()->detach();
+            $contract->settings()->delete();
             $contract->delete();
             DB::commit();
             $this->response['status'] = 'success';
@@ -325,9 +327,13 @@ class HotelContractController extends Controller
         }
         try {
             $contract = $query->first();
-            $this->response['status'] = 'success';
-            $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
-            $this->response['data'] = $contract;
+            if ($contract === null) {
+                $this->response['status'] = 'error';
+                $this->response['data'] = null;
+                $this->response['message'] = 'There are no contracts available.';
+            }
+            else
+                $this->response['data'] = $contract;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
@@ -348,86 +354,341 @@ class HotelContractController extends Controller
         echo json_encode($contracts);
     }
 
-    public function settingsByContract(Request $request) {
+    public function saveSettings(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-
         $rules = array(
-            'id' => 'required',
-            'from' => 'required|date',
-            'to' => 'required|date'
-            //'to' => 'required|date|before:from'
+            'setting-from' => 'required|date|date_format:"d.m.Y"',
+            'setting-to' => 'required|date|date_format:"d.m.Y"'
         );
         $validator = Validator::make(Input::all(), $rules);
 
         if ($validator->fails()) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Invalid parameters.';
+            $this->response['message'] = 'Validation errors.';
             $this->response['errors'] = $validator->errors();
         }
         else {
-            $id = Input::get('id');
-            $from = Carbon::createFromFormat('d.m.Y', Input::get('from'));
-            $to = Carbon::createFromFormat('d.m.Y', Input::get('to'));
+            $contractId = Input::get('contract-id');
+            $from = Input::get('setting-from');
+            $to = Input::get('setting-to');
+            $setPrice = Input::get('set-price');
+            $setAllotment = Input::get('set-allotment');
+            $setCost = Input::get('set-cost');
+            $setStopSale = Input::get('set-stop_sale');
+            $setOffer = Input::get('set-offer');
+            $setRelease = Input::get('set-release');
+            $setSupplement = Input::get('set-supplement');
+            $roomTypeId = Input::get('room-type-id');
 
-            /*$from = Input::get('from');
-            $to = Input::get('to');*/
-            $contract = HotelContract::find($id);
+            $start = Carbon::createFromFormat('d.m.Y', $from);
+            $end = Carbon::createFromFormat('d.m.Y', $to);
+            $contract = HotelContract::with('roomTypes', 'measures')->where('id', $contractId)->first();
 
-            if ($contract === null) {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Invalid contract.';
-                $this->response['errors'] = $validator->errors();
-            }
-            else {
-                //$settings = $contract->settings;
-                $settings_json = '
-                    [
-                        {
-                            "date": "2018-01-01",
-                            "price": "52",
-                            "allotment": "5",
-                            "release": "7",
-                            "offer": "2",
-                            "stop_sale": "0",
-                            "restriction": "0",
-                            "supplement":  "0"
-                        },
-                        {
-                            "date": "2018-01-02",
-                            "price": "52",
-                            "allotment": "5",
-                            "release": "7",
-                            "offer": "2",
-                            "stop_sale": "0",
-                            "restriction": "0",
-                            "supplement":  "0"
-                        },
-                        {
-                            "date": "2018-01-03",
-                            "price": "52",
-                            "allotment": "5",
-                            "release": "7",
-                            "offer": "2",
-                            "stop_sale": "0",
-                            "restriction": "0",
-                            "supplement":  "0"
+            for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
+                $contractSetting = HotelContractSetting::where('hotel_contract_id', $contractId)
+                    ->where('date', $m->format('Y-m-d'))->first();
+                if ($contractSetting === null) {
+                    $contractSetting = new HotelContractSetting();
+                    $contractSetting->hotel_contract_id = $contract->id;
+                    $contractSetting->date = $m->format('Y-m-d');
+                    $settings = array();
+                    if($setPrice != '') {
+                        $obj = new \stdClass();
+                        $obj->measure_id = $setPrice;
+                        $obj->room_type_id = $roomTypeId;
+                        $obj->value = Input::get('price');
+                        $settings[] = $obj;
+                    }
+                    if($setAllotment != '') {
+                        $obj = new \stdClass();
+                        $obj->measure_id = $setAllotment;
+                        $obj->room_type_id = $roomTypeId;
+                        $obj->value = Input::get('allotment');
+                        $settings[] = $obj;
+                    }
+                    if($setCost != '') {
+                        $obj = new \stdClass();
+                        $obj->measure_id = $setCost;
+                        $obj->room_type_id = $roomTypeId;
+                        $obj->value = Input::get('cost');
+                        $settings[] = $obj;
+                    }
+                    if($setStopSale != '') {
+                        $obj = new \stdClass();
+                        $obj->measure_id = $setStopSale;
+                        $obj->room_type_id = $roomTypeId;
+                        $obj->value = Input::get('stop_sale');
+                        $settings[] = $obj;
+                    }
+                    if($setOffer != '') {
+                        $obj = new \stdClass();
+                        $obj->measure_id = $setOffer;
+                        $obj->room_type_id = $roomTypeId;
+                        $obj->value = Input::get('offer');
+                        $settings[] = $obj;
+                    }
+                    if($setRelease != '') {
+                        $obj = new \stdClass();
+                        $obj->measure_id = $setRelease;
+                        $obj->room_type_id = $roomTypeId;
+                        $obj->value = Input::get('release');
+                        $settings[] = $obj;
+                    }
+                    if($setSupplement != '') {
+                        $obj = new \stdClass();
+                        $obj->measure_id = $setSupplement;
+                        $obj->room_type_id = $roomTypeId;
+                        $obj->value = Input::get('supplement');
+                        $settings[] = $obj;
+                    }
+                    $contractSetting->settings = json_encode($settings);
+                    $contractSetting->save();
+                }
+                else {
+                    $settings = json_decode($contractSetting->settings);
+
+                    if ($setPrice != '') {
+                        $isInSettings = false;
+                        for ($i = 0; $i < count($settings); $i ++) {
+                            if ($settings[$i]->measure_id == $setPrice && $settings[$i]->room_type_id == $roomTypeId){
+                                $settings[$i]->value = Input::get('price');
+                                $isInSettings = true;
+                                break;
+                            }
                         }
-                    ]';
-                $settings = json_decode($settings_json);
-
-                //$settings = new \stdClass();
-                //$settings->data = array(
-
-                //);
-                //$temp = $settings->data;
-
-                //print_r($settings);die;
-                $this->response['status'] = 'success';
-                $this->response['from'] = $from->format('d.m.Y');
-                $this->response['to'] = $to->format('d.m.Y');
-                $this->response['data'] = $settings;
+                        if (!$isInSettings) {
+                            $obj = new \stdClass();
+                            $obj->measure_id = $setPrice;
+                            $obj->room_type_id = $roomTypeId;
+                            $obj->value = Input::get('price');
+                            $settings[] = $obj;
+                        }
+                    }
+                    if ($setAllotment != '') {
+                        $isInSettings = false;
+                        for ($i = 0; $i < count($settings); $i ++) {
+                            if ($settings[$i]->measure_id == $setAllotment && $settings[$i]->room_type_id == $roomTypeId){
+                                $settings[$i]->value = Input::get('allotment');
+                                $isInSettings = true;
+                                break;
+                            }
+                        }
+                        if (!$isInSettings) {
+                            $obj = new \stdClass();
+                            $obj->measure_id = $setAllotment;
+                            $obj->room_type_id = $roomTypeId;
+                            $obj->value = Input::get('allotment');
+                            $settings[] = $obj;
+                        }
+                    }
+                    if ($setCost != '') {
+                        $isInSettings = false;
+                        for ($i = 0; $i < count($settings); $i ++) {
+                            if ($settings[$i]->measure_id == $setCost && $settings[$i]->room_type_id == $roomTypeId){
+                                $settings[$i]->value = Input::get('cost');
+                                $isInSettings = true;
+                                break;
+                            }
+                        }
+                        if (!$isInSettings) {
+                            $obj = new \stdClass();
+                            $obj->measure_id = $setCost;
+                            $obj->room_type_id = $roomTypeId;
+                            $obj->value = Input::get('cost');
+                            $settings[] = $obj;
+                        }
+                    }
+                    if ($setStopSale != '') {
+                        $isInSettings = false;
+                        for ($i = 0; $i < count($settings); $i ++) {
+                            if ($settings[$i]->measure_id == $setStopSale && $settings[$i]->room_type_id == $roomTypeId){
+                                $settings[$i]->value = Input::get('stop_sale');
+                                $isInSettings = true;
+                                break;
+                            }
+                        }
+                        if (!$isInSettings) {
+                            $obj = new \stdClass();
+                            $obj->measure_id = $setStopSale;
+                            $obj->room_type_id = $roomTypeId;
+                            $obj->value = Input::get('stop_sale');
+                            $settings[] = $obj;
+                        }
+                    }
+                    if ($setOffer != '') {
+                        $isInSettings = false;
+                        for ($i = 0; $i < count($settings); $i ++) {
+                            if ($settings[$i]->measure_id == $setOffer && $settings[$i]->room_type_id == $roomTypeId){
+                                $settings[$i]->value = Input::get('offer');
+                                $isInSettings = true;
+                                break;
+                            }
+                        }
+                        if (!$isInSettings) {
+                            $obj = new \stdClass();
+                            $obj->measure_id = $setOffer;
+                            $obj->room_type_id = $roomTypeId;
+                            $obj->value = Input::get('offer');
+                            $settings[] = $obj;
+                        }
+                    }
+                    if ($setRelease != '') {
+                        $isInSettings = false;
+                        for ($i = 0; $i < count($settings); $i ++) {
+                            if ($settings[$i]->measure_id == $setRelease && $settings[$i]->room_type_id == $roomTypeId){
+                                $settings[$i]->value = Input::get('release');
+                                $isInSettings = true;
+                                break;
+                            }
+                        }
+                        if (!$isInSettings) {
+                            $obj = new \stdClass();
+                            $obj->measure_id = $setRelease;
+                            $obj->room_type_id = $roomTypeId;
+                            $obj->value = Input::get('release');
+                            $settings[] = $obj;
+                        }
+                    }
+                    if ($setSupplement != '') {
+                        $isInSettings = false;
+                        for ($i = 0; $i < count($settings); $i ++) {
+                            if ($settings[$i]->measure_id == $setSupplement && $settings[$i]->room_type_id == $roomTypeId){
+                                $settings[$i]->value = Input::get('supplement');
+                                $isInSettings = true;
+                                break;
+                            }
+                        }
+                        if (!$isInSettings) {
+                            $obj = new \stdClass();
+                            $obj->measure_id = $setSupplement;
+                            $obj->room_type_id = $roomTypeId;
+                            $obj->value = Input::get('supplement');
+                            $settings[] = $obj;
+                        }
+                    }
+                    $contractSetting->settings = json_encode($settings);
+                    $contractSetting->save();
+                }
             }
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Petition executed successfully.';
+            $this->response['data'] = $contractSetting;
+        }
+        echo json_encode($this->response);
+    }
+
+    public function settingsByContract(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $id = Input::get('id');
+        $from = Input::get('from');
+        $to = Input::get('to');
+        $start = Carbon::createFromFormat('d.m.Y', $from)->startOfMonth();
+        $end = Carbon::createFromFormat('d.m.Y', $to)->endOfMonth();
+
+        $contract = HotelContract::with('settings', 'measures', 'roomTypes')->where('id', $id)->first();
+        $contractSettings = $contract->settings;
+        $settings = array();
+
+        foreach ($contractSettings as $s) {
+            $settings[$s->date] = json_decode($s->settings);
+        }
+
+        if ($contract === null) {
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Invalid contract.';
+        }
+        else {
+            $roomTypes = $contract->roomTypes;
+            $rows = $contract->measures;
+            $tables = '';
+            for ($m = $start; $m->lessThanOrEqualTo($end); $m->addMonth()) {
+                $table =
+                '<div class="portlet box green">' .
+                    '<div class="portlet-title porlet-title-setting">' .
+                        '<div class="caption caption-setting">' .
+                            '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . '</div>' .
+                        '<div class="tools tools-setting">' .
+                            '<a href="" class="fullscreen"> </a>' .
+                            '<a href="javascript:;" class="collapse"> </a>' .
+                        '</div>' .
+                    '</div>' .
+                    '<div class="portlet-body" style="padding: 0;">' .
+                        '<div class="table-responsive">';
+
+                for ($r = 0; $r < count($roomTypes); $r++) {
+                    $table .=
+                            '<table class="table table-striped table-bordered table-setting" data-room="' . $roomTypes[$r]->id . '">' .
+                                '<thead>' .
+                                    '<tr>' .
+                                        '<th class="room-name head-setting">' . strtoupper($roomTypes[$r]->name) . '</th>';
+
+                    $month = $m->format('d.m.Y');
+                    $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
+                    $monthEnd = Carbon::createFromFormat('d.m.Y', $month)->endOfMonth();
+                    $count = 0;
+
+                    for ($d = $monthStart; $d->lessThanOrEqualTo($monthEnd); $d->addDay()) {
+                        $table .=
+                                        '<th class="column-setting head-setting">' . $d->format("d") . '</th>';
+                        $count ++;
+                    }
+                    if ($count < 31) {
+                        for ($z = $count; $z < 31; $z++) {
+                            $table .=
+                                        '<th class="column-setting head-setting-invalid"></th>';
+                        }
+                    }
+                    $table .=
+                                    '</tr>' .
+                                '</thead>' .
+                                '<tbody>';
+
+                    for ($v = 0; $v < count($rows); $v++) {
+                        $table .=
+                                    '<tr data-row="' . $rows[$v]->id . '">' .
+                                        '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
+
+                        $month = $m->format('d.m.Y');
+                        $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
+                        $monthEnd = Carbon::createFromFormat('d.m.Y', $month)->endOfMonth();
+
+                        for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
+                            $value = '';
+                            if (array_key_exists($i->format('Y-m-d'), $settings)) {
+                                $dateSettings = $settings[$i->format('Y-m-d')];
+                                if (is_array($dateSettings) && count($dateSettings) > 0) {
+                                    foreach ($dateSettings as $d) {
+                                        if ($d->measure_id == $rows[$v]->id && $d->room_type_id == $roomTypes[$r]->id) {
+                                            $value = $d->value;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            $table .=
+                                        '<td class="column-setting item-setting" data-date="' . $i->format('Y-m-d') . '" ' .
+                                        'data-measure-id="' . $rows[$v]->id . '" data-room-type-id="' . $roomTypes[$r]->id . '" ' .
+                                        '>' . $value . '</td>';
+                        }
+                        $table .=
+                                    '</tr>';
+                    }
+                    $table .=
+                                '</tbody>' .
+                            '</table>';
+                }
+                $table .=
+                        '</div>' .
+                    '</div>' .
+                '</div>';
+                $tables .= $table;
+            }
+            $this->response['status'] = 'success';
+            $this->response['from'] = $from;
+            $this->response['to'] = $to;
+            $this->response['table'] = $tables;
         }
         echo json_encode($this->response);
     }

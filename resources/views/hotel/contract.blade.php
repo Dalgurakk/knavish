@@ -32,7 +32,7 @@
                         <i class="fa fa-refresh"></i>
                     </a>
                     <div class="btn-group">
-                        <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">25</a>
+                        <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">10</a>
                         <ul class="dropdown-menu dropdown-options">
                             <li>
                                 <a href="javascript:;" class="lenght-option" data="10">10</a>
@@ -1014,7 +1014,7 @@
             "processing": true,
             "serverSide": true,
             "sDom": "ltip",
-            "iDisplayLength" : 25,
+            "iDisplayLength" : 10,
             "ajax": {
                 "url": "{{ route('hotel.contract.read') }}",
                 "type": "POST",

@@ -84,7 +84,7 @@ CREATE TABLE `hotel_contract_board_type` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=141 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_board_type` */
 
@@ -101,7 +101,7 @@ CREATE TABLE `hotel_contract_measure` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=172 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=181 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_measure` */
 
@@ -118,7 +118,7 @@ CREATE TABLE `hotel_contract_pax_type` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=184 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=188 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_pax_type` */
 
@@ -135,7 +135,7 @@ CREATE TABLE `hotel_contract_room_type` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=221 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=225 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_room_type` */
 
@@ -153,7 +153,7 @@ CREATE TABLE `hotel_contract_settings` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_settings` */
 
@@ -172,7 +172,7 @@ CREATE TABLE `hotel_contracts` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contracts` */
 
@@ -390,11 +390,11 @@ CREATE TABLE `role_user` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `role_user` */
 
-insert  into `role_user`(`id`,`role_id`,`user_id`,`created_at`,`updated_at`) values (2,1,2,'2018-05-05 11:03:01','2018-05-05 11:03:01'),(39,1,56,'2018-05-13 17:32:58','2018-05-13 17:32:58'),(17,1,37,'2018-05-12 02:04:33','2018-05-12 02:04:33'),(19,2,39,'2018-05-12 02:07:42','2018-05-12 02:07:42'),(20,1,40,'2018-05-12 02:09:13','2018-05-12 02:09:13'),(21,1,41,'2018-05-12 02:10:32','2018-05-12 02:10:32'),(22,1,42,'2018-05-12 02:12:50','2018-05-12 02:12:50'),(23,1,43,'2018-05-12 02:18:36','2018-05-12 02:18:36'),(24,1,44,'2018-05-12 02:20:39','2018-05-12 02:20:39'),(74,1,90,'2018-05-20 01:42:10','2018-05-20 01:42:10'),(26,1,46,'2018-05-12 02:34:22','2018-05-12 02:34:22'),(37,1,54,'2018-05-13 17:24:44','2018-05-13 17:24:44'),(28,1,48,'2018-05-12 05:05:00','2018-05-12 05:05:00'),(38,1,55,'2018-05-13 17:25:08','2018-05-13 17:25:08'),(43,2,60,'2018-05-14 02:17:44','2018-05-14 02:17:44'),(31,1,51,'2018-05-13 03:58:59','2018-05-13 03:58:59'),(32,1,52,'2018-05-13 04:00:11','2018-05-13 04:00:11'),(45,1,62,'2018-05-14 02:20:36','2018-05-14 02:20:36'),(46,1,63,'2018-05-14 02:20:49','2018-05-14 02:20:49'),(50,2,67,'2018-05-16 00:10:34','2018-05-16 00:10:34'),(55,2,72,'2018-05-17 17:09:04','2018-05-17 17:09:04'),(54,2,71,'2018-05-17 17:08:50','2018-05-17 17:08:50'),(56,2,73,'2018-05-17 17:10:33','2018-05-17 17:10:33'),(57,2,74,'2018-05-17 17:10:46','2018-05-17 17:10:46'),(71,1,76,'2018-05-19 18:50:37','2018-05-19 18:50:37'),(60,2,77,'2018-05-17 17:27:48','2018-05-17 17:27:48'),(61,2,78,'2018-05-17 17:28:02','2018-05-17 17:28:02'),(62,2,79,'2018-05-17 18:07:25','2018-05-17 18:07:25'),(63,2,80,'2018-05-17 18:07:40','2018-05-17 18:07:40'),(64,2,81,'2018-05-18 16:17:27','2018-05-18 16:17:27'),(66,1,83,'2018-05-18 21:56:08','2018-05-18 21:56:08'),(67,1,84,'2018-05-19 01:48:02','2018-05-19 01:48:02'),(68,2,85,'2018-05-19 05:12:28','2018-05-19 05:12:28'),(69,2,86,'2018-05-19 05:13:10','2018-05-19 05:13:10'),(70,2,87,'2018-05-19 05:13:36','2018-05-19 05:13:36'),(72,2,88,'2018-05-19 19:15:30','2018-05-19 19:15:30');
+insert  into `role_user`(`id`,`role_id`,`user_id`,`created_at`,`updated_at`) values (2,1,2,'2018-05-05 11:03:01','2018-05-05 11:03:01'),(19,2,39,'2018-05-12 02:07:42','2018-05-12 02:07:42'),(20,1,40,'2018-05-12 02:09:13','2018-05-12 02:09:13'),(81,3,97,'2018-07-25 04:12:59','2018-07-25 04:12:59'),(89,3,98,'2018-07-25 05:12:42','2018-07-25 05:12:42'),(46,1,63,'2018-05-14 02:20:49','2018-05-14 02:20:49'),(87,1,83,'2018-07-25 05:08:09','2018-07-25 05:08:09'),(88,3,99,'2018-07-25 05:11:57','2018-07-25 05:11:57'),(72,2,88,'2018-05-19 19:15:30','2018-05-19 19:15:30');
 
 /*Table structure for table `roles` */
 
@@ -407,11 +407,11 @@ CREATE TABLE `roles` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `roles` */
 
-insert  into `roles`(`id`,`name`,`description`,`created_at`,`updated_at`) values (1,'administrator','Administrator','2018-05-05 11:03:01','2018-05-05 11:03:01'),(2,'commercial','Commercial','2018-05-05 11:03:01','2018-05-05 11:03:01');
+insert  into `roles`(`id`,`name`,`description`,`created_at`,`updated_at`) values (1,'administrator','Administrator','2018-05-05 11:03:01','2018-05-05 11:03:01'),(2,'commercial','Commercial','2018-05-05 11:03:01','2018-05-05 11:03:01'),(3,'client','Client',NULL,NULL);
 
 /*Table structure for table `users` */
 
@@ -427,14 +427,15 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
+  `market_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`),
   UNIQUE KEY `users_username_unique` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=92 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`name`,`email`,`password`,`remember_token`,`created_at`,`updated_at`,`username`,`active`) values (2,'Admin','admin@example.com','$2y$10$.5opd.3Xi2iqr4xFoKzqHuyx7rp67jWS2EMiRAOBqbXF/uRpPfzO6','VVrSgfTBLRsqf6lawkks9muuz8Pdkagpk0whnRM9M9OURKH4F1H0g96bsnUv','2018-05-05 11:03:01','2018-05-19 17:19:56','admin',1),(55,'popi','po1pi@popi.po','$2y$10$VMsGfb2AqV5pil/UmIynWeQGk5qatCTAC9V1W0vOByf8q.OjQ/Wkm',NULL,'2018-05-13 17:25:08','2018-05-19 01:20:36','popi',0),(39,'kiki','kiki@kiki.ki','$2y$10$lATh.wEJVmtwW2PLxYm3meVzTyvJ.MYapwwgxRdcnPTlkhf55OieG',NULL,'2018-05-12 02:07:42','2018-05-12 02:07:42','kiki',0),(40,'lulu','lulu@lulu.lu','$2y$10$Oa6.E9/eIqjM7tNNXiwCDOQkHDABO6QlyS13JRj5ActOZm5FZn9mm',NULL,'2018-05-12 02:09:13','2018-05-19 05:14:21','lulu',1),(37,'popo','popo@popo.po','$2y$10$yYyCiWHFUGSafe/.0bufPO7qZUiykPr1C1aA0DhNgaZD2m.NiWJ4y',NULL,'2018-05-12 02:04:33','2018-05-19 17:22:14','popo',1),(56,'aeae1','aeae@ae.ae','$2y$10$IDY3mJwhkzdXgkO8vN/dOeMRQKzsBZXupMs8icaT7hedxjGlZlWi6',NULL,'2018-05-13 17:32:58','2018-05-19 17:20:03','aeae',1),(41,'pupu','pupu@pupu.pu','$2y$10$aShLiIgkCVyjbfdfMBAchODuRndBE1E3/Qhr4qWKGo8HIIso6mx1a',NULL,'2018-05-12 02:10:32','2018-05-12 02:10:32','pupu',0),(42,'loli','loli@lo.lo','$2y$10$hyluln4uJ1Af6.n78hgWreKVLRlw.yBJZ3qjscQJ2As/XZy/S1rge',NULL,'2018-05-12 02:12:50','2018-05-12 02:12:50','loli',0),(43,'tutu','tutu@tutu.tu','$2y$10$gGAmL/LDmYJbn4JvLJPou.7EE8Q58Sgrg7dLbUJAAtfQ/zBjsx16i',NULL,'2018-05-12 02:18:36','2018-05-12 02:18:36','tutu',0),(44,'tuti','tuti@tuti.tu','$2y$10$u3grXm6OtWUfLpq9ipHcxuDf/pvbEr.Yva03T8THly1pIqTK6t9P.',NULL,'2018-05-12 02:20:39','2018-05-19 17:22:22','tuti',1),(46,'juju','999ty99@999.as','$2y$10$dRmsFYGRBBJkaRM5/TJXNugL313v5kiFvudRWiB/uH4CCReNwpR9u',NULL,'2018-05-12 02:34:22','2018-05-20 01:03:40','juju',1),(54,'pepe','pepe@pepe.pe','$2y$10$X5Fzh3GSvZTik4/WF1fbz.wU0Cb1CapIJlUnW963G/TimUi5dA1vK',NULL,'2018-05-13 17:24:44','2018-05-19 17:22:37','pepe',1),(48,'yeye','dffdff.sdf@ad.df','$2y$10$C6yg1zzdI1r2xhIbshqopOWDwwJblaHw05r7LtiAuwa7Jk1LcwhJu',NULL,'2018-05-12 05:05:00','2018-05-20 01:57:50','yeye',0),(60,'gigi','gigi@gi.gi','$2y$10$8YHlbnxaGxx53BQBr1hWweODSNwICrNQpbvWuzusHgC9t.MeXzzn.',NULL,'2018-05-14 02:17:44','2018-05-19 16:58:53','gigi',1),(51,'sasa','sasa@sasa.sa','$2y$10$H9Ygl4XL30CB2LimY84J/ud32PglC5e7NjLdlx1734u/z6ZbXg/hu',NULL,'2018-05-13 03:58:59','2018-05-19 17:22:26','sasa',1),(52,'nini','nini@nini.in','$2y$10$WdpTqkF1Q/QYcGy1FN/U4eZ9/qVAsZuHRj8SMSAy8hgxgliXzFzXO',NULL,'2018-05-13 04:00:11','2018-05-19 05:14:17','nini',1),(62,'lolo','adminlo@example.com','$2y$10$U5YAtXfqGbormyPtwBg4h.syZKzIDttSfQlvErVdQCJVMGaH8NkEe',NULL,'2018-05-14 02:20:36','2018-05-14 02:20:36','lolo',0),(63,'lele','lulelu@lulu.lu','$2y$10$gxKKbCQyYJyzmNyCojlZWOhPFS7n/WHW50rMaZHxa72OkQd55UeEW',NULL,'2018-05-14 02:20:49','2018-05-14 02:20:49','lele',0),(90,'yuyu','yuyu@yu.yu','$2y$10$8dUay4BsZF/sJYrGhToIKug/6eZU4WzvHaLuMw//4d8HY9UZX.UW.',NULL,'2018-05-20 01:42:10','2018-05-20 01:50:56','yuyu',0),(67,'adaname','adaemail@ada.as','$2y$10$x/qm61J3FHsHCE3u0dG3fOaFUYRsKVEs4dcIp1YPdHkXiiiojRZgG',NULL,'2018-05-16 00:10:34','2018-05-24 04:41:27','adausername',1),(72,'fafa','fafajeje@jeje.je','$2y$10$PDPB/kwxX8PQZiMjYmk1SeNHKVjsaR7yrWOcYYIUZBtSfRGSGkReC',NULL,'2018-05-17 17:09:04','2018-05-19 16:58:49','fafa',1),(71,'fefe','fefe@fe.fe','$2y$10$3V4IPT6YNRD8xQmiRps1Ne7V9bV.k/dykj6Pu7HEKB5YyuBb7D8S6',NULL,'2018-05-17 17:08:50','2018-05-17 17:08:50','fefe',0),(73,'bubu','bubujeje@jeje.je','$2y$10$VgqovhghKWSslxom6AkPvuO05hym7kCEFMe4sdyyAZVvpoGn.Kd/.',NULL,'2018-05-17 17:10:33','2018-05-19 05:04:18','bubu',1),(74,'bibi','bibiadmin@example.com','$2y$10$Z/UBoQLFBGgswP5wsXp4JuuHPdf99ElqKX74UuDixE6paFGLyZNaC',NULL,'2018-05-17 17:10:46','2018-05-19 05:04:14','bibi',0),(76,'awaw','awaw@as.aw','$2y$10$Ltm8eNeMitDoIHuyRn7Ov.vgx1l9gIsya9I7RQJ06YZUVqaBohcUa','vlGw3KZ2FHzPUjZOQ14voUPiAahpRYsKn1I8RuH5csuNMkn2ftHakLlG9Ya1','2018-05-17 17:16:26','2018-05-19 18:51:05','awaw',0),(77,'momo','momojeje@jeje.je','$2y$10$AUR2DzmQvQn4A5GNIQv02eRYDRaiXhui201JL3tpvXXKqQ63RvF86',NULL,'2018-05-17 17:27:48','2018-05-17 17:27:48','momo',0),(78,'mimi','momimojeje@jeje.je','$2y$10$FHGYgGaCwcLJ4Y8lb7L5r.DAk4VATn8JolnSEvt7FNqA9VA4DFIQy',NULL,'2018-05-17 17:28:02','2018-05-17 17:28:02','mimi',0),(79,'cece','cecebibiadmin@example.com','$2y$10$b/hjMXkOySR6CqaFahQKc.fEcbHNgRbPOgDDXtIlRI.dTVWRdiQBW',NULL,'2018-05-17 18:07:25','2018-05-19 16:58:43','cece',1),(80,'veve','jveveeje@jeje.je','$2y$10$oUggXk7SzZ.N1GIohAfldO4ti0ddmPlyIoJE9qqGK/ivN5kEvaSvi',NULL,'2018-05-17 18:07:40','2018-05-17 18:07:40','veve',0),(81,'mumu','mumuaasad@as.as','$2y$10$m8ouG8l2dP0kzUeRRdOYEO0goIdLoBjrvHDRTSbY3T3s9m16lH/J2',NULL,'2018-05-18 16:17:27','2018-05-18 16:17:27','mumu',0),(83,'nino','nino@asd.as1','$2y$10$7DeDBQUjXmhWxqPGlvO0feSkHrbE9FcbJVEOaTcAeGq0pYOIaLReC',NULL,'2018-05-18 21:56:08','2018-05-18 21:57:00','nino',0),(84,'myemail','myemail@myemail.my','$2y$10$9DexNpTW81pLFxFT/s7eP.HjQ60a7rXU3.7gWcl7OAxy.yaARL49y','bIMXx2jFhidQKPBUORcmKNigYy9BP6c0h1yYgAPu278TWD29TgHgGdQgJHnV','2018-05-19 01:48:02','2018-05-19 05:14:13','myemail',1),(85,'xexe','xexe@xexe.xe','$2y$10$.2XE.W/6ABYWru3DSq1UMOcrF4diiTEx5G29tHXRY9aWYM1acWT/S',NULL,'2018-05-19 05:12:28','2018-05-19 05:12:28','xexe',1),(86,'afaf','afafaasad@as.as','$2y$10$yraElUGfJeYMepwlpFe22.ZIHC2H7v175tgRDgM7PXyDfzJYD4AsO',NULL,'2018-05-19 05:13:10','2018-05-19 05:13:10','afaf',1),(87,'acac','acacasad@as.as','$2y$10$b9kqcQBdUVuRS.wxbe33DukZ0Af8eV3uPtfIxLWcGgaI/Au5Yu51u','dkfyEJ63bMm4FbVmgCNNi8cWZsqB67Ku25MBekgzo3OnNtwETHEJNtsXwVq0','2018-05-19 05:13:36','2018-05-23 23:55:08','acac',1),(88,'user','user@example.cu','$2y$10$zb13jIJPnNtUIty2CNQhkOKcP9bJXeT9dwF7t9wBY2StKHWQjxxma','NzzpGviJlDdmgFJDIdZ1lz0e2dR36G57xGnnNw98AYZSVI3lDrjTOJVos0yp','2018-05-19 19:15:30','2018-05-19 19:35:16','user',0);
+insert  into `users`(`id`,`name`,`email`,`password`,`remember_token`,`created_at`,`updated_at`,`username`,`active`,`market_id`) values (2,'Admin','admin@example.com','$2y$10$FAfFfWPJ62MNRNAgd16oTu3dxsBjkuc14j8k.jy5qIOSh2gQcT63G','akzqxD2GDAh4Po2VnYfv3umueEn4XTmaQvcXXrTP39MZcfrsbTRqz8D0jl6v','2018-05-05 11:03:01','2018-07-22 14:44:42','admin',1,0),(39,'Yairis','yairis@rtt.com','$2y$10$xKCmjhYRiLbqTiEbCAkeJeRv31zYKDNuqeD0HZMv/mVsVHjsLbWsq',NULL,'2018-05-12 02:07:42','2018-07-22 14:44:12','yairis',1,0),(40,'Ariadna','ariadna@rtt.com','$2y$10$Th6szVzluWg852NkXqH3YuYv/d2dqRElowhifMRUIYvOGLOa6kpxe',NULL,'2018-05-12 02:09:13','2018-07-25 05:02:04','ariadna',1,0),(63,'Osvaldo','osvaldo@rtt.com','$2y$10$4ssRxJTzrZjKUdTZV7oUne5QAD63slVkF47.1cRpAxrFScodclVbC',NULL,'2018-05-14 02:20:49','2018-07-22 14:44:25','osvaldo',1,0),(83,'Froylan','nino@rtt.com','$2y$10$8cSMzEtPlIuDxj8SNVsz7exCQvyr.bZm0Rm2i/sbGAIGizOrI68QW',NULL,'2018-05-18 21:56:08','2018-07-25 05:08:55','nino',0,0),(88,'Renier','renier@rtt.com','$2y$10$qOCv4ht0ZQFr5JwPIQjhve1xEPSEbdkAyONUZe95B2rA1thOGCpVi','NzzpGviJlDdmgFJDIdZ1lz0e2dR36G57xGnnNw98AYZSVI3lDrjTOJVos0yp','2018-05-19 19:15:30','2018-07-22 14:44:18','renier',0,0),(97,'Client 1','client1@gmail.com','$2y$10$0AMx/Rit1ZU7AJADVsm6mOanPj1AW/onkMAyZSg./7g2l2zmougA.',NULL,'2018-07-25 04:12:59','2018-07-25 05:10:08','client1',1,4),(98,'Client 2 Gonzalez Peres','client2@gmail.com','$2y$10$l5xLdkqWMkuicVwY/qByGu4osLlNIQSZGrdsWyaQJXFAsm6j73EXC',NULL,'2018-07-25 04:14:17','2018-07-25 05:12:42','client2',1,5),(99,'Client 3','client3@gmail.com','$2y$10$RnMmkq8FwoBWhtPtuBASg.GWKwzj6RcZtuB7Bx/BmN6vI6bwUGJIS',NULL,'2018-07-25 05:11:57','2018-07-25 05:11:57','client3',1,1);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

@@ -153,7 +153,7 @@ CREATE TABLE `hotel_contract_settings` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_settings` */
 
@@ -360,11 +360,11 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `migrations` */
 
-insert  into `migrations`(`id`,`migration`,`batch`) values (13,'2014_10_12_000000_create_users_table',1),(14,'2014_10_12_100000_create_password_resets_table',1),(15,'2018_05_05_003827_create_roles_table',1),(16,'2018_05_05_004029_create_role_user_table',1),(17,'2018_05_05_104909_add_username_to_users',1),(18,'2018_05_19_021658_add_active_to_users',2),(22,'2018_05_20_001156_create_brands_table',3),(23,'2018_05_20_045836_create_table_categories',4),(25,'2018_05_24_232152_update_description_type',5),(26,'2018_06_06_190644_add_category_id_to_brands',6),(27,'2018_06_06_193221_add_image_to_brands',7);
+insert  into `migrations`(`id`,`migration`,`batch`) values (13,'2014_10_12_000000_create_users_table',1),(14,'2014_10_12_100000_create_password_resets_table',1),(15,'2018_05_05_003827_create_roles_table',1),(16,'2018_05_05_004029_create_role_user_table',1),(17,'2018_05_05_104909_add_username_to_users',1),(18,'2018_05_19_021658_add_active_to_users',2),(22,'2018_05_20_001156_create_brands_table',3),(23,'2018_05_20_045836_create_table_categories',4),(25,'2018_05_24_232152_update_description_type',5),(26,'2018_06_06_190644_add_category_id_to_brands',6),(27,'2018_06_06_193221_add_image_to_brands',7),(28,'2018_06_16_050516_rename_car_tables',8),(29,'2018_06_16_053034_car_brands_rename_category_id',9),(30,'2018_06_16_170131_create_table_hotel_pax_types',10),(31,'2018_06_17_042713_create_table_hotel_room_types',11),(36,'2018_06_19_003337_create_table_hotel_board_types',12),(37,'2018_06_19_193826_create_table_locations',12),(38,'2018_06_22_035525_add_icon_to_locations',13),(40,'2018_06_22_061440_update_locations_set_code_nullable',14),(41,'2018_06_26_033222_create_table_hotels_chain',15),(42,'2018_06_26_204953_create_table_hotels',16),(43,'2018_06_27_043328_update_hotels_set_locations_nullable',17),(45,'2018_07_13_051222_update_hotel_pax_types_set_age_to_decimal',18),(49,'2018_07_17_220906_create_hotel_hotel_board_type',19),(50,'2018_07_17_221215_create_hotel_hotel_room_type',19),(51,'2018_07_17_221230_create_hotel_hotel_pax_type',19),(52,'2018_07_19_155155_create_hotel_hotel_image',20),(53,'2018_07_20_051344_add_size_to_hotel_image',21),(54,'2018_07_20_052853_add_mime_to_hotel_image',22),(55,'2018_07_21_053948_add_email_to_hotels',23),(56,'2018_07_22_192447_create_table_hotel_contracts',24),(58,'2018_07_22_211857_rename_tables_associated_with_contracts',25),(60,'2018_07_23_050606_update_contract_id_fields',26),(61,'2018_07_23_180635_update_hotel_contracts_add_status',27),(62,'2018_07_24_221632_create_table_markets',28),(69,'2018_07_24_230512_update_users_add_market_id',29),(75,'2018_07_28_193114_create_table_hotel_contract_settings',30),(79,'2018_07_31_031940_create_table_hotel_measures',31),(80,'2018_07_31_041153_create_table_hotel_contract_measure',31),(81,'2018_08_02_063916_redefine_table_contract_settings',32),(82,'2018_08_02_171634_update_hotel_measures_add_code',33),(83,'2018_08_12_183743_update_users_remove_market_asociation',34);
 
 /*Table structure for table `password_resets` */
 
@@ -390,11 +390,11 @@ CREATE TABLE `role_user` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `role_user` */
 
-insert  into `role_user`(`id`,`role_id`,`user_id`,`created_at`,`updated_at`) values (2,1,2,'2018-05-05 11:03:01','2018-05-05 11:03:01'),(19,2,39,'2018-05-12 02:07:42','2018-05-12 02:07:42'),(20,1,40,'2018-05-12 02:09:13','2018-05-12 02:09:13'),(81,3,97,'2018-07-25 04:12:59','2018-07-25 04:12:59'),(89,3,98,'2018-07-25 05:12:42','2018-07-25 05:12:42'),(46,1,63,'2018-05-14 02:20:49','2018-05-14 02:20:49'),(87,1,83,'2018-07-25 05:08:09','2018-07-25 05:08:09'),(88,3,99,'2018-07-25 05:11:57','2018-07-25 05:11:57'),(72,2,88,'2018-05-19 19:15:30','2018-05-19 19:15:30');
+insert  into `role_user`(`id`,`role_id`,`user_id`,`created_at`,`updated_at`) values (2,1,2,'2018-05-05 11:03:01','2018-05-05 11:03:01'),(19,2,39,'2018-05-12 02:07:42','2018-05-12 02:07:42'),(20,1,40,'2018-05-12 02:09:13','2018-05-12 02:09:13'),(46,1,63,'2018-05-14 02:20:49','2018-05-14 02:20:49'),(87,1,83,'2018-07-25 05:08:09','2018-07-25 05:08:09'),(72,2,88,'2018-05-19 19:15:30','2018-05-19 19:15:30');
 
 /*Table structure for table `roles` */
 
@@ -427,15 +427,14 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
-  `market_id` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`),
   UNIQUE KEY `users_username_unique` (`username`)
-) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `users` */
 
-insert  into `users`(`id`,`name`,`email`,`password`,`remember_token`,`created_at`,`updated_at`,`username`,`active`,`market_id`) values (2,'Admin','admin@example.com','$2y$10$FAfFfWPJ62MNRNAgd16oTu3dxsBjkuc14j8k.jy5qIOSh2gQcT63G','akzqxD2GDAh4Po2VnYfv3umueEn4XTmaQvcXXrTP39MZcfrsbTRqz8D0jl6v','2018-05-05 11:03:01','2018-07-22 14:44:42','admin',1,0),(39,'Yairis','yairis@rtt.com','$2y$10$xKCmjhYRiLbqTiEbCAkeJeRv31zYKDNuqeD0HZMv/mVsVHjsLbWsq',NULL,'2018-05-12 02:07:42','2018-07-22 14:44:12','yairis',1,0),(40,'Ariadna','ariadna@rtt.com','$2y$10$Th6szVzluWg852NkXqH3YuYv/d2dqRElowhifMRUIYvOGLOa6kpxe',NULL,'2018-05-12 02:09:13','2018-07-25 05:02:04','ariadna',1,0),(63,'Osvaldo','osvaldo@rtt.com','$2y$10$4ssRxJTzrZjKUdTZV7oUne5QAD63slVkF47.1cRpAxrFScodclVbC',NULL,'2018-05-14 02:20:49','2018-07-22 14:44:25','osvaldo',1,0),(83,'Froylan','nino@rtt.com','$2y$10$8cSMzEtPlIuDxj8SNVsz7exCQvyr.bZm0Rm2i/sbGAIGizOrI68QW',NULL,'2018-05-18 21:56:08','2018-07-25 05:08:55','nino',0,0),(88,'Renier','renier@rtt.com','$2y$10$qOCv4ht0ZQFr5JwPIQjhve1xEPSEbdkAyONUZe95B2rA1thOGCpVi','NzzpGviJlDdmgFJDIdZ1lz0e2dR36G57xGnnNw98AYZSVI3lDrjTOJVos0yp','2018-05-19 19:15:30','2018-07-22 14:44:18','renier',0,0),(97,'Client 1','client1@gmail.com','$2y$10$0AMx/Rit1ZU7AJADVsm6mOanPj1AW/onkMAyZSg./7g2l2zmougA.',NULL,'2018-07-25 04:12:59','2018-07-25 05:10:08','client1',1,4),(98,'Client 2 Gonzalez Peres','client2@gmail.com','$2y$10$l5xLdkqWMkuicVwY/qByGu4osLlNIQSZGrdsWyaQJXFAsm6j73EXC',NULL,'2018-07-25 04:14:17','2018-07-25 05:12:42','client2',1,5),(99,'Client 3','client3@gmail.com','$2y$10$RnMmkq8FwoBWhtPtuBASg.GWKwzj6RcZtuB7Bx/BmN6vI6bwUGJIS',NULL,'2018-07-25 05:11:57','2018-07-25 05:11:57','client3',1,1);
+insert  into `users`(`id`,`name`,`email`,`password`,`remember_token`,`created_at`,`updated_at`,`username`,`active`) values (2,'Admin','admin@example.com','$2y$10$FAfFfWPJ62MNRNAgd16oTu3dxsBjkuc14j8k.jy5qIOSh2gQcT63G','rfkVLLKwr50Ab3RRMplYnAYZf85uXSqtffBMVw2aGCLpw2tplMnJLbrts5KX','2018-05-05 11:03:01','2018-07-22 14:44:42','admin',1),(39,'Yairis','yairis@rtt.com','$2y$10$xKCmjhYRiLbqTiEbCAkeJeRv31zYKDNuqeD0HZMv/mVsVHjsLbWsq',NULL,'2018-05-12 02:07:42','2018-07-22 14:44:12','yairis',1),(40,'Ariadna','ariadna@rtt.com','$2y$10$Th6szVzluWg852NkXqH3YuYv/d2dqRElowhifMRUIYvOGLOa6kpxe',NULL,'2018-05-12 02:09:13','2018-07-25 05:02:04','ariadna',1),(63,'Osvaldo','osvaldo@rtt.com','$2y$10$4ssRxJTzrZjKUdTZV7oUne5QAD63slVkF47.1cRpAxrFScodclVbC',NULL,'2018-05-14 02:20:49','2018-07-22 14:44:25','osvaldo',1),(83,'Froylan','nino@rtt.com','$2y$10$8cSMzEtPlIuDxj8SNVsz7exCQvyr.bZm0Rm2i/sbGAIGizOrI68QW',NULL,'2018-05-18 21:56:08','2018-07-25 05:08:55','nino',0),(88,'Renier','renier@rtt.com','$2y$10$qOCv4ht0ZQFr5JwPIQjhve1xEPSEbdkAyONUZe95B2rA1thOGCpVi','NzzpGviJlDdmgFJDIdZ1lz0e2dR36G57xGnnNw98AYZSVI3lDrjTOJVos0yp','2018-05-19 19:15:30','2018-07-22 14:44:18','renier',0);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

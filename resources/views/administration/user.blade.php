@@ -71,18 +71,6 @@
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
-                                    <div class="input-icon left">
-                                        <i class="fa fa-star"></i>
-                                        <select class="form-control" name="market">
-                                            <option value="">Select a market</option>
-                                        @foreach($markets as $m)
-                                            <option value="{{ $m->id }}">{{ $m->code . ': ' . $m->name }}</option>
-                                        @endforeach
-                                        </select> </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-4 col-sm-6">
-                                <div class="form-group">
                                     <div class="input-icon">
                                         <i class="fa fa-user"></i>
                                         <input type="text" class="form-control" name="name" placeholder="Name"> </div>
@@ -124,8 +112,6 @@
                             <th class="">Role Id</th>
                             <th class="">Name</th>
                             <th class="">Email</th>
-                            <th class="">Market</th>
-                            <th class="">Market Id</th>
                             <th class="">Enabled</th>
                             <th class="" style="min-width: 140px;">Actions</th>
                         </tr>
@@ -165,18 +151,9 @@
                         <select class="form-control" name="role-id">
                             <option value="">Select a role</option>
                         @foreach($roles as $r)
-                            <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
-                        @endforeach
-                        </select> </div>
-                </div>
-                <div class="form-group">
-                    <label>Market</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-star"></i>
-                        <select class="form-control" name="market">
-                            <option value="0">Select a market</option>
-                        @foreach($markets as $m)
-                            <option value="{{ $m->id }}">{{ $m->code . ': ' . $m->name }}</option>
+                            @if($r->name != 'client')
+                                <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
+                            @endif
                         @endforeach
                         </select> </div>
                 </div>
@@ -202,7 +179,7 @@
                 </div>
                 <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
                             <input type="checkbox" value="0" name="active"/>
                             <span></span>
                         </label>
@@ -239,12 +216,6 @@
                         <i class="fa fa-envelope"></i>
                         <input type="text" class="form-control" name="email" readonly> </div>
                 </div>
-                <div class="form-group">
-                    <label>Market</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-star"></i>
-                        <input type="text" class="form-control" name="market" readonly> </div>
-                </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
@@ -261,7 +232,7 @@
                 </div>
                 <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
                             <input type="checkbox" value="0" name="active" onclick="return false;"/>
                             <span></span>
                         </label>
@@ -308,18 +279,9 @@
                         <i class="fa fa-graduation-cap"></i>
                         <select class="form-control" name="role-id">
                         @foreach($roles as $r)
-                            <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
-                        @endforeach
-                        </select> </div>
-                </div>
-                <div class="form-group">
-                    <label>Market</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-star"></i>
-                        <select class="form-control" name="market">
-                            <option value="0">Select a market</option>
-                        @foreach($markets as $m)
-                            <option value="{{ $m->id }}">{{ $m->code . ': ' . $m->name }}</option>
+                            @if($r->name != 'client')
+                                <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
+                            @endif
                         @endforeach
                         </select> </div>
                 </div>
@@ -345,7 +307,7 @@
                 </div>
                 <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Enabled
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
                             <input type="checkbox" value="0" name="active"/>
                             <span></span>
                         </label>
@@ -384,29 +346,6 @@
     $(document).ready(function () {
         var needUpdate = false;
 
-        $('#modal-add :input[name=market]').attr('disabled', 'disabled');
-        $('#modal-edit :input[name=market]').attr('disabled', 'disabled');
-
-        $('#modal-add :input[name=role-id]').on('change', function() {
-            if ($('#modal-add :input[name=role-id] option:selected').attr('data') == 'client') {
-                $('#modal-add :input[name=market]').removeAttr('disabled');
-            }
-            else {
-                $('#modal-add :input[name=market]').attr('disabled', 'disabled');
-                $('#modal-add :input[name=market]').val('0');
-            }
-        });
-
-        $('#modal-edit :input[name=role-id]').on('change', function() {
-            if ($('#modal-edit :input[name=role-id] option:selected').attr('data') == 'client') {
-                $('#modal-edit :input[name=market]').removeAttr('disabled');
-            }
-            else {
-                $('#modal-edit :input[name=market]').attr('disabled', 'disabled');
-                $('#modal-edit :input[name=market]').val('0');
-            }
-        });
-
         $.fn.dataTable.ext.errMode = 'none';
         var table = $('#table').on('error.dt', function(e, settings, techNote, message) {
 
@@ -436,7 +375,7 @@
                 {data: 'username', name: 'username'},
                 {data: 'role', name: 'role'},
                 {data: 'role_id', name: 'role_id', visible: false},
-                {data: 'name', name: 'name', visible: false},
+                {data: 'name', name: 'name'},
                 {
                     targets: 'email',
                     name: 'email',
@@ -445,8 +384,6 @@
                         return data;
                     }
                 },
-                {data: 'market', name: 'market'},
-                {data: 'market_id', name: 'market_id', visible: false},
                 {
                     data: 'active',
                     name: 'active',
@@ -503,13 +440,6 @@
             select.change();
         });
 
-        $.validator.addMethod('addRequiredMarket', function (value, element, param) {
-            if ($('#modal-add :input[name=role-id] option:selected').attr('data') == 'client') {
-                return $('#modal-add :input[name=market]').val() != '0';
-            }
-            return true;
-        }, 'This field is required.');
-
         var formAdd = $('#form-add');
         formAdd.validate({
             errorElement: 'span',
@@ -537,9 +467,6 @@
                 },
                 "role-id": {
                     required: true
-                },
-                market: {
-                    addRequiredMarket: true
                 }
             },
             errorPlacement: function (error, element) {
@@ -617,7 +544,6 @@
             e.preventDefault();
             $('#search-section :input[name=username]').val('');
             $('#search-section :input[name=role]').val('');
-            $('#search-section :input[name=market]').val('');
             $('#search-section :input[name=name]').val('');
             $('#search-section :input[name=email]').val('');
             $('#search-section :input[name=active]').val('');
@@ -637,7 +563,6 @@
                 .columns('name:name').search($('#search-section :input[name=name]').val())
                 .columns('email:name').search($('#search-section :input[name=email]').val())
                 .columns('active:name').search($('#search-section :input[name=active]').val())
-                .columns('market_id:name').search($('#search-section :input[name=market]').val())
             .draw();
         });
 
@@ -655,7 +580,6 @@
             $('#modal-info :input[name=email]').val(data['email']);
             $('#modal-info :input[name=username]').val(data['username']);
             $('#modal-info :input[name=role-id]').val(data['role']);
-            $('#modal-info :input[name=market]').val(data['market']);
             if (data['active'] == 1) {
                 $('#modal-info :input[name=active]').prop('checked', 'checked');
                 $('#modal-info :input[name=active]').val(1);
@@ -676,8 +600,6 @@
             $('#modal-edit :input[name=email]').val(data['email']);
             $('#modal-edit :input[name=username]').val(data['username']);
             $('#modal-edit :input[name=role-id]').val(data['role_id']).trigger('change');
-            var market = data['market_id'] === null ? '0' : data['market_id'];
-            $('#modal-edit :input[name=market]').val(market);
             if (data['active'] == 1) {
                 $('#modal-edit :input[name=active]').prop('checked', 'checked');
                 $('#modal-edit :input[name=active]').val(1);
@@ -723,13 +645,6 @@
             e.preventDefault();
         });
 
-        $.validator.addMethod('editRequiredMarket', function (value, element, param) {
-            if ($('#modal-edit :input[name=role-id] option:selected').attr('data') == 'client') {
-                return $('#modal-edit :input[name=market]').val() != '0';
-            }
-            return true;
-        }, 'This field is required.');
-
         var formEdit = $('#form-edit');
         formEdit.validate({
             errorElement: 'span',
@@ -753,9 +668,6 @@
                 },
                 "role-id": {
                     required: true
-                },
-                market: {
-                    editRequiredMarket: true
                 }
             },
             errorPlacement: function (error, element) {

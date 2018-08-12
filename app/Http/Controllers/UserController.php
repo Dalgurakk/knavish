@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Market;
-use App\Role;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\User;
@@ -33,13 +31,10 @@ class UserController extends Controller
             ->select('roles.id', 'roles.description', 'roles.name')
             ->get();
 
-        $markets = Market::where('active', '1')->get();
-
         $data['breadcrumb'] = $breadcrumb;
         $data['menuAdministration'] = 'selected';
         $data['submenuUser'] = 'selected';
         $data['roles'] = $roles;
-        $data['markets'] = $markets;
 
         return view('administration.user')->with($data);
     }
@@ -50,10 +45,9 @@ class UserController extends Controller
         $users = DB::table('users')
             ->select(
                 'users.id', 'users.name', 'users.email', 'users.username', 'roles.name as role',
-                'roles.id as role_id', 'users.active', 'markets.name as market', 'markets.id as market_id')
+                'roles.id as role_id', 'users.active')
             ->join('role_user', 'role_user.user_id', '=', 'users.id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
-            ->leftJoin('markets', 'users.market_id', '=', 'markets.id')
             ->get();
         return DataTables::of($users)->make(true);
     }
@@ -84,15 +78,6 @@ class UserController extends Controller
             $user->active = Input::get('active') == 1 ? true : false;
 
             try {
-                $role = Role::find(Input::get('role-id'));
-                if($role->name == 'client') {
-                    $market = Market::find(Input::get('market'));
-                    if ($market === null)
-                        throw new Exception('Market required.');
-                    else
-                        $user->market_id = $market->id;
-                }
-                else $user->market_id = 0;
                 $user->save();
                 $user->roles()->attach(Input::get('role-id'));
                 $this->response['status'] = 'success';
@@ -140,15 +125,6 @@ class UserController extends Controller
                 $user->password = bcrypt(Input::get('password'));
 
             try {
-                $role = Role::find(Input::get('role-id'));
-                if($role->name == 'client') {
-                    $market = Market::find(Input::get('market'));
-                    if ($market === null)
-                        throw new Exception('Market required.');
-                    else
-                        $user->market_id = $market->id;
-                }
-                else $user->market_id = 0;
                 $user->save();
                 $user->roles()->sync(Input::get('role-id'));
                 $this->response['status'] = 'success';

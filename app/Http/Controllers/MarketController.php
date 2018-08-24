@@ -38,6 +38,7 @@ class MarketController extends Controller
 
         $markets = DB::table('markets')
             ->select('markets.id', 'markets.code', 'markets.name', 'markets.description', 'markets.active')
+            ->where('markets.id', '>', '1')
             ->get();
 
         return DataTables::of($markets)->make(true);

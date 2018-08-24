@@ -30,6 +30,13 @@ class HotelContract extends Model
             ->withTimestamps();
     }
 
+    public function markets() {
+        return $this
+            ->belongsToMany('App\Market')
+            ->withPivot('type', 'value', 'round')
+            ->withTimestamps();
+    }
+
     public function settings() {
         return $this->hasMany('App\HotelContractSetting');
     }

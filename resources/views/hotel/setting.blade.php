@@ -21,12 +21,13 @@
 .item-variable { /*font-weight: 600;background-color: #e8f0fc; border:1px solid #fff !important;*/}
 /*.room-name { word-wrap:break-word;width: 10.1%;}*/
 .select2-selection__rendered { margin-left: 20px; }
-.mt-checkbox-row { margin-bottom: 5px !important; }
-.mt-checkbox-list-row { padding: 0 !important; }
+.mt-checkbox-row { margin-bottom: 10px !important; }
+/*.mt-checkbox-list-row { padding: 0 !important; }*/
 .portlet-body-row { padding-top: 5px !important; padding-bottom: 5px !important }
 .btn-search-submit { margin-top: 10px; }
 .porlet-setting { margin-bottom: 5px !important;}
 /*.medium-porlet { min-height: 0 !important; height: 30px; }*/
+.mt-radio { margin-bottom: 10px !important; }
 </style>
 @stop
 
@@ -60,7 +61,7 @@
                                                 <select class="form-control" name="hotel"></select> </div>
                                         </div>
                                     </div-->
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
                                         <label>Contract</label>
                                         <div class="form-group">
                                             <div class="input-icon">
@@ -78,16 +79,22 @@
                                             </div>
                                         </div>
                                     </div-->
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
                                         <div class="form-group">
                                             <label>Hotel</label>
                                             <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
                                         <div class="form-group">
                                             <label>Valid Period</label>
                                             <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <input type="text" class="form-control" name="status" readonly style="background-color: #fff;">
                                         </div>
                                     </div>
                                     <!--div class="col-lg-4 col-md-4">
@@ -107,7 +114,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-md-3 col-sm-3 col-xs-12">
                         <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
@@ -130,7 +137,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-md-3 col-sm-3 col-xs-12">
                         <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
@@ -149,7 +156,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-md-3 col-sm-3 col-xs-12">
                         <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
@@ -160,6 +167,25 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="mt-checkbox-list mt-checkbox-list-row room-types-list">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3 col-xs-12">
+                        <div class="portlet box green porlet-setting">
+                            <div class="portlet-title porlet-title-setting">
+                                <div class="caption caption-setting">
+                                    <i class="fa fa-star"></i>Market</div>
+                            </div>
+                            <div class="portlet-body" style="padding-bottom: 8px;">
+                                <div class="scroller" style="height:200px">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mt-radio-list market-rate-price-list">
 
                                             </div>
                                         </div>
@@ -408,20 +434,35 @@
         function fillContract(c) {
             var roomTypes = c.room_types;
             var measures = c.measures;
+            var markets = c.markets;
             var contract = c;
-
+            var status = contract.active == 1 ? 'Enabled' : 'Disabled';
             $("#modal-setting :input[name=contract-id]").val(contract.id);
             $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
+            $("#search-accomodation :input[name=status]").val(status);
             $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
             //$("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
             $('.measures-list').html('');
             $.each(measures, function (i, item) {
                 var measure =
                     '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                        '<input type="checkbox" name="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name.toUpperCase() +
+                        '<input type="checkbox" name="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
                         '<span></span>' +
                     '</label>';
                 $('.measures-list').append(measure);
+            });
+
+            $('.market-rate-price-list').html('');
+            $.each(markets, function (i, item) {
+                var checked = '';
+                if (markets[i].id == 1)
+                    checked = 'checked';
+                var market =
+                    '<label class="mt-radio mt-radio-outline custom-radio">' +
+                        '<input type="radio" name="market-rate" id="market-rate-' + markets[i].id + '" value="' + markets[i].id + '" ' + checked + '> ' + markets[i].name +
+                        '<span></span>' +
+                    '</label>';
+                $('.market-rate-price-list').append(market);
             });
 
             $('input[name=row-selected]').on('click', function() {
@@ -442,7 +483,7 @@
             $.each(roomTypes, function (i, item) {
                 var roomType =
                     '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                        '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name.toUpperCase() +
+                        '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
                         '<span></span>' +
                     '</label>';
                 $('.room-types-list').append(roomType);

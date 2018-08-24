@@ -6,9 +6,22 @@
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/jquery-bar-rating-master/dist/themes/fontawesome-stars.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/global/plugins/bootstrap-select/css/bootstrap-select.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/global/plugins/jquery-multi-select/css/multi-select.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css') }}" rel="stylesheet" type="text/css" />
+<style>
+    .ms-container .ms-list { height: 150px; }
+    .ms-container { width: unset; }
+    .tabbable-custom { margin-bottom: 0; }
+    .tabbable-line > .nav-tabs > li { border-bottom: 0 !important; }
+    .custom-radio { margin-bottom: 11px !important; }
+    .tabbable-custom { margin-bottom: 0px; }
+    .ms-container .ms-selectable li.ms-elem-selectable { padding: 5px 10px !important; }
+    .ms-container .ms-selection li.ms-elem-selection { padding: 5px 10px !important; }
+</style>
 @stop
 
 @section('page-title','Manage Contracts')
@@ -273,6 +286,7 @@
                                             </label>
                                         </th>
                                         <th> Id </th>
+                                        <th> Code </th>
                                         <th> Pax Type </th>
                                         <th> From </th>
                                         <th> To </th>
@@ -287,8 +301,9 @@
                                                 <span></span>
                                             </label>
                                         </td>
-                                        <td> {{ $p->id  }} </td>
-                                        <td> {{ $p->code . ': ' . $p->name }} </td>
+                                        <td> {{ $p->id }} </td>
+                                        <td> {{ $p->code }} </td>
+                                        <td> {{ $p->name }} </td>
                                         <td> {{ $p->agefrom }} </td>
                                         <td> {{ $p->ageto }} </td>
                                     </tr>
@@ -349,6 +364,7 @@
                                             </label>
                                         </th>
                                         <th> Id </th>
+                                        <th> Code </th>
                                         <th> Board Type </th>
                                     </tr>
                                 </thead>
@@ -362,11 +378,89 @@
                                             </label>
                                         </td>
                                         <td> {{ $b->id }} </td>
-                                        <td> {{ $b->code . ': ' . $b->name }} </td>
+                                        <td> {{ $b->code }} </td>
+                                        <td> {{ $b->name }} </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet box green ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-star"></i> Market Price Rates </div>
+                    </div>
+                    <div class="portlet-body">
+                        <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
+                        <!--div class="note note-info">
+                            <p>The contract base price rate is included by default.</p>
+                        </div-->
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <select multiple="multiple" class="multi-select" name="select-markets">
+                                    @foreach($markets as $k)
+                                        @if($k->id != 1)
+                                            <option value="{{ $k->id }}">{{ $k->name }}</option>
+                                        @endif
+                                    @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 market-rate-container" style="margin-top: 20px;">
+                                <div class="tabbable-custom">
+                                    <ul class="nav nav-tabs custom-tab">
+                                        <li class="active" data-tab="1">
+                                            <a href="#tab_1_add" data-toggle="tab"> Base </a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content custom-content">
+                                        <div class="tab-pane active" id="tab_1_add" data-tab="1">
+                                            <div class="row" style="margin-top:15px;">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="mt-radio-list" style="padding: 0;">
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="rate_type_1" id="rate_type_percent_1_add" value="1" data-target="rate_percent_value_1_add" data-market="1" checked>
+                                                            <div class="form-group">
+                                                                <input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value_1" id="rate_percent_value_1_add"/>
+                                                            </div>
+                                                            <span style="margin-top: 8px;"></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="rate_type_1" id="rate_type_fee_1_add" value="2" data-target="rate_fee_value_1_add" data-market="1">
+                                                            <div class="form-group">
+                                                                <input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value_1" id="rate_fee_value_1_add" disabled/>
+                                                            </div>
+                                                            <span style="margin-top: 8px;"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="mt-radio-list" style="padding: 0;">
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_add" id="round_method_1_1_add" value="1" data-market="1" checked> Not Round
+                                                            <span></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_add" id="round_method_2_1_add" value="2" data-market="1"> Round Up
+                                                            <span></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_add" id="round_method_3_1_add" value="3" data-market="1"> Round Down
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 market-rate-container-error" style="color:#e73d4a;"></div>
                         </div>
                     </div>
                 </div>
@@ -607,6 +701,66 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="portlet box green ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-star"></i> Market Price Rates </div>
+                    </div>
+                    <div class="portlet-body">
+                        <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
+                        <div class="row">
+                            <div class="col-md-12 market-rate-container">
+                                <div class="tabbable-custom">
+                                    <ul class="nav nav-tabs custom-tab">
+                                        <li class="active" data-tab="1">
+                                            <a href="#tab_1_info" data-toggle="tab"> Base </a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content custom-content">
+                                        <div class="tab-pane active" id="tab_1_info" data-tab="1">
+                                            <div class="row" style="margin-top:15px;">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="mt-radio-list" style="padding: 0;">
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="rate_type_1" id="rate_type_percent_1_info" value="1" data-target="rate_percent_value_1_info" data-market="1" checked onclick="return false;">
+                                                            <div class="form-group">
+                                                                <input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value_1" id="rate_percent_value_1_info" readonly/>
+                                                            </div>
+                                                            <span style="margin-top: 8px;"></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="rate_type_1" id="rate_type_fee_1_info" value="2" data-target="rate_fee_value_1_info" data-market="1" onclick="return false;">
+                                                            <div class="form-group">
+                                                                <input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value_1" id="rate_fee_value_1_info" readonly/>
+                                                            </div>
+                                                            <span style="margin-top: 8px;"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="mt-radio-list" style="padding: 0;">
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_info" id="round_method_1_1_info" value="1" data-market="1" checked onclick="return false;"> Not Round
+                                                            <span></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_info" id="round_method_2_1_info" value="2" data-market="1" onclick="return false;"> Round Up
+                                                            <span></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_info" id="round_method_3_1_info" value="3" data-market="1" onclick="return false;"> Round Down
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -885,6 +1039,80 @@
                         </div>
                     </div>
                 </div>
+                <!--div class="portlet box green ">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-star"></i> Market Price Rates </div>
+                    </div>
+                    <div class="portlet-body">
+                        <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <select multiple="multiple" class="multi-select" name="select-markets">
+                                    @foreach($markets as $k)
+                                        @if($k->id != 1)
+                                            <option value="{{ $k->id }}">{{ $k->name }}</option>
+                                        @endif
+                                    @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 market-rate-container" style="margin-top: 20px;">
+                                <div class="tabbable-custom">
+                                    <ul class="nav nav-tabs custom-tab">
+                                        <li class="active" data-tab="1">
+                                            <a href="#tab_1_add" data-toggle="tab"> Base </a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content custom-content">
+                                        <div class="tab-pane active" id="tab_1_add" data-tab="1">
+                                            <div class="row" style="margin-top:15px;">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="mt-radio-list" style="padding: 0;">
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="rate_type_1" id="rate_type_percent_1_add" value="1" data-target="rate_percent_value_1_add" data-market="1" checked>
+                                                            <div class="form-group">
+                                                                <input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value_1" id="rate_percent_value_1_add"/>
+                                                            </div>
+                                                            <span style="margin-top: 8px;"></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="rate_type_1" id="rate_type_fee_1_add" value="2" data-target="rate_fee_value_1_add" data-market="1">
+                                                            <div class="form-group">
+                                                                <input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value_1" id="rate_fee_value_1_add" disabled/>
+                                                            </div>
+                                                            <span style="margin-top: 8px;"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <div class="mt-radio-list" style="padding: 0;">
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_add" id="round_method_1_1_add" value="1" data-market="1" checked> Not Round
+                                                            <span></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_add" id="round_method_2_1_add" value="2" data-market="1"> Round Up
+                                                            <span></span>
+                                                        </label>
+                                                        <label class="mt-radio mt-radio-outline custom-radio">
+                                                            <input type="radio" name="round_method_1_add" id="round_method_3_1_add" value="3" data-market="1"> Round Down
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 market-rate-container-error" style="color:#e73d4a;"></div>
+                        </div>
+                    </div>
+                </div-->
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
@@ -942,12 +1170,136 @@
 <script src="{{ asset('assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/my-moment.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/select2/js/select2.full.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/fuelux/js/spinner.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js') }}" type="text/javascript"></script>
 @stop
 
 @section('custom-scripts')
 <script>
     $(document).ready(function () {
         var needUpdate = false;
+
+        $('#modal-add [id=rate_fee_value_1_add]').TouchSpin({
+            min: -1000000000,
+            max: 1000000000,
+            stepinterval: 50,
+            decimals: 2,
+            maxboostedstep: 10000000,
+            prefix: '$'
+        });
+
+        $('#modal-add [id=rate_percent_value_1_add]').TouchSpin({
+            min: 0,
+            max: 100,
+            step: 1,
+            decimals: 2,
+            boostat: 5,
+            maxboostedstep: 10,
+            postfix: '%'
+        });
+
+        $('#modal-add [id=rate_type_percent_1_add]').change(function() {
+            $('#modal-add [id=rate_fee_value_1_add]').val('');
+            $('#modal-add [id=rate_fee_value_1_add]').attr('disabled', 'disabled');
+            $('#modal-add [id=rate_percent_value_1_add]').removeAttr('disabled');
+        });
+
+        $('#modal-add [id=rate_type_fee_1_add]').change(function() {
+            $('#modal-add [id=rate_percent_value_1_add]').val('');
+            $('#modal-add [id=rate_percent_value_1_add]').attr('disabled', 'disabled');
+            $('#modal-add [id=rate_fee_value_1_add]').removeAttr('disabled');
+        });
+
+        $('#modal-add :input[name=select-markets]').multiSelect({
+            afterSelect: function(value){
+                var li = '<li data-tab="' + value + '">';
+                var content = '<div class="tab-pane" id="tab_' + value + '_add" data-tab="' + value + '">';
+                li += '<a href="#tab_' + value + '_add" data-toggle="tab"> ' + $('#modal-add :input[name=select-markets] option[value=' + value + ']').html() + ' </a></li>';
+                content +=
+                    '<div class="row" style="margin-top:15px;">' +
+                        '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                            '<div class="mt-radio-list" style="padding: 0;">' +
+                                '<label class="mt-radio mt-radio-outline custom-radio">' +
+                                    '<input type="radio" name="rate_type_' + value + '" id="rate_type_percent_' + value + '_add" value="1" data-target="rate_percent_value_' + value + '_add" data-market="' + value + '" checked>' +
+                                    '<div class="form-group">' +
+                                        '<input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value_' + value + '" id="rate_percent_value_' + value + '_add"/>' +
+                                    '</div>' +
+                                    '<span style="margin-top: 8px;"></span>' +
+                                '</label>' +
+                                '<label class="mt-radio mt-radio-outline custom-radio">' +
+                                    '<input type="radio" name="rate_type_' + value + '" id="rate_type_fee_' + value + '_add" value="2" data-target="rate_fee_value_' + value + '_add" data-market="' + value + '">' +
+                                    '<div class="form-group">' +
+                                        '<input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value_' + value + '" id="rate_fee_value_' + value + '_add" disabled/>' +
+                                    '</div>'+
+                                    '<span style="margin-top: 8px;"></span>' +
+                                '</label>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                            '<div class="mt-radio-list" style="padding: 0;">' +
+                                '<label class="mt-radio mt-radio-outline custom-radio">' +
+                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_1_' + value + '" value="1" data-market="' + value + '" checked> Not Round' +
+                                    '<span></span>' +
+                                '</label>' +
+                                '<label class="mt-radio mt-radio-outline custom-radio">' +
+                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_2_' + value + '" value="2" data-market="' + value + '"> Round Up' +
+                                    '<span></span>' +
+                                '</label>' +
+                                '<label class="mt-radio mt-radio-outline custom-radio">' +
+                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_3_' + value + '" value="3" data-market="' + value + '"> Round Down' +
+                                    '<span></span>' +
+                                '</label>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                content += '</div>';
+
+                $('#modal-add .market-rate-container .custom-tab').append(li);
+                $('#modal-add .market-rate-container .custom-content').append(content);
+                $('#modal-add .market-rate-container').show();
+
+                $('#rate_fee_value_' + value + '_add').TouchSpin({
+                    min: -1000000000,
+                    max: 1000000000,
+                    stepinterval: 50,
+                    decimals: 2,
+                    maxboostedstep: 10000000,
+                    prefix: '$'
+                });
+
+                $('#rate_percent_value_' + value + '_add').TouchSpin({
+                    min: 0,
+                    max: 100,
+                    step: 1,
+                    decimals: 2,
+                    boostat: 5,
+                    maxboostedstep: 10,
+                    postfix: '%'
+                });
+
+                $('#rate_type_percent_' + value + '_add').change(function() {
+                    $('#rate_fee_value_' + value + '_add').val('');
+                    $('#rate_fee_value_' + value + '_add').attr('disabled', 'disabled');
+                    $('#rate_percent_value_' + value + '_add').removeAttr('disabled');
+                });
+
+                $('#rate_type_fee_' + value + '_add').change(function() {
+                    $('#rate_percent_value_' + value + '_add').val('');
+                    $('#rate_percent_value_' + value + '_add').attr('disabled', 'disabled');
+                    $('#rate_fee_value_' + value + '_add').removeAttr('disabled');
+                });
+            },
+            afterDeselect: function(value) {
+                $('#modal-add [data-tab="' + value + '"]').remove();
+                $("#modal-add .nav-tabs li").children('a').first().click();
+            },
+            keepOrder: true
+        });
+
+        $('#modal-add :input[name=select-markets]').multiSelect('select', '1');
 
         $('.date-picker').datepicker({
             rtl: App.isRTL(),
@@ -1109,6 +1461,14 @@
             $('#modal-add .select-hotel').val(null).trigger('change');
             desactiveRows(tableAddBoardType);
             desactiveRows(tableAddPaxType);
+            desactiveRows(tableAddMarket);
+            $('#modal-add :input[name=select-markets]').multiSelect('deselect_all');
+            $('#modal-add [data-tab]').each(function() {
+                if($(this).attr('data-tab') != '1') {
+                    $(this).remove();
+                }
+            });
+            $('#modal-add .ms-elem-selectable').removeClass('ms-hover');
         });
 
         $('.lenght-option').on('click', function () {
@@ -1126,6 +1486,21 @@
         jQuery.validator.addMethod("validDate", function(value, element) {
             return this.optional(element) || moment(value,"DD.MM.YYYY",true).isValid();
         }, "Invalid date, use dd.mm.yyyy.");
+
+        $.validator.addMethod('validMarketPriceRate', function (value, element, param) {
+            var valid = true;
+            $('#modal-add [name^="rate_type_"]').each(function () {
+                if($(this).prop('checked')) {
+                    var target = $(this).attr('data-target');
+                    var content = $('#' + target).val();
+                    if (content == '' || content == null) {
+                        valid = false;
+                        return false ;
+                    }
+                }
+            });
+            return valid;
+        }, 'Some market rate price is invalid.');
 
         var formAdd = $('#form-add');
         formAdd.validate({
@@ -1159,6 +1534,9 @@
                 },
                 "count-room-type": {
                     greaterThanZero: true
+                },
+                "market-rate-price": {
+                    validMarketPriceRate: true
                 }
             },
             errorPlacement: function (error, element) {
@@ -1186,12 +1564,16 @@
                     error.insertAfter(element.next());
                 }else if (element.hasClass("select-hotel")) {
                     error.insertAfter(element.next());
+                }else if (element.hasClass('market-rate-price-type')){
+                    error.appendTo('.market-rate-container-error');
+					$('.market-rate-container-error > span').css('color', '#e73d4a');
                 }else {
                     error.insertAfter(element);
                 }
             },
             invalidHandler: function (event, validator) {
                 toastr['error']("Please check the entry fields.", "Error");
+                console.log(validator);
             },
             highlight: function (element) {
                $(element)
@@ -1213,10 +1595,27 @@
                     if($(this).prop('checked'))
                         measures.push($(this).attr("data"));
                 });
+				var markets = [];
+                $('#modal-add [name^="rate_type_"]:checked').each(function () {
+                    var target = $(this).attr('data-target');
+                    var id = $(this).attr('data-market');
+                    var content = $('#' + target).val();
+                    var round = $('#modal-add :input[name="round_method_'+ id + '_add"]:checked').val();
+                    var obj = {
+                        market_id : id,
+                        rate_type : $(this).val(),
+                        value : content,
+                        round_type : round
+                    };
+                    markets.push(obj);
+                });
+
                 formData.append('paxTypes', JSON.stringify(getSelectedRows(tableAddPaxType)));
                 formData.append('boardTypes', JSON.stringify(getSelectedRows(tableAddBoardType)));
+                formData.append('markets', JSON.stringify(getSelectedRows(tableAddMarket)));
                 formData.append('roomTypes', JSON.stringify($('#modal-add .js-data-ajax').val()));
                 formData.append('measures', JSON.stringify(measures));
+                formData.append('markets', JSON.stringify(markets));
                 $.ajax({
                     "url": "{{ route('hotel.contract.create') }}",
                     "type": "POST",
@@ -1246,6 +1645,7 @@
                                 $('#modal-add .select-hotel').val(null).trigger('change');
                                 desactiveRows(tableAddBoardType);
                                 desactiveRows(tableAddPaxType);
+                                desactiveRows(tableAddMarket);
                             }
                             else {
                                 toastr['error'](response.message, "Error");
@@ -1395,7 +1795,8 @@
             var boardTypes = contract.board_types;
             var roomTypes = contract.room_types;
             var measures = contract.measures;
-            //console.log(measures);
+            var markets = contract.markets;
+            //console.log(markets);
 
             $('#modal-info :input[name=name]').val(contract.name);
             $('#modal-info :input[name=valid-from]').val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY'));
@@ -1424,6 +1825,159 @@
             $('#modal-info [name="check-measures[]"]').prop('checked', '');
             for (var i = 0; i < measures.length; i++) {
                 $('#modal-info [name="check-measures[]"][data="' + measures[i].id + '"]').prop('checked', 'checked');
+            }
+
+            $('#modal-info [data-tab]').each(function() {
+                if($(this).attr('data-tab') != '1') {
+                    $(this).remove();
+                }
+            });
+            $("#modal-info .nav-tabs li").children('a').first().click();
+
+            $('#modal-info [id=rate_fee_value_1_info]').val('');
+            $('#modal-info [id=rate_fee_value_1_info]').attr('disabled', 'disabled');
+            $('#rate_fee_value_1_info').TouchSpin({
+                min: -1000000000,
+                max: 1000000000,
+                stepinterval: 50,
+                decimals: 2,
+                maxboostedstep: 10000000,
+                prefix: '$'
+            });
+            $('#modal-info [id=rate_percent_value_1_info]').val('');
+            $('#modal-info [id=rate_percent_value_1_info]').attr('disabled', 'disabled');
+            $('#rate_percent_value_1_info').TouchSpin({
+                min: 0,
+                max: 100,
+                step: 1,
+                decimals: 2,
+                boostat: 5,
+                maxboostedstep: 10,
+                postfix: '%'
+            });
+
+            for (var i = 0; i < markets.length; i++) {
+                var pivot = markets[i].pivot;
+                if(markets[i].id == 1) {
+                    if (pivot.type == '1') {
+                        $('#modal-info [id=rate_percent_value_1_info]').val(pivot.value);
+                        $('#modal-info [id=rate_type_percent_1_info]').prop('checked', 'checked');
+                    }
+                    else if (pivot.type == '2') {
+                        $('#modal-info [id=rate_fee_value_1_info]').val(pivot.value);
+                        $('#modal-info [id=rate_type_fee_1_info]').prop('checked', 'checked');
+                    }
+
+                    if (pivot.round == '1') {
+                        $('#modal-info [id=round_method_1_1_info]').prop('checked', 'checked');
+                    }
+                    else if (pivot.round == '2') {
+                        $('#modal-info [id=round_method_2_1_info]').prop('checked', 'checked');
+                    }
+                    else if (pivot.round == '3') {
+                        $('#modal-info [id=round_method_3_1_info]').prop('checked', 'checked');
+                    }
+                }
+                else {
+                    var li = '<li data-tab="' + markets[i].id + '">';
+                    var content = '<div class="tab-pane" id="tab_' + markets[i].id + '_info" data-tab="' + markets[i].id + '">';
+                    li += '<a href="#tab_' + markets[i].id + '_info" data-toggle="tab"> ' + markets[i].name + ' </a></li>';
+                    content +=
+                        '<div class="row" style="margin-top:15px;">' +
+                            '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                                '<div class="mt-radio-list" style="padding: 0;">' +
+                                    '<label class="mt-radio mt-radio-outline custom-radio">';
+                    if (pivot.type == '1') {
+                        content +=      '<input type="radio" name="rate_type_' + markets[i].id + '" id="rate_type_percent_' + markets[i].id + '_info" value="1" data-target="rate_percent_value_' + markets[i].id + '_info" data-market="' + markets[i].id + '" checked onclick="return false;">' +
+                                        '<div class="form-group">' +
+                                            '<input class="form-control percent" placeholder="Percent" type="text" value="' + pivot.value + '" name="rate_percent_value_' + markets[i].id + '" id="rate_percent_value_' + markets[i].id + '_info" disabled/>' +
+                                        '</div>';
+                    }
+                    else {
+                        content +=      '<input type="radio" name="rate_type_' + markets[i].id + '" id="rate_type_percent_' + markets[i].id + '_info" value="1" data-target="rate_percent_value_' + markets[i].id + '_info" data-market="' + markets[i].id + '" onclick="return false;">' +
+                                        '<div class="form-group">' +
+                                            '<input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value_' + markets[i].id + '" id="rate_percent_value_' + markets[i].id + '_info" disabled/>' +
+                                        '</div>';
+                    }
+                    content +=
+                                        '<span style="margin-top: 8px;"></span>' +
+                                    '</label>' +
+                                    '<label class="mt-radio mt-radio-outline custom-radio">';
+                    if (pivot.type == '2') {
+                        content +=      '<input type="radio" name="rate_type_' + markets[i].id + '" id="rate_type_fee_' + markets[i].id + '_info" value="2" data-target="rate_fee_value_' + markets[i].id + '_info" data-market="' + markets[i].id + '" checked onclick="return false;">' +
+                                        '<div class="form-group">' +
+                                            '<input class="form-control fee" placeholder="Fee" type="text" value="' + pivot.value + '" name="rate_fee_value_' + markets[i].id + '" id="rate_fee_value_' + markets[i].id + '_info" disabled/>' +
+                                        '</div>';
+                    }
+                    else {
+                        content +=      '<input type="radio" name="rate_type_' + markets[i].id + '" id="rate_type_fee_' + markets[i].id + '_info" value="2" data-target="rate_fee_value_' + markets[i].id + '_info" data-market="' + markets[i].id + '" onclick="return false;">' +
+                                        '<div class="form-group">' +
+                                            '<input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value_' + markets[i].id + '" id="rate_fee_value_' + markets[i].id + '_info" disabled/>' +
+                                        '</div>';
+                    }
+                    content +=
+                                        '<span style="margin-top: 8px;"></span>' +
+                                    '</label>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                                '<div class="mt-radio-list" style="padding: 0;">' +
+                                    '<label class="mt-radio mt-radio-outline custom-radio">';
+                    if (pivot.round == '1') {
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_1_' + markets[i].id + '_info" value="1" data-market="' + markets[i].id + '" checked onclick="return false;"> Not Round';
+                    }
+                    else {
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_1_' + markets[i].id + '_info" value="1" data-market="' + markets[i].id + '" onclick="return false;"> Not Round';
+                    }
+                    content +=
+                                        '<span></span>' +
+                                    '</label>' +
+                                    '<label class="mt-radio mt-radio-outline custom-radio">';
+                    if (pivot.round == '2') {
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_2_' + markets[i].id + '_info" value="2" data-market="' + markets[i].id + '" checked onclick="return false;"> Round Up';
+                    }
+                    else {
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_2_' + markets[i].id + '_info" value="2" data-market="' + markets[i].id + '" onclick="return false;"> Round Up';
+                    }
+                    content +=
+                                        '<span></span>' +
+                                    '</label>' +
+                                    '<label class="mt-radio mt-radio-outline custom-radio">';
+                    if (pivot.round == '3') {
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_3_' + markets[i].id + '_info" value="3" data-market="' + markets[i].id + '" checked onclick="return false;"> Round Down';
+                    }
+                    else {
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_3_' + markets[i].id + '_info" value="3" data-market="' + markets[i].id + '" onclick="return false;"> Round Down';
+                    }
+                    content +=
+                                    '<span></span>' +
+                                    '</label>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                    content += '</div>';
+                    $('#modal-info .market-rate-container .custom-tab').append(li);
+                    $('#modal-info .market-rate-container .custom-content').append(content);
+
+                    $('#rate_fee_value_' + markets[i].id + '_info').TouchSpin({
+                        min: -1000000000,
+                        max: 1000000000,
+                        stepinterval: 50,
+                        decimals: 2,
+                        maxboostedstep: 10000000,
+                        prefix: '$'
+                    });
+
+                    $('#rate_percent_value_' + markets[i].id + '_info').TouchSpin({
+                        min: 0,
+                        max: 100,
+                        step: 1,
+                        decimals: 2,
+                        boostat: 5,
+                        maxboostedstep: 10,
+                        postfix: '%'
+                    });
+                }
             }
 
             tableInfoPaxType.api().clear();
@@ -1801,6 +2355,35 @@
         tableAddBoardType.on('change', 'tbody tr .checkboxes', function () {
             $(this).parents('tr').toggleClass("active");
             $('#modal-add :input[name=count-board-type]').val(countSelectedRecords(tableAddBoardType));
+        });
+
+        var tableAddMarket = $('#modal-add .table-market').dataTable({
+            "sDom": "t",
+            "columnDefs": [
+                { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
+                { 'visible': false, 'targets': [1] }
+            ],
+            "order": [[ 2, "asc" ]],
+            "autoWidth": false,
+            "lengthMenu": [[-1], ["All"]]
+        });
+
+        tableAddMarket.find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).prop("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).prop("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+        });
+
+        tableAddMarket.on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
         });
 
         var tableAddRoomType = $('#modal-add .table-room-type').dataTable({

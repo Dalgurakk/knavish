@@ -7,6 +7,7 @@ use App\HotelContract;
 use App\HotelContractSetting;
 use App\HotelMeasure;
 use App\HotelPaxType;
+use App\Market;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -18,6 +19,10 @@ use Carbon;
 class HotelContractController extends Controller
 {
     private $response;
+
+    /*round
+    ceil
+    floor*/
 
     public function __construct() {
         $this->middleware('auth');
@@ -33,7 +38,9 @@ class HotelContractController extends Controller
 
         $paxTypes = HotelPaxType::where('active', '1')->get();
         $boardTypes = HotelBoardType::where('active', '1')->get();
-        $measures = HotelMeasure::where('active', '1')->orderBy('id', 'asc')->get();
+        //$measures = HotelMeasure::where('active', '1')->orderBy('id', 'asc')->get();
+        $measures = HotelMeasure::where('active', '1')->whereIn('code', ['cost', 'price'])->orderBy('id', 'asc')->get();
+        $markets = Market::where('active', '1')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
@@ -41,6 +48,7 @@ class HotelContractController extends Controller
         $data['paxTypes'] = $paxTypes;
         $data['boardTypes'] = $boardTypes;
         $data['measures'] = $measures;
+        $data['markets'] = $markets;
 
         return view('hotel.contract')->with($data);
     }
@@ -94,7 +102,7 @@ class HotelContractController extends Controller
         foreach ($result as $r) {
             $query = HotelContract::with([
                 'hotel', 'hotel.hotelChain', 'hotel.country', 'hotel.state', 'hotel.city',
-                'roomTypes', 'paxTypes', 'boardTypes', 'measures'])
+                'roomTypes', 'paxTypes', 'boardTypes', 'markets', 'measures'])
                 ->where('id', $r->id)->get();
 
             $contract = $query[0];
@@ -148,8 +156,10 @@ class HotelContractController extends Controller
             'hotel' => 'required',
             'roomTypes' => 'required|json',
             'boardTypes' => 'required|json',
-            'paxTypes' => 'required|json'
+            'paxTypes' => 'required|json',
+            'markets' => 'required|json'
         );
+
         $validator = Validator::make(Input::all(), $rules);
 
         if ($validator->fails()) {
@@ -172,6 +182,7 @@ class HotelContractController extends Controller
                 $roomTypes = json_decode(Input::get('roomTypes'), true);
                 $boardTypes = json_decode(Input::get('boardTypes'));
                 $paxTypes = json_decode(Input::get('paxTypes'));
+                $markets = json_decode(Input::get('markets'));
                 $temp = json_decode(Input::get('measures'));
                 $measures = array(1, 2);
                 foreach ($temp as $key => $val) {
@@ -189,6 +200,13 @@ class HotelContractController extends Controller
                 }
                 foreach ($measures as $m) {
                     $contract->measures()->attach($m);
+                }
+                foreach ($markets as $k) {
+                    $contract->markets()->attach($k->market_id, [
+                        'type' => $k->rate_type,
+                        'value' => $k->value,
+                        'round' => $k->round_type
+                    ]);
                 }
                 DB::commit();
 
@@ -281,6 +299,7 @@ class HotelContractController extends Controller
             $contract->boardTypes()->detach();
             $contract->roomTypes()->detach();
             $contract->measures()->detach();
+            $contract->markets()->detach();
             $contract->settings()->delete();
             $contract->delete();
             DB::commit();
@@ -320,7 +339,7 @@ class HotelContractController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $id = Input::get('contractId');
-        $query = HotelContract::with(['hotel', 'roomTypes', 'measures']);
+        $query = HotelContract::with(['hotel', 'roomTypes', 'markets', 'measures']);
 
         if($id != '') {
             $query->where('id', $id);
@@ -347,7 +366,7 @@ class HotelContractController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $string = '%' . Input::get('q') . '%';
-        $contracts = HotelContract::with(['hotel', 'roomTypes', 'measures'])
+        $contracts = HotelContract::with(['hotel', 'roomTypes', 'markets', 'measures'])
             ->where('name', 'like', $string)
             ->orderBy('name', 'asc')
             ->get();
@@ -610,7 +629,7 @@ class HotelContractController extends Controller
                         '<div class="caption caption-setting">' .
                             '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . '</div>' .
                         '<div class="tools tools-setting">' .
-                            '<a href="" class="fullscreen"> </a>' .
+                            '<!--a href="" class="fullscreen"> </a-->' .
                             '<a href="javascript:;" class="collapse"> </a>' .
                         '</div>' .
                     '</div>' .

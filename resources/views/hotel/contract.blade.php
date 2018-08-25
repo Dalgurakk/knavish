@@ -1685,7 +1685,7 @@
             focusInvalid: false,
             ignore: "",
             rules: {
-                /*name: {
+                name: {
                     required: true
                 },
                 "hotel-id": {
@@ -1710,7 +1710,7 @@
                 },
                 "count-room-type": {
                     greaterThanZero: true
-                },*/
+                },
                 "market-rate-price": {
                     validMarketPriceRate2: true
                 }

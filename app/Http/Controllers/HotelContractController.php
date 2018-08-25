@@ -237,7 +237,8 @@ class HotelContractController extends Controller
             'roomTypes' => 'required|json',
             'boardTypes' => 'required|json',
             'paxTypes' => 'required|json',
-            'measures' => 'required|json'
+            'measures' => 'required|json',
+            'markets' => 'required|json'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -260,6 +261,7 @@ class HotelContractController extends Controller
                 $contract->save();
                 $roomTypes = json_decode(Input::get('roomTypes'), true);
                 $boardTypes = json_decode(Input::get('boardTypes'));
+                $markets = json_decode(Input::get('markets'));
                 $paxTypes = json_decode(Input::get('paxTypes'));
                 $temp = json_decode(Input::get('measures'));
                 $measures = array(1, 2);
@@ -267,6 +269,15 @@ class HotelContractController extends Controller
                     if($val == 1 || $val == 2) continue;
                     else $measures[] = $val;
                 }
+                $syncMarkets = array();
+                foreach ($markets as $k) {
+                    $syncMarkets[$k->market_id] = array(
+                        'type' => $k->rate_type,
+                        'value' => $k->value,
+                        'round' => $k->round_type
+                    );
+                }
+                $contract->markets()->sync($syncMarkets);
                 $contract->roomTypes()->sync($roomTypes);
                 $contract->boardTypes()->sync($boardTypes);
                 $contract->paxTypes()->sync($paxTypes);

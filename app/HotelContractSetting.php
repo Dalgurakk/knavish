@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class HotelContractSetting extends Model
 {
-    public function contract()
+    public function priceRate()
     {
-        return $this->belongsTo('App\HotelContract');
+        return $this->belongsTo('App\HotelContractMarket');
     }
 }

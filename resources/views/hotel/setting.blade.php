@@ -24,10 +24,11 @@
 .mt-checkbox-row { margin-bottom: 10px !important; }
 /*.mt-checkbox-list-row { padding: 0 !important; }*/
 .portlet-body-row { padding-top: 5px !important; padding-bottom: 5px !important }
-.btn-search-submit { margin-top: 10px; }
-.porlet-setting { margin-bottom: 5px !important;}
+/*.btn-search-submit { margin-top: 10px; }*/
+/*.porlet-setting { margin-bottom: 5px !important;}*/
 /*.medium-porlet { min-height: 0 !important; height: 30px; }*/
 .mt-radio { margin-bottom: 10px !important; }
+.note-custom { padding: 4px 10px !important; margin-bottom: 5px !important; }
 </style>
 @stop
 
@@ -53,15 +54,7 @@
                             </div>
                             <div class="portlet-body">
                                 <div class="row">
-                                    <!--div class="col-lg-4 col-md-4">
-                                        <label>Hotel</label>
-                                        <div class="form-group">
-                                            <div class="input-icon">
-                                                <i class="fa fa-building-o"></i>
-                                                <select class="form-control" name="hotel"></select> </div>
-                                        </div>
-                                    </div-->
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
                                         <label>Contract</label>
                                         <div class="form-group">
                                             <div class="input-icon">
@@ -69,52 +62,26 @@
                                                 <select class="form-control" name="contract"></select> </div>
                                         </div>
                                     </div>
-                                    <!--div class="col-lg-4 col-md-4">
-                                        <div class="form-group">
-                                            <div class="mt-checkbox-list">
-                                                <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px;"> Load old contracts
-                                                    <input type="checkbox" value="1" name="old"/>
-                                                    <span></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div-->
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="col-lg-4 col-md-4 col-sm-4">
                                         <div class="form-group">
                                             <label>Hotel</label>
                                             <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <div class="col-lg-4col-md-4 col-sm-4">
                                         <div class="form-group">
-                                            <label>Valid Period</label>
-                                            <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                        <div class="form-group">
-                                            <label>Status</label>
-                                            <input type="text" class="form-control" name="status" readonly style="background-color: #fff;">
-                                        </div>
-                                    </div>
-                                    <!--div class="col-lg-4 col-md-4">
-                                        <label>State</label>
-                                        <div class="form-group">
+                                            <label>Price Rate</label>
                                             <div class="input-icon">
-                                                <i class="fa fa-building-o"></i>
-                                                <select class="form-control" name="state">
-                                                    <option value="2"><span class="label label-sm label-success"> In Progress </span></option>
-                                                    <option value="1"><span class="label label-sm label-warning"> Pending </span></option>
-                                                    <option value="3"><span class="label label-sm label-danger"> Finished </span></option>
-                                                    <option value="0"><span class="label label-sm label-primary"> All </span></option>
+                                                <i class="fa fa-star"></i>
+                                                <select class="form-control" name="market" id="market">
                                                 </select> </div>
                                         </div>
-                                    </div-->
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
                         <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
@@ -123,40 +90,23 @@
                             <div class="portlet-body" style="padding-bottom: 8px;">
                                 <div class="scroller" style="height:200px">
                                     <div class="row">
-                                        <div class="col-md-12 datepicker-from-container">
+                                        <div class="col-md-12 valid-period">
+                                            <div class="note note-info note-custom">
+                                                <label id="period" style="margin-top: 5px;"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 datepicker-from-container" style="margin-top: 8px;">
 
                                         </div>
                                         <div class="col-md-12 datepicker-to-container">
 
                                         </div>
-                                        <div class="col-md-12">
-                                            <button type="submit" class="btn green btn-search-submit"><i class="fa fa-search"></i> Search</button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
-                        <div class="portlet box green porlet-setting">
-                            <div class="portlet-title porlet-title-setting">
-                                <div class="caption caption-setting">
-                                    <i class="fa fa-table"></i>Rows</div>
-                            </div>
-                            <div class="portlet-body" style="padding-bottom: 8px;">
-                                <div class="scroller" style="height:200px">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="mt-checkbox-list mt-checkbox-list-row measures-list">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
                         <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
@@ -175,17 +125,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
                         <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
-                                    <i class="fa fa-star"></i>Market</div>
+                                    <i class="fa fa-table"></i>Rows</div>
                             </div>
                             <div class="portlet-body" style="padding-bottom: 8px;">
                                 <div class="scroller" style="height:200px">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="mt-radio-list market-rate-price-list">
+                                            <div class="mt-checkbox-list mt-checkbox-list-row measures-list">
 
                                             </div>
                                         </div>
@@ -193,6 +143,9 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="submit" class="btn green btn-search-submit" style="float: right;"> <i class="fa fa-search"></i> Search</button>
                     </div>
                 </div>
             </div>
@@ -213,6 +166,7 @@
     <div class="modal-body">
         <input type="hidden" name="contract-id" value="0">
         <input type="hidden" name="room-type-id" value="0">
+        <input type="hidden" name="market-id" value="0">
         <div class="row">
             <div class="col-md-12" style="margin-bottom: 20px;">
                 <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
@@ -274,7 +228,6 @@
         var formSearch = $('#search-accomodation');
         var contractId = '{{ $contract_id }}';
         var contract = null;
-        var initials = [];
 
         $('.date-picker').datepicker({
             rtl: App.isRTL(),
@@ -326,7 +279,6 @@
 
         $("#search-accomodation :input[name=contract]").on('select2:select select2:unselect', function (e) {
             var value = e.params.data;
-            //console.log(value);
             if(value.selected) {
                 contract = value;
                 fillContract(value);
@@ -359,7 +311,6 @@
                         toastr['warning'](response.message, "Warning");
                     }
                     else {
-                        //console.log(contract);
                         $("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
                         $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
                         fillContract(contract);
@@ -384,13 +335,25 @@
             else {
                 var from = moment($('input[name=from]').datepicker("getDate")).format('DD.MM.YYYY');
                 var to = moment($('input[name=to]').datepicker("getDate")).format('DD.MM.YYYY');
+                var market = $('#market').val();
+                var roomTypes = [];
+                $('[name="room-selected"]:checked').each(function () {
+                    roomTypes.push($(this).val());
+                });
+                var rows = [];
+                $('[name="row-selected"]:checked').each(function () {
+                    rows.push($(this).val());
+                });
                 $.ajax({
                     "url": "{{ route('hotel.contract.settings.data') }}",
                     "type": "POST",
                     "data": {
                         id: contract.id,
                         from:  from,
-                        to: to
+                        to: to,
+                        market: market,
+                        rooms: JSON.stringify(roomTypes),
+                        rows: JSON.stringify(rows)
                     },
                     "beforeSend": function() {
                         App.showMask(true, formSearch);
@@ -407,14 +370,6 @@
                                 $('.result-container').html('');
                                 $('.result-container').append(table);
                                 renderTable(response.from, response.to, contract);
-                                /*$.when(
-                                    renderTable(response.from, response.to, contract)
-                                ).then(setValues(response.data));*/
-
-                                /*for (var i = 0; i < response.data.length; i++) {
-                                    console.log(response.data[i].date)
-                                    $('[data-date=' + response.data.date + '][data-measure=' + response.data.measure + '][data-room-type=' + response.data.room + ']').html(response.data.value);
-                                }*/
                             }
                             else {
                                 toastr['error'](response.message, "Error");
@@ -432,16 +387,17 @@
         }
 
         function fillContract(c) {
+            //console.log(c);
             var roomTypes = c.room_types;
             var measures = c.measures;
             var markets = c.markets;
             var contract = c;
             var status = contract.active == 1 ? 'Enabled' : 'Disabled';
-            $("#modal-setting :input[name=contract-id]").val(contract.id);
             $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
             $("#search-accomodation :input[name=status]").val(status);
-            $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
+            $("#search-accomodation [id=period]").html(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
             //$("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
+
             $('.measures-list').html('');
             $.each(measures, function (i, item) {
                 var measure =
@@ -452,31 +408,11 @@
                 $('.measures-list').append(measure);
             });
 
-            $('.market-rate-price-list').html('');
+            $('#market').empty()
             $.each(markets, function (i, item) {
-                var checked = '';
-                if (markets[i].id == 1)
-                    checked = 'checked';
-                var market =
-                    '<label class="mt-radio mt-radio-outline custom-radio">' +
-                        '<input type="radio" name="market-rate" id="market-rate-' + markets[i].id + '" value="' + markets[i].id + '" ' + checked + '> ' + markets[i].name +
-                        '<span></span>' +
-                    '</label>';
-                $('.market-rate-price-list').append(market);
-            });
-
-            $('input[name=row-selected]').on('click', function() {
-                var $items = $('tr[data-row="' + $(this).val() + '"]');
-                if ($(this).is(':checked')) {
-                    $items.each(function(){
-                        $(this).show();
-                    });
-                }
-                else {
-                    $items.each(function(){
-                        $(this).hide();
-                    });
-                }
+                var option = '<option value="' + markets[i].id + '"> ' + markets[i].name + '</option>';
+                var option = '<option value="' + markets[i].id + '"> ' + markets[i].name + '</option>';
+                $('#market').append(option);
             });
 
             $('.room-types-list').html('');
@@ -546,6 +482,7 @@
             $('#modal-setting :input[name=setting-to]').datepicker( "setEndDate" , new Date(endDate));
 
             $('.measures-container').html('');
+            //console.log(contract);
             for (var i = 0; i < contract.measures.length; i++) {
                 var html =
                 '<div class="row">' +
@@ -583,27 +520,6 @@
         }
 
         function renderTable(from, to, contract) {
-            var start = moment(from, 'DD.MM.YYYY').startOf('month');
-            var end = moment(to, 'DD.MM.YYYY').endOf('month');
-            var html = '';
-            var roomTypes = contract.room_types;
-            var rows = contract.measures;
-
-            $('input[name="room-selected"]').on('click', function() {
-                var $items = $('table[data-room="' + $(this).val() + '"]');
-
-                if ($(this).is(':checked')) {
-                    $items.each(function(){
-                        $(this).show();
-                    });
-                }
-                else {
-                    $items.each(function(){
-                        $(this).hide();
-                    });
-                }
-            });
-
             $('.item-setting').on('click', function() {
                 formAdd.validate().resetForm();
                 formAdd[0].reset();
@@ -621,7 +537,9 @@
                 $('#modal-setting :input[data-set=' + measure + ']').prop('checked', 'checked');
                 $('#modal-setting :input[data-set=' + measure + ']').val($('#modal-setting :input[data-set=' + measure + ']').attr('data-measure-id'));
 
+                $("#modal-setting :input[name=contract-id]").val(contract.id);
                 $("#modal-setting :input[name=room-type-id]").val($(this).attr('data-room-type-id'));
+                $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
 
                 for (var i = 0; i < contract.measures.length; i++) {
                     var date = $(this).attr('data-date');
@@ -630,34 +548,6 @@
                     $('#modal-setting :input[name="' + contract.measures[i].code + '"]').val(value);
                 }
                 $('#modal-setting').modal('show');
-            });
-
-            $('input[name=row-selected]:checked').each(function() {
-                var $items = $('tr[data-row="' + $(this).val() + '"]');
-                $items.each(function(){
-                    $(this).show();
-                });
-            });
-
-            $('input[name=row-selected]:not(:checked)').each(function() {
-                var $items = $('tr[data-row="' + $(this).val() + '"]');
-                $items.each(function(){
-                    $(this).hide();
-                });
-            });
-
-            $('input[name=room-selected]:checked').each(function() {
-                var $items = $('table[data-room="' + $(this).val() + '"]');
-                $items.each(function(){
-                    $(this).show();
-                });
-            });
-
-            $('input[name=room-selected]:not(:checked)').each(function() {
-                var $items = $('table[data-room="' + $(this).val() + '"]');
-                $items.each(function(){
-                    $(this).hide();
-                });
             });
         }
 

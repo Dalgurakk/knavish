@@ -84,7 +84,7 @@ CREATE TABLE `hotel_contract_board_type` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=166 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=168 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_board_type` */
 
@@ -104,11 +104,11 @@ CREATE TABLE `hotel_contract_market` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=62 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_market` */
 
-insert  into `hotel_contract_market`(`id`,`hotel_contract_id`,`market_id`,`type`,`value`,`round`,`created_at`,`updated_at`) values (48,65,1,1,10.00,1,'2018-08-25 02:29:22','2018-08-25 02:29:22'),(47,67,1,1,10.00,1,'2018-08-25 02:29:13','2018-08-25 02:29:13'),(44,66,1,1,10.00,1,'2018-08-25 02:27:12','2018-08-25 02:27:12'),(43,63,1,1,10.00,1,'2018-08-25 02:27:02','2018-08-25 02:27:02'),(42,70,1,1,10.00,1,'2018-08-25 02:26:13','2018-08-25 02:26:13'),(49,62,1,1,10.00,1,'2018-08-25 02:29:31','2018-08-25 02:29:31'),(46,61,1,1,10.00,1,'2018-08-25 02:29:05','2018-08-25 02:29:05'),(45,64,1,1,10.00,1,'2018-08-25 02:28:57','2018-08-25 02:28:57'),(50,71,1,1,10.00,1,'2018-08-25 02:29:39','2018-08-25 02:29:39'),(51,60,1,1,10.00,1,'2018-08-25 02:29:48','2018-08-25 02:29:48');
+insert  into `hotel_contract_market`(`id`,`hotel_contract_id`,`market_id`,`type`,`value`,`round`,`created_at`,`updated_at`) values (48,65,1,1,10.00,1,'2018-08-25 02:29:22','2018-08-25 02:29:22'),(47,67,1,1,10.00,1,'2018-08-25 02:29:13','2018-08-25 02:29:13'),(44,66,1,1,10.00,1,'2018-08-25 02:27:12','2018-08-25 02:27:12'),(43,63,1,1,10.00,1,'2018-08-25 02:27:02','2018-08-25 02:27:02'),(42,70,1,1,10.00,1,'2018-08-25 02:26:13','2018-08-25 16:22:05'),(49,62,1,1,10.00,1,'2018-08-25 02:29:31','2018-08-25 02:29:31'),(46,61,1,1,10.00,1,'2018-08-25 02:29:05','2018-08-25 02:29:05'),(45,64,1,1,10.00,1,'2018-08-25 02:28:57','2018-08-25 02:28:57'),(50,71,1,1,10.00,1,'2018-08-25 02:29:39','2018-08-25 02:29:39'),(51,60,1,1,10.00,1,'2018-08-25 02:29:48','2018-08-25 02:29:48'),(53,72,1,1,10.00,1,'2018-08-26 18:32:20','2018-08-26 18:32:20'),(54,69,1,1,10.00,1,'2018-08-26 18:32:30','2018-08-26 18:32:30'),(55,68,1,1,10.00,1,'2018-08-26 18:32:44','2018-08-26 18:32:44');
 
 /*Table structure for table `hotel_contract_measure` */
 
@@ -121,7 +121,7 @@ CREATE TABLE `hotel_contract_measure` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=225 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=229 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_measure` */
 
@@ -138,7 +138,7 @@ CREATE TABLE `hotel_contract_pax_type` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=212 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=214 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_pax_type` */
 
@@ -155,7 +155,7 @@ CREATE TABLE `hotel_contract_room_type` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=249 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=255 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_room_type` */
 
@@ -167,7 +167,7 @@ DROP TABLE IF EXISTS `hotel_contract_settings`;
 
 CREATE TABLE `hotel_contract_settings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `hotel_contract_id` int(10) unsigned NOT NULL,
+  `hotel_contract_market_id` int(10) unsigned NOT NULL,
   `date` date NOT NULL,
   `settings` json NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -192,11 +192,11 @@ CREATE TABLE `hotel_contracts` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contracts` */
 
-insert  into `hotel_contracts`(`id`,`name`,`hotel_id`,`valid_from`,`valid_to`,`active`,`created_at`,`updated_at`,`status`) values (69,'Mercure Sevilla 2019',9,'2018-11-01','2019-10-31',1,'2018-08-03 01:54:42','2018-08-03 01:54:42',NULL),(70,'Iberostar Playa Alameda 2018',7,'2017-11-01','2018-10-31',1,'2018-08-03 01:59:27','2018-08-25 02:26:13',NULL),(61,'Kawama 2017',64,'2016-11-01','2017-10-31',0,'2018-08-03 01:39:41','2018-08-25 02:29:05',NULL),(62,'Melia Santiago 2017',8,'2016-11-01','2017-10-31',0,'2018-08-03 01:41:06','2018-08-25 02:29:31',NULL),(63,'Iberostar Riviera 2017',6,'2016-11-01','2017-10-31',1,'2018-08-03 01:42:18','2018-08-25 02:27:02',NULL),(64,'IberostarTrinidad 2019',4,'2018-11-01','2019-10-31',1,'2018-08-03 01:44:16','2018-08-25 02:28:57',NULL),(65,'Kawama 2019',64,'2018-11-01','2019-10-31',1,'2018-08-03 01:46:13','2018-08-25 02:29:22',NULL),(60,'Melia Varadero 2017',1,'2017-11-01','2018-10-31',1,'2018-08-03 01:36:54','2018-08-25 02:29:48',NULL),(66,'Iberostar Riviera 2018',6,'2017-11-01','2018-10-31',1,'2018-08-03 01:47:25','2018-08-25 02:27:12',NULL),(67,'Kawama 2018',64,'2017-11-01','2018-10-31',1,'2018-08-03 01:48:30','2018-08-25 02:29:13',NULL),(68,'Palacio Azul 2017',5,'2017-11-01','2018-10-31',1,'2018-08-03 01:53:37','2018-08-03 01:53:37',NULL),(71,'Meliá Santiago 2018',8,'2017-11-01','2018-10-31',1,'2018-08-03 02:00:34','2018-08-25 02:29:39',NULL),(72,'Mercure Sevilla 2018',9,'2017-11-01','2018-10-31',1,'2018-08-03 02:02:04','2018-08-03 02:02:04',NULL);
+insert  into `hotel_contracts`(`id`,`name`,`hotel_id`,`valid_from`,`valid_to`,`active`,`created_at`,`updated_at`,`status`) values (69,'Mercure Sevilla 2019',9,'2018-11-01','2019-10-31',1,'2018-08-03 01:54:42','2018-08-26 18:32:30',NULL),(70,'Iberostar Playa Alameda 2018',7,'2017-11-01','2018-10-31',1,'2018-08-03 01:59:27','2018-08-25 16:22:05',NULL),(61,'Kawama 2017',64,'2016-11-01','2017-10-31',0,'2018-08-03 01:39:41','2018-08-25 02:29:05',NULL),(62,'Melia Santiago 2017',8,'2016-11-01','2017-10-31',0,'2018-08-03 01:41:06','2018-08-25 02:29:31',NULL),(63,'Iberostar Riviera 2017',6,'2016-11-01','2017-10-31',1,'2018-08-03 01:42:18','2018-08-25 02:27:02',NULL),(64,'IberostarTrinidad 2019',4,'2018-11-01','2019-10-31',1,'2018-08-03 01:44:16','2018-08-25 02:28:57',NULL),(65,'Kawama 2019',64,'2018-11-01','2019-10-31',1,'2018-08-03 01:46:13','2018-08-25 02:29:22',NULL),(60,'Melia Varadero 2017',1,'2017-11-01','2018-10-31',1,'2018-08-03 01:36:54','2018-08-25 02:29:48',NULL),(66,'Iberostar Riviera 2018',6,'2017-11-01','2018-10-31',1,'2018-08-03 01:47:25','2018-08-25 02:27:12',NULL),(67,'Kawama 2018',64,'2017-11-01','2018-10-31',1,'2018-08-03 01:48:30','2018-08-25 02:29:13',NULL),(68,'Palacio Azul 2017',5,'2017-11-01','2018-10-31',1,'2018-08-03 01:53:37','2018-08-26 18:32:44',NULL),(71,'Meliá Santiago 2018',8,'2017-11-01','2018-10-31',1,'2018-08-03 02:00:34','2018-08-25 02:29:39',NULL),(72,'Mercure Sevilla 2018',9,'2017-11-01','2018-10-31',1,'2018-08-03 02:02:04','2018-08-26 18:32:20',NULL);
 
 /*Table structure for table `hotel_hotels_chain` */
 
@@ -380,11 +380,11 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=87 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `migrations` */
 
-insert  into `migrations`(`id`,`migration`,`batch`) values (13,'2014_10_12_000000_create_users_table',1),(14,'2014_10_12_100000_create_password_resets_table',1),(15,'2018_05_05_003827_create_roles_table',1),(16,'2018_05_05_004029_create_role_user_table',1),(17,'2018_05_05_104909_add_username_to_users',1),(18,'2018_05_19_021658_add_active_to_users',2),(22,'2018_05_20_001156_create_brands_table',3),(23,'2018_05_20_045836_create_table_categories',4),(25,'2018_05_24_232152_update_description_type',5),(26,'2018_06_06_190644_add_category_id_to_brands',6),(27,'2018_06_06_193221_add_image_to_brands',7),(28,'2018_06_16_050516_rename_car_tables',8),(29,'2018_06_16_053034_car_brands_rename_category_id',9),(30,'2018_06_16_170131_create_table_hotel_pax_types',10),(31,'2018_06_17_042713_create_table_hotel_room_types',11),(36,'2018_06_19_003337_create_table_hotel_board_types',12),(37,'2018_06_19_193826_create_table_locations',12),(38,'2018_06_22_035525_add_icon_to_locations',13),(40,'2018_06_22_061440_update_locations_set_code_nullable',14),(41,'2018_06_26_033222_create_table_hotels_chain',15),(42,'2018_06_26_204953_create_table_hotels',16),(43,'2018_06_27_043328_update_hotels_set_locations_nullable',17),(45,'2018_07_13_051222_update_hotel_pax_types_set_age_to_decimal',18),(49,'2018_07_17_220906_create_hotel_hotel_board_type',19),(50,'2018_07_17_221215_create_hotel_hotel_room_type',19),(51,'2018_07_17_221230_create_hotel_hotel_pax_type',19),(52,'2018_07_19_155155_create_hotel_hotel_image',20),(53,'2018_07_20_051344_add_size_to_hotel_image',21),(54,'2018_07_20_052853_add_mime_to_hotel_image',22),(55,'2018_07_21_053948_add_email_to_hotels',23),(56,'2018_07_22_192447_create_table_hotel_contracts',24),(58,'2018_07_22_211857_rename_tables_associated_with_contracts',25),(60,'2018_07_23_050606_update_contract_id_fields',26),(61,'2018_07_23_180635_update_hotel_contracts_add_status',27),(62,'2018_07_24_221632_create_table_markets',28),(69,'2018_07_24_230512_update_users_add_market_id',29),(75,'2018_07_28_193114_create_table_hotel_contract_settings',30),(79,'2018_07_31_031940_create_table_hotel_measures',31),(80,'2018_07_31_041153_create_table_hotel_contract_measure',31),(81,'2018_08_02_063916_redefine_table_contract_settings',32),(82,'2018_08_02_171634_update_hotel_measures_add_code',33),(83,'2018_08_12_183743_update_users_remove_market_asociation',34),(86,'2018_08_12_193049_create_table_hotel_contract_rates',35);
+insert  into `migrations`(`id`,`migration`,`batch`) values (13,'2014_10_12_000000_create_users_table',1),(14,'2014_10_12_100000_create_password_resets_table',1),(15,'2018_05_05_003827_create_roles_table',1),(16,'2018_05_05_004029_create_role_user_table',1),(17,'2018_05_05_104909_add_username_to_users',1),(18,'2018_05_19_021658_add_active_to_users',2),(22,'2018_05_20_001156_create_brands_table',3),(23,'2018_05_20_045836_create_table_categories',4),(25,'2018_05_24_232152_update_description_type',5),(26,'2018_06_06_190644_add_category_id_to_brands',6),(27,'2018_06_06_193221_add_image_to_brands',7),(28,'2018_06_16_050516_rename_car_tables',8),(29,'2018_06_16_053034_car_brands_rename_category_id',9),(30,'2018_06_16_170131_create_table_hotel_pax_types',10),(31,'2018_06_17_042713_create_table_hotel_room_types',11),(36,'2018_06_19_003337_create_table_hotel_board_types',12),(37,'2018_06_19_193826_create_table_locations',12),(38,'2018_06_22_035525_add_icon_to_locations',13),(40,'2018_06_22_061440_update_locations_set_code_nullable',14),(41,'2018_06_26_033222_create_table_hotels_chain',15),(42,'2018_06_26_204953_create_table_hotels',16),(43,'2018_06_27_043328_update_hotels_set_locations_nullable',17),(45,'2018_07_13_051222_update_hotel_pax_types_set_age_to_decimal',18),(49,'2018_07_17_220906_create_hotel_hotel_board_type',19),(50,'2018_07_17_221215_create_hotel_hotel_room_type',19),(51,'2018_07_17_221230_create_hotel_hotel_pax_type',19),(52,'2018_07_19_155155_create_hotel_hotel_image',20),(53,'2018_07_20_051344_add_size_to_hotel_image',21),(54,'2018_07_20_052853_add_mime_to_hotel_image',22),(55,'2018_07_21_053948_add_email_to_hotels',23),(56,'2018_07_22_192447_create_table_hotel_contracts',24),(58,'2018_07_22_211857_rename_tables_associated_with_contracts',25),(60,'2018_07_23_050606_update_contract_id_fields',26),(61,'2018_07_23_180635_update_hotel_contracts_add_status',27),(62,'2018_07_24_221632_create_table_markets',28),(69,'2018_07_24_230512_update_users_add_market_id',29),(75,'2018_07_28_193114_create_table_hotel_contract_settings',30),(79,'2018_07_31_031940_create_table_hotel_measures',31),(80,'2018_07_31_041153_create_table_hotel_contract_measure',31),(81,'2018_08_02_063916_redefine_table_contract_settings',32),(82,'2018_08_02_171634_update_hotel_measures_add_code',33),(83,'2018_08_12_183743_update_users_remove_market_asociation',34),(86,'2018_08_12_193049_create_table_hotel_contract_rates',35),(89,'2018_08_26_215531_update_hotel_contract_settings_rename_column_hotel_contract_id_to_hotel_contract_market_id',36);
 
 /*Table structure for table `password_resets` */
 

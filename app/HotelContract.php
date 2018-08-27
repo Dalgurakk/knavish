@@ -37,8 +37,8 @@ class HotelContract extends Model
             ->withTimestamps();
     }
 
-    public function settings() {
-        return $this->hasMany('App\HotelContractSetting');
+    public function priceRates() {
+        return $this->hasMany('App\HotelContractMarket');
     }
 
     public function hotel() {

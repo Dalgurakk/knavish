@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\HotelBoardType;
 use App\HotelContract;
+use App\HotelContractMarket;
 use App\HotelContractSetting;
 use App\HotelMeasure;
 use App\HotelPaxType;
@@ -311,7 +312,8 @@ class HotelContractController extends Controller
             $contract->roomTypes()->detach();
             $contract->measures()->detach();
             $contract->markets()->detach();
-            $contract->settings()->delete();
+            //$contract->priceRates()->settings()->delete();
+            $contract->priceRates()->delete();
             $contract->delete();
             DB::commit();
             $this->response['status'] = 'success';
@@ -350,7 +352,18 @@ class HotelContractController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $id = Input::get('contractId');
-        $query = HotelContract::with(['hotel', 'roomTypes', 'markets', 'measures']);
+        $query = HotelContract::with([
+            'hotel',
+            'roomTypes' => function($query) {
+                $query->orderBy('name', 'asc');
+            },
+            'markets' => function($query) {
+                $query->orderBy('name', 'asc');
+            },
+            'measures' => function($query) {
+                $query->orderBy('id', 'asc');
+            },
+        ]);
 
         if($id != '') {
             $query->where('id', $id);
@@ -360,7 +373,7 @@ class HotelContractController extends Controller
             if ($contract === null) {
                 $this->response['status'] = 'error';
                 $this->response['data'] = null;
-                $this->response['message'] = 'There are no contracts available.';
+                $this->response['message'] = 'Contract not available.';
             }
             else
                 $this->response['data'] = $contract;
@@ -400,202 +413,45 @@ class HotelContractController extends Controller
         }
         else {
             $contractId = Input::get('contract-id');
+            $marketId = Input::get('market-id');
             $from = Input::get('setting-from');
             $to = Input::get('setting-to');
             $setPrice = Input::get('set-price');
-            $setAllotment = Input::get('set-allotment');
             $setCost = Input::get('set-cost');
+            /*$setAllotment = Input::get('set-allotment');
             $setStopSale = Input::get('set-stop_sale');
             $setOffer = Input::get('set-offer');
             $setRelease = Input::get('set-release');
-            $setSupplement = Input::get('set-supplement');
+            $setSupplement = Input::get('set-supplement');*/
             $roomTypeId = Input::get('room-type-id');
 
             $start = Carbon::createFromFormat('d.m.Y', $from);
             $end = Carbon::createFromFormat('d.m.Y', $to);
-            $contract = HotelContract::with('roomTypes', 'measures')->where('id', $contractId)->first();
+            $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
 
             for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
-                $contractSetting = HotelContractSetting::where('hotel_contract_id', $contractId)
-                    ->where('date', $m->format('Y-m-d'))->first();
+                $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
                 if ($contractSetting === null) {
                     $contractSetting = new HotelContractSetting();
-                    $contractSetting->hotel_contract_id = $contract->id;
+                    $contractSetting->hotel_contract_market_id = $marketRate->id;
                     $contractSetting->date = $m->format('Y-m-d');
                     $settings = array();
                     if($setPrice != '') {
-                        $obj = new \stdClass();
-                        $obj->measure_id = $setPrice;
-                        $obj->room_type_id = $roomTypeId;
-                        $obj->value = Input::get('price');
-                        $settings[] = $obj;
-                    }
-                    if($setAllotment != '') {
-                        $obj = new \stdClass();
-                        $obj->measure_id = $setAllotment;
-                        $obj->room_type_id = $roomTypeId;
-                        $obj->value = Input::get('allotment');
-                        $settings[] = $obj;
+                        $settings[$roomTypeId][$setPrice] = Input::get('price');
                     }
                     if($setCost != '') {
-                        $obj = new \stdClass();
-                        $obj->measure_id = $setCost;
-                        $obj->room_type_id = $roomTypeId;
-                        $obj->value = Input::get('cost');
-                        $settings[] = $obj;
-                    }
-                    if($setStopSale != '') {
-                        $obj = new \stdClass();
-                        $obj->measure_id = $setStopSale;
-                        $obj->room_type_id = $roomTypeId;
-                        $obj->value = Input::get('stop_sale');
-                        $settings[] = $obj;
-                    }
-                    if($setOffer != '') {
-                        $obj = new \stdClass();
-                        $obj->measure_id = $setOffer;
-                        $obj->room_type_id = $roomTypeId;
-                        $obj->value = Input::get('offer');
-                        $settings[] = $obj;
-                    }
-                    if($setRelease != '') {
-                        $obj = new \stdClass();
-                        $obj->measure_id = $setRelease;
-                        $obj->room_type_id = $roomTypeId;
-                        $obj->value = Input::get('release');
-                        $settings[] = $obj;
-                    }
-                    if($setSupplement != '') {
-                        $obj = new \stdClass();
-                        $obj->measure_id = $setSupplement;
-                        $obj->room_type_id = $roomTypeId;
-                        $obj->value = Input::get('supplement');
-                        $settings[] = $obj;
+                        $settings[$roomTypeId][$setCost] = Input::get('cost');
                     }
                     $contractSetting->settings = json_encode($settings);
                     $contractSetting->save();
                 }
                 else {
-                    $settings = json_decode($contractSetting->settings);
-
-                    if ($setPrice != '') {
-                        $isInSettings = false;
-                        for ($i = 0; $i < count($settings); $i ++) {
-                            if ($settings[$i]->measure_id == $setPrice && $settings[$i]->room_type_id == $roomTypeId){
-                                $settings[$i]->value = Input::get('price');
-                                $isInSettings = true;
-                                break;
-                            }
-                        }
-                        if (!$isInSettings) {
-                            $obj = new \stdClass();
-                            $obj->measure_id = $setPrice;
-                            $obj->room_type_id = $roomTypeId;
-                            $obj->value = Input::get('price');
-                            $settings[] = $obj;
-                        }
+                    $settings = json_decode($contractSetting->settings, true);
+                    if($setPrice != '') {
+                        $settings[$roomTypeId][$setPrice] = Input::get('price');
                     }
-                    if ($setAllotment != '') {
-                        $isInSettings = false;
-                        for ($i = 0; $i < count($settings); $i ++) {
-                            if ($settings[$i]->measure_id == $setAllotment && $settings[$i]->room_type_id == $roomTypeId){
-                                $settings[$i]->value = Input::get('allotment');
-                                $isInSettings = true;
-                                break;
-                            }
-                        }
-                        if (!$isInSettings) {
-                            $obj = new \stdClass();
-                            $obj->measure_id = $setAllotment;
-                            $obj->room_type_id = $roomTypeId;
-                            $obj->value = Input::get('allotment');
-                            $settings[] = $obj;
-                        }
-                    }
-                    if ($setCost != '') {
-                        $isInSettings = false;
-                        for ($i = 0; $i < count($settings); $i ++) {
-                            if ($settings[$i]->measure_id == $setCost && $settings[$i]->room_type_id == $roomTypeId){
-                                $settings[$i]->value = Input::get('cost');
-                                $isInSettings = true;
-                                break;
-                            }
-                        }
-                        if (!$isInSettings) {
-                            $obj = new \stdClass();
-                            $obj->measure_id = $setCost;
-                            $obj->room_type_id = $roomTypeId;
-                            $obj->value = Input::get('cost');
-                            $settings[] = $obj;
-                        }
-                    }
-                    if ($setStopSale != '') {
-                        $isInSettings = false;
-                        for ($i = 0; $i < count($settings); $i ++) {
-                            if ($settings[$i]->measure_id == $setStopSale && $settings[$i]->room_type_id == $roomTypeId){
-                                $settings[$i]->value = Input::get('stop_sale');
-                                $isInSettings = true;
-                                break;
-                            }
-                        }
-                        if (!$isInSettings) {
-                            $obj = new \stdClass();
-                            $obj->measure_id = $setStopSale;
-                            $obj->room_type_id = $roomTypeId;
-                            $obj->value = Input::get('stop_sale');
-                            $settings[] = $obj;
-                        }
-                    }
-                    if ($setOffer != '') {
-                        $isInSettings = false;
-                        for ($i = 0; $i < count($settings); $i ++) {
-                            if ($settings[$i]->measure_id == $setOffer && $settings[$i]->room_type_id == $roomTypeId){
-                                $settings[$i]->value = Input::get('offer');
-                                $isInSettings = true;
-                                break;
-                            }
-                        }
-                        if (!$isInSettings) {
-                            $obj = new \stdClass();
-                            $obj->measure_id = $setOffer;
-                            $obj->room_type_id = $roomTypeId;
-                            $obj->value = Input::get('offer');
-                            $settings[] = $obj;
-                        }
-                    }
-                    if ($setRelease != '') {
-                        $isInSettings = false;
-                        for ($i = 0; $i < count($settings); $i ++) {
-                            if ($settings[$i]->measure_id == $setRelease && $settings[$i]->room_type_id == $roomTypeId){
-                                $settings[$i]->value = Input::get('release');
-                                $isInSettings = true;
-                                break;
-                            }
-                        }
-                        if (!$isInSettings) {
-                            $obj = new \stdClass();
-                            $obj->measure_id = $setRelease;
-                            $obj->room_type_id = $roomTypeId;
-                            $obj->value = Input::get('release');
-                            $settings[] = $obj;
-                        }
-                    }
-                    if ($setSupplement != '') {
-                        $isInSettings = false;
-                        for ($i = 0; $i < count($settings); $i ++) {
-                            if ($settings[$i]->measure_id == $setSupplement && $settings[$i]->room_type_id == $roomTypeId){
-                                $settings[$i]->value = Input::get('supplement');
-                                $isInSettings = true;
-                                break;
-                            }
-                        }
-                        if (!$isInSettings) {
-                            $obj = new \stdClass();
-                            $obj->measure_id = $setSupplement;
-                            $obj->room_type_id = $roomTypeId;
-                            $obj->value = Input::get('supplement');
-                            $settings[] = $obj;
-                        }
+                    if($setCost != '') {
+                        $settings[$roomTypeId][$setCost] = Input::get('cost');
                     }
                     $contractSetting->settings = json_encode($settings);
                     $contractSetting->save();
@@ -614,31 +470,57 @@ class HotelContractController extends Controller
         $id = Input::get('id');
         $from = Input::get('from');
         $to = Input::get('to');
+        $market = Input::get('market');
+        $roomTypes = json_decode(Input::get('rooms'));
+        $measures = json_decode(Input::get('rows'));
         $start = Carbon::createFromFormat('d.m.Y', $from)->startOfMonth();
         $end = Carbon::createFromFormat('d.m.Y', $to)->endOfMonth();
 
-        $contract = HotelContract::with('settings', 'measures', 'roomTypes')->where('id', $id)->first();
-        $contractSettings = $contract->settings;
-        $settings = array();
-
-        foreach ($contractSettings as $s) {
-            $settings[$s->date] = json_decode($s->settings);
-        }
+        $contract = HotelContract::with([
+            'measures' => function($query) use ($measures) {
+                $query
+                    ->whereIn('hotel_measure_id', $measures)
+                    ->orderBy('id', 'asc');
+            },
+            'roomTypes' => function($query) use ($roomTypes) {
+                $query
+                    ->whereIn('hotel_room_type_id', $roomTypes)
+                    ->orderBy('name', 'asc');
+            },
+            'priceRates' => function($query) use ($market) {
+                $query->where('market_id', $market);
+            },
+            'priceRates.settings' => function($query) use ($start, $end){
+                $query
+                    ->orderBy('date', 'asc')
+                    ->where('date', '>=', $start->format('Y-m-d'))
+                    ->where('date', '<=', $end->format('Y-m-d'));
+            },
+            'markets' => function($query) use ($market) {
+                $query->where('market_id', $market);
+            }
+        ])->where('id', $id)->first();
 
         if ($contract === null) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'Invalid contract.';
         }
         else {
+            $settings = array();
+            foreach ($contract->priceRates[0]->settings as $s) {
+                $settings[$s->date] = json_decode($s->settings, true);
+            }
+
             $roomTypes = $contract->roomTypes;
             $rows = $contract->measures;
             $tables = '';
+
             for ($m = $start; $m->lessThanOrEqualTo($end); $m->addMonth()) {
                 $table =
                 '<div class="portlet box green">' .
                     '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                            '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . '</div>' .
+                            '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
                         '<div class="tools tools-setting">' .
                             '<!--a href="" class="fullscreen"> </a-->' .
                             '<a href="javascript:;" class="collapse"> </a>' .
@@ -687,19 +569,16 @@ class HotelContractController extends Controller
                         for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
                             $value = '';
                             if (array_key_exists($i->format('Y-m-d'), $settings)) {
-                                $dateSettings = $settings[$i->format('Y-m-d')];
-                                if (is_array($dateSettings) && count($dateSettings) > 0) {
-                                    foreach ($dateSettings as $d) {
-                                        if ($d->measure_id == $rows[$v]->id && $d->room_type_id == $roomTypes[$r]->id) {
-                                            $value = $d->value;
-                                            break;
-                                        }
-                                    }
-                                }
+                                $data = $settings[$i->format('Y-m-d')];
+                                if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
+                                    $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
                             }
                             $table .=
-                                        '<td class="column-setting item-setting" data-date="' . $i->format('Y-m-d') . '" ' .
-                                        'data-measure-id="' . $rows[$v]->id . '" data-room-type-id="' . $roomTypes[$r]->id . '" ' .
+                                        '<td class="column-setting item-setting"' .
+                                            'data-date="' . $i->format('Y-m-d') . '" ' .
+                                            'data-measure-id="' . $rows[$v]->id . '"' .
+                                            'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
+                                            'data-market-id="' . $market . '" ' .
                                         '>' . $value . '</td>';
                         }
                         $table .=

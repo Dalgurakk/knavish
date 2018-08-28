@@ -123,24 +123,14 @@ class HotelBoardTypeController extends Controller
         $boardType = HotelBoardType::find($id);
 
         try {
-            $hotel = DB::table('hotels')
-                ->join('hotel_hotel_board_type', 'hotel_hotel_board_type.hotel_id', '=', 'hotels.id')
-                ->where('hotel_hotel_board_type.hotel_board_type_id', '=', $boardType->id)
-                ->first();
-            if ($hotel === null) {
-                $boardType->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Board type ' . $boardType->code . ': ' . $boardType->name . ' deleted successfully.';
-                $this->response['data'] = $boardType;
-            }
-            else {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Board type is in use, please check the hotel: ' . $hotel->name . '.';
-            }
+            $boardType->delete();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Board type ' . $boardType->code . ': ' . $boardType->name . ' deleted successfully.';
+            $this->response['data'] = $boardType;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the board type is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);

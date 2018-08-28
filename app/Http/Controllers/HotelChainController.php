@@ -119,23 +119,14 @@ class HotelChainController extends Controller
         $hotelChain = HotelChain::find($id);
 
         try {
-            $hotel = DB::table('hotels')
-                ->where('hotels.hotel_chain_id', '=', $hotelChain->id)
-                ->first();
-            if ($hotel === null) {
-                $hotelChain->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Hotel chain ' . $hotelChain->name . ' deleted successfully.';
-                $this->response['data'] = $hotelChain;
-            }
-            else {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Hotel chain is in use, please check the hotel: ' . $hotel->name . '.';
-            }
+            $hotelChain->delete();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Hotel chain ' . $hotelChain->name . ' deleted successfully.';
+            $this->response['data'] = $hotelChain;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the hotel chain is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
 

@@ -205,6 +205,15 @@ class HotelController extends Controller
         $hotel = Hotel::find($id);
 
         try {
+            $hotelImages = HotelImage::where('hotel_id', $hotel->id)->get();
+            foreach ($hotelImages as $hotelImage) {
+                if ($hotelImage->image != null && file_exists($this->uploadPath . $hotelImage->image)) {
+                    unlink($this->uploadPath . $hotelImage->image);
+                }
+                if ($hotelImage->image != null && file_exists($this->uploadThumbnailPath . $hotelImage->image)) {
+                    unlink($this->uploadThumbnailPath . $hotelImage->image);
+                }
+            }
             $hotel->delete();
             $this->response['status'] = 'success';
             $this->response['message'] = 'Hotel ' . $hotel->name . ' deleted successfully.';
@@ -212,7 +221,7 @@ class HotelController extends Controller
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed probably the hotel is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);
@@ -336,21 +345,6 @@ class HotelController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $string = '%' . Input::get('q') . '%';
-        /*$hotels = DB::table('hotels')
-            ->whereIn('hotels.id', function($query) {
-                $query->select(DB::raw('hotel_contracts.hotel_id'))
-                    ->from('hotel_contracts')
-                    ->whereRaw('hotel_contracts.hotel_id = hotels.id');
-            })
-            ->where('hotels.name', 'like', $temp)
-            ->orderBy('hotels.name', 'asc')
-            ->get();
-
-        foreach ($hotels as $h) {
-            $contracts = HotelContract::with('roomTypes')->where('hotel_id', $h->id)->get();
-            $h->contracts = $contracts;
-        }*/
-
         $hotels = Hotel::with('contracts')
             ->whereHas('contracts')
             ->where('hotels.name', 'like', $string)

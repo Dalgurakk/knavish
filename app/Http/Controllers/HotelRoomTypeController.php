@@ -184,24 +184,14 @@ class HotelRoomTypeController extends Controller
         $roomType = HotelRoomType::find($id);
 
         try {
-            $hotel = DB::table('hotels')
-                ->join('hotel_hotel_room_type', 'hotel_hotel_room_type.hotel_id', '=', 'hotels.id')
-                ->where('hotel_hotel_room_type.hotel_room_type_id', '=', $roomType->id)
-                ->first();
-            if ($hotel === null) {
-                $roomType->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Room type ' . $roomType->code . ': ' . $roomType->name . ' deleted successfully.';
-                $this->response['data'] = $roomType;
-            }
-            else {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Room type is in use, please check the hotel: ' . $hotel->name . '.';
-            }
+            $roomType->delete();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Room type ' . $roomType->code . ': ' . $roomType->name . ' deleted successfully.';
+            $this->response['data'] = $roomType;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the room type is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);

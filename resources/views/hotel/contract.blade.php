@@ -464,7 +464,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="portlet box green ">
+                <!--div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
@@ -492,7 +492,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
         </div>
     </div>
@@ -764,7 +764,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="portlet box green ">
+                <!--div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
@@ -783,7 +783,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
         </div>
     </div>
@@ -1113,7 +1113,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="portlet box green ">
+                <!--div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
@@ -1141,7 +1141,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div-->
             </div>
         </div>
     </div>
@@ -1850,18 +1850,22 @@
             var roomTypes = contract.room_types;
             var measures = contract.measures;
             var markets = contract.markets;
+            var country = hotel.country != null ? hotel.country.name : '';
+            var state = hotel.state != null ? hotel.state.name : '';
+            var city = hotel.city != null ? hotel.city.name : '';
+            var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
 
             $('#modal-info :input[name=name]').val(contract.name);
             $('#modal-info :input[name=valid-from]').val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY'));
             $('#modal-info :input[name=valid-to]').val(moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
             $('#modal-info :input[name=hotel]').val(hotel.name);
-            $('#modal-info :input[name=country-text]').val(hotel.country.name);
-            $('#modal-info :input[name=state-text]').val(hotel.state.name);
-            $('#modal-info :input[name=city-text]').val(hotel.city.name);
+            $('#modal-info :input[name=country-text]').val(country);
+            $('#modal-info :input[name=state-text]').val(state);
+            $('#modal-info :input[name=city-text]').val(city);
             $('#modal-info :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-info :input[name=address]').val(hotel.address);
             $('#modal-info :input[name=category]').barrating('set', hotel.category);
-            $('#modal-info :input[name=hotel-chain]').val(hotel.hotel_chain.name);
+            $('#modal-info :input[name=hotel-chain]').val(hotelChain);
             $('#modal-info :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-info :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-info :input[name=web-site]').val(hotel.web_site);
@@ -2222,6 +2226,10 @@
             var roomTypes = contract.room_types;
             var measures = contract.measures;
             var markets = contract.markets;
+            var country = hotel.country != null ? hotel.country.name : '';
+            var state = hotel.state != null ? hotel.state.name : '';
+            var city = hotel.city != null ? hotel.city.name : '';
+            var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
 
             $('#modal-edit :input[name=id]').val(contract.id);
             $('#modal-edit :input[name=hotel-id]').val(hotel.id);
@@ -2229,13 +2237,13 @@
             $('#modal-edit :input[name=name]').val(contract.name);
             $('#modal-edit :input[name=valid-from]').datepicker("setDate" , new Date(moment(contract.valid_from, 'YYYY-MM-DD')));
             $('#modal-edit :input[name=valid-to]').datepicker("setDate" , new Date(moment(contract.valid_to, 'YYYY-MM-DD')));
-            $('#modal-edit :input[name=country-text]').val(hotel.country.name);
-            $('#modal-edit :input[name=state-text]').val(hotel.state.name);
-            $('#modal-edit :input[name=city-text]').val(hotel.city.name);
+            $('#modal-edit :input[name=country-text]').val(country);
+            $('#modal-edit :input[name=state-text]').val(state);
+            $('#modal-edit :input[name=city-text]').val(city);
             $('#modal-edit :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-edit :input[name=address]').val(hotel.address);
             $('#modal-edit :input[name=category]').barrating('set', hotel.category);
-            $('#modal-edit :input[name=hotel-chain]').val(hotel.hotel_chain.name);
+            $('#modal-edit :input[name=hotel-chain]').val(hotelChain);
             $('#modal-edit :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-edit :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-edit :input[name=web-site]').val(hotel.web_site);

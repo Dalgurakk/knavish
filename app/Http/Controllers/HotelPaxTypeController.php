@@ -130,24 +130,14 @@ class HotelPaxTypeController extends Controller
         $paxType = HotelPaxType::find($id);
 
         try {
-            $hotel = DB::table('hotels')
-                ->join('hotel_hotel_pax_type', 'hotel_hotel_pax_type.hotel_id', '=', 'hotels.id')
-                ->where('hotel_hotel_pax_type.hotel_pax_type_id', '=', $paxType->id)
-                ->first();
-            if ($hotel === null) {
-                $paxType->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Pax type ' . $paxType->code . ': ' . $paxType->name . ' deleted successfully.';
-                $this->response['data'] = $paxType;
-            }
-            else {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Pax type is in use, please check the hotel: ' . $hotel->name . '.';
-            }
+            $paxType->delete();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Pax type ' . $paxType->code . ': ' . $paxType->name . ' deleted successfully.';
+            $this->response['data'] = $paxType;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the pax type is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);

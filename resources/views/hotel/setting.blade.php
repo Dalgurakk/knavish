@@ -20,7 +20,7 @@
 .room-name { word-wrap:break-word;width: 10.1%; color: #fff; background-color: #6d90c4;white-space: normal !important; vertical-align: middle !important;}
 .item-variable { /*font-weight: 600;background-color: #e8f0fc; border:1px solid #fff !important;*/}
 /*.room-name { word-wrap:break-word;width: 10.1%;}*/
-.select2-selection__rendered { margin-left: 20px; }
+/*.select2-selection__rendered { margin-left: 20px; }*/
 .mt-checkbox-row { margin-bottom: 10px !important; }
 /*.mt-checkbox-list-row { padding: 0 !important; }*/
 .portlet-body-row { padding-top: 5px !important; padding-bottom: 5px !important }
@@ -38,7 +38,7 @@
 @section('content')
 <div class="row">
     <div class="col-xs-12">
-        <div class="portlet light custom-container">
+        <div class="portlet light custom-container" style="padding-bottom: 0;">
             <div class="portlet-title">
                 <div class="caption">
                     <i class="icon-settings"></i>Search Accommodation </div>
@@ -54,27 +54,28 @@
                             </div>
                             <div class="portlet-body">
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
                                         <label>Contract</label>
                                         <div class="form-group">
-                                            <div class="input-icon">
-                                                <i class="fa fa-file-text-o"></i>
-                                                <select class="form-control" name="contract"></select> </div>
+                                            <select class="form-control" name="contract"></select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
                                         <div class="form-group">
                                             <label>Hotel</label>
                                             <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
                                         </div>
                                     </div>
-                                    <div class="col-lg-4col-md-4 col-sm-4">
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
+                                        <div class="form-group">
+                                            <label>Period</label>
+                                            <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3">
                                         <div class="form-group">
                                             <label>Price Rate</label>
-                                            <div class="input-icon">
-                                                <i class="fa fa-star"></i>
-                                                <select class="form-control" name="market" id="market">
-                                                </select> </div>
+                                            <select class="form-control" name="market" id="market"></select>
                                         </div>
                                     </div>
                                 </div>
@@ -90,16 +91,10 @@
                             <div class="portlet-body" style="padding-bottom: 8px;">
                                 <div class="scroller" style="height:200px">
                                     <div class="row">
-                                        <div class="col-md-12 valid-period">
-                                            <div class="note note-info note-custom">
-                                                <label id="period" style="margin-top: 5px;"></label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 datepicker-from-container" style="margin-top: 8px;">
-
-                                        </div>
-                                        <div class="col-md-12 datepicker-to-container">
-
+                                        <div class="col-md-12 datepicker-from-container" style="margin-top: 8px;"></div>
+                                        <div class="col-md-12 datepicker-to-container"></div>
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn green btn-search-submit" style="margin-top:5px;"> <i class="fa fa-search"></i> Search</button>
                                         </div>
                                     </div>
                                 </div>
@@ -116,9 +111,7 @@
                                 <div class="scroller" style="height:200px">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="mt-checkbox-list mt-checkbox-list-row room-types-list">
-
-                                            </div>
+                                            <div class="mt-checkbox-list mt-checkbox-list-row room-types-list"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -135,17 +128,12 @@
                                 <div class="scroller" style="height:200px">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="mt-checkbox-list mt-checkbox-list-row measures-list">
-
-                                            </div>
+                                            <div class="mt-checkbox-list mt-checkbox-list-row measures-list"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <button type="submit" class="btn green btn-search-submit" style="float: right;"> <i class="fa fa-search"></i> Search</button>
                     </div>
                 </div>
             </div>
@@ -311,7 +299,6 @@
                         toastr['warning'](response.message, "Warning");
                     }
                     else {
-                        $("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
                         $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
                         fillContract(contract);
                         $('.filter-content').show();
@@ -387,7 +374,6 @@
         }
 
         function fillContract(c) {
-            //console.log(c);
             var roomTypes = c.room_types;
             var measures = c.measures;
             var markets = c.markets;
@@ -395,9 +381,8 @@
             var status = contract.active == 1 ? 'Enabled' : 'Disabled';
             $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
             $("#search-accomodation :input[name=status]").val(status);
-            $("#search-accomodation [id=period]").html(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
-            //$("#search-accomodation :input[name=hotel]").next().find(".select2-selection__rendered").html(contract.hotel.name + '<span class="select2-selection__placeholder"></span>');
-
+            $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
+            $('.result-container').html('');
             $('.measures-list').html('');
             $.each(measures, function (i, item) {
                 var measure =
@@ -482,7 +467,7 @@
             $('#modal-setting :input[name=setting-to]').datepicker( "setEndDate" , new Date(endDate));
 
             $('.measures-container').html('');
-            //console.log(contract);
+
             for (var i = 0; i < contract.measures.length; i++) {
                 var html =
                 '<div class="row">' +
@@ -513,7 +498,7 @@
                     else {
                         $(this).val('0');
                         $('input[name=' + name + ']').prop('readonly', true);
-                        $('input[name=' + name + ']').val('');
+                        //$('input[name=' + name + ']').val('');
                     }
                 });
             }
@@ -558,6 +543,9 @@
             focusInvalid: false,
             ignore: "",
             rules: {
+                "cost" : {
+                    required: true
+                },
                 "setting-from" : {
                     required: true
                 },

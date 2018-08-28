@@ -120,22 +120,14 @@ class CarCategoryController extends Controller
         $category = CarCategory::find($id);
 
         try {
-            //$category->brands()->delete();
-            $brand = CarBrand::where('car_category_id', '=', $category->id)->first();
-            if ($brand === null) {
-                $category->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Category ' . $category->name . ' deleted successfully.';
-                $this->response['data'] = $category;
-            }
-            else {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Category is in use, please check the car model: ' . $brand->name . '.';
-            }
+            $category->delete();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Category ' . $category->name . ' deleted successfully.';
+            $this->response['data'] = $category;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the category is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);

@@ -307,13 +307,6 @@ class HotelContractController extends Controller
 
         DB::beginTransaction();
         try {
-            $contract->paxTypes()->detach();
-            $contract->boardTypes()->detach();
-            $contract->roomTypes()->detach();
-            $contract->measures()->detach();
-            $contract->markets()->detach();
-            //$contract->priceRates()->settings()->delete();
-            $contract->priceRates()->delete();
             $contract->delete();
             DB::commit();
             $this->response['status'] = 'success';
@@ -390,11 +383,33 @@ class HotelContractController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $string = '%' . Input::get('q') . '%';
-        $contracts = HotelContract::with(['hotel', 'roomTypes', 'markets', 'measures'])
-            ->where('name', 'like', $string)
-            ->orderBy('name', 'asc')
-            ->get();
+        $contracts = HotelContract::with([
+            'hotel',
+            'roomTypes' => function($query) {
+                $query->orderBy('name', 'asc');
+            },
+            'markets' => function($query) {
+                $query->orderBy('name', 'asc');
+            },
+            'measures' => function($query) {
+                $query->orderBy('id', 'asc');
+            }
+        ])
+        ->where('name', 'like', $string)
+        ->orderBy('name', 'asc')
+        ->get();
         echo json_encode($contracts);
+    }
+
+    public function calculatePrice($cost, $rate) {
+        $price = 0;
+        if ($rate->type == '1') {
+            $price = $rate->value * $cost / 100 + $cost;
+        }
+        else if ($rate->type == '2') {
+            $price = $cost + $rate->value;
+        }
+        return $price;
     }
 
     public function saveSettings(Request $request) {
@@ -436,22 +451,30 @@ class HotelContractController extends Controller
                     $contractSetting->hotel_contract_market_id = $marketRate->id;
                     $contractSetting->date = $m->format('Y-m-d');
                     $settings = array();
-                    if($setPrice != '') {
-                        $settings[$roomTypeId][$setPrice] = Input::get('price');
-                    }
-                    if($setCost != '') {
+                    if($setCost != '' && Input::get('cost') != '') {
                         $settings[$roomTypeId][$setCost] = Input::get('cost');
+                        if(!isset($setPrice) || Input::get('price') == '') {
+                            $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
+                        }
+                    }
+                    if($setPrice != '' && Input::get('price') != '') {
+                        $settings[$roomTypeId][$setPrice] = Input::get('price');
                     }
                     $contractSetting->settings = json_encode($settings);
                     $contractSetting->save();
                 }
                 else {
                     $settings = json_decode($contractSetting->settings, true);
-                    if($setPrice != '') {
-                        $settings[$roomTypeId][$setPrice] = Input::get('price');
-                    }
                     if($setCost != '') {
                         $settings[$roomTypeId][$setCost] = Input::get('cost');
+                    }
+                    if($setPrice != '') {
+                        if (Input::get('price') != '') {
+                            $settings[$roomTypeId][$setPrice] = Input::get('price');
+                        }
+                        else {
+                            $settings[$roomTypeId][$setPrice] = $this->calculatePrice($settings[$roomTypeId]['1'], $marketRate);
+                        }
                     }
                     $contractSetting->settings = json_encode($settings);
                     $contractSetting->save();

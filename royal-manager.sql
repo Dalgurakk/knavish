@@ -69,11 +69,11 @@ CREATE TABLE `hotel_board_types` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_board_types` */
 
-insert  into `hotel_board_types`(`id`,`name`,`description`,`code`,`active`,`created_at`,`updated_at`) values (9,'BED & BREAKFAST',NULL,'BB',1,'2018-07-17 22:58:19','2018-07-22 14:09:59'),(12,'HALF BOARD',NULL,'HB',1,'2018-07-31 08:07:51','2018-07-31 08:08:13'),(13,'FULL BOARD',NULL,'FB',1,'2018-07-31 08:08:37','2018-07-31 08:08:37'),(14,'ALL INCLUSIVE',NULL,'AI',1,'2018-08-03 01:12:20','2018-08-03 01:12:20'),(15,'board type test','board type test','board type test',1,'2018-08-28 22:02:44','2018-08-28 22:02:44');
+insert  into `hotel_board_types`(`id`,`name`,`description`,`code`,`active`,`created_at`,`updated_at`) values (9,'BED & BREAKFAST',NULL,'BB',1,'2018-07-17 22:58:19','2018-07-22 14:09:59'),(12,'HALF BOARD',NULL,'HB',1,'2018-07-31 08:07:51','2018-07-31 08:08:13'),(13,'FULL BOARD',NULL,'FB',1,'2018-07-31 08:08:37','2018-07-31 08:08:37'),(14,'ALL INCLUSIVE',NULL,'AI',1,'2018-08-03 01:12:20','2018-08-03 01:12:20');
 
 /*Table structure for table `hotel_contract_board_type` */
 
@@ -90,7 +90,7 @@ CREATE TABLE `hotel_contract_board_type` (
   KEY `hotel_contract_board_type_hotel_contract_id_foreign` (`hotel_contract_id`),
   CONSTRAINT `hotel_contract_board_type_hotel_board_type_id_foreign` FOREIGN KEY (`hotel_board_type_id`) REFERENCES `hotel_board_types` (`id`),
   CONSTRAINT `hotel_contract_board_type_hotel_contract_id_foreign` FOREIGN KEY (`hotel_contract_id`) REFERENCES `hotel_contracts` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=141 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_board_type` */
 
@@ -115,7 +115,7 @@ CREATE TABLE `hotel_contract_market` (
   KEY `hotel_contract_market_hotel_contract_id_foreign` (`hotel_contract_id`),
   CONSTRAINT `hotel_contract_market_hotel_contract_id_foreign` FOREIGN KEY (`hotel_contract_id`) REFERENCES `hotel_contracts` (`id`) ON DELETE CASCADE,
   CONSTRAINT `hotel_contract_market_market_id_foreign` FOREIGN KEY (`market_id`) REFERENCES `markets` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_market` */
 
@@ -136,7 +136,7 @@ CREATE TABLE `hotel_contract_measure` (
   KEY `hotel_contract_measure_hotel_contract_id_foreign` (`hotel_contract_id`),
   CONSTRAINT `hotel_contract_measure_hotel_contract_id_foreign` FOREIGN KEY (`hotel_contract_id`) REFERENCES `hotel_contracts` (`id`) ON DELETE CASCADE,
   CONSTRAINT `hotel_contract_measure_hotel_measure_id_foreign` FOREIGN KEY (`hotel_measure_id`) REFERENCES `hotel_measures` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_measure` */
 
@@ -157,7 +157,7 @@ CREATE TABLE `hotel_contract_pax_type` (
   KEY `hotel_contract_pax_type_hotel_contract_id_foreign` (`hotel_contract_id`),
   CONSTRAINT `hotel_contract_pax_type_hotel_contract_id_foreign` FOREIGN KEY (`hotel_contract_id`) REFERENCES `hotel_contracts` (`id`) ON DELETE CASCADE,
   CONSTRAINT `hotel_contract_pax_type_hotel_pax_type_id_foreign` FOREIGN KEY (`hotel_pax_type_id`) REFERENCES `hotel_pax_types` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=196 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_pax_type` */
 
@@ -178,7 +178,7 @@ CREATE TABLE `hotel_contract_room_type` (
   KEY `hotel_contract_room_type_hotel_contract_id_foreign` (`hotel_contract_id`),
   CONSTRAINT `hotel_contract_room_type_hotel_contract_id_foreign` FOREIGN KEY (`hotel_contract_id`) REFERENCES `hotel_contracts` (`id`) ON DELETE CASCADE,
   CONSTRAINT `hotel_contract_room_type_hotel_room_type_id_foreign` FOREIGN KEY (`hotel_room_type_id`) REFERENCES `hotel_room_types` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=224 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=241 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_room_type` */
 
@@ -199,7 +199,7 @@ CREATE TABLE `hotel_contract_settings` (
   KEY `hotel_contract_settings_hotel_contract_market_id_foreign` (`hotel_contract_market_id`),
   KEY `hotel_contract_settings_hotel_contract_market_id_date_index` (`hotel_contract_market_id`,`date`),
   CONSTRAINT `hotel_contract_settings_hotel_contract_market_id_foreign` FOREIGN KEY (`hotel_contract_market_id`) REFERENCES `hotel_contract_market` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=731 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contract_settings` */
 
@@ -220,7 +220,7 @@ CREATE TABLE `hotel_contracts` (
   PRIMARY KEY (`id`),
   KEY `hotel_contracts_hotel_id_foreign` (`hotel_id`),
   CONSTRAINT `hotel_contracts_hotel_id_foreign` FOREIGN KEY (`hotel_id`) REFERENCES `hotels` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_contracts` */
 
@@ -238,7 +238,7 @@ CREATE TABLE `hotel_hotels_chain` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_hotels_chain` */
 
@@ -299,11 +299,11 @@ CREATE TABLE `hotel_pax_types` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_pax_types` */
 
-insert  into `hotel_pax_types`(`id`,`name`,`description`,`code`,`agefrom`,`ageto`,`active`,`created_at`,`updated_at`) values (20,'Children',NULL,'CH',2,11.99,1,'2018-07-17 22:57:01','2018-07-17 22:57:01'),(21,'Adult',NULL,'AD',12,99,1,'2018-07-17 22:57:16','2018-07-17 22:57:16'),(23,'Infant',NULL,'BB',0,1.99,1,'2018-08-03 01:16:39','2018-08-03 01:16:39'),(24,'pax type test',NULL,'pax type test',10,20,1,'2018-08-28 22:02:08','2018-08-28 22:02:08');
+insert  into `hotel_pax_types`(`id`,`name`,`description`,`code`,`agefrom`,`ageto`,`active`,`created_at`,`updated_at`) values (20,'Children',NULL,'CH',2,11.99,1,'2018-07-17 22:57:01','2018-07-17 22:57:01'),(21,'Adult',NULL,'AD',12,99,1,'2018-07-17 22:57:16','2018-07-17 22:57:16'),(23,'Infant',NULL,'BB',0,1.99,1,'2018-08-03 01:16:39','2018-08-03 01:16:39');
 
 /*Table structure for table `hotel_room_types` */
 
@@ -323,11 +323,11 @@ CREATE TABLE `hotel_room_types` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotel_room_types` */
 
-insert  into `hotel_room_types`(`id`,`name`,`description`,`code`,`maxpax`,`minpax`,`minadult`,`minchildren`,`maxinfant`,`active`,`created_at`,`updated_at`) values (2,'Bungalow Superior 2 PAX',NULL,'XH2',2,1,1,1,1,0,'2018-06-18 00:37:26','2018-07-29 06:38:04'),(4,'Bungalow Superior 2AD+ 1CHD',NULL,'G7Y',3,3,2,2,1,1,'2018-06-18 00:50:27','2018-06-18 02:49:50'),(20,'Triple',NULL,'TBL',3,3,3,0,1,1,'2018-07-15 16:23:54','2018-07-22 14:08:20'),(22,'Double',NULL,'DBL',2,2,2,0,1,1,'2018-07-17 22:58:52','2018-07-22 14:25:10'),(23,'Bungalow Superior 3AD',NULL,'DRL',3,3,3,0,1,1,'2018-07-17 23:00:12','2018-07-17 23:00:12'),(27,'Double/Twin',NULL,'RX8',2,2,2,0,1,1,'2018-07-22 14:24:44','2018-07-22 14:24:44'),(28,'Double Basic (2AD+1CH)',NULL,'PG3',2,2,2,0,1,1,'2018-07-22 14:28:57','2018-07-22 14:29:03'),(29,'Bungalow Superior Single',NULL,'MZU',1,1,1,0,1,1,'2018-08-03 01:14:44','2018-08-03 01:14:44'),(30,'Single',NULL,'SGL',1,1,1,0,1,1,'2018-08-03 01:15:34','2018-08-03 01:15:34'),(31,'room type test',NULL,'room type test',1,1,1,1,1,1,'2018-08-28 22:02:27','2018-08-28 22:02:27');
+insert  into `hotel_room_types`(`id`,`name`,`description`,`code`,`maxpax`,`minpax`,`minadult`,`minchildren`,`maxinfant`,`active`,`created_at`,`updated_at`) values (2,'Bungalow Superior 2 PAX',NULL,'XH2',2,1,1,1,1,0,'2018-06-18 00:37:26','2018-07-29 06:38:04'),(4,'Bungalow Superior 2AD+ 1CHD',NULL,'G7Y',3,3,2,2,1,1,'2018-06-18 00:50:27','2018-06-18 02:49:50'),(20,'Triple',NULL,'TBL',3,3,3,0,1,1,'2018-07-15 16:23:54','2018-07-22 14:08:20'),(22,'Double',NULL,'DBL',2,2,2,0,1,1,'2018-07-17 22:58:52','2018-07-22 14:25:10'),(23,'Bungalow Superior 3AD',NULL,'DRL',3,3,3,0,1,1,'2018-07-17 23:00:12','2018-07-17 23:00:12'),(27,'Double/Twin',NULL,'RX8',2,2,2,0,1,1,'2018-07-22 14:24:44','2018-07-22 14:24:44'),(28,'Double Basic (2AD+1CH)',NULL,'PG3',2,2,2,0,1,1,'2018-07-22 14:28:57','2018-07-22 14:29:03'),(29,'Bungalow Superior Single',NULL,'MZU',1,1,1,0,1,1,'2018-08-03 01:14:44','2018-08-03 01:14:44'),(30,'Single',NULL,'SGL',1,1,1,0,1,1,'2018-08-03 01:15:34','2018-08-03 01:15:34');
 
 /*Table structure for table `hotels` */
 
@@ -361,7 +361,7 @@ CREATE TABLE `hotels` (
   CONSTRAINT `hotels_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `hotels_hotel_chain_id_foreign` FOREIGN KEY (`hotel_chain_id`) REFERENCES `hotel_hotels_chain` (`id`),
   CONSTRAINT `hotels_state_id_foreign` FOREIGN KEY (`state_id`) REFERENCES `locations` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `hotels` */
 

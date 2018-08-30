@@ -21,10 +21,6 @@ class HotelContractController extends Controller
 {
     private $response;
 
-    /*round
-    ceil
-    floor*/
-
     public function __construct() {
         $this->middleware('auth');
     }
@@ -249,7 +245,7 @@ class HotelContractController extends Controller
             $this->response['errors'] = $validator->errors();
         }
         else {
-            $contract = HotelContract::find($id);
+            $contract = HotelContract::with('priceRates')->find($id);
             $contract->name = Input::get('name');
             $contract->hotel_id = Input::get('hotel-id');
             $contract->valid_from = Carbon::createFromFormat('d.m.Y', Input::get('valid-from'))->format('Y-m-d');
@@ -259,7 +255,6 @@ class HotelContractController extends Controller
 
             DB::beginTransaction();
             try {
-                $contract->save();
                 $roomTypes = json_decode(Input::get('roomTypes'), true);
                 $boardTypes = json_decode(Input::get('boardTypes'));
                 $markets = json_decode(Input::get('markets'));
@@ -277,13 +272,36 @@ class HotelContractController extends Controller
                         'value' => $k->value,
                         'round' => $k->round_type
                     );
+
+                    if ($k->update_price == '1') {
+                        foreach ($contract->priceRates as $r) {
+                            if ($k->market_id == $r->market_id) {
+                                if ($k->rate_type != $r->type || $k->value != $r->value || $k->round_type != $r->round) {
+                                    foreach ($r->settings as $s) {
+                                        $settings = json_decode($s->settings, true);
+                                        foreach($settings as $key => $data){
+                                            $aux = $r;
+                                            $aux->type = $k->rate_type;
+                                            $aux->value = $k->value;
+                                            $aux->round = $k->round_type;
+                                            $data['2'] = $this->calculatePrice($data['1'], $aux);
+                                            $settings[$key] = $data;
+                                        }
+                                        $s->settings = json_encode($settings);
+                                        $s->save();
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+
                 $contract->markets()->sync($syncMarkets);
                 $contract->roomTypes()->sync($roomTypes);
                 $contract->boardTypes()->sync($boardTypes);
                 $contract->paxTypes()->sync($paxTypes);
                 $contract->measures()->sync($measures);
-
+                $contract->save();
                 DB::commit();
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Contract updated successfully.';
@@ -409,6 +427,13 @@ class HotelContractController extends Controller
         else if ($rate->type == '2') {
             $price = $cost + $rate->value;
         }
+        if ($rate->round == '1') {
+            $price = round($price, 2);
+        } else if ($rate->round == '2') {
+            $price = round($price);
+        } else if ($rate->round == '3') {
+            $price = ceil($price);
+        }
         return $price;
     }
 
@@ -433,11 +458,6 @@ class HotelContractController extends Controller
             $to = Input::get('setting-to');
             $setPrice = Input::get('set-price');
             $setCost = Input::get('set-cost');
-            /*$setAllotment = Input::get('set-allotment');
-            $setStopSale = Input::get('set-stop_sale');
-            $setOffer = Input::get('set-offer');
-            $setRelease = Input::get('set-release');
-            $setSupplement = Input::get('set-supplement');*/
             $roomTypeId = Input::get('room-type-id');
 
             $start = Carbon::createFromFormat('d.m.Y', $from);
@@ -453,12 +473,12 @@ class HotelContractController extends Controller
                     $settings = array();
                     if($setCost != '' && Input::get('cost') != '') {
                         $settings[$roomTypeId][$setCost] = Input::get('cost');
-                        if(!isset($setPrice) || Input::get('price') == '') {
-                            $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
-                        }
                     }
                     if($setPrice != '' && Input::get('price') != '') {
                         $settings[$roomTypeId][$setPrice] = Input::get('price');
+                    }
+                    else {
+                        $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
                     }
                     $contractSetting->settings = json_encode($settings);
                     $contractSetting->save();
@@ -468,13 +488,11 @@ class HotelContractController extends Controller
                     if($setCost != '') {
                         $settings[$roomTypeId][$setCost] = Input::get('cost');
                     }
-                    if($setPrice != '') {
-                        if (Input::get('price') != '') {
-                            $settings[$roomTypeId][$setPrice] = Input::get('price');
-                        }
-                        else {
-                            $settings[$roomTypeId][$setPrice] = $this->calculatePrice($settings[$roomTypeId]['1'], $marketRate);
-                        }
+                    if($setPrice != '' && Input::get('price') != '') {
+                        $settings[$roomTypeId][$setPrice] = Input::get('price');
+                    }
+                    else {
+                        $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
                     }
                     $contractSetting->settings = json_encode($settings);
                     $contractSetting->save();
@@ -530,97 +548,104 @@ class HotelContractController extends Controller
         }
         else {
             $settings = array();
-            foreach ($contract->priceRates[0]->settings as $s) {
-                $settings[$s->date] = json_decode($s->settings, true);
-            }
 
-            $roomTypes = $contract->roomTypes;
-            $rows = $contract->measures;
-            $tables = '';
+            if (isset ($contract->priceRates[0])) {
+                foreach ($contract->priceRates[0]->settings as $s) {
+                    $settings[$s->date] = json_decode($s->settings, true);
+                }
 
-            for ($m = $start; $m->lessThanOrEqualTo($end); $m->addMonth()) {
-                $table =
-                '<div class="portlet box green">' .
-                    '<div class="portlet-title porlet-title-setting">' .
+                $roomTypes = $contract->roomTypes;
+                $rows = $contract->measures;
+                $tables = '';
+
+                for ($m = $start; $m->lessThanOrEqualTo($end); $m->addMonth()) {
+                    $table =
+                        '<div class="portlet box green">' .
+                        '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                            '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
+                        '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
                         '<div class="tools tools-setting">' .
-                            '<!--a href="" class="fullscreen"> </a-->' .
-                            '<a href="javascript:;" class="collapse"> </a>' .
+                        '<!--a href="" class="fullscreen"> </a-->' .
+                        '<a href="javascript:;" class="collapse"> </a>' .
                         '</div>' .
-                    '</div>' .
-                    '<div class="portlet-body" style="padding: 0;">' .
+                        '</div>' .
+                        '<div class="portlet-body" style="padding: 0;">' .
                         '<div class="table-responsive">';
 
-                for ($r = 0; $r < count($roomTypes); $r++) {
-                    $table .=
+                    for ($r = 0; $r < count($roomTypes); $r++) {
+                        $table .=
                             '<table class="table table-striped table-bordered table-setting" data-room="' . $roomTypes[$r]->id . '">' .
-                                '<thead>' .
-                                    '<tr>' .
-                                        '<th class="room-name head-setting">' . strtoupper($roomTypes[$r]->name) . '</th>';
-
-                    $month = $m->format('d.m.Y');
-                    $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
-                    $monthEnd = Carbon::createFromFormat('d.m.Y', $month)->endOfMonth();
-                    $count = 0;
-
-                    for ($d = $monthStart; $d->lessThanOrEqualTo($monthEnd); $d->addDay()) {
-                        $table .=
-                                        '<th class="column-setting head-setting">' . $d->format("d") . '</th>';
-                        $count ++;
-                    }
-                    if ($count < 31) {
-                        for ($z = $count; $z < 31; $z++) {
-                            $table .=
-                                        '<th class="column-setting head-setting-invalid"></th>';
-                        }
-                    }
-                    $table .=
-                                    '</tr>' .
-                                '</thead>' .
-                                '<tbody>';
-
-                    for ($v = 0; $v < count($rows); $v++) {
-                        $table .=
-                                    '<tr data-row="' . $rows[$v]->id . '">' .
-                                        '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
+                            '<thead>' .
+                            '<tr>' .
+                            '<th class="room-name head-setting">' . strtoupper($roomTypes[$r]->name) . '</th>';
 
                         $month = $m->format('d.m.Y');
                         $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
                         $monthEnd = Carbon::createFromFormat('d.m.Y', $month)->endOfMonth();
+                        $count = 0;
 
-                        for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
-                            $value = '';
-                            if (array_key_exists($i->format('Y-m-d'), $settings)) {
-                                $data = $settings[$i->format('Y-m-d')];
-                                if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
-                                    $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
-                            }
+                        for ($d = $monthStart; $d->lessThanOrEqualTo($monthEnd); $d->addDay()) {
                             $table .=
-                                        '<td class="column-setting item-setting"' .
-                                            'data-date="' . $i->format('Y-m-d') . '" ' .
-                                            'data-measure-id="' . $rows[$v]->id . '"' .
-                                            'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
-                                            'data-market-id="' . $market . '" ' .
-                                        '>' . $value . '</td>';
+                                '<th class="column-setting head-setting">' . $d->format("d") . '</th>';
+                            $count ++;
+                        }
+                        if ($count < 31) {
+                            for ($z = $count; $z < 31; $z++) {
+                                $table .=
+                                    '<th class="column-setting head-setting-invalid"></th>';
+                            }
                         }
                         $table .=
-                                    '</tr>';
+                            '</tr>' .
+                            '</thead>' .
+                            '<tbody>';
+
+                        for ($v = 0; $v < count($rows); $v++) {
+                            $table .=
+                                '<tr data-row="' . $rows[$v]->id . '">' .
+                                '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
+
+                            $month = $m->format('d.m.Y');
+                            $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
+                            $monthEnd = Carbon::createFromFormat('d.m.Y', $month)->endOfMonth();
+
+                            for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
+                                $value = '';
+                                if (array_key_exists($i->format('Y-m-d'), $settings)) {
+                                    $data = $settings[$i->format('Y-m-d')];
+                                    if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
+                                        $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
+                                }
+                                $table .=
+                                    '<td class="column-setting item-setting"' .
+                                    'data-date="' . $i->format('Y-m-d') . '" ' .
+                                    'data-measure-id="' . $rows[$v]->id . '"' .
+                                    'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
+                                    'data-market-id="' . $market . '" ' .
+                                    '>' . $value . '</td>';
+                            }
+                            $table .=
+                                '</tr>';
+                        }
+                        $table .=
+                            '</tbody>' .
+                            '</table>';
                     }
                     $table .=
-                                '</tbody>' .
-                            '</table>';
-                }
-                $table .=
                         '</div>' .
-                    '</div>' .
-                '</div>';
-                $tables .= $table;
+                        '</div>' .
+                        '</div>';
+                    $tables .= $table;
+                }
+                $this->response['status'] = 'success';
+                $this->response['from'] = $from;
+                $this->response['to'] = $to;
+                $this->response['table'] = $tables;
             }
-            $this->response['status'] = 'success';
-            $this->response['from'] = $from;
-            $this->response['to'] = $to;
-            $this->response['table'] = $tables;
+            else {
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'No data available for this request.';
+            }
         }
         echo json_encode($this->response);
     }

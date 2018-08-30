@@ -7,7 +7,7 @@
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
 <style>
-.table-setting td { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
+.table-setting td { font-size: 11px !important; padding: 5px 1px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
 .table-setting th { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
 .table-setting { margin-bottom: 0; table-layout: fixed !important; min-width: 900px; border-bottom: 0;}
 .porlet-title-setting { min-height: 0 !important; height: 30px; }

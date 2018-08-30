@@ -390,7 +390,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-star"></i> Market Price Rates </div>
+                            <i class="fa fa-star"></i> Price Rates </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -442,15 +442,15 @@
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <div class="mt-radio-list" style="padding: 0;">
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_add" id="round_method_1_1_add" value="1" data-market="1" checked> Not Round
+                                                            <input type="radio" name="round_method_1_add" id="round_method_1_1_add" value="1" data-market="1" checked> Default Round
                                                             <span></span>
                                                         </label>
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_add" id="round_method_2_1_add" value="2" data-market="1"> Round Up
+                                                            <input type="radio" name="round_method_1_add" id="round_method_2_1_add" value="2" data-market="1"> Integer Round
                                                             <span></span>
                                                         </label>
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_add" id="round_method_3_1_add" value="3" data-market="1"> Round Down
+                                                            <input type="radio" name="round_method_1_add" id="round_method_3_1_add" value="3" data-market="1"> Integer Round Up
                                                             <span></span>
                                                         </label>
                                                     </div>
@@ -707,7 +707,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-star"></i> Market Price Rates </div>
+                            <i class="fa fa-star"></i> Price Rates </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -743,15 +743,15 @@
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <div class="mt-radio-list" style="padding: 0;">
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_info" id="round_method_1_1_info" value="1" data-market="1" checked onclick="return false;"> Not Round
+                                                            <input type="radio" name="round_method_1_info" id="round_method_1_1_info" value="1" data-market="1" checked onclick="return false;"> Default Round
                                                             <span></span>
                                                         </label>
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_info" id="round_method_2_1_info" value="2" data-market="1" onclick="return false;"> Round Up
+                                                            <input type="radio" name="round_method_1_info" id="round_method_2_1_info" value="2" data-market="1" onclick="return false;"> Integer Round
                                                             <span></span>
                                                         </label>
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_info" id="round_method_3_1_info" value="3" data-market="1" onclick="return false;"> Round Down
+                                                            <input type="radio" name="round_method_1_info" id="round_method_3_1_info" value="3" data-market="1" onclick="return false;"> Integer Round Up
                                                             <span></span>
                                                         </label>
                                                     </div>
@@ -1042,7 +1042,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-star"></i> Market Price Rates </div>
+                            <i class="fa fa-star"></i> Price Rates </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -1070,7 +1070,7 @@
                                     <div class="tab-content custom-content">
                                         <div class="tab-pane active" id="tab_1_edit" data-tab="1">
                                             <div class="row" style="margin-top:15px;">
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="col-md-5 col-sm-5 col-xs-12">
                                                     <div class="mt-radio-list" style="padding: 0;">
                                                         <label class="mt-radio mt-radio-outline custom-radio">
                                                             <input type="radio" name="rate_type_1" id="rate_type_percent_1_edit" value="1" data-target="rate_percent_value_1_edit" data-market="1" checked>
@@ -1088,18 +1088,26 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="col-md-3 col-sm-3 col-xs-12">
                                                     <div class="mt-radio-list" style="padding: 0;">
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_edit" id="round_method_1_1_edit" value="1" data-market="1" checked> Not Round
+                                                            <input type="radio" name="round_method_1_edit" id="round_method_1_1_edit" value="1" data-market="1" checked> Default Round
                                                             <span></span>
                                                         </label>
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_edit" id="round_method_2_1_edit" value="2" data-market="1"> Round Up
+                                                            <input type="radio" name="round_method_1_edit" id="round_method_2_1_edit" value="2" data-market="1"> Integer Round
                                                             <span></span>
                                                         </label>
                                                         <label class="mt-radio mt-radio-outline custom-radio">
-                                                            <input type="radio" name="round_method_1_edit" id="round_method_3_1_edit" value="3" data-market="1"> Round Down
+                                                            <input type="radio" name="round_method_1_edit" id="round_method_3_1_edit" value="3" data-market="1"> Integer Round Up
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-sm-4 col-xs-12">
+                                                    <div class="mt-checkbox-list" style="padding: 0">
+                                                        <label class="mt-checkbox mt-checkbox-outline">
+                                                            <input type="checkbox" name="update_prices_1_edit" value="1"> Update related prices
                                                             <span></span>
                                                         </label>
                                                     </div>
@@ -1241,15 +1249,15 @@
                         '<div class="col-md-6 col-sm-6 col-xs-12">' +
                             '<div class="mt-radio-list" style="padding: 0;">' +
                                 '<label class="mt-radio mt-radio-outline custom-radio">' +
-                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_1_' + value + '" value="1" data-market="' + value + '" checked> Not Round' +
+                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_1_' + value + '" value="1" data-market="' + value + '" checked> Default Round' +
                                     '<span></span>' +
                                 '</label>' +
                                 '<label class="mt-radio mt-radio-outline custom-radio">' +
-                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_2_' + value + '" value="2" data-market="' + value + '"> Round Up' +
+                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_2_' + value + '" value="2" data-market="' + value + '"> Integer Round' +
                                     '<span></span>' +
                                 '</label>' +
                                 '<label class="mt-radio mt-radio-outline custom-radio">' +
-                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_3_' + value + '" value="3" data-market="' + value + '"> Round Down' +
+                                    '<input type="radio" name="round_method_' + value + '_add" id="round_method_3_' + value + '" value="3" data-market="' + value + '"> Integer Round Up' +
                                     '<span></span>' +
                                 '</label>' +
                             '</div>' +
@@ -1774,11 +1782,13 @@
                     var id = $(this).attr('data-market');
                     var content = $('#' + target).val();
                     var round = $('#modal-edit :input[name="round_method_'+ id + '_edit"]:checked').val();
+                    var updatePrice = $('#modal-edit :input[name="update_prices_'+ id + '_edit"]:checked').val();
                     var obj = {
                         market_id : id,
                         rate_type : $(this).val(),
                         value : content,
-                        round_type : round
+                        round_type : round,
+                        update_price : updatePrice == null ? '0' : updatePrice
                     };
                     markets.push(obj);
                 });
@@ -1965,30 +1975,30 @@
                                 '<div class="mt-radio-list" style="padding: 0;">' +
                                     '<label class="mt-radio mt-radio-outline custom-radio">';
                     if (pivot.round == '1') {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_1_' + markets[i].id + '_info" value="1" data-market="' + markets[i].id + '" checked onclick="return false;"> Not Round';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_1_' + markets[i].id + '_info" value="1" data-market="' + markets[i].id + '" checked onclick="return false;"> Default Round';
                     }
                     else {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_1_' + markets[i].id + '_info" value="1" data-market="' + markets[i].id + '" onclick="return false;"> Not Round';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_1_' + markets[i].id + '_info" value="1" data-market="' + markets[i].id + '" onclick="return false;"> Default Round';
                     }
                     content +=
                                         '<span></span>' +
                                     '</label>' +
                                     '<label class="mt-radio mt-radio-outline custom-radio">';
                     if (pivot.round == '2') {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_2_' + markets[i].id + '_info" value="2" data-market="' + markets[i].id + '" checked onclick="return false;"> Round Up';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_2_' + markets[i].id + '_info" value="2" data-market="' + markets[i].id + '" checked onclick="return false;"> Integer Round';
                     }
                     else {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_2_' + markets[i].id + '_info" value="2" data-market="' + markets[i].id + '" onclick="return false;"> Round Up';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_2_' + markets[i].id + '_info" value="2" data-market="' + markets[i].id + '" onclick="return false;"> Integer Round';
                     }
                     content +=
                                         '<span></span>' +
                                     '</label>' +
                                     '<label class="mt-radio mt-radio-outline custom-radio">';
                     if (pivot.round == '3') {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_3_' + markets[i].id + '_info" value="3" data-market="' + markets[i].id + '" checked onclick="return false;"> Round Down';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_3_' + markets[i].id + '_info" value="3" data-market="' + markets[i].id + '" checked onclick="return false;"> Integer Round Up';
                     }
                     else {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_3_' + markets[i].id + '_info" value="3" data-market="' + markets[i].id + '" onclick="return false;"> Round Down';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '" id="round_method_3_' + markets[i].id + '_info" value="3" data-market="' + markets[i].id + '" onclick="return false;"> Integer Round Up';
                     }
                     content +=
                                     '<span></span>' +
@@ -2133,7 +2143,7 @@
                 li += '<a href="#tab_' + value + '_edit" data-toggle="tab"> ' + $('#modal-edit :input[name=select-markets] option[value=' + value + ']').html() + ' </a></li>';
                 content +=
                     '<div class="row" style="margin-top:15px;">' +
-                        '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                        '<div class="col-md-5 col-sm-5 col-xs-12">' +
                             '<div class="mt-radio-list" style="padding: 0;">' +
                                 '<label class="mt-radio mt-radio-outline custom-radio">' +
                                     '<input type="radio" name="rate_type_' + value + '" id="rate_type_percent_' + value + '_edit" value="1" data-target="rate_percent_value_' + value + '_edit" data-market="' + value + '" checked>' +
@@ -2151,21 +2161,29 @@
                                 '</label>' +
                             '</div>' +
                         '</div>' +
-                        '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                        '<div class="col-md-3 col-sm-3 col-xs-12">' +
                             '<div class="mt-radio-list" style="padding: 0;">' +
                                 '<label class="mt-radio mt-radio-outline custom-radio">' +
-                                    '<input type="radio" name="round_method_' + value + '_edit" id="round_method_1_' + value + '" value="1" data-market="' + value + '" checked> Not Round' +
+                                    '<input type="radio" name="round_method_' + value + '_edit" id="round_method_1_' + value + '" value="1" data-market="' + value + '" checked> Default Round' +
                                     '<span></span>' +
                                 '</label>' +
                                 '<label class="mt-radio mt-radio-outline custom-radio">' +
-                                    '<input type="radio" name="round_method_' + value + '_edit" id="round_method_2_' + value + '" value="2" data-market="' + value + '"> Round Up' +
+                                    '<input type="radio" name="round_method_' + value + '_edit" id="round_method_2_' + value + '" value="2" data-market="' + value + '"> Integer Round' +
                                     '<span></span>' +
                                 '</label>' +
                                 '<label class="mt-radio mt-radio-outline custom-radio">' +
-                                    '<input type="radio" name="round_method_' + value + '_edit" id="round_method_3_' + value + '" value="3" data-market="' + value + '"> Round Down' +
+                                    '<input type="radio" name="round_method_' + value + '_edit" id="round_method_3_' + value + '" value="3" data-market="' + value + '"> Integer Round Up' +
                                     '<span></span>' +
                                 '</label>' +
                             '</div>' +
+                        '</div>' +
+                        '<div class="col-md-4 col-sm-4 col-xs-12">' +
+                             '<div class="mt-checkbox-list" style="padding: 0">' +
+                                 '<label class="mt-checkbox mt-checkbox-outline">' +
+                                     '<input type="checkbox" name="update_prices_' + value + '_edit" value="1"> Update related prices' +
+                                     '<span></span>' +
+                                 '</label>' +
+                             '</div>' +
                         '</div>' +
                     '</div>';
                 content += '</div>';
@@ -2319,7 +2337,7 @@
                     li += '<a href="#tab_' + markets[i].id + '_edit" data-toggle="tab"> ' + markets[i].name + ' </a></li>';
                     content +=
                         '<div class="row" style="margin-top:15px;">' +
-                            '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                            '<div class="col-md-5 col-sm-5 col-xs-12">' +
                                 '<div class="mt-radio-list" style="padding: 0;">' +
                                     '<label class="mt-radio mt-radio-outline custom-radio">';
                     if (pivot.type == '1') {
@@ -2355,39 +2373,47 @@
                                     '</label>' +
                                 '</div>' +
                             '</div>' +
-                            '<div class="col-md-6 col-sm-6 col-xs-12">' +
+                            '<div class="col-md-3 col-sm-3 col-xs-12">' +
                                 '<div class="mt-radio-list" style="padding: 0;">' +
                                     '<label class="mt-radio mt-radio-outline custom-radio">';
                     if (pivot.round == '1') {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_1_' + markets[i].id + '_edit" value="1" data-market="' + markets[i].id + '" checked> Not Round';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_1_' + markets[i].id + '_edit" value="1" data-market="' + markets[i].id + '" checked> Default Round';
                     }
                     else {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_1_' + markets[i].id + '_edit" value="1" data-market="' + markets[i].id + '"> Not Round';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_1_' + markets[i].id + '_edit" value="1" data-market="' + markets[i].id + '"> Default Round';
                     }
                     content +=
                                         '<span></span>' +
                                     '</label>' +
                                     '<label class="mt-radio mt-radio-outline custom-radio">';
                     if (pivot.round == '2') {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_2_' + markets[i].id + '_edit" value="2" data-market="' + markets[i].id + '" checked> Round Up';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_2_' + markets[i].id + '_edit" value="2" data-market="' + markets[i].id + '" checked> Integer Round';
                     }
                     else {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_2_' + markets[i].id + '_edit" value="2" data-market="' + markets[i].id + '"> Round Up';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_2_' + markets[i].id + '_edit" value="2" data-market="' + markets[i].id + '"> Integer Round';
                     }
                     content +=
                                         '<span></span>' +
                                     '</label>' +
                                     '<label class="mt-radio mt-radio-outline custom-radio">';
                     if (pivot.round == '3') {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_3_' + markets[i].id + '_edit" value="3" data-market="' + markets[i].id + '" checked> Round Down';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_3_' + markets[i].id + '_edit" value="3" data-market="' + markets[i].id + '" checked> Integer Round Up';
                     }
                     else {
-                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_3_' + markets[i].id + '_edit" value="3" data-market="' + markets[i].id + '"> Round Down';
+                        content +=      '<input type="radio" name="round_method_' + markets[i].id + '_edit" id="round_method_3_' + markets[i].id + '_edit" value="3" data-market="' + markets[i].id + '"> Integer Round Up';
                     }
                     content +=
                                     '<span></span>' +
                                     '</label>' +
                                 '</div>' +
+                            '</div>' +
+                            '<div class="col-md-4 col-sm-4 col-xs-12">' +
+                                 '<div class="mt-checkbox-list" style="padding: 0">' +
+                                     '<label class="mt-checkbox mt-checkbox-outline">' +
+                                         '<input type="checkbox" name="update_prices_' + markets[i].id + '_edit" value="1"> Update related prices' +
+                                         '<span></span>' +
+                                     '</label>' +
+                                 '</div>' +
                             '</div>' +
                         '</div>';
                     content += '</div>';

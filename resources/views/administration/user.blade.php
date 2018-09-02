@@ -19,7 +19,7 @@
         <div class="portlet light custom-container">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-users "></i>Users List </div>
+                    <i class="fa fa-user "></i>Users List </div>
                 <div class="actions">
                     <a class="btn btn-circle btn-icon-only btn-default search" href="javascript:;">
                         <i class="fa fa-search"></i>

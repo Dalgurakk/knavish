@@ -40,8 +40,9 @@ class HotelContractController extends Controller
         $markets = Market::where('active', '1')->get();
 
         $data['breadcrumb'] = $breadcrumb;
-        $data['menuHotel'] = 'selected';
-        $data['submenuContract'] = 'selected';
+        $data['menuContract'] = 'selected';
+        $data['submenuContractProvider'] = 'selected';
+        $data['submenuContractProviderHotel'] = 'selected';
         $data['paxTypes'] = $paxTypes;
         $data['boardTypes'] = $boardTypes;
         $data['measures'] = $measures;

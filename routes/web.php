@@ -85,16 +85,13 @@ Route::post('/hotel/images', 'HotelController@images')->name('hotel.images');
 Route::post('/hotel/search/active', 'HotelController@getActivesByName')->name('hotel.search.active');
 Route::post('/hotel/search/contract', 'HotelController@getContractsByName')->name('hotel.search.contract');
 //HotelContract
-Route::get('/hotel/contract', 'HotelContractController@index')->name('hotel.contract.index');
-Route::post('/hotel/contract/read', 'HotelContractController@read')->name('hotel.contract.read');
-Route::post('/hotel/contract/create', 'HotelContractController@create')->name('hotel.contract.create');
-Route::post('/hotel/contract/update', 'HotelContractController@update')->name('hotel.contract.update');
-Route::post('/hotel/contract/delete', 'HotelContractController@delete')->name('hotel.contract.delete');
-Route::get('/hotel/contract/settings', 'HotelContractController@settings')->name('hotel.contract.settings');
-Route::post('/hotel/contract', 'HotelContractController@getContract')->name('hotel.contract');
-Route::post('/hotel/contract/search', 'HotelContractController@getByName')->name('hotel.contract.search');
-Route::post('/hotel/contract/settings/save', 'HotelContractController@saveSettings')->name('hotel.contract.settings.save');
-Route::post('/hotel/contract/settings/data', 'HotelContractController@settingsByContract')->name('hotel.contract.settings.data');
-//Manage
-Route::get('/manage/hotel', 'ManageHotelController@index')->name('manage.hotel');
-Route::get('/range/calendar', 'ManageHotelController@rangeCalendar')->name('range.calendar');
+Route::get('/hotel/contract/provider', 'HotelContractController@index')->name('hotel.contract.provider.index');
+Route::post('/hotel/contract/provider/read', 'HotelContractController@read')->name('hotel.contract.provider.read');
+Route::post('/hotel/contract/provider/create', 'HotelContractController@create')->name('hotel.contract.provider.create');
+Route::post('/hotel/contract/provider/update', 'HotelContractController@update')->name('hotel.contract.provider.update');
+Route::post('/hotel/contract/provider/delete', 'HotelContractController@delete')->name('hotel.contract.provider.delete');
+Route::get('/hotel/contract/provider/settings', 'HotelContractController@settings')->name('hotel.contract.provider.settings');
+Route::post('/hotel/contract/provider', 'HotelContractController@getContract')->name('hotel.contract.provider');
+Route::post('/hotel/contract/provider/search', 'HotelContractController@getByName')->name('hotel.contract.provider.search');
+Route::post('/hotel/contract/provider/settings/save', 'HotelContractController@saveSettings')->name('hotel.contract.provider.settings.save');
+Route::post('/hotel/contract/provider/settings/data', 'HotelContractController@settingsByContract')->name('hotel.contract.provider.settings.data');

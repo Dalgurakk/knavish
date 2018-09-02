@@ -1376,7 +1376,7 @@
             "sDom": "ltip",
             "iDisplayLength" : 10,
             "ajax": {
-                "url": "{{ route('hotel.contract.read') }}",
+                "url": "{{ route('hotel.contract.provider.read') }}",
                 "type": "POST",
                 "complete": function(xhr, textStatus) {
                     if (xhr.status != '200') {
@@ -1428,7 +1428,7 @@
                     "data": function ( row, type, val, meta ) {
                         //var contract = row.contract;
                         var data =
-                        '<form method="get" action="{{ route("hotel.contract.settings") }}">' +
+                        '<form method="get" action="{{ route("hotel.contract.provider.settings") }}">' +
                             '<input type="hidden" name="id" value="' + row.id + '">' +
                             '<div class="dt-actions">' +
                             '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info">' +
@@ -1624,7 +1624,7 @@
                 formData.append('measures', JSON.stringify(measures));
                 formData.append('markets', JSON.stringify(markets));
                 $.ajax({
-                    "url": "{{ route('hotel.contract.create') }}",
+                    "url": "{{ route('hotel.contract.provider.create') }}",
                     "type": "POST",
                     "data": formData,
                     "contentType": false,
@@ -1798,7 +1798,7 @@
                 formData.append('measures', JSON.stringify(measures));
                 formData.append('markets', JSON.stringify(markets));
                 $.ajax({
-                    "url": "{{ route('hotel.contract.update') }}",
+                    "url": "{{ route('hotel.contract.provider.update') }}",
                     "type": "POST",
                     //"data": formEdit.serialize(),
                     "data": formData,
@@ -2581,7 +2581,7 @@
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
                 $.ajax({
-                    url: "{{ route('hotel.contract.delete') }}",
+                    url: "{{ route('hotel.contract.provider.delete') }}",
                     "type": "POST",
                     "data":  {
                         id: data['id']

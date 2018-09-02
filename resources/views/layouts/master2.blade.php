@@ -163,7 +163,7 @@ License: You must have a valid license purchased only from themeforest(the above
                             </ul>
                         </li>
                         <li class="nav-item {{ isset($menuHotel) ? 'active open' : '' }}">
-                            <a href="{{ route('hotel.contract.index') }}" class="nav-link nav-toggle">
+                            <a href="{{ route('hotel.index') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-building-o"></i>
                                 <span class="title">Hotel</span>
                                 <span class="{{ isset($menuHotel) ? 'selected' : '' }}"></span>
@@ -205,20 +205,48 @@ License: You must have a valid license purchased only from themeforest(the above
                                         <span class="{{ isset($submenuHotel) ? 'selected' : '' }}"></span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{ isset($submenuContract) ? 'active open' : '' }}">
-                                    <a href="{{ route('hotel.contract.index') }}" class="nav-link ">
-                                        <i class="fa fa-file-text-o"></i>
-                                        <span class="title">Contracts</span>
-                                        <span class="{{ isset($submenuContract) ? 'selected' : '' }}"></span>
+                            </ul>
+                        </li>
+                        <li class="nav-item {{ isset($menuContract) ? 'active open' : '' }}">
+                            <a href="{{ route('hotel.contract.provider.index') }}" class="nav-link nav-toggle">
+                                <i class="fa fa-file-text-o"></i>
+                                <span class="title">Contract</span>
+                                <span class="{{ isset($menuContract) ? 'selected' : '' }}"></span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item {{ isset($submenuContractProvider) ? 'active open' : '' }}">
+                                    <a href="{{ route('hotel.contract.provider.index') }}" class="nav-link ">
+                                        <i class="fa fa-gears"></i>
+                                        <span class="title">Providers</span>
+                                        <span class="{{ isset($submenuContractProvider) ? 'selected' : '' }}"></span>
                                     </a>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item {{ isset($submenuContractProviderHotel) ? 'active open' : '' }}">
+                                            <a href="{{ route('hotel.contract.provider.index') }}" class="nav-link ">
+                                                <i class="fa fa-building-o"></i>
+                                                <span class="title">Hotels</span>
+                                                <span class="{{ isset($submenuContractProviderHotel) ? 'selected' : '' }}"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
-                                <li class="nav-item {{ isset($submenuSettings) ? 'active open' : '' }}">
-                                    <a href="{{ route('hotel.contract.settings') }}" class="nav-link ">
-                                        <i class="icon-settings"></i>
-                                        <span class="title">Settings</span>
-                                        <span class="{{ isset($submenuSettings) ? 'selected' : '' }}"></span>
+                                <!--li class="nav-item {{ isset($submenuContractClient) ? 'active open' : '' }}">
+                                    <a href="{{ route('hotel.roomtype.index') }}" class="nav-link ">
+                                        <i class="fa fa-users"></i>
+                                        <span class="title">Clients</span>
+                                        <span class="{{ isset($submenuContractClient) ? 'selected' : '' }}"></span>
                                     </a>
-                                </li>
+                                    <ul class="sub-menu">
+                                        <li class="nav-item {{ isset($submenuContractClientHotel) ? 'active open' : '' }}">
+                                            <a href="{{ route('hotel.paxtype.index') }}" class="nav-link ">
+                                                <i class="fa fa-building-o"></i>
+                                                <span class="title">Hotels</span>
+                                                <span class="{{ isset($submenuContractClientHotel) ? 'selected' : '' }}"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li-->
                             </ul>
                         </li>
                         <!--li class="nav-item ">
@@ -227,30 +255,6 @@ License: You must have a valid license purchased only from themeforest(the above
                                 <span class="title">Tranfer</span>
                                 <span class="arrow"></span>
                             </a>
-                        </li-->
-                        <!--li class="nav-item {{ isset($menuManage) ? 'active open' : '' }}">
-                            <a href="{{ route('hotel.contract.settings') }}" class="nav-link nav-toggle">
-                                <i class="icon-settings"></i>
-                                <span class="title">Settings</span>
-                                <span class="{{ isset($menuManage) ? 'selected' : '' }}"></span>
-                                <span class="arrow"></span>
-                            </a>
-                            <ul class="sub-menu">
-                                <li class="nav-item start {{ isset($submenuManageHotel) ? 'active open' : '' }}">
-                                    <a href="{{ route('hotel.contract.settings') }}" class="nav-link ">
-                                        <i class="fa fa-building-o"></i>
-                                        <span class="title">Hotel</span>
-                                        <span class="{{ isset($submenuManageHotel) ? 'selected' : '' }}"></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item start {{ isset($submenuRangeCalendar) ? 'active open' : '' }}">
-                                    <a href="{{ route('range.calendar') }}" class="nav-link ">
-                                        <i class="fa fa-calendar"></i>
-                                        <span class="title">Range Calendar</span>
-                                        <span class="{{ isset($submenuRangeCalendar) ? 'selected' : '' }}"></span>
-                                    </a>
-                                </li>
-                            </ul>
                         </li-->
                         @if(Auth::user()->hasRole('administrator'))
                         <li class="nav-item {{ isset($menuAdministration) ? 'active open' : '' }}">

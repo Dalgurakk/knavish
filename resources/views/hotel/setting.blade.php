@@ -240,7 +240,7 @@
         $("#search-accomodation :input[name=contract]").select2({
             width: "off",
             ajax: {
-                url: "{{ route('hotel.contract.search') }}",
+                url: "{{ route('hotel.contract.provider.search') }}",
                 "type": "POST",
                 dataType: 'json',
                 delay: 250,
@@ -279,7 +279,7 @@
         });
 
         $.ajax({
-            "url": "{{ route('hotel.contract') }}",
+            "url": "{{ route('hotel.contract.provider') }}",
             "type": "POST",
             "data": {
                 contractId: contractId
@@ -332,7 +332,7 @@
                     rows.push($(this).val());
                 });
                 $.ajax({
-                    "url": "{{ route('hotel.contract.settings.data') }}",
+                    "url": "{{ route('hotel.contract.provider.settings.data') }}",
                     "type": "POST",
                     "data": {
                         id: contract.id,
@@ -450,9 +450,16 @@
                 $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
                 $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
             }
-            else {
+            else if (currentDate.isBefore(startDate)) {
                 var tempStart = moment(startDate).startOf('month');
-                var tempEnd = moment(endDate).endOf('month');
+                var tempEnd = moment(startDate).endOf('month');
+                $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
+                $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
+            }
+            else if (currentDate.isAfter(endDate)) {
+                var tempStart = moment(endDate).startOf('month');
+                var tempEnd = moment(endDate
+                ).endOf('month');
                 $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
                 $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
             }
@@ -594,7 +601,7 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 $.ajax({
-                    "url": "{{ route('hotel.contract.settings.save') }}",
+                    "url": "{{ route('hotel.contract.provider.settings.save') }}",
                     "type": "POST",
                     "data": formAdd.serialize(),
                     "beforeSend": function() {

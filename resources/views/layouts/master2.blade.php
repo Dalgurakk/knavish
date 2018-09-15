@@ -231,22 +231,22 @@ License: You must have a valid license purchased only from themeforest(the above
                                         </li>
                                     </ul>
                                 </li>
-                                <!--li class="nav-item {{ isset($submenuContractClient) ? 'active open' : '' }}">
-                                    <a href="{{ route('hotel.roomtype.index') }}" class="nav-link ">
+                                <li class="nav-item {{ isset($submenuContractClient) ? 'active open' : '' }}">
+                                    <a href="{{ route('hotel.contract.client.index') }}" class="nav-link ">
                                         <i class="fa fa-users"></i>
                                         <span class="title">Clients</span>
                                         <span class="{{ isset($submenuContractClient) ? 'selected' : '' }}"></span>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="nav-item {{ isset($submenuContractClientHotel) ? 'active open' : '' }}">
-                                            <a href="{{ route('hotel.paxtype.index') }}" class="nav-link ">
+                                            <a href="{{ route('hotel.contract.client.index') }}" class="nav-link ">
                                                 <i class="fa fa-building-o"></i>
                                                 <span class="title">Hotels</span>
                                                 <span class="{{ isset($submenuContractClientHotel) ? 'selected' : '' }}"></span>
                                             </a>
                                         </li>
                                     </ul>
-                                </li-->
+                                </li>
                             </ul>
                         </li>
                         <!--li class="nav-item ">

@@ -151,9 +151,7 @@
                         <select class="form-control" name="role-id">
                             <option value="">Select a role</option>
                         @foreach($roles as $r)
-                            @if($r->name != 'client')
-                                <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
-                            @endif
+                            <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
                         @endforeach
                         </select> </div>
                 </div>
@@ -278,11 +276,10 @@
                     <div class="input-icon left">
                         <i class="fa fa-graduation-cap"></i>
                         <select class="form-control" name="role-id">
-                        @foreach($roles as $r)
-                            @if($r->name != 'client')
+                            <option value="">Select a role</option>
+                            @foreach($roles as $r)
                                 <option value="{{ $r->id }}" data="{{ $r->name }}">{{ $r->description }}</option>
-                            @endif
-                        @endforeach
+                            @endforeach
                         </select> </div>
                 </div>
             </div>

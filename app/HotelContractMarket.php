@@ -13,6 +13,10 @@ class HotelContractMarket extends Model
     }
 
     public function contract() {
-        return $this->belongsTo('App\Contract');
+        return $this->belongsTo('App\HotelContract');
+    }
+
+    public function market() {
+        return $this->belongsTo('App\Market');
     }
 }

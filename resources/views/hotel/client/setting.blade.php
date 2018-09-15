@@ -74,8 +74,8 @@
                                     </div>
                                     <div class="col-lg-3 col-md-3 col-sm-3">
                                         <div class="form-group">
-                                            <label>Price Rate</label>
-                                            <select class="form-control" name="market" id="market"></select>
+                                            <label>Client</label>
+                                            <input type="text" class="form-control" name="client" readonly style="background-color: #fff;">
                                         </div>
                                     </div>
                                 </div>
@@ -203,14 +203,6 @@
 @section('custom-scripts')
 <script>
     $(document).ready(function () {
-        /*
-        M = Monday
-        T = Tuesday
-        W = Wednesday
-        R = Thursday
-        F = Friday
-        S = Saturday
-        U = Sunday (That's right, U for Sunday).*/
 
         var needUpdate = false;
         var formSearch = $('#search-accomodation');
@@ -240,7 +232,7 @@
         $("#search-accomodation :input[name=contract]").select2({
             width: "off",
             ajax: {
-                url: "{{ route('hotel.contract.provider.search') }}",
+                url: "{{ route('hotel.contract.client.search') }}",
                 "type": "POST",
                 dataType: 'json',
                 delay: 250,
@@ -279,7 +271,7 @@
         });
 
         $.ajax({
-            "url": "{{ route('hotel.contract.provider') }}",
+            "url": "{{ route('hotel.contract.client') }}",
             "type": "POST",
             "data": {
                 contractId: contractId
@@ -307,12 +299,12 @@
             }
         });
 
-        $(".datepicker").datepicker({
+        /*$(".datepicker").datepicker({
             format: "MM yyyy",
             viewMode: "months",
             minViewMode: "months",
             autoclose: true
-        });
+        });*/
 
         $('.btn-search-submit').on('click', function(e) {
             e.preventDefault();
@@ -322,7 +314,6 @@
             else {
                 var from = moment($('input[name=from]').datepicker("getDate")).format('DD.MM.YYYY');
                 var to = moment($('input[name=to]').datepicker("getDate")).format('DD.MM.YYYY');
-                var market = $('#market').val();
                 var roomTypes = [];
                 $('[name="room-selected"]:checked').each(function () {
                     roomTypes.push($(this).val());
@@ -332,13 +323,12 @@
                     rows.push($(this).val());
                 });
                 $.ajax({
-                    "url": "{{ route('hotel.contract.provider.settings.data') }}",
+                    "url": "{{ route('hotel.contract.client.settings.data') }}",
                     "type": "POST",
                     "data": {
                         id: contract.id,
                         from:  from,
                         to: to,
-                        market: market,
                         rooms: JSON.stringify(roomTypes),
                         rows: JSON.stringify(rows)
                     },
@@ -367,20 +357,15 @@
             }
         });
 
-        function setValues(data) {
-            for (var i = 0; i < data.length; i++) {
-                $('[data-date=' + data[i].date + '][data-measure=' + data[i].measure + '][data-room-type=' + data[i].room + ']').html(data[i].value);
-            }
-        }
-
         function fillContract(c) {
-            var roomTypes = c.room_types;
-            var measures = c.measures;
-            var markets = c.markets;
-            var contract = c;
+            var roomTypes = c.hotel_contract.room_types;
+            var measures = c.hotel_contract.measures;
+            var contract = c.hotel_contract;
+            var client = c.client;
             var status = contract.active == 1 ? 'Enabled' : 'Disabled';
             $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
             $("#search-accomodation :input[name=status]").val(status);
+            $("#search-accomodation :input[name=client]").val(client.name);
             $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
             $('.result-container').html('');
             $('.measures-list').html('');
@@ -391,13 +376,6 @@
                         '<span></span>' +
                     '</label>';
                 $('.measures-list').append(measure);
-            });
-
-            $('#market').empty()
-            $.each(markets, function (i, item) {
-                var option = '<option value="' + markets[i].id + '"> ' + markets[i].name + '</option>';
-                var option = '<option value="' + markets[i].id + '"> ' + markets[i].name + '</option>';
-                $('#market').append(option);
             });
 
             $('.room-types-list').html('');
@@ -433,12 +411,12 @@
                 '</div>';
             $('.datepicker-to-container').append(html);
 
-            $(".datepicker").datepicker({
+            /*$(".datepicker").datepicker({
                 format: "MM yyyy",
                 viewMode: "months",
                 minViewMode: "months",
                 autoclose: true
-            });
+            });*/
 
             var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
             var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
@@ -513,8 +491,6 @@
 
         function renderTable(from, to, contract) {
             $('.item-setting').on('click', function() {
-                formAdd.validate().resetForm();
-                formAdd[0].reset();
                 var room = $(this).parents('table').find('th:first').html();
                 $('#modal-setting .room-name-header').html(room);
 
@@ -543,100 +519,12 @@
             });
         }
 
-        var formAdd = $('#form-add');
-        formAdd.validate({
-            errorElement: 'span',
-            errorClass: 'help-block help-block-error',
-            focusInvalid: false,
-            ignore: "",
-            rules: {
-                "cost" : {
-                    required: true
-                },
-                "setting-from" : {
-                    required: true
-                },
-                "setting-to" : {
-                    required: true
-                }
-            },
-            errorPlacement: function (error, element) {
-                if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
-                    if (element.parents('.mt-radio-list').size() > 0) {
-                        error.appendTo(element.parents('.mt-radio-list')[0]);
-                    }
-                    if (element.parents('.mt-checkbox-list').size() > 0) {
-                        error.appendTo(element.parents('.mt-checkbox-list')[0]);
-                    }
-                } else if (element.parents('.mt-radio-inline').size() > 0 || element.parents('.mt-checkbox-inline').size() > 0) {
-                    if (element.parents('.mt-radio-inline').size() > 0) {
-                        error.appendTo(element.parents('.mt-radio-inline')[0]);
-                    }
-                    if (element.parents('.mt-checkbox-inline').size() > 0) {
-                        error.appendTo(element.parents('.mt-checkbox-inline')[0]);
-                    }
-                } else if (element.parent(".input-group").size() > 0) {
-                    error.insertAfter(element.parent(".input-group"));
-                } else if (element.attr("data-error-container")) {
-                    error.appendTo(element.attr("data-error-container"));
-                } else {
-                    error.insertAfter(element);
-                }
-            },
-            invalidHandler: function (event, validator) {
-                toastr['error']("Please check the entry fields.", "Error");
-            },
-            highlight: function (element) {
-               $(element)
-                    .closest('.form-group').addClass('has-error');
-            },
-            unhighlight: function (element) {
-                $(element)
-                    .closest('.form-group').removeClass('has-error');
-            },
-            success: function (label) {
-                label
-                    .closest('.form-group').removeClass('has-error');
-            },
-            submitHandler: function (form) {
-                var option = $(form).find("button[type=submit]:focus").attr('data');
-                $.ajax({
-                    "url": "{{ route('hotel.contract.provider.settings.save') }}",
-                    "type": "POST",
-                    "data": formAdd.serialize(),
-                    "beforeSend": function() {
-                        App.showMask(true, formAdd);
-                    },
-                    "complete": function(xhr, textStatus) {
-                        App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                        }
-                        else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                formAdd[0].reset();
-                                needUpdate = true;
-                                if (option == 'accept') {
-                                    $(form).find("button.cancel-form").click();
-                                }
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
-                        }
-                    }
-                });
-            }
-        });
-
-        $('.cancel-form').on('click', function(e) {
+        /*$('.cancel-form').on('click', function(e) {
             if(needUpdate) {
                 $(".btn-search-submit").click();
                 needUpdate = false;
             }
-        });
+        });*/
     });
 </script>
 @stop

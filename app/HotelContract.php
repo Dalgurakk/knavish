@@ -44,4 +44,8 @@ class HotelContract extends Model
     public function hotel() {
         return $this->belongsTo('App\Hotel');
     }
+
+    public function clientContracts() {
+        return $this->hasMany('App\HotelContractClient');
+    }
 }

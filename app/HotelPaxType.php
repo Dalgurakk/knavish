@@ -9,7 +9,7 @@ class HotelPaxType extends Model
     public function contracts()
     {
         return $this
-            ->belongsToMany('App\Contract', 'hotel_contract_pax_type')
+            ->belongsToMany('App\HotelContract', 'hotel_contract_pax_type')
             ->withTimestamps();
     }
 }

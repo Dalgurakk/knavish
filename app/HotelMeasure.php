@@ -9,7 +9,7 @@ class HotelMeasure extends Model
     public function contracts()
     {
         return $this
-            ->belongsToMany('App\Contract', 'hotel_contract_measure')
+            ->belongsToMany('App\HotelContract', 'hotel_contract_measure')
             ->withTimestamps();
     }
 }

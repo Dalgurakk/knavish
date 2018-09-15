@@ -165,4 +165,21 @@ class UserController extends Controller
         }
         echo json_encode($this->response);
     }
+
+    public function getClientsActivesByName(Request $request) {
+        $request->user()->authorizeRoles(['administrator']);
+
+        $string = '%' . Input::get('q') . '%';
+        $clients = DB::table('users')
+            ->select(
+                'users.id', 'users.name', 'users.email', 'users.username', 'roles.name as role',
+                'roles.id as role_id', 'users.active')
+            ->join('role_user', 'role_user.user_id', '=', 'users.id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->where('roles.name', 'client')
+            ->where('users.username', 'like', '%' . $string . '%')
+            ->where('active', '1')
+            ->get();
+        echo json_encode($clients);
+    }
 }

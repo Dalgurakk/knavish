@@ -14,6 +14,7 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 
 //User
 Route::get('/user', 'UserController@index')->name('user.index');
@@ -107,3 +108,11 @@ Route::get('/hotel/contract/client/settings', 'HotelContractClientController@set
 Route::post('/hotel/contract/client', 'HotelContractClientController@getContract')->name('hotel.contract.client');
 Route::post('/hotel/contract/client/search', 'HotelContractClientController@getByName')->name('hotel.contract.client.search');
 Route::post('/hotel/contract/client/settings/data', 'HotelContractClientController@settingsByContract')->name('hotel.contract.client.settings.data');
+
+//Client
+Route::get('/client/contract/hotel', 'ClientController@hotel')->name('client.contract.hotel.index');
+Route::post('/client/contract/hotel/read', 'ClientController@readHotel')->name('client.contract.hotel.read');
+Route::get('/client/contract/hotel/settings', 'ClientController@settingsHotel')->name('client.contract.hotel.settings');
+Route::post('/client/contract/hotel', 'ClientController@getContract')->name('client.contract.hotel');
+Route::post('/client/contract/hotel/search', 'ClientController@getByName')->name('client.contract.hotel.search');
+Route::post('/client/contract/hotel/settings/data', 'ClientController@settingsHotelData')->name('client.contract.hotel.settings.data');

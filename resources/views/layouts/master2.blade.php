@@ -130,14 +130,32 @@ License: You must have a valid license purchased only from themeforest(the above
                     <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
                     <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
                     <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-hover-submenu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
-                        <li class="nav-item start {{ isset($menuDashboard) ? 'active open' : '' }}">
-                            <a href="{{ route('home') }}" class="nav-link nav-toggle">
+                    @if(Auth::user()->hasRole('client'))
+                        <li class="nav-item {{ isset($menuContract) ? 'active open' : '' }}">
+                            <a href="{{ route('client.contract.hotel.index') }}" class="nav-link nav-toggle">
+                                <i class="fa fa-file-text-o"></i>
+                                <span class="title">My Contracts</span>
+                                <span class="{{ isset($menuContract) ? 'selected' : '' }}"></span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item {{ isset($submenuHotel) ? 'active open' : '' }}">
+                                    <a href="{{ route('client.contract.hotel.index') }}" class="nav-link ">
+                                        <i class="fa fa-building-o"></i>
+                                        <span class="title">Hotel</span>
+                                        <span class="{{ isset($submenuHotel) ? 'selected' : '' }}"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        <!--li class="nav-item start {{ isset($menuDashboard) ? 'active open' : '' }}">
+                            <a href="{{ route('dashboard') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-bar-chart"></i>
                                 <span class="title">Dashboard</span>
                                 <span class="{{ isset($menuDashboard) ? 'selected' : '' }}"></span>
-                                <!--span class="arrow open"></span-->
                             </a>
-                        </li>
+                        </li-->
                         <li class="nav-item {{ isset($menuCar) ? 'active open' : '' }}">
                             <a href="{{ route('car.model.index') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-car"></i>
@@ -257,38 +275,39 @@ License: You must have a valid license purchased only from themeforest(the above
                             </a>
                         </li-->
                         @if(Auth::user()->hasRole('administrator'))
-                        <li class="nav-item {{ isset($menuAdministration) ? 'active open' : '' }}">
-                            <a href="{{ route('user.index') }}" class="nav-link nav-toggle">
-                                <i class="fa fa-lock"></i>
-                                <span class="title">Administration</span>
-                                <span class="{{ isset($menuAdministration) ? 'selected' : '' }}"></span>
-                                <span class="arrow"></span>
-                            </a>
-                            <ul class="sub-menu">
-                                <li class="nav-item start {{ isset($submenuUser) ? 'active open' : '' }}">
-                                    <a href="{{ route('user.index') }}" class="nav-link ">
-                                        <i class="fa fa-user"></i>
-                                        <span class="title">Users</span>
-                                        <span class="{{ isset($submenuUser) ? 'selected' : '' }}"></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item start {{ isset($submenuMarket) ? 'active open' : '' }}">
-                                    <a href="{{ route('market.index') }}" class="nav-link ">
-                                        <i class="fa fa-star"></i>
-                                        <span class="title">Markets</span>
-                                        <span class="{{ isset($submenuMarket) ? 'selected' : '' }}"></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item start {{ isset($submenuLocations) ? 'active open' : '' }}">
-                                    <a href="{{ route('location.index') }}" class="nav-link ">
-                                        <i class="fa fa-globe"></i>
-                                        <span class="title">Locations</span>
-                                        <span class="{{ isset($submenuLocations) ? 'selected' : '' }}"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                            <li class="nav-item {{ isset($menuAdministration) ? 'active open' : '' }}">
+                                <a href="{{ route('user.index') }}" class="nav-link nav-toggle">
+                                    <i class="fa fa-lock"></i>
+                                    <span class="title">Administration</span>
+                                    <span class="{{ isset($menuAdministration) ? 'selected' : '' }}"></span>
+                                    <span class="arrow"></span>
+                                </a>
+                                <ul class="sub-menu">
+                                    <li class="nav-item start {{ isset($submenuUser) ? 'active open' : '' }}">
+                                        <a href="{{ route('user.index') }}" class="nav-link ">
+                                            <i class="fa fa-user"></i>
+                                            <span class="title">Users</span>
+                                            <span class="{{ isset($submenuUser) ? 'selected' : '' }}"></span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item start {{ isset($submenuMarket) ? 'active open' : '' }}">
+                                        <a href="{{ route('market.index') }}" class="nav-link ">
+                                            <i class="fa fa-star"></i>
+                                            <span class="title">Markets</span>
+                                            <span class="{{ isset($submenuMarket) ? 'selected' : '' }}"></span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item start {{ isset($submenuLocations) ? 'active open' : '' }}">
+                                        <a href="{{ route('location.index') }}" class="nav-link ">
+                                            <i class="fa fa-globe"></i>
+                                            <span class="title">Locations</span>
+                                            <span class="{{ isset($submenuLocations) ? 'selected' : '' }}"></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         @endif
+                    @endif
                     </ul>
                     <!-- END SIDEBAR MENU -->
                 </div>

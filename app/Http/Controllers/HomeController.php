@@ -24,12 +24,20 @@ class HomeController extends Controller
 
     public function index(Request $request)
     {
+        $request->user()->authorizeRoles(['commercial', 'administrator', 'client']);
+        $breadcrumb = array();
+        $data['breadcrumb'] = $breadcrumb;
+        return view('home')->with($data);
+    }
+
+    public function dashboard(Request $request)
+    {
         $request->user()->authorizeRoles(['commercial', 'administrator']);
         $breadcrumb = array(
             0 => 'Dashboard'
         );
         $data['breadcrumb'] = $breadcrumb;
         $data['menuDashboard'] = 'selected';
-        return view('home')->with($data);
+        return view('dashboard')->with($data);
     }
 }

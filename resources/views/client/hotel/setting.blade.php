@@ -33,7 +33,7 @@
 @stop
 
 @section('page-title','Hotel Contract Settings')
-@section('page-sub-title','define prices, allotments and more...')
+@section('')
 
 @section('content')
 <div class="row">
@@ -144,7 +144,6 @@
 <div class="row">
     <div class="col-xs-12 result-container"></div>
 </div>
-
 @stop
 
 @section('page-plugins')
@@ -181,7 +180,7 @@
         $("#search-accomodation :input[name=contract]").select2({
             width: "off",
             ajax: {
-                url: "{{ route('hotel.contract.client.search') }}",
+                url: "{{ route('client.contract.hotel.search') }}",
                 "type": "POST",
                 dataType: 'json',
                 delay: 250,
@@ -220,7 +219,7 @@
         });
 
         $.ajax({
-            "url": "{{ route('hotel.contract.client') }}",
+            "url": "{{ route('client.contract.hotel') }}",
             "type": "POST",
             "data": {
                 contractId: contractId
@@ -265,7 +264,7 @@
                     rows.push($(this).val());
                 });
                 $.ajax({
-                    "url": "{{ route('hotel.contract.client.settings.data') }}",
+                    "url": "{{ route('client.contract.hotel.settings.data') }}",
                     "type": "POST",
                     "data": {
                         id: contract.id,

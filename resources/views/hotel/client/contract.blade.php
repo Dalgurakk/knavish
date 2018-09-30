@@ -74,8 +74,8 @@
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <div class="input-icon">
-                                        <i class="fa fa-building-o"></i>
-                                        <input type="text" class="form-control" name="hotel" placeholder="Hotel"> </div>
+                                        <i class="fa fa-user"></i>
+                                        <input type="text" class="form-control" name="client" placeholder="Client"> </div>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -988,7 +988,7 @@
             "lengthMenu": [[-1], ["All"]]
         });
 
-        var tableAddRoomType = $('#modal-edit .table-room-type').dataTable({
+        var tableAddRoomType = $('#modal-add .table-room-type').dataTable({
             "sDom": "t",
             "lengthMenu": [[-1], ["All"]],
             "order": [[ 1, "asc" ]],
@@ -1163,8 +1163,8 @@
             var roomTypes = values.room_types;
             var priceRates = values.price_rates;
             if(values.selected) {
-                $('#modal-add :input[name="valid-from"]').val(values.valid_from);
-                $('#modal-add :input[name="valid-to"]').val(values.valid_to);
+                $('#modal-add :input[name=valid-from]').val(moment(values.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY'));
+                $('#modal-add :input[name=valid-to]').val(moment(values.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
 
                 $('#modal-add .show-hotel :input[name=hotel]').val(hotel.name);
                 $('#modal-add .show-hotel :input[name=country-text]').val(hotel.country.name);
@@ -1802,6 +1802,47 @@
                 table.draw();
                 needUpdate = false;
             }
+        });
+
+        $('.btn-search-reset').on('click', function (e) {
+            e.preventDefault();
+            $('#search-section :input[name=name]').val('');
+            $('#search-section :input[name=client]').val('');
+            $('#search-section :input[name=active]').val('');
+            $('#search-section :input[name=valid-from]').val('');
+            $('#search-section :input[name=valid-to]').val('');
+        });
+
+        $('.btn-search-cancel').on('click', function (e) {
+            e.preventDefault();
+            $('#search-section').slideToggle();
+        });
+
+        $('#search-section :input[name=valid-from]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        });
+
+        $('#search-section :input[name=valid-to]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        });
+
+        $('.btn-search-submit').on( 'click', function (e) {
+            e.preventDefault();
+            table
+                .columns('name:name').search($('#search-section :input[name=name]').val())
+                .columns('client:name').search($('#search-section :input[name=client]').val())
+                .columns('valid_from:name').search($('#search-section :input[name=valid-from]').val())
+                .columns('valid_to:name').search($('#search-section :input[name=valid-to]').val())
+                .columns('active:name').search($('#search-section :input[name=active]').val())
+                .draw();
         });
     });
 </script>

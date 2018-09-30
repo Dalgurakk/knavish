@@ -221,7 +221,8 @@
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
-            format: 'dd.mm.yyyy'
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
         });
 
         function searchFormat(repo) {
@@ -305,13 +306,6 @@
                     }
                 }
             }
-        });
-
-        $(".datepicker").datepicker({
-            format: "MM yyyy",
-            viewMode: "months",
-            minViewMode: "months",
-            autoclose: true
         });
 
         $('.btn-search-submit').on('click', function(e) {
@@ -437,7 +431,8 @@
                 format: "MM yyyy",
                 viewMode: "months",
                 minViewMode: "months",
-                autoclose: true
+                autoclose: true,
+                orientation: "bottom"
             });
 
             var startDate = moment(contract.valid_from, 'YYYY-MM-DD');

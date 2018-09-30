@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\HotelBoardType;
 use App\HotelContract;
+use App\HotelContractClient;
 use App\HotelContractMarket;
 use App\HotelContractSetting;
 use App\HotelMeasure;
@@ -58,7 +59,7 @@ class HotelContractController extends Controller
         $records = DB::table('hotel_contracts')->count();
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array('hotel_contracts.id', 'hotel_contracts.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.hotel_id');
+        $columns = array('hotel_contracts.id', 'hotel_contracts.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.active', 'hotel_contracts.hotel_id');
         $orderBy = Input::get('order')['0']['column'];
         $orderDirection = Input::get('order')['0']['dir'];
         $searchName = Input::get('columns')['1']['search']['value'];
@@ -255,6 +256,8 @@ class HotelContractController extends Controller
             $contract->active = Input::get('active') == 1 ? true : false;
             $contract->status = Input::get('status');
 
+            //print_r($contract->active);die;
+
             DB::beginTransaction();
             try {
                 $roomTypes = json_decode(Input::get('roomTypes'), true);
@@ -304,6 +307,15 @@ class HotelContractController extends Controller
                 $contract->paxTypes()->sync($paxTypes);
                 $contract->measures()->sync($measures);
                 $contract->save();
+
+                if ($contract->active != 1) {
+                    $clientContracts = $contract->clientContracts;
+                    foreach ($clientContracts as $c) {
+                        $c->active = false;
+                        $c->save();
+                    }
+                }
+
                 DB::commit();
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Contract updated successfully.';

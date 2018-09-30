@@ -4,69 +4,64 @@ namespace App\Http\Controllers;
 
 use App\HotelContract;
 use App\HotelContractClient;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 use Carbon;
 
-class HotelContractClientController extends Controller
+class ClientController extends Controller
 {
-    private $response;
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('auth');
     }
 
-    public function index(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
+    public function hotel(Request $request)
+    {
+        $request->user()->authorizeRoles(['client']);
         $breadcrumb = array(
-            0 => 'Contract',
-            1 => 'Client',
-            2 => 'Hotel'
+            0 => 'My Contracts',
+            1 => 'Hotel'
         );
-
         $data['breadcrumb'] = $breadcrumb;
         $data['menuContract'] = 'selected';
-        $data['submenuContractClient'] = 'selected';
-        $data['submenuContractClientHotel'] = 'selected';
-
-        return view('hotel.client.contract')->with($data);
+        $data['submenuHotel'] = 'selected';
+        return view('client.hotel.contract')->with($data);
     }
 
-    public function read(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $records = DB::table('hotel_contract_clients')->count();
+    public function readHotel(Request $request) {
+        $request->user()->authorizeRoles(['client']);
+        $records = DB::table('hotel_contract_clients')
+            ->where('client_id', Auth::user()->id)
+            ->where('active', '1')
+            ->count();
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array('hotel_contract_clients.id', 'hotel_contract_clients.name', 'users.username', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contract_clients.active', 'hotel_contract_clients.active');
+        $columns = array('hotel_contract_clients.id', 'hotel_contract_clients.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contract_clients.active');
         $orderBy = Input::get('order')['0']['column'];
         $orderDirection = Input::get('order')['0']['dir'];
         $searchName = Input::get('columns')['1']['search']['value'];
-        $searchClient = Input::get('columns')['2']['search']['value'];
+        $searchHotel = Input::get('columns')['2']['search']['value'];
         $searchValidFrom = Input::get('columns')['3']['search']['value'];
         $searchValidTo = Input::get('columns')['4']['search']['value'];
-        $searchActive = Input::get('columns')['6']['search']['value'];
         $contracts = array();
 
         $query = DB::table('hotel_contract_clients')
             ->select(
-                'hotel_contract_clients.id', 'hotel_contract_clients.name', 'users.name as client', 'hotel_contracts.valid_from',
-                'hotel_contracts.valid_to', 'hotel_contract_clients.active', 'hotel_contract_clients.active')
-            ->join('users', 'users.id', '=', 'hotel_contract_clients.client_id')
-            ->join('hotel_contracts', 'hotel_contracts.id', '=', 'hotel_contract_clients.hotel_contract_id');
+                'hotel_contract_clients.id', 'hotel_contract_clients.name', 'hotels.name as hotel', 'hotel_contracts.valid_from',
+                'hotel_contracts.valid_to', 'hotel_contract_clients.active')
+            ->join('hotel_contracts', 'hotel_contracts.id', '=', 'hotel_contract_clients.hotel_contract_id')
+            ->join('hotels', 'hotels.id', '=', 'hotel_contracts.hotel_id')
+            ->where('hotel_contract_clients.client_id', Auth::user()->id)
+            ->where('hotel_contract_clients.active', '1')
+        ;
 
         if(isset($searchName) && $searchName != '') {
-            $query->where('hotel_contracts.name', 'like', '%' . $searchName . '%');
+            $query->where('hotel_contract_clients.name', 'like', '%' . $searchName . '%');
         }
-        if(isset($searchClient) && $searchClient != '') {
-            $query->where('users.username', 'like', '%' . $searchClient . '%');
-        }
-        if(isset($searchActive) && $searchActive != '') {
-            $query->where('hotel_contract_clients.active', '=', $searchActive);
+        if(isset($searchHotel) && $searchHotel != '') {
+            $query->where('hotels.name', 'like', '%' . $searchHotel . '%');
         }
         if(isset($searchValidFrom) && $searchValidFrom != '') {
             $validFrom = Carbon::createFromFormat('d.m.Y', $searchValidFrom);
@@ -85,9 +80,9 @@ class HotelContractClientController extends Controller
 
         foreach ($result as $r) {
             $query = HotelContractClient::with([
-                'hotelContract', 'hotelContract.priceRates', 'hotelContract.priceRates.market', 'client', 'priceRate', 'priceRate.market',
-                'hotelContract.hotel', 'hotelContract.hotel.hotelChain', 'hotelContract.hotel.country', 'hotelContract.hotel.state',
-                'hotelContract.hotel.city', 'hotelContract.roomTypes', 'hotelContract.paxTypes', 'hotelContract.boardTypes'])
+                'hotelContract', 'hotelContract.hotel', 'hotelContract.hotel.hotelChain', 'hotelContract.hotel.country',
+                'hotelContract.hotel.state', 'hotelContract.hotel.city', 'hotelContract.roomTypes', 'hotelContract.paxTypes',
+                'hotelContract.boardTypes'])
                 ->where('id', $r->id)->get();
 
             $contract = $query[0];
@@ -109,10 +104,9 @@ class HotelContractClientController extends Controller
             $item = array(
                 'id' => $r->id,
                 'name' => $r->name,
-                'client' => $r->client,
+                'hotel' => $r->hotel,
                 'valid_from' => $r->valid_from,
                 'valid_to' => $r->valid_to,
-                'active' => $r->active,
                 'status' => $status,
                 'contract' => $contract
             );
@@ -130,125 +124,13 @@ class HotelContractClientController extends Controller
         echo json_encode($data);
     }
 
-    public function create(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $rules = array(
-            'name' => 'required',
-            'client' => 'required',
-            'contract' => 'required',
-            'price-rate' => 'required'
-        );
-
-        $validator = Validator::make(Input::all(), $rules);
-
-        if ($validator->fails()) {
-            $this->response['status'] = 'error';
-            $this->response['message'] = 'Validation errors.';
-            $this->response['errors'] = $validator->errors();
-        }
-        else {
-            $contract = new HotelContractClient();
-            $contract->name = Input::get('name');
-            $contract->hotel_contract_id = Input::get('contract');
-            $contract->client_id = Input::get('client');
-            $contract->hotel_contract_market_id = Input::get('price-rate');
-            $contract->active = Input::get('active') == 1 ? true : false;
-
-            try {
-                $contract->save();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Contract ' . $contract->name . ' created successfully.';
-                $this->response['data'] = $contract;
-            }
-            catch (QueryException $e) {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
-            }
-        }
-        echo json_encode($this->response);
-    }
-
-    public function update(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $id = Input::get('id');
-        $rules = array(
-            'id' => 'required',
-            'name' => 'required',
-            'client-id' => 'required',
-            'hotel-contract-id' => 'required',
-            'price-rate' => 'required'
-        );
-        $validator = Validator::make(Input::all(), $rules);
-
-        if ($validator->fails()) {
-            $this->response['status'] = 'error';
-            $this->response['message'] = 'Validation errors.';
-            $this->response['errors'] = $validator->errors();
-        }
-        else {
-            $contract = HotelContractClient::find($id);
-            $contract->name = Input::get('name');
-            $contract->hotel_contract_id = Input::get('hotel-contract-id');
-            $contract->client_id = Input::get('client-id');
-            $contract->hotel_contract_market_id = Input::get('price-rate');
-
-            $info = '.';
-            if (Input::get('active') == 1) {
-                $hotelContract = $contract->hotelContract;
-                if ($hotelContract->active == 1)
-                    $contract->active = true;
-                else {
-                    $contract->active = false;
-                    $info = ' but can not be enabled because the provider contract is disabled.';
-                }
-            }
-            else $contract->active = false;
-
-            try {
-                $contract->save();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Contract updated successfully' . $info;
-                $this->response['data'] = $contract;
-            }
-            catch (QueryException $e) {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
-            }
-        }
-        echo json_encode($this->response);
-    }
-
-    public function delete(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $id = Input::get('id');
-        $contract = HotelContractClient::find($id);
-
-        try {
-            $contract->delete();
-            $this->response['status'] = 'success';
-            $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
-            $this->response['data'] = $contract;
-        }
-        catch (QueryException $e) {
-            $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
-            $this->response['errors'] = $e->errorInfo[2];
-        }
-        echo json_encode($this->response);
-    }
-
-    public function settings(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+    public function settingsHotel(Request $request) {
+        $request->user()->authorizeRoles(['client']);
 
         $breadcrumb = array(
-            0 => 'Contract',
-            1 => 'Client',
-            2 => 'Hotel'
+            0 => 'My Contracts',
+            1 => 'Hotel',
+            2 => 'Settings'
         );
 
         $data['breadcrumb'] = $breadcrumb;
@@ -262,11 +144,11 @@ class HotelContractClientController extends Controller
         if ($id != '') {
             $data['contract_id'] = $id;
         }
-        return view('hotel.client.setting')->with($data);
+        return view('client.hotel.setting')->with($data);
     }
 
     public function getContract(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['client']);
 
         $id = Input::get('contractId');
 
@@ -278,9 +160,14 @@ class HotelContractClientController extends Controller
                 $query->orderBy('name', 'asc');
             },
             'hotelContract.measures' => function($query) {
+                $query->whereNotIn('code', ['cost']);
                 $query->orderBy('id', 'asc');
             }
         ]);
+
+        $query
+            ->where('client_id', Auth::user()->id)
+            ->where('active', '1');
 
         if($id != '') {
             $query->where('id', $id);
@@ -304,7 +191,7 @@ class HotelContractClientController extends Controller
     }
 
     public function getByName(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['client']);
 
         $string = '%' . Input::get('q') . '%';
         $contracts = HotelContractClient::with([
@@ -315,17 +202,20 @@ class HotelContractClientController extends Controller
                 $query->orderBy('name', 'asc');
             },
             'hotelContract.measures' => function($query) {
+                $query->whereNotIn('code', ['cost']);
                 $query->orderBy('id', 'asc');
             }
         ])
             ->where('name', 'like', $string)
+            ->where('client_id', Auth::user()->id)
+            ->where('active', '1')
             ->orderBy('name', 'asc')
             ->get();
         echo json_encode($contracts);
     }
 
-    public function settingsByContract(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+    public function settingsHotelData(Request $request) {
+        $request->user()->authorizeRoles(['client']);
 
         $id = Input::get('id');
         $from = Input::get('from');
@@ -335,7 +225,9 @@ class HotelContractClientController extends Controller
         $start = Carbon::createFromFormat('d.m.Y', $from)->startOfMonth();
         $end = Carbon::createFromFormat('d.m.Y', $to)->endOfMonth();
 
-        $clientContract = HotelContractClient::where('id', $id)->first();
+        $clientContract = HotelContractClient::where('id', $id)
+            ->where('client_id', Auth::user()->id)
+            ->where('active', '1')->first();
         $priceRate = $clientContract->hotel_contract_market_id;
 
         $contract = HotelContract::with([
@@ -382,7 +274,7 @@ class HotelContractClientController extends Controller
                         '<div class="portlet box green">' .
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                        '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
+                        '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . '</div>' .
                         '<div class="tools tools-setting">' .
                         '<!--a href="" class="fullscreen"> </a-->' .
                         '<a href="javascript:;" class="collapse"> </a>' .

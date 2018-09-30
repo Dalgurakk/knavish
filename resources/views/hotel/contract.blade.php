@@ -1313,21 +1313,24 @@
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
-            format: 'dd.mm.yyyy'
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
         });
 
         $('#search-section :input[name=valid-from]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
-            format: 'dd.mm.yyyy'
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
         });
 
         $('#search-section :input[name=valid-to]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
-            format: 'dd.mm.yyyy'
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
         });
 
         $('.hotel-category').barrating({

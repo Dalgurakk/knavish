@@ -27,6 +27,7 @@ class HomeController extends Controller
         $request->user()->authorizeRoles(['commercial', 'administrator', 'client']);
         $breadcrumb = array();
         $data['breadcrumb'] = $breadcrumb;
+        $data['menuHome'] = 'selected';
         return view('home')->with($data);
     }
 

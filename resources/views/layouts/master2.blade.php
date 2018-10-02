@@ -149,14 +149,21 @@ License: You must have a valid license purchased only from themeforest(the above
                             </ul>
                         </li>
                     @else
-                        <!--li class="nav-item start {{ isset($menuDashboard) ? 'active open' : '' }}">
+                        <li class="nav-item start {{ isset($menuHome) ? 'active open' : '' }}">
+                            <a href="{{ route('home') }}" class="nav-link nav-toggle">
+                                <i class="icon-home"></i>
+                                <span class="title">Home</span>
+                                <span class="{{ isset($menuHome) ? 'selected' : '' }}"></span>
+                            </a>
+                        </li>
+                            <!--li class="nav-item start {{ isset($menuDashboard) ? 'active open' : '' }}">
                             <a href="{{ route('dashboard') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-bar-chart"></i>
                                 <span class="title">Dashboard</span>
                                 <span class="{{ isset($menuDashboard) ? 'selected' : '' }}"></span>
                             </a>
                         </li-->
-                        <li class="nav-item {{ isset($menuCar) ? 'active open' : '' }}">
+                        <!--li class="nav-item {{ isset($menuCar) ? 'active open' : '' }}">
                             <a href="{{ route('car.model.index') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-car"></i>
                                 <span class="title">Car</span>
@@ -179,7 +186,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li-->
                         <li class="nav-item {{ isset($menuHotel) ? 'active open' : '' }}">
                             <a href="{{ route('hotel.index') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-building-o"></i>
@@ -322,6 +329,7 @@ License: You must have a valid license purchased only from themeforest(the above
                     <h1 class="page-title"> @yield('page-title')
                         <small>@yield('page-sub-title')</small>
                     </h1>
+                    @if (!isset($menuHome))
                     <div class="page-bar">
                         <ul class="page-breadcrumb">
                             <li>
@@ -340,8 +348,8 @@ License: You must have a valid license purchased only from themeforest(the above
                         </ul>
                         @yield('page-toolbar')
                     </div>
+                    @endif
                     <!-- END PAGE HEADER-->
-
 
                     @yield('content')
 

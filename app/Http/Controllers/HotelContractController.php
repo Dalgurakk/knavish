@@ -49,6 +49,7 @@ class HotelContractController extends Controller
         $data['boardTypes'] = $boardTypes;
         $data['measures'] = $measures;
         $data['markets'] = $markets;
+        $data['currentDate'] = parent::currentDate();
 
         return view('hotel.contract')->with($data);
     }
@@ -369,6 +370,7 @@ class HotelContractController extends Controller
         $data['submenuContractProviderHotel'] = 'selected';
         $data['breadcrumb'] = $breadcrumb;
         $data['contract_id'] = null;
+        $data['currentDate'] = parent::currentDate();
 
         $id = Input::get('id');
         if ($id != '') {

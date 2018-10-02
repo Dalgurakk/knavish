@@ -29,6 +29,7 @@ class MarketController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuAdministration'] = 'selected';
         $data['submenuMarket'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
 
         return view('administration.market')->with($data);
     }

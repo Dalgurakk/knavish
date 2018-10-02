@@ -29,6 +29,7 @@ class HotelBoardTypeController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
         $data['submenuHotelBoardType'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
 
         return view('hotel.boardtype')->with($data);
     }

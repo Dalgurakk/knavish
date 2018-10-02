@@ -44,6 +44,7 @@ class HotelController extends Controller
         $data['hotelsChain'] = $hotelsChain;
         $data['publishPath'] = $this->publishPath;
         $data['publishThumbnailPath'] = $this->publishThumbnailPath;
+        $data['currentDate'] = parent::currentDate();
 
         return view('hotel.hotel')->with($data);
     }

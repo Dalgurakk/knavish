@@ -29,6 +29,7 @@ class HotelPaxTypeController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
         $data['submenuHotelPaxType'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
 
         return view('hotel.paxtype')->with($data);
     }

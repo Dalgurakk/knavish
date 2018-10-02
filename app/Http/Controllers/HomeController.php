@@ -28,6 +28,7 @@ class HomeController extends Controller
         $breadcrumb = array();
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHome'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
         return view('home')->with($data);
     }
 

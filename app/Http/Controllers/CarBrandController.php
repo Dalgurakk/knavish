@@ -40,6 +40,7 @@ class CarBrandController extends Controller
         $data['categories'] = $categories;
         $data['uploadDir'] = asset('assets/pages/img/car/uploads');
         $data['noImgSrc'] = asset('assets/pages/img/car/no-image-768x576.jpg');
+        $data['currentDate'] = parent::currentDate();
 
         return view('car.brand')->with($data);
     }

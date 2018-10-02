@@ -57,8 +57,11 @@ License: You must have a valid license purchased only from themeforest(the above
             <div class="page-header-inner ">
                 <!-- BEGIN LOGO -->
                 <div class="page-logo" style="/*height: 45px;*/">
-                    <a href="{{ route('home') }}">
-                        <img src="{{ asset('assets/layouts/layout2/img/logo-default-royal.png') }}" alt="logo" class="logo-default" style="/*margin: 16px 0 0;*/" /> </a>
+                    <!--a href="{{ route('home') }}">
+                        <img src="{{ asset('assets/layouts/layout2/img/logo-default-royal.png') }}" alt="logo" class="logo-default" style="/*margin: 16px 0 0;*/" /> </a-->
+                    <div style="display: inline-block;margin-top: 2px;">
+                        <p style="color: #fff; font-weight: 700; font-size: 16px;">{{ $currentDate }}</p>
+                    </div>
                     <div class="menu-toggler sidebar-toggler" style="/*margin: 12px 0 0;*/">
                         <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
                     </div>
@@ -71,8 +74,10 @@ License: You must have a valid license purchased only from themeforest(the above
                 <!-- BEGIN PAGE TOP -->
                 <div class="page-top" style="/*height: 45px;*/">
                     <div class="master-logo-container">
-                        <img id="logo1" src="{{ asset('assets/layouts/layout2/img/logo-royal-224x50.png') }}" />
-                        <img id="logo2" src="{{ asset('assets/layouts/layout2/img/logo-royal-elemental.png') }}" style="margin-top: 5px;"/>
+                        <a href="{{ route('home') }}">
+                            <img id="logo1" src="{{ asset('assets/layouts/layout2/img/logo-royal-224x50.png') }}" />
+                            <img id="logo2" src="{{ asset('assets/layouts/layout2/img/logo-royal-elemental.png') }}" style="margin-top: 5px;"/>
+                        </a>
                     </div>
                     <!-- BEGIN TOP NAVIGATION MENU -->
                     <div class="top-menu">

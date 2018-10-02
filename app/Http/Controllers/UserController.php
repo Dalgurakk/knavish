@@ -35,6 +35,7 @@ class UserController extends Controller
         $data['menuAdministration'] = 'selected';
         $data['submenuUser'] = 'selected';
         $data['roles'] = $roles;
+        $data['currentDate'] = parent::currentDate();
 
         return view('administration.user')->with($data);
     }

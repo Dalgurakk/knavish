@@ -27,6 +27,8 @@ class ClientController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuContract'] = 'selected';
         $data['submenuHotel'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
+
         return view('client.hotel.contract')->with($data);
     }
 
@@ -139,6 +141,7 @@ class ClientController extends Controller
         $data['submenuContractClientHotel'] = 'selected';
         $data['breadcrumb'] = $breadcrumb;
         $data['contract_id'] = null;
+        $data['currentDate'] = parent::currentDate();
 
         $id = Input::get('id');
         if ($id != '') {

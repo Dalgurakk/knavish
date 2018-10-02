@@ -29,6 +29,7 @@ class HotelRoomTypeController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
         $data['submenuHotelRoomType'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
 
         return view('hotel.roomtype')->with($data);
     }

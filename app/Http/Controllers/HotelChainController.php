@@ -29,6 +29,7 @@ class HotelChainController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuHotel'] = 'selected';
         $data['submenuHotelChain'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
 
         return view('hotel.hotelchain')->with($data);
     }

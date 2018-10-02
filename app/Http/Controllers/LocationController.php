@@ -30,6 +30,7 @@ class LocationController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuAdministration'] = 'selected';
         $data['submenuLocations'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
 
         return view('administration.location')->with($data);
     }

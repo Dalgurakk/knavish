@@ -30,6 +30,7 @@ class CarCategoryController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['menuCar'] = 'selected';
         $data['submenuCarCategory'] = 'selected';
+        $data['currentDate'] = parent::currentDate();
 
         return view('car.category')->with($data);
     }

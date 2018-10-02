@@ -21,7 +21,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
     <head>
         <meta charset="utf-8" />
-        <title>Royal Manager | User Login</title>
+        <title>Royal App | Login</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="Royal Manager - Admin Dashboard" name="description" />
@@ -96,8 +96,8 @@ License: You must have a valid license purchased only from themeforest(the above
                 </div>
                 <div class="form-actions">
                     <label class="rememberme mt-checkbox mt-checkbox-outline">
-                        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }} /> Remember me
-                        <span></span>
+                        <!--input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }} /> Remember me
+                        <span></span-->
                     </label>
                     <button type="submit" class="btn green pull-right"> Login </button>
                 </div>
@@ -106,7 +106,7 @@ License: You must have a valid license purchased only from themeforest(the above
         </div>
         <!-- END LOGIN -->
         <!-- BEGIN COPYRIGHT -->
-        <div class="copyright"> 2018 &copy; Royal Manager - Admin Dashboard. </div>
+        <div class="copyright"> 2018 &copy; Royal Team </div>
         <!-- END COPYRIGHT -->
         <!--[if lt IE 9]>
 <script src="{{ asset('assets/global/plugins/respond.min.js') }}"></script>

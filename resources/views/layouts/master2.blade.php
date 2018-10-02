@@ -20,7 +20,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <!-- BEGIN HEAD -->
     <head>
         <meta charset="utf-8" />
-        <title>Royal Manager | @yield('title')</title>
+        <title>Royal App | @yield('title')</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="Royal Manager - Admin Dashboard" name="description" />
@@ -81,7 +81,7 @@ License: You must have a valid license purchased only from themeforest(the above
                             <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
                             <li class="dropdown dropdown-user" style="/*height: 45px;*/">
                                 <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="/*padding: 11px;*/">
-                                    <img alt="" class="img-circle" src="{{ asset('assets/layouts/layout2/img/avatar3_small.jpg') }}" />
+                                    <img alt="" class="img-circle" src="{{ asset('assets/layouts/layout2/img/avatar.png') }}" />
                                     <span class="username username-hide-on-mobile"> {{ Auth::user()->name }} </span>
                                     <i class="fa fa-angle-down"></i>
                                 </a>

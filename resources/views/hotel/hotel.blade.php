@@ -581,10 +581,6 @@
         var inputSelected;
         var inputSelectedHidden;
 
-        /*$(".hotel-chain").select2({
-            width: "off"
-        });*/
-
          // Initialize the jQuery File Upload widget:
         $('#fileupload').fileupload({
             disableImageResize: false,
@@ -611,7 +607,7 @@
         );
 
         // Upload server status check for browsers with CORS support:
-        if ($.support.cors) {
+        /*if ($.support.cors) {
             $.ajax({
                 type: 'HEAD'
             }).fail(function () {
@@ -620,7 +616,7 @@
                             new Date())
                     .appendTo('#fileupload');
             });
-        }
+        }*/
 
         $('.trigger-location').on('click, focus', function(e) {
             inputSelected = $(this);
@@ -1009,6 +1005,7 @@
             var city = hotel.city != null ? hotel.city.name : '';
             var cityId = hotel.city != null ? hotel.city.id : '';
             var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
+            var hotelChainId = hotel.hotel_chain_id != null ? hotel.hotel_chain_id : '';
 
             $('#modal-edit :input[name=id]').val(data['id']);
             $('#modal-edit :input[name=name]').val(hotel.name);
@@ -1022,7 +1019,7 @@
             $('#modal-edit :input[name=address]').val(hotel.address);
             var category = hotel.category != null ? hotel.category : '';
             $('#modal-edit :input[name=category]').barrating('set', category);
-            $('#modal-edit :input[name=hotel-chain-id]').val(hotelChain);
+            $('#modal-edit :input[name=hotel-chain-id]').val(hotelChainId);
             $('#modal-edit :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-edit :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-edit :input[name=web-site]').val(hotel.web_site);

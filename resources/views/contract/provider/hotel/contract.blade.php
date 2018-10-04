@@ -1,4 +1,4 @@
-@extends('layouts.master2')
+@extends('.........layouts.master2')
 @section('title','Contracts')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
@@ -1377,7 +1377,7 @@
             "sDom": "ltip",
             "iDisplayLength" : 10,
             "ajax": {
-                "url": "{{ route('hotel.contract.provider.read') }}",
+                "url": "{{ route('contract.provider.hotel.read') }}",
                 "type": "POST",
                 "complete": function(xhr, textStatus) {
                     if (xhr.status != '200') {
@@ -1429,7 +1429,7 @@
                     "data": function ( row, type, val, meta ) {
                         //var contract = row.contract;
                         var data =
-                        '<form method="get" action="{{ route("hotel.contract.provider.settings") }}">' +
+                        '<form method="get" action="{{ route("contract.provider.hotel.settings") }}">' +
                             '<input type="hidden" name="id" value="' + row.id + '">' +
                             '<div class="dt-actions">' +
                             '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info">' +
@@ -1625,7 +1625,7 @@
                 formData.append('measures', JSON.stringify(measures));
                 formData.append('markets', JSON.stringify(markets));
                 $.ajax({
-                    "url": "{{ route('hotel.contract.provider.create') }}",
+                    "url": "{{ route('contract.provider.hotel.create') }}",
                     "type": "POST",
                     "data": formData,
                     "contentType": false,
@@ -1799,7 +1799,7 @@
                 formData.append('measures', JSON.stringify(measures));
                 formData.append('markets', JSON.stringify(markets));
                 $.ajax({
-                    "url": "{{ route('hotel.contract.provider.update') }}",
+                    "url": "{{ route('contract.provider.hotel.update') }}",
                     "type": "POST",
                     //"data": formEdit.serialize(),
                     "data": formData,
@@ -2582,7 +2582,7 @@
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
                 $.ajax({
-                    url: "{{ route('hotel.contract.provider.delete') }}",
+                    url: "{{ route('contract.provider.hotel.delete') }}",
                     "type": "POST",
                     "data":  {
                         id: data['id']

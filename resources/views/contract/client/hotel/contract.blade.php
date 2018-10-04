@@ -1,4 +1,4 @@
-@extends('layouts.master2')
+@extends('......layouts.master2')
 @section('title','Contracts')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
@@ -864,7 +864,7 @@
             "sDom": "ltip",
             "iDisplayLength" : 10,
             "ajax": {
-                "url": "{{ route('hotel.contract.client.read') }}",
+                "url": "{{ route('contract.client.hotel.read') }}",
                 "type": "POST",
                 "complete": function(xhr, textStatus) {
                     if (xhr.status != '200') {
@@ -916,7 +916,7 @@
                     "data": function ( row, type, val, meta ) {
                         //var contract = row.contract;
                         var data =
-                        '<form method="get" action="{{ route("hotel.contract.client.settings") }}">' +
+                        '<form method="get" action="{{ route("contract.client.hotel.settings") }}">' +
                             '<input type="hidden" name="id" value="' + row.id + '">' +
                             '<div class="dt-actions">' +
                             '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info">' +
@@ -1128,7 +1128,7 @@
         $("#modal-add :input[name=contract]").select2({
             width: "off",
             ajax: {
-                url: "{{ route('hotel.contract.provider.search.active') }}",
+                url: "{{ route('contract.provider.hotel.search.active') }}",
                 "type": "POST",
                 dataType: 'json',
                 delay: 250,
@@ -1265,7 +1265,7 @@
         $("#modal-edit :input[name=contract]").select2({
             width: "off",
             ajax: {
-                url: "{{ route('hotel.contract.provider.search.active') }}",
+                url: "{{ route('contract.provider.hotel.search.active') }}",
                 "type": "POST",
                 dataType: 'json',
                 delay: 250,
@@ -1434,7 +1434,7 @@
                 var active = $('#modal-add :input[name="active"]').prop('checked') ? '1' : '0';
 
                 $.ajax({
-                    "url": "{{ route('hotel.contract.client.create') }}",
+                    "url": "{{ route('contract.client.hotel.create') }}",
                     "type": "POST",
                     "data": {
                         "price-rate": priceRate,
@@ -1543,7 +1543,7 @@
                 var active = $('#modal-edit :input[name="active"]').prop('checked') ? '1' : '0';
 
                 $.ajax({
-                    "url": "{{ route('hotel.contract.client.update') }}",
+                    "url": "{{ route('contract.client.hotel.update') }}",
                     "type": "POST",
                     "data": {
                         id: id,
@@ -1584,7 +1584,7 @@
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
                 $.ajax({
-                    url: "{{ route('hotel.contract.client.delete') }}",
+                    url: "{{ route('contract.client.hotel.delete') }}",
                     "type": "POST",
                     "data":  {
                         id: data['id']

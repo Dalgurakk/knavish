@@ -1,21 +1,9 @@
 <?php
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 Auth::routes();
-
+//Home
 Route::get('/', 'HomeController@index')->name('home');
+//Dashboard
 Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
-
 //User
 Route::get('/user', 'UserController@index')->name('user.index');
 Route::post('/user/read', 'UserController@read')->name('user.read');
@@ -87,28 +75,27 @@ Route::post('/hotel/images', 'HotelController@images')->name('hotel.images');
 Route::post('/hotel/search/active', 'HotelController@getActivesByName')->name('hotel.search.active');
 Route::post('/hotel/search/contract', 'HotelController@getContractsByName')->name('hotel.search.contract');
 //HotelContract
-Route::get('/hotel/contract/provider', 'HotelContractController@index')->name('hotel.contract.provider.index');
-Route::post('/hotel/contract/provider/read', 'HotelContractController@read')->name('hotel.contract.provider.read');
-Route::post('/hotel/contract/provider/create', 'HotelContractController@create')->name('hotel.contract.provider.create');
-Route::post('/hotel/contract/provider/update', 'HotelContractController@update')->name('hotel.contract.provider.update');
-Route::post('/hotel/contract/provider/delete', 'HotelContractController@delete')->name('hotel.contract.provider.delete');
-Route::get('/hotel/contract/provider/settings', 'HotelContractController@settings')->name('hotel.contract.provider.settings');
-Route::post('/hotel/contract/provider', 'HotelContractController@getContract')->name('hotel.contract.provider');
-Route::post('/hotel/contract/provider/search', 'HotelContractController@getByName')->name('hotel.contract.provider.search');
-Route::post('/hotel/contract/provider/settings/save', 'HotelContractController@saveSettings')->name('hotel.contract.provider.settings.save');
-Route::post('/hotel/contract/provider/settings/data', 'HotelContractController@settingsByContract')->name('hotel.contract.provider.settings.data');
-Route::post('/hotel/contract/provider/search/active', 'HotelContractController@getActivesByName')->name('hotel.contract.provider.search.active');
-
-Route::get('/hotel/contract/client', 'HotelContractClientController@index')->name('hotel.contract.client.index');
-Route::post('/hotel/contract/client/create', 'HotelContractClientController@create')->name('hotel.contract.client.create');
-Route::post('/hotel/contract/client/read', 'HotelContractClientController@read')->name('hotel.contract.client.read');
-Route::post('/hotel/contract/client/update', 'HotelContractClientController@update')->name('hotel.contract.client.update');
-Route::post('/hotel/contract/client/delete', 'HotelContractClientController@delete')->name('hotel.contract.client.delete');
-Route::get('/hotel/contract/client/settings', 'HotelContractClientController@settings')->name('hotel.contract.client.settings');
-Route::post('/hotel/contract/client', 'HotelContractClientController@getContract')->name('hotel.contract.client');
-Route::post('/hotel/contract/client/search', 'HotelContractClientController@getByName')->name('hotel.contract.client.search');
-Route::post('/hotel/contract/client/settings/data', 'HotelContractClientController@settingsByContract')->name('hotel.contract.client.settings.data');
-
+Route::get('/contract/provider/hotel', 'HotelContractController@index')->name('contract.provider.hotel.index');
+Route::post('/contract/provider/hotel/read', 'HotelContractController@read')->name('contract.provider.hotel.read');
+Route::post('/contract/provider/hotel/create', 'HotelContractController@create')->name('contract.provider.hotel.create');
+Route::post('/contract/provider/hotel/update', 'HotelContractController@update')->name('contract.provider.hotel.update');
+Route::post('/contract/provider/hotel/delete', 'HotelContractController@delete')->name('contract.provider.hotel.delete');
+Route::get('/contract/provider/hotel/settings', 'HotelContractController@settings')->name('contract.provider.hotel.settings');
+Route::post('/contract/provider/hotel', 'HotelContractController@getContract')->name('contract.provider.hotel');
+Route::post('/contract/provider/hotel/search', 'HotelContractController@getByName')->name('contract.provider.hotel.search');
+Route::post('/contract/provider/hotel/settings/save', 'HotelContractController@saveSettings')->name('contract.provider.hotel.settings.save');
+Route::post('/contract/provider/hotel/settings/data', 'HotelContractController@settingsByContract')->name('contract.provider.hotel.settings.data');
+Route::post('/contract/provider/hotel/search/active', 'HotelContractController@getActivesByName')->name('contract.provider.hotel.search.active');
+//HotelContractClient
+Route::get('/contract/client/hotel', 'HotelContractClientController@index')->name('contract.client.hotel.index');
+Route::post('/contract/client/hotel/create', 'HotelContractClientController@create')->name('contract.client.hotel.create');
+Route::post('/contract/client/hotel/read', 'HotelContractClientController@read')->name('contract.client.hotel.read');
+Route::post('/contract/client/hotel/update', 'HotelContractClientController@update')->name('contract.client.hotel.update');
+Route::post('/contract/client/hotel/delete', 'HotelContractClientController@delete')->name('contract.client.hotel.delete');
+Route::get('/contract/client/hotel/settings', 'HotelContractClientController@settings')->name('contract.client.hotel.settings');
+Route::post('/contract/client/hotel', 'HotelContractClientController@getContract')->name('contract.client.hotel');
+Route::post('/contract/client/hotel/search', 'HotelContractClientController@getByName')->name('contract.client.hotel.search');
+Route::post('/contract/client/hotel/settings/data', 'HotelContractClientController@settingsByContract')->name('contract.client.hotel.settings.data');
 //Client
 Route::get('/client/contract/hotel', 'ClientController@hotel')->name('client.contract.hotel.index');
 Route::post('/client/contract/hotel/read', 'ClientController@readHotel')->name('client.contract.hotel.read');

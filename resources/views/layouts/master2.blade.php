@@ -238,7 +238,7 @@ License: You must have a valid license purchased only from themeforest(the above
                             </ul>
                         </li>
                         <li class="nav-item {{ isset($menuContract) ? 'active open' : '' }}">
-                            <a href="{{ route('hotel.contract.provider.index') }}" class="nav-link nav-toggle">
+                            <a href="{{ route('contract.provider.hotel.index') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-file-text-o"></i>
                                 <span class="title">Contract</span>
                                 <span class="{{ isset($menuContract) ? 'selected' : '' }}"></span>
@@ -246,14 +246,14 @@ License: You must have a valid license purchased only from themeforest(the above
                             </a>
                             <ul class="sub-menu">
                                 <li class="nav-item {{ isset($submenuContractProvider) ? 'active open' : '' }}">
-                                    <a href="{{ route('hotel.contract.provider.index') }}" class="nav-link ">
+                                    <a href="{{ route('contract.provider.hotel.index') }}" class="nav-link ">
                                         <i class="fa fa-gears"></i>
                                         <span class="title">Providers</span>
                                         <span class="{{ isset($submenuContractProvider) ? 'selected' : '' }}"></span>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="nav-item {{ isset($submenuContractProviderHotel) ? 'active open' : '' }}">
-                                            <a href="{{ route('hotel.contract.provider.index') }}" class="nav-link ">
+                                            <a href="{{ route('contract.provider.hotel.index') }}" class="nav-link ">
                                                 <i class="fa fa-building-o"></i>
                                                 <span class="title">Hotels</span>
                                                 <span class="{{ isset($submenuContractProviderHotel) ? 'selected' : '' }}"></span>
@@ -262,14 +262,14 @@ License: You must have a valid license purchased only from themeforest(the above
                                     </ul>
                                 </li>
                                 <li class="nav-item {{ isset($submenuContractClient) ? 'active open' : '' }}">
-                                    <a href="{{ route('hotel.contract.client.index') }}" class="nav-link ">
+                                    <a href="{{ route('contract.client.hotel.index') }}" class="nav-link ">
                                         <i class="fa fa-users"></i>
                                         <span class="title">Clients</span>
                                         <span class="{{ isset($submenuContractClient) ? 'selected' : '' }}"></span>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="nav-item {{ isset($submenuContractClientHotel) ? 'active open' : '' }}">
-                                            <a href="{{ route('hotel.contract.client.index') }}" class="nav-link ">
+                                            <a href="{{ route('contract.client.hotel.index') }}" class="nav-link ">
                                                 <i class="fa fa-building-o"></i>
                                                 <span class="title">Hotels</span>
                                                 <span class="{{ isset($submenuContractClientHotel) ? 'selected' : '' }}"></span>

@@ -34,7 +34,7 @@ class HotelContractClientController extends Controller
         $data['submenuContractClientHotel'] = 'selected';
         $data['currentDate'] = parent::currentDate();
 
-        return view('hotel.client.contract')->with($data);
+        return view('contract.client.hotel.contract')->with($data);
     }
 
     public function read(Request $request) {
@@ -264,7 +264,7 @@ class HotelContractClientController extends Controller
         if ($id != '') {
             $data['contract_id'] = $id;
         }
-        return view('hotel.client.setting')->with($data);
+        return view('contract.client.hotel.setting')->with($data);
     }
 
     public function getContract(Request $request) {

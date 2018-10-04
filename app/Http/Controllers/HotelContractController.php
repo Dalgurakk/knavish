@@ -51,7 +51,7 @@ class HotelContractController extends Controller
         $data['markets'] = $markets;
         $data['currentDate'] = parent::currentDate();
 
-        return view('hotel.contract')->with($data);
+        return view('contract.provider.hotel.contract')->with($data);
     }
 
     public function read(Request $request) {
@@ -349,7 +349,7 @@ class HotelContractController extends Controller
         catch (QueryException $e) {
             DB::rollback();
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the hotel chain is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);
@@ -376,7 +376,7 @@ class HotelContractController extends Controller
         if ($id != '') {
             $data['contract_id'] = $id;
         }
-        return view('hotel.setting')->with($data);
+        return view('contract.provider.hotel.setting')->with($data);
     }
 
     public function getContract(Request $request) {

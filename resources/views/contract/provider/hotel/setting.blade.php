@@ -1,4 +1,4 @@
-@extends('layouts.master2')
+@extends('.........layouts.master2')
 @section('title','Hotel Contract Settings')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -241,7 +241,7 @@
         $("#search-accomodation :input[name=contract]").select2({
             width: "off",
             ajax: {
-                url: "{{ route('hotel.contract.provider.search') }}",
+                url: "{{ route('contract.provider.hotel.search') }}",
                 "type": "POST",
                 dataType: 'json',
                 delay: 250,
@@ -280,7 +280,7 @@
         });
 
         $.ajax({
-            "url": "{{ route('hotel.contract.provider') }}",
+            "url": "{{ route('contract.provider.hotel') }}",
             "type": "POST",
             "data": {
                 contractId: contractId
@@ -326,7 +326,7 @@
                     rows.push($(this).val());
                 });
                 $.ajax({
-                    "url": "{{ route('hotel.contract.provider.settings.data') }}",
+                    "url": "{{ route('contract.provider.hotel.settings.data') }}",
                     "type": "POST",
                     "data": {
                         id: contract.id,
@@ -596,7 +596,7 @@
             submitHandler: function (form) {
                 var option = $(form).find("button[type=submit]:focus").attr('data');
                 $.ajax({
-                    "url": "{{ route('hotel.contract.provider.settings.save') }}",
+                    "url": "{{ route('contract.provider.hotel.settings.save') }}",
                     "type": "POST",
                     "data": formAdd.serialize(),
                     "beforeSend": function() {

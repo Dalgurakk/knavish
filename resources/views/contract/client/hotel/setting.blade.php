@@ -1,4 +1,4 @@
-@extends('layouts.master2')
+@extends('......layouts.master2')
 @section('title','Hotel Contract Settings')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -181,7 +181,7 @@
         $("#search-accomodation :input[name=contract]").select2({
             width: "off",
             ajax: {
-                url: "{{ route('hotel.contract.client.search') }}",
+                url: "{{ route('contract.client.hotel.search') }}",
                 "type": "POST",
                 dataType: 'json',
                 delay: 250,
@@ -220,7 +220,7 @@
         });
 
         $.ajax({
-            "url": "{{ route('hotel.contract.client') }}",
+            "url": "{{ route('contract.client.hotel') }}",
             "type": "POST",
             "data": {
                 contractId: contractId
@@ -265,7 +265,7 @@
                     rows.push($(this).val());
                 });
                 $.ajax({
-                    "url": "{{ route('hotel.contract.client.settings.data') }}",
+                    "url": "{{ route('contract.client.hotel.settings.data') }}",
                     "type": "POST",
                     "data": {
                         id: contract.id,

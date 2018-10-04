@@ -22,7 +22,7 @@
 .margin-top-15 { margin-top: 15px; }
 .master-logo-container { float: left;margin-left: 20px;margin-top: 9px; }
 #logo2 { display: none; }
-@media (max-width: 767px) {
+@media (max-width: 400px) {
     #logo1{ display: none; }
     #logo2{ display: block; }
     .hide-in-small { display: none; }

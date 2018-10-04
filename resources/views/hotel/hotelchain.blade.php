@@ -217,5 +217,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/hotel/hotelchain.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/hotel/hotelchain.min.js') }}" type="text/javascript"></script>
 @stop

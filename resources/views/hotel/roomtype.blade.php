@@ -298,5 +298,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/hotel/roomtype.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/hotel/roomtype.min.js') }}" type="text/javascript"></script>
 @stop

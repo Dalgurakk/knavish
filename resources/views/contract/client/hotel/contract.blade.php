@@ -846,7 +846,7 @@
 <script>
     var routeRead = "{{ route('contract.client.hotel.read') }}";
     var routeSetting = "{{ route('contract.client.hotel.settings') }}";
-    var routeClient = "{{ route('user.search.client.active') }}";
+    var routeClient = "{{ route('administration.user.search.client.active') }}";
     var routeProvider = "{{ route('contract.provider.hotel.search.active') }}";
     var routeCreate = "{{ route('contract.client.hotel.create') }}";
     var routeUpdate = "{{ route('contract.client.hotel.update') }}";
@@ -855,5 +855,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/contract/client/hotel/contract.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/contract/client/hotel/contract.min.js') }}" type="text/javascript"></script>
 @stop

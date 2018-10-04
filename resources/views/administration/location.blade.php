@@ -229,5 +229,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/administration/location.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/administration/location.min.js') }}" type="text/javascript"></script>
 @stop

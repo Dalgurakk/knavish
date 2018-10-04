@@ -233,5 +233,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/hotel/boardtype.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/hotel/boardtype.min.js') }}" type="text/javascript"></script>
 @stop

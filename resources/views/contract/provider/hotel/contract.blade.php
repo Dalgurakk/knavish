@@ -1193,5 +1193,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/contract.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/contract.min.js') }}" type="text/javascript"></script>
 @stop

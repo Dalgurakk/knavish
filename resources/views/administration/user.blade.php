@@ -339,5 +339,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/administration/user.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/administration/user.min.js') }}" type="text/javascript"></script>
 @stop

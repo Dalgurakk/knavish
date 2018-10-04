@@ -208,5 +208,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.min.js') }}" type="text/javascript"></script>
 @stop

@@ -583,5 +583,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/hotel/hotel.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/hotel/hotel.min.js') }}" type="text/javascript"></script>
 @stop

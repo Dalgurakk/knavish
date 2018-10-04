@@ -135,15 +135,5 @@ License: You must have a valid license purchased only from themeforest(the above
         <!-- END PAGE LEVEL SCRIPTS -->
         <!-- BEGIN THEME LAYOUT SCRIPTS -->
         <!-- END THEME LAYOUT SCRIPTS -->
-        <script>
-            $(document).ready(function()
-            {
-                $('#clickmewow').click(function()
-                {
-                    $('#radio1003').attr('checked', 'checked');
-                });
-            })
-        </script>
     </body>
-
 </html>

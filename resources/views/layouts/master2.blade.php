@@ -288,7 +288,7 @@ License: You must have a valid license purchased only from themeforest(the above
                         </li-->
                         @if(Auth::user()->hasRole('administrator'))
                             <li class="nav-item {{ isset($menuAdministration) ? 'active open' : '' }}">
-                                <a href="{{ route('user.index') }}" class="nav-link nav-toggle">
+                                <a href="{{ route('administration.user.index') }}" class="nav-link nav-toggle">
                                     <i class="fa fa-lock"></i>
                                     <span class="title">Administration</span>
                                     <span class="{{ isset($menuAdministration) ? 'selected' : '' }}"></span>
@@ -296,21 +296,21 @@ License: You must have a valid license purchased only from themeforest(the above
                                 </a>
                                 <ul class="sub-menu">
                                     <li class="nav-item start {{ isset($submenuUser) ? 'active open' : '' }}">
-                                        <a href="{{ route('user.index') }}" class="nav-link ">
+                                        <a href="{{ route('administration.user.index') }}" class="nav-link ">
                                             <i class="fa fa-user"></i>
                                             <span class="title">Users</span>
                                             <span class="{{ isset($submenuUser) ? 'selected' : '' }}"></span>
                                         </a>
                                     </li>
                                     <li class="nav-item start {{ isset($submenuMarket) ? 'active open' : '' }}">
-                                        <a href="{{ route('market.index') }}" class="nav-link ">
+                                        <a href="{{ route('administration.market.index') }}" class="nav-link ">
                                             <i class="fa fa-star"></i>
                                             <span class="title">Markets</span>
                                             <span class="{{ isset($submenuMarket) ? 'selected' : '' }}"></span>
                                         </a>
                                     </li>
                                     <li class="nav-item start {{ isset($submenuLocations) ? 'active open' : '' }}">
-                                        <a href="{{ route('location.index') }}" class="nav-link ">
+                                        <a href="{{ route('administration.location.index') }}" class="nav-link ">
                                             <i class="fa fa-globe"></i>
                                             <span class="title">Locations</span>
                                             <span class="{{ isset($submenuLocations) ? 'selected' : '' }}"></span>

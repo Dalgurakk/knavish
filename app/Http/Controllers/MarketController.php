@@ -125,23 +125,14 @@ class MarketController extends Controller
         $market = Market::find($id);
 
         try {
-            $user = DB::table('users')
-                ->where('users.market_id', '=', $market->id)
-                ->first();
-            if ($user === null) {
-                $market->delete();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Market ' . $market->code . ': ' . $market->name . ' deleted successfully.';
-                $this->response['data'] = $market;
-            }
-            else {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Market is in use, please check the user: ' . $user->username . '.';
-            }
+            $market->delete();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Market ' . $market->name . ' deleted successfully.';
+            $this->response['data'] = $market;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the market is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);

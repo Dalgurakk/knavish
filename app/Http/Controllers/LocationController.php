@@ -167,12 +167,12 @@ class LocationController extends Controller
         try {
             $location->delete();
             $this->response['status'] = 'success';
-            $this->response['message'] = 'Location ' . $location->code . ': ' . $location->name . ' deleted successfully.';
+            $this->response['message'] = 'Location ' . $location->name . ' deleted successfully.';
             $this->response['data'] = $location;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
+            $this->response['message'] = 'The operation can not be completed, probably the location is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);

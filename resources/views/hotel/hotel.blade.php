@@ -573,7 +573,7 @@
 <script src="{{ asset('assets/global/plugins/jquery-file-upload/js/jquery.fileupload-validate.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/jquery-file-upload/js/jquery.fileupload-ui.js') }}" type="text/javascript"></script>
 <script>
-    var routeLocationReadActive = "{{ route('location.read.active') }}";
+    var routeLocationReadActive = "{{ route('administration.location.read.active') }}";
     var routeRead = "{{ route('hotel.read') }}";
     var routeCreate = "{{ route('hotel.create') }}";
     var routeUpdate = "{{ route('hotel.update') }}";

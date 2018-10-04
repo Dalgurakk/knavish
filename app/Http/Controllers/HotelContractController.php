@@ -349,7 +349,7 @@ class HotelContractController extends Controller
         catch (QueryException $e) {
             DB::rollback();
             $this->response['status'] = 'error';
-            $this->response['message'] = 'The operation can not be completed, probably the hotel chain is in use.';
+            $this->response['message'] = 'The operation can not be completed, probably the contract is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);

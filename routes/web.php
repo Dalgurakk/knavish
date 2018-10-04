@@ -5,25 +5,25 @@ Route::get('/', 'HomeController@index')->name('home');
 //Dashboard
 Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 //User
-Route::get('/user', 'UserController@index')->name('user.index');
-Route::post('/user/read', 'UserController@read')->name('user.read');
-Route::post('/user/create', 'UserController@create')->name('user.create');
-Route::post('/user/update', 'UserController@update')->name('user.update');
-Route::post('/user/delete', 'UserController@delete')->name('user.delete');
-Route::post('/user/search/client/active', 'UserController@getClientsActivesByName')->name('user.search.client.active');
+Route::get('/administration/user', 'UserController@index')->name('administration.user.index');
+Route::post('/administration/user/read', 'UserController@read')->name('administration.user.read');
+Route::post('/administration/user/create', 'UserController@create')->name('administration.user.create');
+Route::post('/administration/user/update', 'UserController@update')->name('administration.user.update');
+Route::post('/administration/user/delete', 'UserController@delete')->name('administration.user.delete');
+Route::post('/administration/user/search/client/active', 'UserController@getClientsActivesByName')->name('administration.user.search.client.active');
 //Market
-Route::get('/market', 'MarketController@index')->name('market.index');
-Route::post('/market/read', 'MarketController@read')->name('market.read');
-Route::post('/market/create', 'MarketController@create')->name('market.create');
-Route::post('/market/update', 'MarketController@update')->name('market.update');
-Route::post('/market/delete', 'MarketController@delete')->name('market.delete');
+Route::get('/administration/market', 'MarketController@index')->name('administration.market.index');
+Route::post('/administration/market/read', 'MarketController@read')->name('administration.market.read');
+Route::post('/administration/market/create', 'MarketController@create')->name('administration.market.create');
+Route::post('/administration/market/update', 'MarketController@update')->name('administration.market.update');
+Route::post('/administration/market/delete', 'MarketController@delete')->name('administration.market.delete');
 //Location
-Route::get('/location', 'LocationController@index')->name('location.index');
-Route::post('/location/read', 'LocationController@read')->name('location.read');
-Route::post('/location/create', 'LocationController@create')->name('location.create');
-Route::post('/location/update', 'LocationController@update')->name('location.update');
-Route::post('/location/delete', 'LocationController@delete')->name('location.delete');
-Route::post('/location/read/active', 'LocationController@actives')->name('location.read.active');
+Route::get('/administration/location', 'LocationController@index')->name('administration.location.index');
+Route::post('/administration/location/read', 'LocationController@read')->name('administration.location.read');
+Route::post('/administration/location/create', 'LocationController@create')->name('administration.location.create');
+Route::post('/administration/location/update', 'LocationController@update')->name('administration.location.update');
+Route::post('/administration/location/delete', 'LocationController@delete')->name('administration.location.delete');
+Route::post('/administration/location/read/active', 'LocationController@actives')->name('administration.location.read.active');
 //CarModel
 Route::get('/car/model', 'CarBrandController@index')->name('car.model.index');
 Route::post('/car/model/read', 'CarBrandController@read')->name('car.model.read');

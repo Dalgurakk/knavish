@@ -70,7 +70,44 @@ class HotelContractController extends Controller
         $searchActive = Input::get('columns')['6']['search']['value'];
         $contracts = array();
 
-        $query = DB::table('hotel_contracts')
+        $query = HotelContract::with([
+            'hotel',
+            'hotel.hotelChain',
+            'hotel.country',
+            'hotel.state',
+            'hotel.city',
+            'roomTypes',
+            'paxTypes',
+            'boardTypes',
+            'markets',
+            'measures'
+        ]);
+        if(isset($searchName) && $searchName != '') {
+            $query->where('hotel_contracts.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('hotel_contracts.active', '=', $searchActive);
+        }
+        if(isset($searchValidFrom) && $searchValidFrom != '') {
+            $validFrom = Carbon::createFromFormat('d.m.Y', $searchValidFrom);
+            $query->where('hotel_contracts.valid_from', '>=', $validFrom->format('Y-m-d'));
+        }
+        if(isset($searchValidTo) && $searchValidTo != '') {
+            $validTo = Carbon::createFromFormat('d.m.Y', $searchValidTo);
+            $query->where('hotel_contracts.valid_to', '<=', $validTo->format('Y-m-d'));
+        }
+        if(isset($searchHotel) && $searchHotel != '') {
+            $query->whereHas('hotel', function ($query) use ($searchHotel) {
+                $query->where('name', 'like', '%' . $searchHotel . '%');
+            });
+        }
+        $query
+            ->orderBy($columns[$orderBy], $orderDirection)
+            ->offset($offset)
+            ->limit($limit);
+        $result = $query->get();
+
+        /*$query = DB::table('hotel_contracts')
             ->select(
                 'hotel_contracts.id', 'hotel_contracts.name', 'hotels.name as hotel', 'hotel_contracts.valid_from',
                 'hotel_contracts.valid_to', 'hotel_contracts.active')
@@ -126,6 +163,35 @@ class HotelContractController extends Controller
                 'id' => $r->id,
                 'name' => $r->name,
                 'hotel' => $r->hotel,
+                'valid_from' => $r->valid_from,
+                'valid_to' => $r->valid_to,
+                'active' => $r->active,
+                'status' => $status,
+                'contract' => $contract
+            );
+            $contracts[] = $item;
+        }*/
+
+        foreach ($result as $r) {
+            $contract = $r;
+            $currentDate = Carbon::today();
+            $validFrom = Carbon::createFromFormat('!Y-m-d', $r->valid_from);
+            $validTo = Carbon::createFromFormat('!Y-m-d', $r->valid_to);
+            $r->valid_from = $validFrom->format('d.m.Y');
+            $r->valid_to = $validTo->format('d.m.Y');
+
+            $status = 0;
+            if ($currentDate->greaterThan($validTo))
+                $status = 3; //Old
+            else if ($currentDate->greaterThanOrEqualTo($validFrom) && $currentDate->lessThanOrEqualTo($validTo))
+                $status = 2; //In Progress
+            else if ($currentDate->lessThan($validFrom))
+                $status = 1; //Waiting
+
+            $item = array(
+                'id' => $r->id,
+                'name' => $r->name,
+                'hotel' => $r->hotel->name,
                 'valid_from' => $r->valid_from,
                 'valid_to' => $r->valid_to,
                 'active' => $r->active,

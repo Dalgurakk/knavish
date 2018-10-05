@@ -257,8 +257,6 @@ class HotelContractController extends Controller
             $contract->active = Input::get('active') == 1 ? true : false;
             $contract->status = Input::get('status');
 
-            //print_r($contract->active);die;
-
             DB::beginTransaction();
             try {
                 $roomTypes = json_decode(Input::get('roomTypes'), true);
@@ -338,16 +336,13 @@ class HotelContractController extends Controller
         $id = Input::get('id');
         $contract = HotelContract::find($id);
 
-        DB::beginTransaction();
         try {
             $contract->delete();
-            DB::commit();
             $this->response['status'] = 'success';
             $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
             $this->response['data'] = $contract;
         }
         catch (QueryException $e) {
-            DB::rollback();
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the contract is in use.';
             $this->response['errors'] = $e->errorInfo[2];

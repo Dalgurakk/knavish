@@ -104,16 +104,13 @@ class LocationController extends Controller
                 $location->parent_id = $parentId;
             }
 
-            DB::beginTransaction();
             try {
                 $location->save();
-                DB::commit();
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Location ' . $location->code . ': ' . $location->name . ' created successfully.';
                 $this->response['data'] = $location;
             }
             catch (QueryException $e) {
-                DB::rollback();
                 $this->response['status'] = 'error';
                 $this->response['message'] = 'Database error.';
                 $this->response['errors'] = $e->errorInfo[2];

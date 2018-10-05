@@ -59,7 +59,7 @@ License: You must have a valid license purchased only from themeforest(the above
                 <div class="page-logo" style="/*height: 45px;*/">
                     <!--a href="{{ route('home') }}">
                         <img src="{{ asset('assets/layouts/layout2/img/logo-default-royal.png') }}" alt="logo" class="logo-default" style="/*margin: 16px 0 0;*/" /> </a-->
-                    <div style="display: inline-block;margin-top: 2px;">
+                    <div class="show-date" style="display: inline-block; margin-top: 2px;">
                         <p style="color: #fff; font-weight: 700; font-size: 16px;">{{ $currentDate }}</p>
                     </div>
                     <div class="menu-toggler sidebar-toggler" style="/*margin: 12px 0 0;*/">
@@ -401,7 +401,7 @@ License: You must have a valid license purchased only from themeforest(the above
             <!-- END PAGE LEVEL SCRIPTS -->
             <!-- BEGIN THEME LAYOUT SCRIPTS -->
             <script src="{{ asset('assets/layouts/layout/scripts/layout.min.js') }}" type="text/javascript"></script>
-            <script src="{{ asset('assets/layouts/layout/scripts/demo.min.js') }}" type="text/javascript"></script>
+            <!--script src="{{ asset('assets/layouts/layout/scripts/demo.min.js') }}" type="text/javascript"></script-->
             <script src="{{ asset('assets/layouts/global/scripts/quick-sidebar.min.js') }}" type="text/javascript"></script>
             <script src="{{ asset('assets/layouts/global/scripts/quick-nav.min.js') }}" type="text/javascript"></script>
             <!-- END THEME LAYOUT SCRIPTS -->
@@ -414,9 +414,11 @@ License: You must have a valid license purchased only from themeforest(the above
 
                 $(document).ready(function()
                 {
-                    $('#clickmewow').click(function()
-                    {
-                        $('#radio1003').attr('checked', 'checked');
+                    $('.sidebar-toggler').on('click', function(e) {
+                       if ($('body').hasClass('page-sidebar-closed'))
+                           $('.show-date').css('display', 'inline-block');
+                       else
+                           $('.show-date').css('display', 'none');
                     });
                 })
             </script>

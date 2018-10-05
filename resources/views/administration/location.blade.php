@@ -188,25 +188,6 @@
     </div>
     </form>
 </div>
-
-<!--div id="modal-confirmation" class="modal fade custom-container" tabindex="-1" data-width="450" data-backdrop="static" data-keyboard="false">
-    <div class="modal-header">
-        <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-globe"></i> Confirmation</h4>
-    </div>
-
-    <div class="modal-body">
-        <div class="row">
-            <div class="col-md-12">
-                <label>Are you sure you want to delete the location?</label>
-            </div>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button type="submit" class="btn green confirm-delete" data="accept"><i class="fa fa-check"></i> Accept</button>
-        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
-    </div>
-</div-->
 @stop
 
 @section('page-plugins')

@@ -427,4 +427,9 @@ $(document).ready(function () {
         else
             $('.mt-checkbox > input[type=checkbox]').val(0);
     });
+
+    $('.add').on('click', function () {
+        formAdd.validate().resetForm();
+        formAdd[0].reset();
+    });
 });

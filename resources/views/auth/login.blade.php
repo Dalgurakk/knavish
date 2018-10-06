@@ -96,8 +96,8 @@ License: You must have a valid license purchased only from themeforest(the above
                 </div>
                 <div class="form-actions">
                     <label class="rememberme mt-checkbox mt-checkbox-outline">
-                        <!--input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }} /> Remember me
-                        <span></span-->
+                        <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }} /> Remember me
+                        <span></span>
                     </label>
                     <button type="submit" class="btn green pull-right"> Login </button>
                 </div>

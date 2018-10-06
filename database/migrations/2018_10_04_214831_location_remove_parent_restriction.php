@@ -16,6 +16,10 @@ class LocationRemoveParentRestriction extends Migration
         Schema::table('locations', function (Blueprint $table) {
             $table->dropForeign('locations_parent_id_foreign');
         });
+
+        Schema::table('locations', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('locations')->onDelete('cascade');
+        });
     }
 
     /**
@@ -25,6 +29,10 @@ class LocationRemoveParentRestriction extends Migration
      */
     public function down()
     {
+        Schema::table('locations', function (Blueprint $table) {
+            $table->dropForeign('locations_parent_id_foreign');
+        });
+
         Schema::table('locations', function (Blueprint $table) {
             $table->foreign('parent_id')->references('id')->on('locations');
         });

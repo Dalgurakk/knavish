@@ -530,7 +530,8 @@ class HotelContractController extends Controller
     public function calculatePrice($cost, $rate) {
         $price = 0;
         if ($rate->type == '1') {
-            $price = $rate->value * $cost / 100 + $cost;
+            //$price = $rate->value * $cost / 100 + $cost;
+            $price = $cost / (1 - $rate->value / 100);
         }
         else if ($rate->type == '2') {
             $price = $cost + $rate->value;

@@ -912,17 +912,22 @@ $(document).ready(function () {
     $('#modal-edit :input[name=hotel]').on('select2:select select2:unselect', function (e) {
         var values = e.params.data;
         if(values.selected) {
+            var country = values.country != null ? values.country.name : '';
+            var state = values.state != null ? values.state.name : '';
+            var city = values.city != null ? values.city.name : '';
+            var hotelChain = values.hotel_chain != null ? values.hotel_chain.name : '';
+
             $('#modal-edit .show-hotel :input[name=hotel-id]').val(values.id);
             $('#modal-edit .show-hotel :input[name=name]').val(values.name);
-            $('#modal-edit .show-hotel :input[name=country-text]').val(values.country.name);
-            $('#modal-edit .show-hotel :input[name=state-text]').val(values.state.name);
-            $('#modal-edit .show-hotel :input[name=city-text]').val(values.city.name);
+            $('#modal-edit .show-hotel :input[name=country-text]').val(country);
+            $('#modal-edit .show-hotel :input[name=state-text]').val(state);
+            $('#modal-edit .show-hotel :input[name=city-text]').val(city);
             $('#modal-edit .show-hotel :input[name=postal-code]').val(values.postal_code);
             $('#modal-edit .show-hotel :input[name=address]').val(values.address);
             $('#modal-edit .show-hotel :input[name=category]').barrating('readonly', true);
             var category = values.category != null ? values.category : '';
             $('#modal-edit .show-hotel :input[name=category]').barrating('set', category);
-            $('#modal-edit .show-hotel :input[name=hotel-chain]').val(values.hotel_chain.name);
+            $('#modal-edit .show-hotel :input[name=hotel-chain]').val(hotelChain);
             $('#modal-edit .show-hotel :input[name=admin-phone]').val(values.admin_phone);
             $('#modal-edit .show-hotel :input[name=admin-fax]').val(values.admin_fax);
             $('#modal-edit .show-hotel :input[name=web-site]').val(values.web_site);
@@ -1762,17 +1767,22 @@ $(document).ready(function () {
     $('#modal-add :input[name=hotel]').on('select2:select select2:unselect', function (e) {
         var values = e.params.data;
         if(values.selected) {
+            var country = values.country != null ? values.country.name : '';
+            var state = values.state != null ? values.state.name : '';
+            var city = values.city != null ? values.city.name : '';
+            var hotelChain = values.hotel_chain != null ? values.hotel_chain.name : '';
+
             $('#modal-add .show-hotel :input[name=hotel-id]').val(values.id);
             $('#modal-add .show-hotel :input[name=name]').val(values.name);
-            $('#modal-add .show-hotel :input[name=country-text]').val(values.country.name);
-            $('#modal-add .show-hotel :input[name=state-text]').val(values.state.name);
-            $('#modal-add .show-hotel :input[name=city-text]').val(values.city.name);
+            $('#modal-add .show-hotel :input[name=country-text]').val(country);
+            $('#modal-add .show-hotel :input[name=state-text]').val(state);
+            $('#modal-add .show-hotel :input[name=city-text]').val(city);
             $('#modal-add .show-hotel :input[name=postal-code]').val(values.postal_code);
             $('#modal-add .show-hotel :input[name=address]').val(values.address);
             $('#modal-add .show-hotel :input[name=category]').barrating('readonly', true);
             var category = values.category != null ? values.category : '';
             $('#modal-add .show-hotel :input[name=category]').barrating('set', category);
-            $('#modal-add .show-hotel :input[name=hotel-chain]').val(values.hotel_chain.name);
+            $('#modal-add .show-hotel :input[name=hotel-chain]').val(hotelChain);
             $('#modal-add .show-hotel :input[name=admin-phone]').val(values.admin_phone);
             $('#modal-add .show-hotel :input[name=admin-fax]').val(values.admin_fax);
             $('#modal-add .show-hotel :input[name=web-site]').val(values.web_site);

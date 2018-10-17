@@ -451,7 +451,7 @@ $(document).ready(function () {
         var paxTypes = values.pax_types;
         var boardTypes = values.board_types;
         var roomTypes = values.room_types;
-        var priceRates = values.price_rates
+        var priceRates = values.price_rates;
         var country = hotel.country != null ? hotel.country.name : '';
         var state = hotel.state != null ? hotel.state.name : '';
         var city = hotel.city != null ? hotel.city.name : '';

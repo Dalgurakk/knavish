@@ -182,12 +182,13 @@ $(document).ready(function () {
             $('.measures-list').append(measure);
         });
 
-        $('#market').empty()
+        $('#market').empty();
         $.each(markets, function (i, item) {
-            var option = '<option value="' + markets[i].id + '"> ' + markets[i].name + '</option>';
             var option = '<option value="' + markets[i].id + '"> ' + markets[i].name + '</option>';
             $('#market').append(option);
         });
+
+        updateImport(markets);
 
         $('.room-types-list').html('');
         $.each(roomTypes, function (i, item) {
@@ -268,22 +269,41 @@ $(document).ready(function () {
         for (var i = 0; i < contract.measures.length; i++) {
             var html =
                 '<div class="row">' +
-                '<div class="col-md-12">' +
-                '<div class="col-md-6 col-sm-6 col-xs-6">' +
-                '<div class="form-group">' +
-                '<label>' + contract.measures[i].name + '</label>' +
-                '<input type="text" class="form-control" name="' + contract.measures[i].code + '" readonly>' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-md-6 col-sm-6 col-xs-6">' +
-                '<div class="mt-checkbox-list">' +
-                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15"> Set' +
-                '<input type="checkbox" value="" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
-                '<span></span>' +
-                '</label>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
+                    '<div class="col-md-12">' +
+                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                            '<div class="form-group">' +
+                                '<label>' + contract.measures[i].name + '</label>' +
+                                '<input type="text" class="form-control measure-input" name="' + contract.measures[i].code + '" readonly>' +
+                            '</div>' +
+                        '</div>';
+            if (contract.measures[i].code == 'cost') {
+                html +=
+                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                            '<div class="mt-checkbox-inline">' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
+                                    '<input type="checkbox" value="1" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
+                                    '<span></span>' +
+                                '</label>' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Unset' +
+                                    '<input type="checkbox" value="0" name="unset-cost" />' +
+                                    '<span></span>' +
+                                '</label>' +
+                            '</div>' +
+                        '</div>';
+            }
+            else {
+                html +=
+                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                            '<div class="mt-checkbox-inline">' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
+                                    '<input type="checkbox" value="" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
+                                    '<span></span>' +
+                                '</label>' +
+                            '</div>' +
+                        '</div>';
+            }
+            html +=
+                    '</div>' +
                 '</div>';
             $('.measures-container').append(html);
             $('input[name="set-' + contract.measures[i].code + '"]').change(function() {
@@ -299,12 +319,70 @@ $(document).ready(function () {
                 }
             });
         }
+
+        $('input[name="unset-cost"]').change(function() {
+            if($(this).is(":checked")) {
+                $('.measure-input').prop('readonly', true);
+                $('.measure-input').val('');
+                $('input[name^=set-]').prop('checked', '');
+                $('input[name^=set-]').attr('onclick', 'return false;');
+                formSetting.validate();
+                $('input[name="cost"]').rules('remove', 'required');
+            }
+            else {
+                $('.measure-input').prop('readonly', '');
+                $('input[name^=set-]').attr('onclick', '');
+                formSetting.validate();
+                $('input[name="cost"]').rules('add', 'required');
+            }
+        });
+    }
+
+    function updateImport(markets) {
+        $('#price-rate').empty();
+        $('.import').remove();
+        $("#market option:not(:selected)").each(function(i){
+            var option = '<option value="' + $(this).val() + '"> ' + $(this).text() + '</option>';
+            $('#price-rate').append(option);
+        });
+
+        if (markets.length > 1) {
+            $('.room-name-header').append(
+                '<a class="btn btn-circle btn-icon-only btn-default btn-outline import hide-import" style="margin-left: 10px; margin-bottom: 7px;" href="javascript:;">' +
+                    '<i class="fa fa-arrow-down"></i>' +
+                '</a>'
+            );
+
+            $('.import').on('click', function (e) {
+                e.preventDefault();
+                if ($(this).hasClass('show-import')) {
+                    $('.set-price-container').css('display', 'block');
+                    $('.import-cost-container').css('display', 'none');
+                    formSetting.validate();
+                    $('input[name="cost"]').rules('add', 'required');
+                    $(this).removeClass('show-import');
+                    $(this).addClass('hide-import');
+                    $('input[name=import-cost]').val('');
+                }
+                else {
+                    $('.set-price-container').css('display', 'none');
+                    $('.import-cost-container').css('display', 'block');
+                    formSetting.validate();
+                    $('input[name="cost"]').rules('remove', 'required');
+                    $(this).addClass('show-import');
+                    $(this).removeClass('hide-import');
+                    $('input[name=import-cost]').val('1');
+                }
+            });
+        }
     }
 
     function renderTable(from, to, contract) {
         $('.item-setting').on('click', function() {
-            formAdd.validate().resetForm();
-            formAdd[0].reset();
+            formSetting.validate();
+            $('input[name="cost"]').rules('add', 'required');
+            formSetting.validate().resetForm();
+            formSetting[0].reset();
             var room = $(this).parents('table').find('th:first').html();
             $('#modal-setting .room-name-header').html(room);
 
@@ -329,12 +407,23 @@ $(document).ready(function () {
                 var value = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]').html();
                 $('#modal-setting :input[name="' + contract.measures[i].code + '"]').val(value);
             }
+
+            $('#modal-setting .range-optional').each(function() {
+                $(this).remove();
+            });
+
+            updateImport(contract.markets);
+
+            $('.set-price-container').css('display', 'block');
+            $('.import-cost-container').css('display', 'none');
+            $('input[name=import-cost]').val('');
+
             $('#modal-setting').modal('show');
         });
     }
 
-    var formAdd = $('#form-add');
-    formAdd.validate({
+    var formSetting = $('#form-setting');
+    formSetting.validate({
         errorElement: 'span',
         errorClass: 'help-block help-block-error',
         focusInvalid: false,
@@ -390,15 +479,30 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var option = $(form).find("button[type=submit]:focus").attr('data');
+            var formData = new FormData(formSetting[0]);
+            var market = $('#market').val();
+            var ranges = [];
+            $('#modal-setting .range').each(function () {
+                var obj = {
+                    from : $(this).find('input[name^="setting-from"]').val(),
+                    to : $(this).find('input[name^="setting-to"]').val()
+                };
+                ranges.push(obj);
+            });
+            formData.append('ranges', JSON.stringify(ranges));
+            formData.append('market', market);
             $.ajax({
                 "url": routeSave,
                 "type": "POST",
-                "data": formAdd.serialize(),
+                "data": formData,
+                "contentType": false,
+                "processData": false,
+                //"data": formSetting.serialize(),
                 "beforeSend": function() {
-                    App.showMask(true, formAdd);
+                    App.showMask(true, formSetting);
                 },
                 "complete": function(xhr, textStatus) {
-                    App.showMask(false, formAdd);
+                    App.showMask(false, formSetting);
                     if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
@@ -406,7 +510,7 @@ $(document).ready(function () {
                         var response = $.parseJSON(xhr.responseText);
                         if (response.status == 'success') {
                             toastr['success'](response.message, "Success");
-                            formAdd[0].reset();
+                            formSetting[0].reset();
                             needUpdate = true;
                             if (option == 'accept') {
                                 $(form).find("button.cancel-form").click();
@@ -419,6 +523,73 @@ $(document).ready(function () {
                 }
             });
         }
+    });
+
+    $('.add-row').on('click', function(e) {
+        e.preventDefault();
+        var time = $.now();
+        var range =
+            '<div class="range range-optional" data="' + time + '">' +
+            '<div class="col-md-5 col-sm-5 col-xs-5">' +
+            '<div class="form-group">' +
+            '<label>From</label>' +
+            '<div class="input-icon left">' +
+            '<i class="fa fa-calendar"></i>' +
+            '<input type="text" class="form-control date-picker" name="setting-from-' + time + '">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-5 col-sm-5 col-xs-5">' +
+            '<div class="form-group">' +
+            '<label>To</label>' +
+            '<div class="input-icon left">' +
+            '<i class="fa fa-calendar"></i>' +
+            '<input type="text" class="form-control date-picker" name="setting-to-' + time + '">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-2 col-sm-2 col-xs-2">' +
+            '<div class="form-group">' +
+            '<a class="btn red btn-outline delete-row" href="#" data="' + time + '">' +
+            '<i class="fa fa-trash"></i>' +
+            '</a>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        $('.range-container').append(range);
+
+        $('input[name="setting-from-' + time + '"]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        });
+
+        $('input[name="setting-to-' + time + '"]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        });
+
+        var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
+        var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
+
+        $('input[name="setting-from-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('input[name="setting-from-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+        $('input[name="setting-to-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('input[name="setting-to-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+
+        formSetting.validate();
+        $('input[name="setting-from-' + time + '"]').rules('add', 'required');
+        $('input[name="setting-to-' + time + '"]').rules('add', 'required');
+
+        $('.delete-row[data="' + time + '"]').on('click', function(e) {
+            $('.range[data="' + time + '"]').remove();
+            e.preventDefault();
+        });
     });
 
     $('.cancel-form').on('click', function(e) {

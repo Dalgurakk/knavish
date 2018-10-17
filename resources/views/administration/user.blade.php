@@ -1,4 +1,4 @@
-@extends('...layouts.master2')
+@extends('layouts.master2')
 @section('title','Users')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
@@ -311,7 +311,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="submit" class="btn green" data="apply"><i class="fa fa-repeat"></i> Apply</button>
+        <!--button type="submit" class="btn green" data="apply"><i class="fa fa-repeat"></i> Apply</button-->
         <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>
         <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
     </div>

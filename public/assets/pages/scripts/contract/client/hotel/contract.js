@@ -311,20 +311,24 @@ $(document).ready(function () {
         var boardTypes = values.board_types;
         var roomTypes = values.room_types;
         var priceRates = values.price_rates;
+        var country = hotel.country != null ? hotel.country.name : '';
+        var state = hotel.state != null ? hotel.state.name : '';
+        var city = hotel.city != null ? hotel.city.name : '';
+        var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
         if(values.selected) {
             $('#modal-add :input[name=valid-from]').val(moment(values.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY'));
             $('#modal-add :input[name=valid-to]').val(moment(values.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
 
             $('#modal-add .show-hotel :input[name=hotel]').val(hotel.name);
-            $('#modal-add .show-hotel :input[name=country-text]').val(hotel.country.name);
-            $('#modal-add .show-hotel :input[name=state-text]').val(hotel.state.name);
-            $('#modal-add .show-hotel :input[name=city-text]').val(hotel.city.name);
+            $('#modal-add .show-hotel :input[name=country-text]').val(country);
+            $('#modal-add .show-hotel :input[name=state-text]').val(state);
+            $('#modal-add .show-hotel :input[name=city-text]').val(city);
             $('#modal-add .show-hotel :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-add .show-hotel :input[name=address]').val(hotel.address);
             $('#modal-add .show-hotel :input[name=category]').barrating('readonly', true);
             var category = hotel.category != null ? hotel.category : '';
             $('#modal-add .show-hotel :input[name=category]').barrating('set', category);
-            $('#modal-add .show-hotel :input[name=hotel-chain]').val(hotel.hotel_chain.name);
+            $('#modal-add .show-hotel :input[name=hotel-chain]').val(hotelChain);
             $('#modal-add .show-hotel :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-add .show-hotel :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-add .show-hotel :input[name=web-site]').val(hotel.web_site);
@@ -447,22 +451,26 @@ $(document).ready(function () {
         var paxTypes = values.pax_types;
         var boardTypes = values.board_types;
         var roomTypes = values.room_types;
-        var priceRates = values.price_rates;
+        var priceRates = values.price_rates
+        var country = hotel.country != null ? hotel.country.name : '';
+        var state = hotel.state != null ? hotel.state.name : '';
+        var city = hotel.city != null ? hotel.city.name : '';
+        var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
         if(values.selected) {
             $('#modal-edit :input[name=hotel-contract-id]').val(values.id);
             $('#modal-edit :input[name="valid-from"]').val(values.valid_from);
             $('#modal-edit :input[name="valid-to"]').val(values.valid_to);
 
             $('#modal-edit .show-hotel :input[name=hotel]').val(hotel.name);
-            $('#modal-edit .show-hotel :input[name=country-text]').val(hotel.country.name);
-            $('#modal-edit .show-hotel :input[name=state-text]').val(hotel.state.name);
-            $('#modal-edit .show-hotel :input[name=city-text]').val(hotel.city.name);
+            $('#modal-edit .show-hotel :input[name=country-text]').val(country);
+            $('#modal-edit .show-hotel :input[name=state-text]').val(state);
+            $('#modal-edit .show-hotel :input[name=city-text]').val(city);
             $('#modal-edit .show-hotel :input[name=postal-code]').val(hotel.postal_code);
             $('#modal-edit .show-hotel :input[name=address]').val(hotel.address);
             $('#modal-edit .show-hotel :input[name=category]').barrating('readonly', true);
             var category = hotel.category != null ? hotel.category : '';
             $('#modal-edit .show-hotel :input[name=category]').barrating('set', category);
-            $('#modal-edit .show-hotel :input[name=hotel-chain]').val(hotel.hotel_chain.name);
+            $('#modal-edit .show-hotel :input[name=hotel-chain]').val(hotelChain);
             $('#modal-edit .show-hotel :input[name=admin-phone]').val(hotel.admin_phone);
             $('#modal-edit .show-hotel :input[name=admin-fax]').val(hotel.admin_fax);
             $('#modal-edit .show-hotel :input[name=web-site]').val(hotel.web_site);

@@ -1,4 +1,4 @@
-@extends('......layouts.master2')
+@extends('layouts.master2')
 @section('title','Hotel Contract Settings')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -6,30 +6,6 @@
 <link href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
-<style>
-.table-setting td { font-size: 11px !important; padding: 5px 1px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
-.table-setting th { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
-.table-setting { margin-bottom: 0; table-layout: fixed !important; min-width: 900px; border-bottom: 0;}
-.porlet-title-setting { min-height: 0 !important; height: 30px; }
-.caption-setting { font-size: 13px !important; padding: 6px 0 5px !important; font-weight: 600; }
-.tools-setting { font-size: 13px !important; padding: 6px 0 0 !important; }
-.table-setting .item-setting:hover { background-color: #f2f2f2; cursor: pointer; }
-.column-setting { width: 2.9%; }
-.head-setting { vertical-align: top !important; background-color: #e8f0fc; border:1px solid #fff !important; }
-.head-setting-invalid { background-color: #fff !important; border: 1px solid #fff !important;}
-.room-name { word-wrap:break-word;width: 10.1%; color: #fff; background-color: #6d90c4;white-space: normal !important; vertical-align: middle !important;}
-.item-variable { /*font-weight: 600;background-color: #e8f0fc; border:1px solid #fff !important;*/}
-/*.room-name { word-wrap:break-word;width: 10.1%;}*/
-/*.select2-selection__rendered { margin-left: 20px; }*/
-.mt-checkbox-row { margin-bottom: 10px !important; }
-/*.mt-checkbox-list-row { padding: 0 !important; }*/
-.portlet-body-row { padding-top: 5px !important; padding-bottom: 5px !important }
-/*.btn-search-submit { margin-top: 10px; }*/
-/*.porlet-setting { margin-bottom: 5px !important;}*/
-/*.medium-porlet { min-height: 0 !important; height: 30px; }*/
-.mt-radio { margin-bottom: 10px !important; }
-.note-custom { padding: 4px 10px !important; margin-bottom: 5px !important; }
-</style>
 @stop
 
 @section('page-title','Hotel Contract Settings')

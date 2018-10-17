@@ -1,4 +1,4 @@
-@extends('.........layouts.master2')
+@extends('layouts.master2')
 @section('title','Hotel Contract Settings')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -7,33 +7,13 @@
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
 <style>
-.table-setting td { font-size: 11px !important; padding: 5px 1px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
-.table-setting th { font-size: 11px !important; padding: 5px 2px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
-.table-setting { margin-bottom: 0; table-layout: fixed !important; min-width: 900px; border-bottom: 0;}
-.porlet-title-setting { min-height: 0 !important; height: 30px; }
-.caption-setting { font-size: 13px !important; padding: 6px 0 5px !important; font-weight: 600; }
-.tools-setting { font-size: 13px !important; padding: 6px 0 0 !important; }
-.table-setting .item-setting:hover { background-color: #f2f2f2; cursor: pointer; }
-.column-setting { width: 2.9%; }
-.head-setting { vertical-align: top !important; background-color: #e8f0fc; border:1px solid #fff !important; }
-.head-setting-invalid { background-color: #fff !important; border: 1px solid #fff !important;}
-.room-name { word-wrap:break-word;width: 10.1%; color: #fff; background-color: #6d90c4;white-space: normal !important; vertical-align: middle !important;}
-.item-variable { /*font-weight: 600;background-color: #e8f0fc; border:1px solid #fff !important;*/}
-/*.room-name { word-wrap:break-word;width: 10.1%;}*/
-/*.select2-selection__rendered { margin-left: 20px; }*/
-.mt-checkbox-row { margin-bottom: 10px !important; }
-/*.mt-checkbox-list-row { padding: 0 !important; }*/
-.portlet-body-row { padding-top: 5px !important; padding-bottom: 5px !important }
-/*.btn-search-submit { margin-top: 10px; }*/
-/*.porlet-setting { margin-bottom: 5px !important;}*/
-/*.medium-porlet { min-height: 0 !important; height: 30px; }*/
-.mt-radio { margin-bottom: 10px !important; }
-.note-custom { padding: 4px 10px !important; margin-bottom: 5px !important; }
+    .show-import, .show-import:focus, .show-import:hover { color: #fff; background-color: #32c5d2; border-color: #32c5d2; }
+    .hide-import, .hide-import:focus, .hide-import:hover { color: #32c5d2; background-color: #fff; border-color: #32c5d2; }
 </style>
 @stop
 
 @section('page-title','Hotel Contract Settings')
-@section('page-sub-title','define prices, allotments and more...')
+@section('page-sub-title','define costs, prices and more...')
 
 @section('content')
 <div class="row">
@@ -150,35 +130,82 @@
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
         <h4 class="modal-title"><i class="icon-settings"></i> Settings</h4>
     </div>
-    <form id="form-add">
+    <form id="form-setting">
     <div class="modal-body">
         <input type="hidden" name="contract-id" value="0">
         <input type="hidden" name="room-type-id" value="0">
         <input type="hidden" name="market-id" value="0">
         <div class="row">
-            <div class="col-md-12" style="margin-bottom: 20px;">
-                <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
-            </div>
-            <div class="col-md-6 col-sm-6">
-                <div class="form-group">
-                    <label>From</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-calendar"></i>
-                        <input type="text" class="form-control date-picker" name="setting-from">
-                    </div>
+            <div class="col-md-12" style="margin-bottom: 30px; display: inline-block; text-align: center;">
+                <div class="caption" style="display: inline-block; line-height: 2.3;">
+                    <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-6">
-                <div class="form-group">
-                    <label>To</label>
-                    <div class="input-icon left">
-                        <i class="fa fa-calendar"></i>
-                        <input type="text" class="form-control date-picker" name="setting-to">
+
+            <div class="set-price-container">
+                <div class="range-container">
+                    <div class="range">
+                        <div class="col-md-5 col-sm-5 col-xs-5">
+                            <div class="form-group">
+                                <label>From</label>
+                                <div class="input-icon left">
+                                    <i class="fa fa-calendar"></i>
+                                    <input type="text" class="form-control date-picker" name="setting-from">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 col-sm-5 col-xs-5">
+                            <div class="form-group">
+                                <label>To</label>
+                                <div class="input-icon left">
+                                    <i class="fa fa-calendar"></i>
+                                    <input type="text" class="form-control date-picker" name="setting-to">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-xs-2">
+                            <div class="form-group">
+                                <a class="btn blue btn-outline add-row" href="javascript:;">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="measures-container"></div>
+            </div>
+            <div class="import-cost-container" style="display: none;">
+                <input type="hidden" name="import-cost" value="">
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <div class="note note-info">
+                        <p>This option will overwrite the current settings for <b>ALL</b> room types.</p>
+                    </div>
+                </div>
+                <div class="col-md-12" style="margin-bottom: 10px;">
+                    <div class="col-md-6" style="margin-left: auto; margin-right: auto; float: none;">
+                        <label>Import From</label>
+                        <div class="form-group" style="/*margin-bottom: 30px;*/">
+                            <select class="form-control" name="price-rate" id="price-rate"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="display: none;">
+                    <div class="form-group">
+                        <!--label>To</label-->
+                        <div class="mt-radio-list">
+                            <label class="mt-radio mt-radio-outline"> To Current Room Type
+                                <input type="radio" value="1" name="import-type" checked/>
+                                <span></span>
+                            </label>
+                            <label class="mt-radio mt-radio-outline"> To All Room Types
+                                <input type="radio" value="2" name="import-type" />
+                                <span></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row measures-container"></div>
     </div>
     <div class="modal-footer">
         <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>

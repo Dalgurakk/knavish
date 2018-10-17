@@ -46,7 +46,7 @@ License: You must have a valid license purchased only from themeforest(the above
         <!-- END PAGE LEVEL STYLES -->
         <!-- BEGIN THEME LAYOUT STYLES -->
         <!-- END THEME LAYOUT STYLES -->
-        <link rel="shortcut icon" href="favicon.ico" /> </head>
+        <link rel="shortcut icon" href="{{ asset('assets/layouts/layout2/img/favicon.png') }}" /> </head>
     <!-- END HEAD -->
 
     <body class=" login">
@@ -109,10 +109,10 @@ License: You must have a valid license purchased only from themeforest(the above
         <div class="copyright"> 2018 &copy; Royal Team </div>
         <!-- END COPYRIGHT -->
         <!--[if lt IE 9]>
-<script src="{{ asset('assets/global/plugins/respond.min.js') }}"></script>
-<script src="{{ asset('assets/global/plugins/excanvas.min.js') }}"></script>
-<script src="{{ asset('assets/global/plugins/ie8.fix.min.js') }}"></script>
-<![endif]-->
+        <script src="{{ asset('assets/global/plugins/respond.min.js') }}"></script>
+        <script src="{{ asset('assets/global/plugins/excanvas.min.js') }}"></script>
+        <script src="{{ asset('assets/global/plugins/ie8.fix.min.js') }}"></script>
+        <![endif]-->
         <!-- BEGIN CORE PLUGINS -->
         <script src="{{ asset('assets/global/plugins/jquery.min.js') }}" type="text/javascript"></script>
         <script src="{{ asset('assets/global/plugins/bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>

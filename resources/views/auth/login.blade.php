@@ -51,9 +51,11 @@ License: You must have a valid license purchased only from themeforest(the above
 
     <body class=" login">
         <!-- BEGIN LOGO -->
-        <div class="logo">
-            <!--a href="index.html">
-                <img src="{{ asset("assets/pages/img/logo-big.png") }}" alt="" /> </a-->
+        <div class="logo" style="margin-bottom: 0;">
+            <a href="index.html">
+                <!--img src="{{ asset("assets/pages/img/logo-big.png") }}" alt="" /> </a-->
+                <img id="logo2" src="{{ asset('assets/layouts/layout2/img/logo-royal-224x50.png') }}" style="height: 60px;">
+            </a>
         </div>
         <!-- END LOGO -->
         <!-- BEGIN LOGIN -->

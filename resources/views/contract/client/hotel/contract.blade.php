@@ -321,9 +321,11 @@
                                         <th> Id </th>
                                         <th> Room Type </th>
                                         <th> Max Pax </th>
-                                        <th> Min Pax </th>
+                                        <th> Max AD </th>
                                         <th> Min AD </th>
+                                        <th> Max CH </th>
                                         <th> Min CH </th>
+                                        <th> Max INF </th>
                                         <th> Min INF </th>
                                     </tr>
                                 </thead>
@@ -548,9 +550,11 @@
                                     <th> Id </th>
                                     <th> Room Type </th>
                                     <th> Max Pax </th>
-                                    <th> Min Pax </th>
+                                    <th> Max AD </th>
                                     <th> Min AD </th>
+                                    <th> Max CH </th>
                                     <th> Min CH </th>
+                                    <th> Max INF </th>
                                     <th> Min INF </th>
                                 </tr>
                                 </thead>
@@ -781,9 +785,11 @@
                                         <th> Id </th>
                                         <th> Room Type </th>
                                         <th> Max Pax </th>
-                                        <th> Min Pax </th>
+                                        <th> Max AD </th>
                                         <th> Min AD </th>
+                                        <th> Max CH </th>
                                         <th> Min CH </th>
+                                        <th> Max INF </th>
                                         <th> Min INF </th>
                                     </tr>
                                     </thead>

@@ -84,10 +84,12 @@
                             <th class="">Code</th>
                             <th class="">Denomination</th>
                             <th class="">Max Pax</th>
-                            <th class="">Min Pax</th>
+                            <th class="">Max AD</th>
                             <th class="">Min AD</th>
+                            <th class="">Max CH</th>
                             <th class="">Min CH</th>
                             <th class="">Max INF</th>
+                            <th class="">Min INF</th>
                             <th class="">Enable</th>
                             <th class="" style="min-width: 140px;">Actions</th>
                         </tr>
@@ -123,8 +125,12 @@
                     <input type="text" class="form-control" placeholder="Max Pax" name="maxpax">
                 </div>
                 <div class="form-group">
-                    <label>Min Adult</label>
-                    <input type="text" class="form-control" placeholder="Min Adult" name="minadult">
+                    <label>Max Adult</label>
+                    <input type="text" class="form-control" placeholder="Max Adult" name="maxadult">
+                </div>
+                <div class="form-group">
+                    <label>Max Children</label>
+                    <input type="text" class="form-control" placeholder="Max Children" name="maxchildren">
                 </div>
                 <div class="form-group">
                     <label>Max Infant</label>
@@ -133,20 +139,24 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Min Pax</label>
-                    <input type="text" class="form-control" placeholder="Min Pax" name="minpax">
+                    <div class="mt-checkbox-list">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px; margin-bottom: 4px;"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Min Adult</label>
+                    <input type="text" class="form-control" placeholder="Min Adult" name="minadult">
                 </div>
                 <div class="form-group">
                     <label>Min Children</label>
                     <input type="text" class="form-control" placeholder="Min Children" name="minchildren">
                 </div>
-                <div class="form-group no-margin-bottom">
-                    <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px"> Enabled
-                            <input type="checkbox" value="1" name="active"/>
-                            <span></span>
-                        </label>
-                    </div>
+                <div class="form-group">
+                    <label>Min Infant</label>
+                    <input type="text" class="form-control" placeholder="Min Infant" name="mininfant">
                 </div>
             </div>
         </div>
@@ -179,11 +189,15 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Max Pax</label>
-                    <input type="text" class="form-control" name="maxpax" readonly>
+                    <input type="text" class="form-control"name="maxpax" readonly>
                 </div>
                 <div class="form-group">
-                    <label>Min Adult</label>
-                    <input type="text" class="form-control" name="minadult" readonly>
+                    <label>Max Adult</label>
+                    <input type="text" class="form-control" name="maxadult" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Max Children</label>
+                    <input type="text" class="form-control" name="maxchildren" readonly>
                 </div>
                 <div class="form-group">
                     <label>Max Infant</label>
@@ -192,20 +206,24 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Min Pax</label>
-                    <input type="text" class="form-control" name="minpax" readonly>
+                    <div class="mt-checkbox-list">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px; margin-bottom: 4px;"> Enabled
+                            <input type="checkbox" value="1" name="active" onclick="return false;"/>
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Min Adult</label>
+                    <input type="text" class="form-control" name="minadult" readonly>
                 </div>
                 <div class="form-group">
                     <label>Min Children</label>
                     <input type="text" class="form-control" name="minchildren" readonly>
                 </div>
-                <div class="form-group no-margin-bottom">
-                    <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px"> Enabled
-                            <input type="checkbox" value="1" name="active" onclick="return false;"/>
-                            <span></span>
-                        </label>
-                    </div>
+                <div class="form-group">
+                    <label>Min Infant</label>
+                    <input type="text" class="form-control" name="mininfant" readonly>
                 </div>
             </div>
         </div>
@@ -240,8 +258,12 @@
                     <input type="text" class="form-control" placeholder="Max Pax" name="maxpax">
                 </div>
                 <div class="form-group">
-                    <label>Min Adult</label>
-                    <input type="text" class="form-control" placeholder="Min Adult" name="minadult">
+                    <label>Max Adult</label>
+                    <input type="text" class="form-control" placeholder="Max Adult" name="maxadult">
+                </div>
+                <div class="form-group">
+                    <label>Max Children</label>
+                    <input type="text" class="form-control" placeholder="Max Children" name="maxchildren">
                 </div>
                 <div class="form-group">
                     <label>Max Infant</label>
@@ -250,20 +272,24 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Min Pax</label>
-                    <input type="text" class="form-control" placeholder="Min Pax" name="minpax">
+                    <div class="mt-checkbox-list">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px; margin-bottom: 4px;"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Min Adult</label>
+                    <input type="text" class="form-control" placeholder="Min Adult" name="minadult">
                 </div>
                 <div class="form-group">
                     <label>Min Children</label>
                     <input type="text" class="form-control" placeholder="Min Children" name="minchildren">
                 </div>
-                <div class="form-group no-margin-bottom">
-                    <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px"> Enabled
-                            <input type="checkbox" value="1" name="active"/>
-                            <span></span>
-                        </label>
-                    </div>
+                <div class="form-group">
+                    <label>Min Infant</label>
+                    <input type="text" class="form-control" placeholder="Min Infant" name="mininfant">
                 </div>
             </div>
         </div>

@@ -65,7 +65,6 @@ $(document).ready(function () {
                 name: 'actions',
                 "className": "dt-center",
                 "data": function ( row, type, val, meta ) {
-                    //var contract = row.contract;
                     var data =
                         '<form method="get" action="' + routeSetting + '">' +
                         '<input type="hidden" name="id" value="' + row.id + '">' +
@@ -149,11 +148,10 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [3] },
             { 'orderable': false, 'targets': [4] },
             { 'orderable': false, 'targets': [5] },
-            { 'orderable': false, 'targets': [6] }
-        ],
-        "language": {
-            "emptyTable": "No room type selected"
-        }
+            { 'orderable': false, 'targets': [6] },
+            { 'orderable': false, 'targets': [7] },
+            { 'orderable': false, 'targets': [8] }
+        ]
     });
 
     var tableEditPaxType = $('#modal-edit .table-pax-type').dataTable({
@@ -186,11 +184,10 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [3] },
             { 'orderable': false, 'targets': [4] },
             { 'orderable': false, 'targets': [5] },
-            { 'orderable': false, 'targets': [6] }
-        ],
-        "language": {
-            "emptyTable": "No room type selected"
-        }
+            { 'orderable': false, 'targets': [6] },
+            { 'orderable': false, 'targets': [7] },
+            { 'orderable': false, 'targets': [8] }
+        ]
     });
 
     var tableInfoPaxType = $('#modal-info .table-pax-type').dataTable({
@@ -223,11 +220,10 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [3] },
             { 'orderable': false, 'targets': [4] },
             { 'orderable': false, 'targets': [5] },
-            { 'orderable': false, 'targets': [6] }
-        ],
-        "language": {
-            "emptyTable": "No room type selected"
-        }
+            { 'orderable': false, 'targets': [6] },
+            { 'orderable': false, 'targets': [7] },
+            { 'orderable': false, 'targets': [8] }
+        ]
     });
 
     $('.hotel-category').barrating({
@@ -371,11 +367,13 @@ $(document).ready(function () {
                 tableAddRoomType.api().row.add([
                     roomTypes[i].id,
                     roomTypes[i].code + ': ' + roomTypes[i].name,
-                    roomTypes[i].maxpax,
-                    roomTypes[i].minpax,
-                    roomTypes[i].minadult,
-                    roomTypes[i].minchildren,
-                    roomTypes[i].minchildren
+                    roomTypes[i].max_pax,
+                    roomTypes[i].max_adult,
+                    roomTypes[i].min_adult,
+                    roomTypes[i].max_children,
+                    roomTypes[i].min_children,
+                    roomTypes[i].max_infant,
+                    roomTypes[i].min_infant
                 ]).draw( false );
             }
             tableAddRoomType.api().columns.adjust().draw();
@@ -513,11 +511,13 @@ $(document).ready(function () {
                 tableEditRoomType.api().row.add([
                     roomTypes[i].id,
                     roomTypes[i].code + ': ' + roomTypes[i].name,
-                    roomTypes[i].maxpax,
-                    roomTypes[i].minpax,
-                    roomTypes[i].minadult,
-                    roomTypes[i].minchildren,
-                    roomTypes[i].minchildren
+                    roomTypes[i].max_pax,
+                    roomTypes[i].max_adult,
+                    roomTypes[i].min_adult,
+                    roomTypes[i].max_children,
+                    roomTypes[i].min_children,
+                    roomTypes[i].max_infant,
+                    roomTypes[i].min_infant
                 ]).draw( false );
             }
             tableEditRoomType.api().columns.adjust().draw();
@@ -848,11 +848,13 @@ $(document).ready(function () {
             tableInfoRoomType.api().row.add([
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
-                roomTypes[i].maxpax,
-                roomTypes[i].minpax,
-                roomTypes[i].minadult,
-                roomTypes[i].minchildren,
-                roomTypes[i].minchildren
+                roomTypes[i].max_pax,
+                roomTypes[i].max_adult,
+                roomTypes[i].min_adult,
+                roomTypes[i].max_children,
+                roomTypes[i].min_children,
+                roomTypes[i].max_infant,
+                roomTypes[i].min_infant
             ]).draw( false );
         }
         tableInfoRoomType.api().columns.adjust().draw();
@@ -943,11 +945,13 @@ $(document).ready(function () {
             tableEditRoomType.api().row.add([
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
-                roomTypes[i].maxpax,
-                roomTypes[i].minpax,
-                roomTypes[i].minadult,
-                roomTypes[i].minchildren,
-                roomTypes[i].minchildren
+                roomTypes[i].max_pax,
+                roomTypes[i].max_adult,
+                roomTypes[i].min_adult,
+                roomTypes[i].max_children,
+                roomTypes[i].min_children,
+                roomTypes[i].max_infant,
+                roomTypes[i].min_infant
             ]).draw( false );
         }
         tableEditRoomType.api().columns.adjust().draw();

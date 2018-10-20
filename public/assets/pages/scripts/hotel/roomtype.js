@@ -29,11 +29,13 @@ $(document).ready(function () {
             {data: 'id', name: 'id', visible: false},
             {data: 'code', name: 'code'},
             {data: 'name', name: 'name', width: '35%'},
-            {data: 'maxpax', name: 'maxpax'},
-            {data: 'minpax', name: 'minpax'},
-            {data: 'minadult', name: 'minadult'},
-            {data: 'minchildren', name: 'minchildren'},
-            {data: 'maxinfant', name: 'maxinfant'},
+            {data: 'max_pax', name: 'maxpax'},
+            {data: 'max_adult', name: 'maxadult'},
+            {data: 'min_adult', name: 'minadult'},
+            {data: 'max_children', name: 'maxchildren'},
+            {data: 'min_children', name: 'minchildren'},
+            {data: 'max_infant', name: 'maxinfant'},
+            {data: 'min_infant', name: 'mininfant'},
             {
                 data: 'active',
                 name: 'active',
@@ -98,6 +100,14 @@ $(document).ready(function () {
         return this.optional(element) || parseInt(value) <= parseInt($(param).val());
     }, 'Invalid value.');
 
+    $.validator.addMethod('addTotalPaxValue', function (value, element) {
+        var ad = $.isNumeric($('#modal-add :input[name=minadult]').val()) ? parseInt($('#modal-add :input[name=minadult]').val()) : 0;
+        var ch = $.isNumeric($('#modal-add :input[name=minchildren]').val()) ? parseInt($('#modal-add :input[name=minchildren]').val()) : 0;
+        var inf = $.isNumeric($('#modal-add :input[name=mininfant]').val()) ? parseInt($('#modal-add :input[name=mininfant]').val()) : 0;
+        var total = ad + ch + inf;
+        return this.optional(element) || parseInt(value) >= total;
+    }, 'The total of the min pax value can not exceed the max pax value.');
+
     var formAdd = $('#form-add');
     formAdd.validate({
         errorElement: 'span',
@@ -114,9 +124,10 @@ $(document).ready(function () {
             maxpax: {
                 required: true,
                 digits: true,
-                min:1
+                min:1,
+                addTotalPaxValue: true
             },
-            minpax: {
+            maxadult: {
                 required: true,
                 digits: true,
                 min:0,
@@ -126,33 +137,51 @@ $(document).ready(function () {
                 required: true,
                 digits: true,
                 min:0,
+                notGreaterThan: '#modal-add :input[name=maxadult]'
+            },
+            maxchildren: {
+                required: true,
+                digits: true,
+                min:0,
                 notGreaterThan: '#modal-add :input[name=maxpax]'
             },
             minchildren: {
                 required: true,
                 digits: true,
                 min:0,
-                notGreaterThan: '#modal-add :input[name=maxpax]'
+                notGreaterThan: '#modal-add :input[name=maxchildren]'
             },
             maxinfant: {
                 required: true,
                 digits: true,
                 min:0,
                 notGreaterThan: '#modal-add :input[name=maxpax]'
+            },
+            mininfant: {
+                required: true,
+                digits: true,
+                min:0,
+                notGreaterThan: '#modal-add :input[name=maxinfant]'
             }
         },
         messages: {
-            minpax: {
+            maxadult: {
                 notGreaterThan: 'Must not be greater than Max Pax.'
             },
-            minadult: {
-                notGreaterThan: 'Must not be greater than Max Pax.'
-            },
-            minchildren: {
+            maxchildren: {
                 notGreaterThan: 'Must not be greater than Max Pax.'
             },
             maxinfant: {
                 notGreaterThan: 'Must not be greater than Max Pax.'
+            },
+            minadult: {
+                notGreaterThan: 'Must not be greater than Max Adult.'
+            },
+            minchildren: {
+                notGreaterThan: 'Must not be greater than Max Children.'
+            },
+            mininfant: {
+                notGreaterThan: 'Must not be greater than Max Infant.'
             }
         },
         errorPlacement: function (error, element) {
@@ -234,6 +263,14 @@ $(document).ready(function () {
             $('.mt-checkbox > input[type=checkbox]').val(0);
     });
 
+    $.validator.addMethod('editTotalPaxValue', function (value, element) {
+        var ad = $.isNumeric($('#modal-edit :input[name=minadult]').val()) ? parseInt($('#modal-edit :input[name=minadult]').val()) : 0;
+        var ch = $.isNumeric($('#modal-edit :input[name=minchildren]').val()) ? parseInt($('#modal-edit :input[name=minchildren]').val()) : 0;
+        var inf = $.isNumeric($('#modal-edit :input[name=mininfant]').val()) ? parseInt($('#modal-edit :input[name=mininfant]').val()) : 0;
+        var total = ad + ch + inf;
+        return this.optional(element) || parseInt(value) >= total;
+    }, 'The total of the min pax value can not exceed the max pax value.');
+
     var formEdit = $('#form-edit');
     formEdit.validate({
         errorElement: 'span',
@@ -250,9 +287,10 @@ $(document).ready(function () {
             maxpax: {
                 required: true,
                 digits: true,
-                min:1
+                min:1,
+                editTotalPaxValue: true
             },
-            minpax: {
+            maxadult: {
                 required: true,
                 digits: true,
                 min:0,
@@ -262,33 +300,51 @@ $(document).ready(function () {
                 required: true,
                 digits: true,
                 min:0,
+                notGreaterThan: '#modal-edit :input[name=maxadult]'
+            },
+            maxchildren: {
+                required: true,
+                digits: true,
+                min:0,
                 notGreaterThan: '#modal-edit :input[name=maxpax]'
             },
             minchildren: {
                 required: true,
                 digits: true,
                 min:0,
-                notGreaterThan: '#modal-edit :input[name=maxpax]'
+                notGreaterThan: '#modal-edit :input[name=maxchildren]'
             },
             maxinfant: {
                 required: true,
                 digits: true,
                 min:0,
                 notGreaterThan: '#modal-edit :input[name=maxpax]'
+            },
+            mininfant: {
+                required: true,
+                digits: true,
+                min:0,
+                notGreaterThan: '#modal-edit :input[name=maxinfant]'
             }
         },
         messages: {
-            minpax: {
-                notGreaterThan: 'Must not be greater than Max pax.'
+            maxadult: {
+                notGreaterThan: 'Must not be greater than Max Pax.'
             },
-            minadult: {
-                notGreaterThan: 'Must not be greater than Max pax.'
-            },
-            minchildren: {
-                notGreaterThan: 'Must not be greater than Max pax.'
+            maxchildren: {
+                notGreaterThan: 'Must not be greater than Max Pax.'
             },
             maxinfant: {
-                notGreaterThan: 'Must not be greater than Max pax.'
+                notGreaterThan: 'Must not be greater than Max Pax.'
+            },
+            minadult: {
+                notGreaterThan: 'Must not be greater than Max Adult.'
+            },
+            minchildren: {
+                notGreaterThan: 'Must not be greater than Max Children.'
+            },
+            mininfant: {
+                notGreaterThan: 'Must not be greater than Max Infant.'
             }
         },
         errorPlacement: function (error, element) {
@@ -365,11 +421,14 @@ $(document).ready(function () {
         var data = table.row( $(this).parents('tr') ).data();
         $('#modal-info :input[name=code]').val(data['code']);
         $('#modal-info :input[name=name]').val(data['name']);
-        $('#modal-info :input[name=maxpax]').val(data['maxpax']);
-        $('#modal-info :input[name=minpax]').val(data['minpax']);
-        $('#modal-info :input[name=minadult]').val(data['minadult']);
-        $('#modal-info :input[name=minchildren]').val(data['minchildren']);
-        $('#modal-info :input[name=maxinfant]').val(data['maxinfant']);
+        $('#modal-info :input[name=maxpax]').val(data['max_pax']);
+        $('#modal-info :input[name=maxpax]').val(data['max_pax']);
+        $('#modal-info :input[name=maxadult]').val(data['max_adult']);
+        $('#modal-info :input[name=minadult]').val(data['min_adult']);
+        $('#modal-info :input[name=maxchildren]').val(data['max_children']);
+        $('#modal-info :input[name=minchildren]').val(data['min_children']);
+        $('#modal-info :input[name=maxinfant]').val(data['max_infant']);
+        $('#modal-info :input[name=mininfant]').val(data['min_infant']);
         if (data['active'] == 1) {
             $('#modal-info :input[name=active]').prop('checked', 'checked');
             $('#modal-info :input[name=active]').val(1);
@@ -388,11 +447,14 @@ $(document).ready(function () {
         $('#modal-edit :input[name=id]').val(data['id']);
         $('#modal-edit :input[name=code]').val(data['code']);
         $('#modal-edit :input[name=name]').val(data['name']);
-        $('#modal-edit :input[name=maxpax]').val(data['maxpax']);
-        $('#modal-edit :input[name=minpax]').val(data['minpax']);
-        $('#modal-edit :input[name=minadult]').val(data['minadult']);
-        $('#modal-edit :input[name=minchildren]').val(data['minchildren']);
-        $('#modal-edit :input[name=maxinfant]').val(data['maxinfant']);
+        $('#modal-edit :input[name=maxpax]').val(data['max_pax']);
+        $('#modal-edit :input[name=maxpax]').val(data['max_pax']);
+        $('#modal-edit :input[name=maxadult]').val(data['max_adult']);
+        $('#modal-edit :input[name=minadult]').val(data['min_adult']);
+        $('#modal-edit :input[name=maxchildren]').val(data['max_children']);
+        $('#modal-edit :input[name=minchildren]').val(data['min_children']);
+        $('#modal-edit :input[name=maxinfant]').val(data['max_infant']);
+        $('#modal-edit :input[name=mininfant]').val(data['min_infant']);
         if (data['active'] == 1) {
             $('#modal-edit :input[name=active]').prop('checked', 'checked');
             $('#modal-edit :input[name=active]').val(1);

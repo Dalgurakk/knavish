@@ -40,7 +40,6 @@ class HotelContractClientController extends Controller
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        $records = DB::table('hotel_contract_clients')->count();
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
         $columns = array('hotel_contract_clients.id', 'hotel_contract_clients.name', 'users.username', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contract_clients.active', 'hotel_contract_clients.active');
@@ -61,7 +60,7 @@ class HotelContractClientController extends Controller
             ->join('hotel_contracts', 'hotel_contracts.id', '=', 'hotel_contract_clients.hotel_contract_id');
 
         if(isset($searchName) && $searchName != '') {
-            $query->where('hotel_contracts.name', 'like', '%' . $searchName . '%');
+            $query->where('hotel_contract_clients.name', 'like', '%' . $searchName . '%');
         }
         if(isset($searchClient) && $searchClient != '') {
             $query->where('users.username', 'like', '%' . $searchClient . '%');
@@ -83,6 +82,7 @@ class HotelContractClientController extends Controller
             ->limit($limit);
 
         $result = $query->get();
+        $records = count($result);
 
         foreach ($result as $r) {
             $query = HotelContractClient::with([

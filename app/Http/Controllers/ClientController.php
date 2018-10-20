@@ -34,10 +34,7 @@ class ClientController extends Controller
 
     public function readHotel(Request $request) {
         $request->user()->authorizeRoles(['client']);
-        $records = DB::table('hotel_contract_clients')
-            ->where('client_id', Auth::user()->id)
-            ->where('active', '1')
-            ->count();
+
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
         $columns = array('hotel_contract_clients.id', 'hotel_contract_clients.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contract_clients.active');
@@ -79,6 +76,8 @@ class ClientController extends Controller
             ->limit($limit);
 
         $result = $query->get();
+
+        $records = count($result);
 
         foreach ($result as $r) {
             $query = HotelContractClient::with([

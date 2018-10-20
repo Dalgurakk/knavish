@@ -52,7 +52,6 @@ class HotelController extends Controller
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        $records = DB::table('hotels')->count();
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
         $columns = array('hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name', 'hotels.active');
@@ -78,6 +77,7 @@ class HotelController extends Controller
             ->limit($limit);
 
         $result = $query->get();
+        $records = count($result);
 
         foreach ($result as $r) {
             $query = Hotel::with(['hotelChain', 'country', 'state', 'city'])

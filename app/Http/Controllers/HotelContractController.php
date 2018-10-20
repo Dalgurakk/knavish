@@ -134,7 +134,33 @@ class HotelContractController extends Controller
             $contracts[] = $item;
         }
 
-        /*$query = DB::table('hotel_contracts')
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $contracts
+        );
+        echo json_encode($data);
+    }
+
+    public function read2(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array('hotel_contracts.id', 'hotel_contracts.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.active', 'hotel_contracts.hotel_id');
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchName = Input::get('columns')['1']['search']['value'];
+        $searchHotel = Input::get('columns')['2']['search']['value'];
+        $searchValidFrom = Input::get('columns')['3']['search']['value'];
+        $searchValidTo = Input::get('columns')['4']['search']['value'];
+        $searchActive = Input::get('columns')['6']['search']['value'];
+        $contracts = array();
+
+        $query = DB::table('hotel_contracts')
             ->select(
                 'hotel_contracts.id', 'hotel_contracts.name', 'hotels.name as hotel', 'hotel_contracts.valid_from',
                 'hotel_contracts.valid_to', 'hotel_contracts.active')
@@ -163,6 +189,7 @@ class HotelContractController extends Controller
             ->limit($limit);
 
         $result = $query->get();
+        $records = count($result);
 
         foreach ($result as $r) {
             $query = HotelContract::with([
@@ -197,7 +224,7 @@ class HotelContractController extends Controller
                 'contract' => $contract
             );
             $contracts[] = $item;
-        }*/
+        }
 
         $data = array(
             "draw" => Input::get('draw'),

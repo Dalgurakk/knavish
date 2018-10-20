@@ -138,20 +138,11 @@ License: You must have a valid license purchased only from themeforest(the above
                     @if(Auth::user()->hasRole('client'))
                         <li class="nav-item {{ isset($menuContract) ? 'active open' : '' }}">
                             <a href="{{ route('client.contract.hotel.index') }}" class="nav-link nav-toggle">
-                                <i class="fa fa-file-text-o"></i>
-                                <span class="title">My Contracts</span>
+                                <i class="fa fa-building-o"></i>
+                                <span class="title">Hotel</span>
                                 <span class="{{ isset($menuContract) ? 'selected' : '' }}"></span>
-                                <span class="arrow"></span>
+                                <!--span class="arrow"></span-->
                             </a>
-                            <ul class="sub-menu">
-                                <li class="nav-item {{ isset($submenuHotel) ? 'active open' : '' }}">
-                                    <a href="{{ route('client.contract.hotel.index') }}" class="nav-link ">
-                                        <i class="fa fa-building-o"></i>
-                                        <span class="title">Hotel</span>
-                                        <span class="{{ isset($submenuHotel) ? 'selected' : '' }}"></span>
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
                     @else
                         <li class="nav-item start {{ isset($menuHome) ? 'active open' : '' }}">
@@ -161,7 +152,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                 <span class="{{ isset($menuHome) ? 'selected' : '' }}"></span>
                             </a>
                         </li>
-                            <!--li class="nav-item start {{ isset($menuDashboard) ? 'active open' : '' }}">
+                        <!--li class="nav-item start {{ isset($menuDashboard) ? 'active open' : '' }}">
                             <a href="{{ route('dashboard') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-bar-chart"></i>
                                 <span class="title">Dashboard</span>

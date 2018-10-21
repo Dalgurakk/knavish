@@ -11,6 +11,7 @@ Route::post('/administration/user/create', 'UserController@create')->name('admin
 Route::post('/administration/user/update', 'UserController@update')->name('administration.user.update');
 Route::post('/administration/user/delete', 'UserController@delete')->name('administration.user.delete');
 Route::post('/administration/user/search/client/active', 'UserController@getClientsActivesByName')->name('administration.user.search.client.active');
+Route::get('/administration/user/export', 'UserController@export')->name('administration.user.export');
 //Market
 Route::get('/administration/market', 'MarketController@index')->name('administration.market.index');
 Route::post('/administration/market/read', 'MarketController@read')->name('administration.market.read');

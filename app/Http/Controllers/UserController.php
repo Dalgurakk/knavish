@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Exception;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UserExport;
 
 class UserController extends Controller
 {
@@ -182,5 +184,10 @@ class UserController extends Controller
             ->where('active', '1')
             ->get();
         echo json_encode($clients);
+    }
+
+    public function export(Request $request) {
+        $request->user()->authorizeRoles(['administrator']);
+        return Excel::download(new UserExport, 'users.xlsx');
     }
 }

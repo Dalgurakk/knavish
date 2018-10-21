@@ -41,6 +41,9 @@
                             </li>
                         </ul>
                     </div>
+                    <!--a class="btn btn-circle btn-icon-only btn-default export" href="{{ route('administration.user.export') }}" target="_blank">
+                        <i class="fa fa-user"></i>
+                    </a-->
                 </div>
             </div>
             <div class="portlet-body">
@@ -339,5 +342,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/administration/user.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/administration/user.js') }}" type="text/javascript"></script>
 @stop

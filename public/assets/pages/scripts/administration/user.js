@@ -401,4 +401,16 @@ $(document).ready(function () {
             needUpdate = false;
         }
     });
+
+    $('.export').on('click',function(){
+        var query = {
+            username: $('#search-section :input[name=username]').val(),
+            role: $('#search-section :input[name=role]').val(),
+            name: $('#search-section :input[name=name]').val(),
+            email: $('#search-section :input[name=email]').val(),
+            active: $('#search-section :input[name=active]').val()
+        };
+        var url = routeExcel + "?" + $.param(query);
+        window.location = url;
+    });
 });

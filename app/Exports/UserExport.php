@@ -2,28 +2,59 @@
 
 namespace App\Exports;
 
-use App\User;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class UserExport implements FromCollection, WithHeadings
+
+class UserExport implements FromQuery, WithHeadings, ShouldAutoSize
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+    private $parameters;
+
+    public function __construct($parameters) {
+        $this->parameters = $parameters;
+    }
+
+    public function query()
     {
-        return User::all();
+        $users = DB::table('users')
+            ->select(
+                'users.username', 'roles.name as role', 'users.name', 'users.email',
+                DB::raw('(CASE WHEN users.active = 1 THEN "Yes" ELSE "No" END) AS active')
+            )
+            ->join('role_user', 'role_user.user_id', '=', 'users.id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->orderBy('users.username');
+
+        if ($this->parameters['username'] != '') {
+            $users->where('users.username', 'like', '%' . $this->parameters['username'] . '%');
+        }
+        if ($this->parameters['role'] != '') {
+            $users->where('roles.id', $this->parameters['role']);
+        }
+        if ($this->parameters['name'] != '') {
+            $users->where('users.name', 'like', '%' . $this->parameters['name'] . '%');
+        }
+        if ($this->parameters['email'] != '') {
+            $users->where('users.email', 'like', '%' . $this->parameters['email'] . '%');
+        }
+        if ($this->parameters['active'] != '') {
+            $users->where('users.active', $this->parameters['active']);
+        }
+
+        $users->get();
+        return $users;
     }
 
     public function headings(): array
     {
         return [
-            '#',
-            'Date',
+            'Username',
+            'Role',
+            'Name',
+            'Email',
+            'Enabled',
         ];
     }
-
 }

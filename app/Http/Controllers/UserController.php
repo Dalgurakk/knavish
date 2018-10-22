@@ -180,7 +180,7 @@ class UserController extends Controller
             ->join('role_user', 'role_user.user_id', '=', 'users.id')
             ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->where('roles.name', 'client')
-            ->where('users.username', 'like', '%' . $string . '%')
+            ->where('users.username', 'like', $string)
             ->where('active', '1')
             ->get();
         echo json_encode($clients);
@@ -188,6 +188,13 @@ class UserController extends Controller
 
     public function export(Request $request) {
         $request->user()->authorizeRoles(['administrator']);
-        return Excel::download(new UserExport, 'users.xlsx');
+        $parameters = array(
+            'username' => Input::get('username'),
+            'role' => Input::get('role'),
+            'name'=> Input::get('name'),
+            'email' => Input::get('email'),
+            'active' => Input::get('active')
+        );
+        return Excel::download(new UserExport($parameters), 'users.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

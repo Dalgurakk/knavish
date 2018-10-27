@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\HotelContractExport;
 use App\HotelBoardType;
 use App\HotelContract;
-use App\HotelContractClient;
 use App\HotelContractMarket;
 use App\HotelContractSetting;
 use App\HotelMeasure;
@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HotelContractController extends Controller
 {
@@ -57,7 +58,6 @@ class HotelContractController extends Controller
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        $records = DB::table('hotel_contracts')->count();
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
         $columns = array('hotel_contracts.id', 'hotel_contracts.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.active', 'hotel_contracts.hotel_id');
@@ -106,6 +106,8 @@ class HotelContractController extends Controller
             ->offset($offset)
             ->limit($limit);
         $result = $query->get();
+
+        $records = count($result);
 
         foreach ($result as $r) {
             $contract = $r;
@@ -902,5 +904,25 @@ class HotelContractController extends Controller
             }
         }
         echo json_encode($this->response);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $settings = array(
+            'headerRange' => 'A4:K4',
+            'headerText' => 'Hotel Contracts',
+            'cellRange' => 'A6:K6'
+        );
+
+        $parameters = array(
+            'name'=> Input::get('name'),
+            'hotel'=> Input::get('hotel'),
+            'validFrom'=> Input::get('validFrom'),
+            'validTo'=> Input::get('validTo'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new HotelContractExport($parameters), 'Hotel Contracts.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

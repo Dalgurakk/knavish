@@ -1,5 +1,5 @@
 @extends('layouts.master2')
-@section('title','Contracts')
+@section('title','Hotel Contracts')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
@@ -40,6 +40,9 @@
                     </a>
                     <a class="btn btn-circle btn-icon-only btn-default reload" href="javascript:;">
                         <i class="fa fa-refresh"></i>
+                    </a>
+                    <a class="btn btn-circle btn-icon-only btn-default excel" href="javascript:;">
+                        <i class="fa fa-file-excel-o"></i>
                     </a>
                     <div class="btn-group">
                         <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">10</a>
@@ -336,8 +339,9 @@
 <script src="{{ asset('assets/global/plugins/fuelux/js/spinner.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js') }}" type="text/javascript"></script>
 <script>
-    var routeRead = "{{ route('client.contract.hotel.read') }}";
-    var routeSetting = "{{ route('client.contract.hotel.settings') }}";
+    var routeRead = "{{ route('client.hotel.read') }}";
+    var routeSetting = "{{ route('client.hotel.settings') }}";
+    var routeExcel = "{{ route('client.hotel.excel') }}";
 </script>
 @stop
 

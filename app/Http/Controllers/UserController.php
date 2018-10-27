@@ -186,15 +186,23 @@ class UserController extends Controller
         echo json_encode($clients);
     }
 
-    public function export(Request $request) {
+    public function toExcel(Request $request) {
         $request->user()->authorizeRoles(['administrator']);
+
+        $settings = array(
+            'headerRange' => 'A4:F4',
+            'headerText' => 'Users',
+            'cellRange' => 'A6:F6'
+        );
+
         $parameters = array(
             'username' => Input::get('username'),
             'role' => Input::get('role'),
             'name'=> Input::get('name'),
             'email' => Input::get('email'),
-            'active' => Input::get('active')
+            'active' => Input::get('active'),
+            'settings' => $settings
         );
-        return Excel::download(new UserExport($parameters), 'users.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        return Excel::download(new UserExport($parameters), 'Users.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

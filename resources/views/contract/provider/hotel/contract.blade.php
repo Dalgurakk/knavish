@@ -1,5 +1,5 @@
 @extends('layouts.master2')
-@section('title','Contracts')
+@section('title','Hotel Contracts')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
@@ -24,8 +24,8 @@
 </style>
 @stop
 
-@section('page-title','Manage Contracts')
-@section('page-sub-title','show, insert, update and delete contracts')
+@section('page-title','Manage Hotel Contracts')
+@section('page-sub-title','show, insert, update and delete hotel contracts')
 
 @section('content')
 <div class="row">
@@ -43,6 +43,9 @@
                     </a>
                     <a class="btn btn-circle btn-icon-only btn-default reload" href="javascript:;">
                         <i class="fa fa-refresh"></i>
+                    </a>
+                    <a class="btn btn-circle btn-icon-only btn-default excel" href="javascript:;">
+                        <i class="fa fa-file-excel-o"></i>
                     </a>
                     <div class="btn-group">
                         <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">10</a>
@@ -82,14 +85,14 @@
                                 <div class="form-group">
                                     <div class="input-icon">
                                         <i class="fa fa-calendar"></i>
-                                        <input type="text" class="form-control" name="valid-from" placeholder="From"> </div>
+                                        <input type="text" class="form-control" name="valid-from" placeholder="Valid From"> </div>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <div class="input-icon">
                                         <i class="fa fa-calendar"></i>
-                                        <input type="text" class="form-control" name="valid-to" placeholder="To"> </div>
+                                        <input type="text" class="form-control" name="valid-to" placeholder="Valid To"> </div>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -392,7 +395,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-star"></i> Price Rates </div>
+                            <i class="fa fa-tag"></i> Price Rates </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -711,7 +714,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-star"></i> Price Rates </div>
+                            <i class="fa fa-tag"></i> Price Rates </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -1048,7 +1051,7 @@
                 <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
-                            <i class="fa fa-star"></i> Price Rates </div>
+                            <i class="fa fa-tag"></i> Price Rates </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -1195,6 +1198,7 @@
     var routeHotelSearchActive = "{{ route('hotel.search.active') }}";
     var routeRoomTypeSearchActive = "{{ route('hotel.roomtype.search.active') }}";
     var routeDelete = "{{ route('contract.provider.hotel.delete') }}";
+    var routeExcel = "{{ route('contract.provider.hotel.excel') }}";
 </script>
 @stop
 

@@ -32,9 +32,9 @@
                             </li>
                         </ul>
                     </div>
-                    <!--a class="btn btn-circle btn-icon-only btn-default expand hide-in-small" data-toggle="expand" href="javascript:;">
-                        <i class="fa fa-arrows-h"></i>
-                    </a-->
+                    <a class="btn btn-circle btn-icon-only btn-default excel" href="javascript:;">
+                        <i class="fa fa-file-excel-o"></i>
+                    </a>
                 </div>
             </div>
             <div class="portlet-body">
@@ -206,6 +206,7 @@
     var routeCreate = "{{ route('administration.location.create') }}";
     var routeUpdate = "{{ route('administration.location.update') }}";
     var routeDelete = "{{ route('administration.location.delete') }}";
+    var routeExcel = "{{ route('administration.location.excel') }}";
 </script>
 @stop
 

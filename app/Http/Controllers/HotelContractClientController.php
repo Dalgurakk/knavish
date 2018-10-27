@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\HotelContractClientExport;
 use App\HotelContract;
 use App\HotelContractClient;
 use Illuminate\Database\QueryException;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HotelContractClientController extends Controller
 {
@@ -468,5 +470,25 @@ class HotelContractClientController extends Controller
             }
         }
         echo json_encode($this->response);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $settings = array(
+            'headerRange' => 'A4:N4',
+            'headerText' => 'Hotel Contracts',
+            'cellRange' => 'A6:N6'
+        );
+
+        $parameters = array(
+            'name'=> Input::get('name'),
+            'client'=> Input::get('client'),
+            'validFrom'=> Input::get('validFrom'),
+            'validTo'=> Input::get('validTo'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new HotelContractClientExport($parameters), 'Hotel Contracts.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

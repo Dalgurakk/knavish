@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\HotelExport;
 use App\HotelChain;
-use App\HotelContract;
 use App\HotelImage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Image;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HotelController extends Controller
 {
@@ -58,6 +59,7 @@ class HotelController extends Controller
         $orderBy = Input::get('order')['0']['column'];
         $orderDirection = Input::get('order')['0']['dir'];
         $searchName = Input::get('columns')['1']['search']['value'];
+        $searchChain = Input::get('columns')['3']['search']['value'];
         $searchActive = Input::get('columns')['4']['search']['value'];
         $hotels = array();
 
@@ -67,6 +69,9 @@ class HotelController extends Controller
 
         if(isset($searchName) && $searchName != '') {
             $query->where('hotels.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchChain) && $searchChain != '') {
+            $query->where('hotel_hotels_chain.name', 'like', '%' . $searchChain . '%');
         }
         if(isset($searchActive) && $searchActive != '') {
             $query->where('hotels.active', '=', $searchActive);
@@ -352,5 +357,23 @@ class HotelController extends Controller
             ->orderBy('hotels.name', 'asc')
             ->get();
         echo json_encode($hotels);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $settings = array(
+            'headerRange' => 'A4:O4',
+            'headerText' => 'Hotels',
+            'cellRange' => 'A6:O6'
+        );
+
+        $parameters = array(
+            'code' => Input::get('code'),
+            'name'=> Input::get('name'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new HotelExport($parameters), 'Hotels.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

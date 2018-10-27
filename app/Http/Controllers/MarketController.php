@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MarketExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Market;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MarketController extends Controller
 {
@@ -23,7 +25,7 @@ class MarketController extends Controller
 
         $breadcrumb = array(
             0 => 'Administration',
-            1 => 'Markets'
+            1 => 'Price Rates'
         );
 
         $data['breadcrumb'] = $breadcrumb;
@@ -69,7 +71,7 @@ class MarketController extends Controller
             try {
                 $market->save();
                 $this->response['status'] = 'success';
-                $this->response['message'] = 'Market ' . $market->code . ': ' . $market->name . ' created successfully.';
+                $this->response['message'] = 'Price Rate ' . $market->code . ': ' . $market->name . ' created successfully.';
                 $this->response['data'] = $market;
             }
             catch (QueryException $e) {
@@ -106,7 +108,7 @@ class MarketController extends Controller
             try {
                 $market->save();
                 $this->response['status'] = 'success';
-                $this->response['message'] = 'Market updated successfully.';
+                $this->response['message'] = 'Price Rate updated successfully.';
                 $this->response['data'] = $market;
             }
             catch (QueryException $e) {
@@ -127,14 +129,32 @@ class MarketController extends Controller
         try {
             $market->delete();
             $this->response['status'] = 'success';
-            $this->response['message'] = 'Market ' . $market->name . ' deleted successfully.';
+            $this->response['message'] = 'Price Rate ' . $market->name . ' deleted successfully.';
             $this->response['data'] = $market;
         }
         catch (QueryException $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'The operation can not be completed, probably the market is in use.';
+            $this->response['message'] = 'The operation can not be completed, probably the price rate is in use.';
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator']);
+
+        $settings = array(
+            'headerRange' => 'A4:D4',
+            'headerText' => 'Price Rates',
+            'cellRange' => 'A6:D6'
+        );
+
+        $parameters = array(
+            'code' => Input::get('code'),
+            'name'=> Input::get('name'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new MarketExport($parameters), 'Price Rates.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

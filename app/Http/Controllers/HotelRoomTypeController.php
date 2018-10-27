@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RoomTypeExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\HotelRoomType;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HotelRoomTypeController extends Controller
 {
@@ -241,5 +243,23 @@ class HotelRoomTypeController extends Controller
             ->orderBy('hotel_room_types.code', 'asc')
             ->get();
         echo json_encode($roomTypes);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator']);
+
+        $settings = array(
+            'headerRange' => 'A4:K4',
+            'headerText' => 'Room Types',
+            'cellRange' => 'A6:K6'
+        );
+
+        $parameters = array(
+            'code' => Input::get('code'),
+            'name'=> Input::get('name'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new RoomTypeExport($parameters), 'Room Types.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

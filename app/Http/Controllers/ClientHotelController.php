@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ClientHotelExport;
 use App\HotelContract;
 use App\HotelContractClient;
 use Illuminate\Http\Request;
@@ -9,8 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
-class ClientController extends Controller
+class ClientHotelController extends Controller
 {
     public function __construct()
     {
@@ -21,7 +23,7 @@ class ClientController extends Controller
     {
         $request->user()->authorizeRoles(['client']);
         $breadcrumb = array(
-            0 => 'My Contracts',
+            0 => 'Contracts',
             1 => 'Hotel'
         );
         $data['breadcrumb'] = $breadcrumb;
@@ -360,5 +362,25 @@ class ClientController extends Controller
             }
         }
         echo json_encode($this->response);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['client']);
+
+        $settings = array(
+            'headerRange' => 'A4:L4',
+            'headerText' => 'Hotel Contracts',
+            'cellRange' => 'A6:L6'
+        );
+
+        $parameters = array(
+            'name'=> Input::get('name'),
+            'hotel'=> Input::get('hotel'),
+            'validFrom'=> Input::get('validFrom'),
+            'validTo'=> Input::get('validTo'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new ClientHotelExport($parameters), 'Hotel Contracts.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

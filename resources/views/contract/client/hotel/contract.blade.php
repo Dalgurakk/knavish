@@ -44,6 +44,9 @@
                     <a class="btn btn-circle btn-icon-only btn-default reload" href="javascript:;">
                         <i class="fa fa-refresh"></i>
                     </a>
+                    <a class="btn btn-circle btn-icon-only btn-default excel" href="javascript:;">
+                        <i class="fa fa-file-excel-o"></i>
+                    </a>
                     <div class="btn-group">
                         <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">10</a>
                         <ul class="dropdown-menu dropdown-options">
@@ -82,14 +85,14 @@
                                 <div class="form-group">
                                     <div class="input-icon">
                                         <i class="fa fa-calendar"></i>
-                                        <input type="text" class="form-control" name="valid-from" placeholder="From"> </div>
+                                        <input type="text" class="form-control" name="valid-from" placeholder="Valid From"> </div>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <div class="input-icon">
                                         <i class="fa fa-calendar"></i>
-                                        <input type="text" class="form-control" name="valid-to" placeholder="To"> </div>
+                                        <input type="text" class="form-control" name="valid-to" placeholder="Valid To"> </div>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
@@ -857,6 +860,7 @@
     var routeCreate = "{{ route('contract.client.hotel.create') }}";
     var routeUpdate = "{{ route('contract.client.hotel.update') }}";
     var routeDelete = "{{ route('contract.client.hotel.delete') }}";
+    var routeExcel = "{{ route('contract.client.hotel.excel') }}";
 </script>
 @stop
 

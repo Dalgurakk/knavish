@@ -137,7 +137,7 @@ License: You must have a valid license purchased only from themeforest(the above
                     <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-hover-submenu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
                     @if(Auth::user()->hasRole('client'))
                         <li class="nav-item {{ isset($menuContract) ? 'active open' : '' }}">
-                            <a href="{{ route('client.contract.hotel.index') }}" class="nav-link nav-toggle">
+                            <a href="{{ route('client.hotel.index') }}" class="nav-link nav-toggle">
                                 <i class="fa fa-building-o"></i>
                                 <span class="title">Hotel</span>
                                 <span class="{{ isset($menuContract) ? 'selected' : '' }}"></span>
@@ -295,8 +295,8 @@ License: You must have a valid license purchased only from themeforest(the above
                                     </li>
                                     <li class="nav-item start {{ isset($submenuMarket) ? 'active open' : '' }}">
                                         <a href="{{ route('administration.market.index') }}" class="nav-link ">
-                                            <i class="fa fa-star"></i>
-                                            <span class="title">Markets</span>
+                                            <i class="fa fa-tag"></i>
+                                            <span class="title">Price Rates</span>
                                             <span class="{{ isset($submenuMarket) ? 'selected' : '' }}"></span>
                                         </a>
                                     </li>

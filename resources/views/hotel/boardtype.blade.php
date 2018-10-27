@@ -27,6 +27,9 @@
                     <a class="btn btn-circle btn-icon-only btn-default reload" href="javascript:;">
                         <i class="fa fa-refresh"></i>
                     </a>
+                    <a class="btn btn-circle btn-icon-only btn-default excel" href="javascript:;">
+                        <i class="fa fa-file-excel-o"></i>
+                    </a>
                     <div class="btn-group">
                         <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">25</a>
                         <ul class="dropdown-menu dropdown-options">
@@ -229,6 +232,7 @@
     var routeCreate = "{{ route('hotel.boardtype.create') }}";
     var routeUpdate = "{{ route('hotel.boardtype.update') }}";
     var routeDelete = "{{ route('hotel.boardtype.delete') }}";
+    var routeExcel = "{{ route('hotel.boardtype.excel') }}";
 </script>
 @stop
 

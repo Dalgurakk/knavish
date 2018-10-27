@@ -3,25 +3,33 @@
 namespace App\Exports;
 
 use App\User;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithCustomStartCell;
-use Maatwebsite\Excel\Concerns\WithDrawings;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\AfterSheet;
 
-class UserExport implements FromCollection, WithHeadings, WithCustomStartCell, WithDrawings, WithEvents, ShouldAutoSize
+class UserExport extends GeneralExport
 {
-    private $parameters;
-
-    public function __construct($parameters) {
-        $this->parameters = $parameters;
-    }
-
     public function collection() {
-        $users = User::with(['roles'])->orderBy('username')->get();
-        $filtered = $users->map(function ($item, $index) {
+        $query = User::with(['roles']);
+
+        if ($this->parameters['username'] != '') {
+            $query->where('users.username', 'like', '%' . $this->parameters['username'] . '%');
+        }
+        if($this->parameters['role'] != '') {
+            $id = $this->parameters['role'];
+            $query->whereHas('roles', function ($query) use ($id) {
+                $query->where('role_id', $id);
+            });
+        }
+        if ($this->parameters['name'] != '') {
+            $query->where('users.name', 'like', '%' . $this->parameters['name'] . '%');
+        }
+        if ($this->parameters['email'] != '') {
+            $query->where('users.email', 'like', '%' . $this->parameters['email'] . '%');
+        }
+        if ($this->parameters['active'] != '') {
+            $query->where('users.active', $this->parameters['active']);
+        }
+        $items = $query->orderBy('username')->get();
+        $filtered = $items->map(function ($item, $index) {
+            $this->records = $index + 1;
             return [
                 'index' => $index + 1,
                 'username' => $item->username,
@@ -31,6 +39,7 @@ class UserExport implements FromCollection, WithHeadings, WithCustomStartCell, W
                 'enabled' => $item->active == '1' ? 'Yes' : 'No'
             ];
         });
+        $this->rangeContent = parent::getContentRange($this->records);
         return $filtered;
     }
 
@@ -43,74 +52,6 @@ class UserExport implements FromCollection, WithHeadings, WithCustomStartCell, W
             'Name',
             'Email',
             'Enabled',
-        ];
-    }
-
-    public function startCell(): string
-    {
-        return 'A6';
-    }
-
-    public function drawings()
-    {
-        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-        $drawing->setName('Logo');
-        $drawing->setDescription('Logo');
-        $drawing->setPath(public_path('assets/layouts/layout2/img/logo-royal-224x50.png'));
-        $drawing->setHeight(45);
-        $drawing->setOffsetX(10);
-        $drawing->setOffsetY(5);
-        return $drawing;
-    }
-
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function(AfterSheet $event) {
-                $sheet = $event->sheet;
-                $headerRange = 'A4:F4';
-                $styleHeaderArray = [
-                    'font' => [
-                        'size' => '14',
-                        'bold' => true,
-                        'color' => [
-                            'argb' => 'FF000066',
-                        ]
-                    ],
-                    'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                    ],
-                ];
-                $sheet->getCell('A4')->setValue("Users List");
-                $sheet->getStyle('A4')->getAlignment()->setWrapText(false);
-                $sheet->getStyle($headerRange)->applyFromArray($styleHeaderArray);
-                $sheet->mergeCells('A4:F4');
-
-                $cellRange = 'A6:F6';
-                $styleArray = [
-                    'font' => [
-                        'color' => [
-                            'argb' => 'FFFFFFFF',
-                        ]
-                    ],
-                    'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-                    ],
-                    'borders' => [
-                        'top' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        ],
-                    ],
-                    'fill' => [
-                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                        'color' => [
-                            'argb' => 'FF000066',
-                        ]
-                    ],
-                ];
-                $sheet->getStyle($cellRange)->applyFromArray($styleArray);
-                $sheet->setAutoFilter($cellRange);
-            },
         ];
     }
 }

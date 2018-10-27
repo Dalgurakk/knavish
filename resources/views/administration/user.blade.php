@@ -27,6 +27,9 @@
                     <a class="btn btn-circle btn-icon-only btn-default reload" href="javascript:;">
                         <i class="fa fa-refresh"></i>
                     </a>
+                    <a class="btn btn-circle btn-icon-only btn-default excel" href="javascript:;">
+                        <i class="fa fa-file-excel-o"></i>
+                    </a>
                     <div class="btn-group">
                         <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">25</a>
                         <ul class="dropdown-menu dropdown-options">
@@ -41,9 +44,6 @@
                             </li>
                         </ul>
                     </div>
-                    <a class="btn btn-circle btn-icon-only btn-default export" href="javascript:;">
-                        <i class="fa fa-file-excel-o"></i>
-                    </a>
                 </div>
             </div>
             <div class="portlet-body">
@@ -338,7 +338,7 @@
     var routeCreate = "{{ route('administration.user.create') }}";
     var routeUpdate = "{{ route('administration.user.update') }}";
     var routeDelete = "{{ route('administration.user.delete') }}";
-    var routeExcel = "{{ route('administration.user.export') }}";
+    var routeExcel = "{{ route('administration.user.excel') }}";
 </script>
 @stop
 

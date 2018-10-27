@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LocationExport;
 use App\Location;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\HotelPaxType;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LocationController extends Controller
 {
@@ -220,5 +220,20 @@ class LocationController extends Controller
             $nodes = array();
         }
         echo json_encode($nodes);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator']);
+
+        $settings = array(
+            'headerRange' => 'A4:E4',
+            'headerText' => 'Locations',
+            'cellRange' => 'A6:E6'
+        );
+
+        $parameters = array(
+            'settings' => $settings
+        );
+        return Excel::download(new LocationExport($parameters), 'Locations.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

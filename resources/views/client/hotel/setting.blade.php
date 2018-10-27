@@ -132,9 +132,9 @@
 <script src="{{ asset('assets/global/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/jquery-validation/js/additional-methods.min.js') }}" type="text/javascript"></script>
 <script>
-    var routeSearch = "{{ route('client.contract.hotel.search') }}";
-    var routeContract = "{{ route('client.contract.hotel') }}";
-    var routeData = "{{ route('client.contract.hotel.settings.data') }}";
+    var routeSearch = "{{ route('client.hotel.search') }}";
+    var routeContract = "{{ route('client.hotel') }}";
+    var routeData = "{{ route('client.hotel.settings.data') }}";
     var contractId = '{{ $contract_id }}';
 </script>
 @stop

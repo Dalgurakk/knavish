@@ -1,5 +1,5 @@
 @extends('layouts.master2')
-@section('title','Markets')
+@section('title','Price Rates')
 @section('page-css')
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
@@ -7,8 +7,8 @@
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
 @stop
 
-@section('page-title','Manage Markets')
-@section('page-sub-title','show, insert, update and delete markets')
+@section('page-title','Manage Price Rates')
+@section('page-sub-title','show, insert, update and delete price rates')
 
 @section('content')
 <div class="row">
@@ -16,7 +16,7 @@
         <div class="portlet light custom-container">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-star"></i>Markets List </div>
+                    <i class="fa fa-tag"></i>Price Rates List </div>
                 <div class="actions">
                     <a class="btn btn-circle btn-icon-only btn-default search" href="javascript:;">
                         <i class="fa fa-search"></i>
@@ -26,6 +26,9 @@
                     </a>
                     <a class="btn btn-circle btn-icon-only btn-default reload" href="javascript:;">
                         <i class="fa fa-refresh"></i>
+                    </a>
+                    <a class="btn btn-circle btn-icon-only btn-default excel" href="javascript:;">
+                        <i class="fa fa-file-excel-o"></i>
                     </a>
                     <div class="btn-group">
                         <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">25</a>
@@ -98,7 +101,7 @@
 <div id="modal-add" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-star"></i> Add Market</h4>
+        <h4 class="modal-title"><i class="fa fa-tag"></i> Add Price Rate</h4>
     </div>
     <form id="form-add">
     <div class="modal-body">
@@ -138,7 +141,7 @@
 <div id="modal-info" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-star"></i> Market Data</h4>
+        <h4 class="modal-title"><i class="fa fa-tag"></i> Price Rate Data</h4>
     </div>
     <div class="modal-body">
         <div class="row">
@@ -174,7 +177,7 @@
 <div id="modal-edit" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-star"></i> Edit Market</h4>
+        <h4 class="modal-title"><i class="fa fa-tag"></i> Edit Price Rate</h4>
     </div>
     <form id="form-edit">
     <div class="modal-body">
@@ -229,6 +232,7 @@
     var routeCreate = "{{ route('administration.market.create') }}";
     var routeUpdate = "{{ route('administration.market.update') }}";
     var routeDelete = "{{ route('administration.market.delete') }}";
+    var routeExcel = "{{ route('administration.market.excel') }}";
 </script>
 @stop
 

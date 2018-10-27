@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PaxTypeExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\HotelPaxType;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HotelPaxTypeController extends Controller
 {
@@ -142,5 +144,23 @@ class HotelPaxTypeController extends Controller
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $settings = array(
+            'headerRange' => 'A4:F4',
+            'headerText' => 'Pax Types',
+            'cellRange' => 'A6:F6'
+        );
+
+        $parameters = array(
+            'code' => Input::get('code'),
+            'name'=> Input::get('name'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new PaxTypeExport($parameters), 'Pax Types.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

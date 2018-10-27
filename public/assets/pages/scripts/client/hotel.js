@@ -221,4 +221,16 @@ $(document).ready(function () {
         tableInfoRoomType.api().columns.adjust().draw();
         e.preventDefault();
     });
+
+    $('.excel').on('click',function(){
+        var query = {
+            name: $('#search-section :input[name=name]').val(),
+            hotel: $('#search-section :input[name=hotel]').val(),
+            validFrom: $('#search-section :input[name=valid-from]').val(),
+            validTo: $('#search-section :input[name=valid-to]').val(),
+            active: $('#search-section :input[name=active]').val()
+        };
+        var url = routeExcel + "?" + $.param(query);
+        window.location = url;
+    });
 });

@@ -432,4 +432,9 @@ $(document).ready(function () {
         formAdd.validate().resetForm();
         formAdd[0].reset();
     });
+
+    $('.excel').on('click',function(){
+        var url = routeExcel;
+        window.location = url;
+    });
 });

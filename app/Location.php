@@ -20,4 +20,8 @@ class Location extends Model
     public function cities() {
         return $this->hasMany('App\Location' ,'city_id', 'id');
     }
+
+    public function parent() {
+        return $this->belongsTo('App\Location' ,'parent_id', 'id');
+    }
 }

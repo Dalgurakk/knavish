@@ -1869,4 +1869,16 @@ $(document).ready(function () {
     $("button[data-select2-open]").click(function() {
         $("#" + $(this).data("select2-open")).select2("open");
     });
+
+    $('.excel').on('click',function(){
+        var query = {
+            name: $('#search-section :input[name=name]').val(),
+            hotel: $('#search-section :input[name=hotel]').val(),
+            validFrom: $('#search-section :input[name=valid-from]').val(),
+            validTo: $('#search-section :input[name=valid-to]').val(),
+            active: $('#search-section :input[name=active]').val()
+        };
+        var url = routeExcel + "?" + $.param(query);
+        window.location = url;
+    });
 });

@@ -402,7 +402,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.export').on('click',function(){
+    $('.excel').on('click',function(){
         var query = {
             username: $('#search-section :input[name=username]').val(),
             role: $('#search-section :input[name=role]').val(),

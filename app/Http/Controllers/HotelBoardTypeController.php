@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BoardTypeExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\HotelBoardType;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HotelBoardTypeController extends Controller
 {
@@ -135,5 +137,23 @@ class HotelBoardTypeController extends Controller
             $this->response['errors'] = $e->errorInfo[2];
         }
         echo json_encode($this->response);
+    }
+
+    public function toExcel(Request $request) {
+        $request->user()->authorizeRoles(['administrator']);
+
+        $settings = array(
+            'headerRange' => 'A4:D4',
+            'headerText' => 'Board Types',
+            'cellRange' => 'A6:D6'
+        );
+
+        $parameters = array(
+            'code' => Input::get('code'),
+            'name'=> Input::get('name'),
+            'active' => Input::get('active'),
+            'settings' => $settings
+        );
+        return Excel::download(new BoardTypeExport($parameters), 'Board Types.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 }

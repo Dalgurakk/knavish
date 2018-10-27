@@ -409,4 +409,14 @@ $(document).ready(function () {
             .columns('active:name').search($('#search-section :input[name=active]').val())
             .draw();
     });
+
+    $('.excel').on('click',function(){
+        var query = {
+            code: $('#search-section :input[name=code]').val(),
+            name: $('#search-section :input[name=name]').val(),
+            active: $('#search-section :input[name=active]').val()
+        };
+        var url = routeExcel + "?" + $.param(query);
+        window.location = url;
+    });
 });

@@ -339,7 +339,7 @@ class HotelContractClientController extends Controller
         $start = Carbon::createFromFormat('d.m.Y', $from)->startOfMonth();
         $end = Carbon::createFromFormat('d.m.Y', $to)->endOfMonth();
 
-        $clientContract = HotelContractClient::where('id', $id)->first();
+        $clientContract = HotelContractClient::with(['priceRate.market'])->where('id', $id)->first();
         $priceRate = $clientContract->hotel_contract_market_id;
 
         $contract = HotelContract::with([
@@ -386,7 +386,7 @@ class HotelContractClientController extends Controller
                         '<div class="portlet box green">' .
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                        '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
+                        '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $clientContract->priceRate->market->name . '</div>' .
                         '<div class="tools tools-setting">' .
                         '<!--a href="" class="fullscreen"> </a-->' .
                         '<a href="javascript:;" class="collapse"> </a>' .

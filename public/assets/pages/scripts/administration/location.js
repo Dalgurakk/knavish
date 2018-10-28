@@ -35,56 +35,56 @@ $(document).ready(function () {
 
     function deleteNode() {
         swal({
-                title: 'Confirmation',
-                text: 'Are you sure you want to delete the location: "' + $('#node-data :input[name=name]').val() + '"?',
-                type: null,
-                allowOutsideClick: false,
-                showConfirmButton: true,
-                showCancelButton: true,
-                confirmButtonClass: "green",
-                cancelButtonClass: "red",
-                closeOnConfirm: true,
-                closeOnCancel: true,
-                confirmButtonText: "Accept",
-                cancelButtonText: "Cancel"
-            },
-            function(isConfirm){
-                if (isConfirm){
-                    if (selectedNode == '0') {
-                        toastr['error']("Please select the node you want to delete.", "Error");
-                    }
-                    else {
-                        $.ajax({
-                            url: routeDelete,
-                            "type": "POST",
-                            "data":  {
-                                id: selectedNode
-                            },
-                            "beforeSend": function() {
-                                App.showMask(true, $('.node-data'));
-                            },
-                            "complete": function(xhr, textStatus) {
-                                App.showMask(false, $('.node-data'));
-                                if (xhr.status != '200') {
-                                    toastr['error']("Please check your connection and try again.", "Error on loading the content");
+            title: 'Confirmation',
+            text: 'Are you sure you want to delete the location: "' + $('#node-data :input[name=name]').val() + '"?',
+            type: null,
+            allowOutsideClick: false,
+            showConfirmButton: true,
+            showCancelButton: true,
+            confirmButtonClass: "green",
+            cancelButtonClass: "red",
+            closeOnConfirm: true,
+            closeOnCancel: true,
+            confirmButtonText: "Accept",
+            cancelButtonText: "Cancel"
+        },
+        function(isConfirm){
+            if (isConfirm){
+                if (selectedNode == '0') {
+                    toastr['error']("Please select the node you want to delete.", "Error");
+                }
+                else {
+                    $.ajax({
+                        url: routeDelete,
+                        "type": "POST",
+                        "data":  {
+                            id: selectedNode
+                        },
+                        "beforeSend": function() {
+                            App.showMask(true, $('.node-data'));
+                        },
+                        "complete": function(xhr, textStatus) {
+                            App.showMask(false, $('.node-data'));
+                            if (xhr.status != '200') {
+                                toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                            }
+                            else {
+                                var response = $.parseJSON(xhr.responseText);
+                                if (response.status == 'success') {
+                                    selectedNode = '0';
+                                    toastr['success'](response.message, "Success");
+                                    $('#tree').jstree("refresh");
+                                    cleanLocationSelected();
                                 }
                                 else {
-                                    var response = $.parseJSON(xhr.responseText);
-                                    if (response.status == 'success') {
-                                        selectedNode = '0';
-                                        toastr['success'](response.message, "Success");
-                                        $('#tree').jstree("refresh");
-                                        cleanLocationSelected();
-                                    }
-                                    else {
-                                        toastr['error'](response.message, "Error");
-                                    }
+                                    toastr['error'](response.message, "Error");
                                 }
                             }
-                        });
-                    }
+                        }
+                    });
                 }
-            });
+            }
+        });
     }
 
     function showAddNode() {

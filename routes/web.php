@@ -93,7 +93,9 @@ Route::post('/contract/provider/hotel', 'HotelContractController@getContract')->
 Route::post('/contract/provider/hotel/search', 'HotelContractController@getByName')->name('contract.provider.hotel.search');
 Route::post('/contract/provider/hotel/settings/save', 'HotelContractController@saveSettings')->name('contract.provider.hotel.settings.save');
 Route::post('/contract/provider/hotel/settings/data', 'HotelContractController@settingsByContract')->name('contract.provider.hotel.settings.data');
+Route::post('/contract/provider/hotel/settings/import', 'HotelContractController@import')->name('contract.provider.hotel.settings.import');
 Route::post('/contract/provider/hotel/search/active', 'HotelContractController@getActivesByName')->name('contract.provider.hotel.search.active');
+Route::get('/contract/provider/hotel/search/excel', 'HotelContractController@toExcel')->name('contract.provider.hotel.excel');
 Route::get('/contract/provider/hotel/search/excel', 'HotelContractController@toExcel')->name('contract.provider.hotel.excel');
 //HotelContractClient
 Route::get('/contract/client/hotel', 'HotelContractClientController@index')->name('contract.client.hotel.index');

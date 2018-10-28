@@ -575,88 +575,82 @@ class HotelContractController extends Controller
         return $price;
     }
 
-    public function saveSettings(Request $request) {
+    public function import(Request $request)    {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
+        //$importType = Input::get('import-type');
+        $priceRate = Input::get('price-rate');
         $contractId = Input::get('contract-id');
         $marketId = Input::get('market-id');
-        $setPrice = Input::get('set-price');
-        $setCost = Input::get('set-cost');
         $roomTypeId = Input::get('room-type-id');
-        $importCost = Input::get('import-cost');
-        $importType = Input::get('import-type');
-        $priceRate = Input::get('price-rate');
-        $unsetCost = Input::get('unset-cost');
-        $ranges = Input::get('ranges');
-        $ranges = json_decode($ranges);
 
         $importType = '2';
 
-        if($importCost != '') {
-            if ($importType == '1') {
-                $fromPriceRate = HotelContractMarket::with([
-                    'settings'
-                ])
-                    ->where('market_id', $priceRate)
-                    ->where('hotel_contract_id', $contractId)
-                    ->first();
+        if ($importType == '1') {
+            $fromPriceRate = HotelContractMarket::with([
+                'settings'
+            ])
+                ->where('market_id', $priceRate)
+                ->where('hotel_contract_id', $contractId)
+                ->first();
 
-                $toPriceRate = HotelContractMarket::with([
-                    'settings'
-                ])
-                    ->where('market_id', $marketId)
-                    ->where('hotel_contract_id', $contractId)
-                    ->first();
+            $toPriceRate = HotelContractMarket::with([
+                'settings'
+            ])
+                ->where('market_id', $marketId)
+                ->where('hotel_contract_id', $contractId)
+                ->first();
 
-                $fromContractSetting = $fromPriceRate['settings'];
-                $toContractSetting = $toPriceRate['settings'];
+            $fromContractSetting = $fromPriceRate['settings'];
+            $toContractSetting = $toPriceRate['settings'];
 
-                foreach ($toContractSetting as $contractSetting) {
-                    $settings = json_decode($contractSetting->settings, true);
-                    if (array_key_exists($roomTypeId, $settings)) {
-                        unset($settings[$roomTypeId]);
-                        if (empty($settings)) {
-                            $contractSetting->delete();
-                        }
-                        else {
-                            $contractSetting->settings = json_encode($settings);
-                            $contractSetting->save();
-                        }
-                    }
-                }
-                foreach ($fromContractSetting as $from) {
-                    $founded = false;
-                    $temp = null;
-                    foreach ($toContractSetting as $to) {
-                        if ($from->date == $to->date) {
-                            $founded = true;
-                            $temp = $to;
-                            break;
-                        }
-                    }
-                    if ($founded) {
-                        $contractSetting = $temp;
-                        $fromSettings = json_decode($from->settings, true);
-                        $toSettings = json_decode($to->settings, true);
-                        $toSettings[$roomTypeId] = $fromSettings[$roomTypeId];
-                        $toSettings[$roomTypeId]['2'] = $this->calculatePrice($toSettings[$roomTypeId]['1'], $toPriceRate);
-                        $contractSetting->settings = json_encode($toSettings);
-                        $contractSetting->save();
+            foreach ($toContractSetting as $contractSetting) {
+                $settings = json_decode($contractSetting->settings, true);
+                if (array_key_exists($roomTypeId, $settings)) {
+                    unset($settings[$roomTypeId]);
+                    if (empty($settings)) {
+                        $contractSetting->delete();
                     }
                     else {
-                        $contractSetting = new HotelContractSetting();
-                        $contractSetting->hotel_contract_market_id = $toPriceRate->id;
-                        $contractSetting->date = $from->date;
-                        $fromSettings = json_decode($from->settings, true);
-                        $newSettings = array();
-                        $newSettings[$roomTypeId] = $fromSettings[$roomTypeId];
-                        $newSettings[$roomTypeId]['2'] = $this->calculatePrice($newSettings[$roomTypeId]['1'], $toPriceRate);
-                        $contractSetting->settings = json_encode($newSettings);
+                        $contractSetting->settings = json_encode($settings);
                         $contractSetting->save();
                     }
                 }
             }
-            else {
+            foreach ($fromContractSetting as $from) {
+                $founded = false;
+                $temp = null;
+                foreach ($toContractSetting as $to) {
+                    if ($from->date == $to->date) {
+                        $founded = true;
+                        $temp = $to;
+                        break;
+                    }
+                }
+                if ($founded) {
+                    $contractSetting = $temp;
+                    $fromSettings = json_decode($from->settings, true);
+                    $toSettings = json_decode($to->settings, true);
+                    $toSettings[$roomTypeId] = $fromSettings[$roomTypeId];
+                    $toSettings[$roomTypeId]['2'] = $this->calculatePrice($toSettings[$roomTypeId]['1'], $toPriceRate);
+                    $contractSetting->settings = json_encode($toSettings);
+                    $contractSetting->save();
+                }
+                else {
+                    $contractSetting = new HotelContractSetting();
+                    $contractSetting->hotel_contract_market_id = $toPriceRate->id;
+                    $contractSetting->date = $from->date;
+                    $fromSettings = json_decode($from->settings, true);
+                    $newSettings = array();
+                    $newSettings[$roomTypeId] = $fromSettings[$roomTypeId];
+                    $newSettings[$roomTypeId]['2'] = $this->calculatePrice($newSettings[$roomTypeId]['1'], $toPriceRate);
+                    $contractSetting->settings = json_encode($newSettings);
+                    $contractSetting->save();
+                }
+            }
+        }
+        else {
+            try {
                 $fromPriceRate = HotelContractMarket::with([
                     'settings'
                 ])
@@ -670,7 +664,7 @@ class HotelContractController extends Controller
 
                 HotelContractSetting::where('hotel_contract_market_id', $toPriceRate->id)->delete();
 
-                foreach($fromPriceRate['settings'] as $fromContractSetting) {
+                foreach ($fromPriceRate['settings'] as $fromContractSetting) {
                     $contractSetting = new HotelContractSetting();
                     $contractSetting->hotel_contract_market_id = $toPriceRate->id;
                     $contractSetting->date = $fromContractSetting['date'];
@@ -682,73 +676,93 @@ class HotelContractController extends Controller
                     $contractSetting->settings = json_encode($newSettings);
                     $contractSetting->save();
                 }
+                $this->response['status'] = 'success';
+                $this->response['message'] = 'Petition executed successfully.';
+            }
+            catch (QueryException $e) {
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Database error, probably the email or username already exist.';
+                $this->response['errors'] = $e->errorInfo[2];
             }
         }
-        else {
-            if($unsetCost != '') {
-                $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+        echo json_encode($this->response);
+    }
 
-                foreach($ranges as $range) {
-                    $start = Carbon::createFromFormat('d.m.Y', $range->from);
-                    $end = Carbon::createFromFormat('d.m.Y', $range->to);
+    public function saveSettings(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-                    for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
-                        $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
-                        if ($contractSetting != null) {
-                            $settings = json_decode($contractSetting->settings, true);
-                            if (array_key_exists($roomTypeId, $settings)) {
-                                unset($settings[$roomTypeId]);
-                                if (empty($settings)) {
-                                    $contractSetting->delete();
-                                }
-                                else {
-                                    $contractSetting->settings = json_encode($settings);
-                                    $contractSetting->save();
-                                }
+        $contractId = Input::get('contract-id');
+        $marketId = Input::get('market-id');
+        $setPrice = Input::get('set-price');
+        $setCost = Input::get('set-cost');
+        $roomTypeId = Input::get('room-type-id');
+        $unsetCost = Input::get('unset-cost');
+        $ranges = Input::get('ranges');
+        $ranges = json_decode($ranges);
+
+        if($unsetCost != '') {
+            $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+
+            foreach($ranges as $range) {
+                $start = Carbon::createFromFormat('d.m.Y', $range->from);
+                $end = Carbon::createFromFormat('d.m.Y', $range->to);
+
+                for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
+                    $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
+                    if ($contractSetting != null) {
+                        $settings = json_decode($contractSetting->settings, true);
+                        if (array_key_exists($roomTypeId, $settings)) {
+                            unset($settings[$roomTypeId]);
+                            if (empty($settings)) {
+                                $contractSetting->delete();
+                            }
+                            else {
+                                $contractSetting->settings = json_encode($settings);
+                                $contractSetting->save();
                             }
                         }
                     }
                 }
             }
-            else {
-                $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
-                foreach($ranges as $range) {
-                    $start = Carbon::createFromFormat('d.m.Y', $range->from);
-                    $end = Carbon::createFromFormat('d.m.Y', $range->to);
+        }
+        else {
+            $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+            foreach($ranges as $range) {
+                $start = Carbon::createFromFormat('d.m.Y', $range->from);
+                $end = Carbon::createFromFormat('d.m.Y', $range->to);
 
-                    for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
-                        $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
-                        if ($contractSetting === null) {
-                            $contractSetting = new HotelContractSetting();
-                            $contractSetting->hotel_contract_market_id = $marketRate->id;
-                            $contractSetting->date = $m->format('Y-m-d');
-                            $settings = array();
-                            if($setCost != '' && Input::get('cost') != '') {
-                                $settings[$roomTypeId][$setCost] = Input::get('cost');
-                            }
-                            if($setPrice != '' && Input::get('price') != '') {
-                                $settings[$roomTypeId][$setPrice] = Input::get('price');
-                            }
-                            else {
-                                $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
-                            }
-                            $contractSetting->settings = json_encode($settings);
-                            $contractSetting->save();
+                for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
+                    $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
+                    if ($contractSetting === null) {
+                        $contractSetting = new HotelContractSetting();
+                        $contractSetting->hotel_contract_market_id = $marketRate->id;
+                        $contractSetting->date = $m->format('Y-m-d');
+                        $settings = array();
+                        if($setCost != '' && Input::get('cost') != '') {
+                            $settings[$roomTypeId][$setCost] = Input::get('cost');
+                        }
+                        if($setPrice != '' && Input::get('price') != '') {
+                            $settings[$roomTypeId][$setPrice] = Input::get('price');
                         }
                         else {
-                            $settings = json_decode($contractSetting->settings, true);
-                            if($setCost != '') {
-                                $settings[$roomTypeId][$setCost] = Input::get('cost');
-                            }
-                            if($setPrice != '' && Input::get('price') != '') {
-                                $settings[$roomTypeId][$setPrice] = Input::get('price');
-                            }
-                            else {
-                                $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
-                            }
-                            $contractSetting->settings = json_encode($settings);
-                            $contractSetting->save();
+                            $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
                         }
+                        $contractSetting->settings = json_encode($settings);
+                        $contractSetting->save();
+                    }
+                    else {
+                        $settings = json_decode($contractSetting->settings, true);
+                        if($setCost != '') {
+                            $settings[$roomTypeId][$setCost] = Input::get('cost');
+                        }
+                        if($setPrice != '' && Input::get('price') != '') {
+                            $settings[$roomTypeId][$setPrice] = Input::get('price');
+                        }
+                        else {
+                            $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
+                        }
+                        $contractSetting->settings = json_encode($settings);
+                        $contractSetting->save();
                     }
                 }
             }

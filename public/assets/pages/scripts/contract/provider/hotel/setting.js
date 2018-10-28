@@ -11,6 +11,7 @@ $(document).ready(function () {
     var needUpdate = false;
     var formSearch = $('#search-accomodation');
     var contract = null;
+    var searched = false;
 
     $('.date-picker').datepicker({
         rtl: App.isRTL(),
@@ -65,6 +66,7 @@ $(document).ready(function () {
         var value = e.params.data;
         if(value.selected) {
             contract = value;
+            searched = false;
             fillContract(value);
             var url = window.location.href;
             if (url.indexOf("?") > 0) {
@@ -100,6 +102,61 @@ $(document).ready(function () {
                     $('.filter-content').show();
                 }
             }
+        }
+    });
+
+    $('.btn-import').on('click', function(e) {
+        e.preventDefault();
+        if (contract.markets.length <= 1) {
+            toastr['info']("There are no price rates available to import.", "Information");
+        }
+        else {
+            swal({
+                title: 'Confirmation',
+                text: 'Are you sure you want to import the costs from the ' + $('#import-from option:selected').text() + ' price rate to the ' + $('#market option:selected').text() + ' price rate?',
+                type: null,
+                allowOutsideClick: false,
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonClass: "green",
+                cancelButtonClass: "red",
+                closeOnConfirm: true,
+                closeOnCancel: true,
+                confirmButtonText: "Accept",
+                cancelButtonText: "Cancel"
+            },
+            function(isConfirm){
+                if (isConfirm){
+                    $.ajax({
+                        url: routeImport,
+                        "type": "POST",
+                        "data":  {
+                            "contract-id": contract.id,
+                            "price-rate": $('#import-from').val(),
+                            "market-id": $('#market').val()
+                        },
+                        "beforeSend": function() {
+                            App.showMask(true, $('.node-data'));
+                        },
+                        "complete": function(xhr, textStatus) {
+                            App.showMask(false, $('.node-data'));
+                            if (xhr.status != '200') {
+                                toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                            }
+                            else {
+                                var response = $.parseJSON(xhr.responseText);
+                                if (response.status == 'success') {
+                                    $(".btn-search-submit").click();
+                                    toastr['success'](response.message, "Success");
+                                }
+                                else {
+                                    toastr['error'](response.message, "Error");
+                                }
+                            }
+                        }
+                    });
+                }
+            });
         }
     });
 
@@ -140,6 +197,7 @@ $(document).ready(function () {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
+                        searched = true;
                         var response = $.parseJSON(xhr.responseText);
                         if (response.status == 'success') {
                             var table = response.table;
@@ -155,12 +213,6 @@ $(document).ready(function () {
             });
         }
     });
-
-    function setValues(data) {
-        for (var i = 0; i < data.length; i++) {
-            $('[data-date=' + data[i].date + '][data-measure=' + data[i].measure + '][data-room-type=' + data[i].room + ']').html(data[i].value);
-        }
-    }
 
     function fillContract(c) {
         var roomTypes = c.room_types;
@@ -339,41 +391,19 @@ $(document).ready(function () {
     }
 
     function updateImport(markets) {
-        $('#price-rate').empty();
-        $('.import').remove();
-        $("#market option:not(:selected)").each(function(i){
-            var option = '<option value="' + $(this).val() + '"> ' + $(this).text() + '</option>';
-            $('#price-rate').append(option);
-        });
+        $('#import-from').empty();
+        $('#import-from').removeAttr('disabled');
+        $('.btn-import').removeAttr('disabled');
 
         if (markets.length > 1) {
-            $('.room-name-header').append(
-                '<a class="btn btn-circle btn-icon-only btn-default btn-outline import hide-import" style="margin-left: 10px; margin-bottom: 7px;" href="javascript:;">' +
-                    '<i class="fa fa-arrow-down"></i>' +
-                '</a>'
-            );
-
-            $('.import').on('click', function (e) {
-                e.preventDefault();
-                if ($(this).hasClass('show-import')) {
-                    $('.set-price-container').css('display', 'block');
-                    $('.import-cost-container').css('display', 'none');
-                    formSetting.validate();
-                    $('input[name="cost"]').rules('add', 'required');
-                    $(this).removeClass('show-import');
-                    $(this).addClass('hide-import');
-                    $('input[name=import-cost]').val('');
-                }
-                else {
-                    $('.set-price-container').css('display', 'none');
-                    $('.import-cost-container').css('display', 'block');
-                    formSetting.validate();
-                    $('input[name="cost"]').rules('remove', 'required');
-                    $(this).addClass('show-import');
-                    $(this).removeClass('hide-import');
-                    $('input[name=import-cost]').val('1');
-                }
+            $("#market option:not(:selected)").each(function(i){
+                var option = '<option value="' + $(this).val() + '"> ' + $(this).text() + '</option>';
+                $('#import-from').append(option);
             });
+        }
+        else {
+            $('#import-from').attr('disabled', 'disabled');
+            $('.btn-import').attr('disabled', 'disabled');
         }
     }
 
@@ -413,10 +443,6 @@ $(document).ready(function () {
             });
 
             updateImport(contract.markets);
-
-            $('.set-price-container').css('display', 'block');
-            $('.import-cost-container').css('display', 'none');
-            $('input[name=import-cost]').val('');
 
             $('#modal-setting').modal('show');
         });
@@ -597,5 +623,12 @@ $(document).ready(function () {
             $(".btn-search-submit").click();
             needUpdate = false;
         }
+    });
+
+    $('#market').change(function() {
+        if(searched) {
+            $('.btn-search-submit').click();
+        }
+        updateImport(contract.markets);
     });
 });

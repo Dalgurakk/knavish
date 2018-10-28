@@ -6,6 +6,7 @@
 <link href="{{ asset('assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/global/plugins/bootstrap-sweetalert/sweetalert.css') }}" rel="stylesheet" type="text/css" />
 <style>
     .show-import, .show-import:focus, .show-import:hover { color: #fff; background-color: #32c5d2; border-color: #32c5d2; }
     .hide-import, .hide-import:focus, .hide-import:hover { color: #32c5d2; background-color: #fff; border-color: #32c5d2; }
@@ -26,36 +27,81 @@
             <form id="search-accomodation">
             <div class="portlet-body">
                 <div class="row filter-content" style="display: none;">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="portlet box green">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
-                                    <i class="fa fa-building-o"></i>Contract</div>
+                                    <i class="fa fa-file-text-o"></i>Contract</div>
                             </div>
-                            <div class="portlet-body">
-                                <div class="row" style="margin-top: 10px;">
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                        <label>Contract</label>
-                                        <div class="form-group">
-                                            <select class="form-control" name="contract"></select>
+                            <div class="portlet-body" style="padding-bottom: 8px;">
+                                <div class="scroller" style="height:200px">
+                                    <div class="row">
+                                        <div class="col-md-12" style="margin-top: 8px;">
+                                            <div class="form-group">
+                                                <label>Contract</label>
+                                                <select class="form-control" name="contract"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Period</label>
+                                                <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                        <div class="form-group">
-                                            <label>Hotel</label>
-                                            <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="portlet box green porlet-setting">
+                            <div class="portlet-title porlet-title-setting">
+                                <div class="caption caption-setting">
+                                    <i class="fa fa-building-o"></i>Hotel</div>
+                            </div>
+                            <div class="portlet-body" style="padding-bottom: 8px;">
+                                <div class="scroller" style="height:200px">
+                                    <div class="row">
+                                        <div class="col-md-12" style="margin-top: 8px;">
+                                            <div class="form-group">
+                                                <label>Hotel</label>
+                                                <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Hotel</label>
+                                                <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                        <div class="form-group">
-                                            <label>Period</label>
-                                            <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="portlet box green porlet-setting">
+                            <div class="portlet-title porlet-title-setting">
+                                <div class="caption caption-setting">
+                                    <i class="fa fa-tag"></i>Price Rate</div>
+                            </div>
+                            <div class="portlet-body" style="padding-bottom: 8px;">
+                                <div class="scroller" style="height:200px">
+                                    <div class="row">
+                                        <div class="col-md-12" style="margin-top: 8px;">
+                                            <div class="form-group">
+                                                <label>Price Rate</label>
+                                                <select class="form-control" name="market" id="market"></select>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-3 col-md-3 col-sm-3">
-                                        <div class="form-group">
-                                            <label>Price Rate</label>
-                                            <select class="form-control" name="market" id="market"></select>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Import Cost From</label>
+                                                <select class="form-control" name="import-from" id="import-from"></select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <button class="btn green btn-import" style="margin-top:5px;"> <i class="fa fa-download"></i> Import</button>
                                         </div>
                                     </div>
                                 </div>
@@ -141,7 +187,6 @@
                     <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
                 </div>
             </div>
-
             <div class="set-price-container">
                 <div class="range-container">
                     <div class="range">
@@ -174,37 +219,6 @@
                 </div>
                 <div class="measures-container"></div>
             </div>
-            <div class="import-cost-container" style="display: none;">
-                <input type="hidden" name="import-cost" value="">
-                <div class="col-md-12" style="margin-bottom: 10px;">
-                    <div class="note note-info">
-                        <p>This option will overwrite the current settings for <b>ALL</b> room types.</p>
-                    </div>
-                </div>
-                <div class="col-md-12" style="margin-bottom: 10px;">
-                    <div class="col-md-6" style="margin-left: auto; margin-right: auto; float: none;">
-                        <label>Import From</label>
-                        <div class="form-group" style="/*margin-bottom: 30px;*/">
-                            <select class="form-control" name="price-rate" id="price-rate"></select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6" style="display: none;">
-                    <div class="form-group">
-                        <!--label>To</label-->
-                        <div class="mt-radio-list">
-                            <label class="mt-radio mt-radio-outline"> To Current Room Type
-                                <input type="radio" value="1" name="import-type" checked/>
-                                <span></span>
-                            </label>
-                            <label class="mt-radio mt-radio-outline"> To All Room Types
-                                <input type="radio" value="2" name="import-type" />
-                                <span></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -225,15 +239,17 @@
 <script src="{{ asset('assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/jquery-validation/js/additional-methods.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-sweetalert/sweetalert.min.js') }}" type="text/javascript"></script>
 <script>
     var routeSearch = "{{ route('contract.provider.hotel.search') }}";
     var routeContract = "{{ route('contract.provider.hotel') }}";
     var routeData = "{{ route('contract.provider.hotel.settings.data') }}";
     var routeSave = "{{ route('contract.provider.hotel.settings.save') }}";
+    var routeImport = "{{ route('contract.provider.hotel.settings.import') }}";
     var contractId = '{{ $contract_id }}';
 </script>
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.js') }}" type="text/javascript"></script>
 @stop

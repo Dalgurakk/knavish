@@ -70,8 +70,8 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label>Hotel</label>
-                                                <input type="text" class="form-control" name="hotel" readonly style="background-color: #fff;">
+                                                <label>Hotel Chain</label>
+                                                <input type="text" class="form-control" name="hotel-chain" readonly style="background-color: #fff;">
                                             </div>
                                         </div>
                                     </div>

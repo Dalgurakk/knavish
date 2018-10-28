@@ -219,8 +219,10 @@ $(document).ready(function () {
         var measures = c.measures;
         var markets = c.markets;
         var contract = c;
+        var chain = contract.hotel.hotel_chain != null ? contract.hotel.hotel_chain.name : '';
         var status = contract.active == 1 ? 'Enabled' : 'Disabled';
         $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
+        $("#search-accomodation :input[name=hotel-chain]").val(chain);
         $("#search-accomodation :input[name=status]").val(status);
         $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
         $('.result-container').html('');

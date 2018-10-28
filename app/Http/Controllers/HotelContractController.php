@@ -473,6 +473,7 @@ class HotelContractController extends Controller
         $id = Input::get('contractId');
         $query = HotelContract::with([
             'hotel',
+            'hotel.hotelChain',
             'roomTypes' => function($query) {
                 $query->orderBy('name', 'asc');
             },
@@ -511,6 +512,7 @@ class HotelContractController extends Controller
         $string = '%' . Input::get('q') . '%';
         $contracts = HotelContract::with([
             'hotel',
+            'hotel.hotelChain',
             'roomTypes' => function($query) {
                 $query->orderBy('name', 'asc');
             },

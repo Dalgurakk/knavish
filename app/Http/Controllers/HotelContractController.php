@@ -372,31 +372,12 @@ class HotelContractController extends Controller
                     }
                 }
 
-                if (count($unusedRooms) > 0) {
-                    foreach ($contract->priceRates as $priceRate) {
-                        foreach ($priceRate->settings as $setting) {
-                            $contractSettings = json_decode($setting->settings, true);
-                            foreach ($unusedRooms as $unusedRoom) {
-                                if (array_key_exists($unusedRoom->id, $contractSettings)) {
-                                    unset($contractSettings[$unusedRoom->id]);
-                                    if (empty($contractSettings)) {
-                                        $setting->delete();
-                                    }
-                                    else {
-                                        $setting->settings = json_encode($contractSettings);
-                                        $setting->save();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
                 $measures = array(1, 2);
                 foreach ($temp as $key => $val) {
                     if($val == 1 || $val == 2) continue;
                     else $measures[] = $val;
                 }
+
                 $syncMarkets = array();
                 foreach ($markets as $k) {
                     $syncMarkets[$k->market_id] = array(
@@ -434,6 +415,26 @@ class HotelContractController extends Controller
                 $contract->paxTypes()->sync($paxTypes);
                 $contract->measures()->sync($measures);
                 $contract->save();
+
+                if (count($unusedRooms) > 0) {
+                    foreach ($contract->priceRates as $priceRate) {
+                        foreach ($priceRate->settings as $setting) {
+                            $contractSettings = json_decode($setting->settings, true);
+                            foreach ($unusedRooms as $unusedRoom) {
+                                if (array_key_exists($unusedRoom->id, $contractSettings)) {
+                                    unset($contractSettings[$unusedRoom->id]);
+                                    if (empty($contractSettings)) {
+                                        $setting->delete();
+                                    }
+                                    else {
+                                        $setting->settings = json_encode($contractSettings);
+                                        $setting->save();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 if ($contract->active != 1) {
                     $clientContracts = $contract->clientContracts;

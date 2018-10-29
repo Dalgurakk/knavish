@@ -342,7 +342,7 @@ class HotelContractController extends Controller
             $this->response['errors'] = $validator->errors();
         }
         else {
-            $contract = HotelContract::with('priceRates')->find($id);
+            $contract = HotelContract::with(['priceRates', 'priceRates.settings'])->find($id);
             $contract->name = Input::get('name');
             $contract->hotel_id = Input::get('hotel-id');
             $contract->valid_from = Carbon::createFromFormat('d.m.Y', Input::get('valid-from'))->format('Y-m-d');
@@ -357,6 +357,41 @@ class HotelContractController extends Controller
                 $markets = json_decode(Input::get('markets'));
                 $paxTypes = json_decode(Input::get('paxTypes'));
                 $temp = json_decode(Input::get('measures'));
+                $unusedRooms = array();
+
+                foreach ($contract->roomTypes as $contractRoom) {
+                    $flag = false;
+                    foreach($roomTypes as $roomtype) {
+                        if($roomtype == $contractRoom->id) {
+                            $flag = true;
+                            break;
+                        }
+                    }
+                    if (!$flag) {
+                        $unusedRooms[] = $contractRoom;
+                    }
+                }
+
+                if (count($unusedRooms) > 0) {
+                    foreach ($contract->priceRates as $priceRate) {
+                        foreach ($priceRate->settings as $setting) {
+                            $contractSettings = json_decode($setting->settings, true);
+                            foreach ($unusedRooms as $unusedRoom) {
+                                if (array_key_exists($unusedRoom->id, $contractSettings)) {
+                                    unset($contractSettings[$unusedRoom->id]);
+                                    if (empty($contractSettings)) {
+                                        $setting->delete();
+                                    }
+                                    else {
+                                        $setting->settings = json_encode($contractSettings);
+                                        $setting->save();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 $measures = array(1, 2);
                 foreach ($temp as $key => $val) {
                     if($val == 1 || $val == 2) continue;

@@ -697,8 +697,10 @@ class HotelContractController extends Controller
         $marketId = Input::get('market-id');
         $setPrice = Input::get('set-price');
         $setCost = Input::get('set-cost');
-        $roomTypeId = Input::get('room-type-id');
+        //$roomTypeId = Input::get('room-type-id');
         $unsetCost = Input::get('unset-cost');
+        $roomTypes = Input::get('room-types');
+        $roomTypes = json_decode($roomTypes);
         $ranges = Input::get('ranges');
         $ranges = json_decode($ranges);
 
@@ -713,14 +715,16 @@ class HotelContractController extends Controller
                     $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
                     if ($contractSetting != null) {
                         $settings = json_decode($contractSetting->settings, true);
-                        if (array_key_exists($roomTypeId, $settings)) {
-                            unset($settings[$roomTypeId]);
-                            if (empty($settings)) {
-                                $contractSetting->delete();
-                            }
-                            else {
-                                $contractSetting->settings = json_encode($settings);
-                                $contractSetting->save();
+                        foreach ($roomTypes as $item) {
+                            if (array_key_exists($item, $settings)) {
+                                unset($settings[$item]);
+                                if (empty($settings)) {
+                                    $contractSetting->delete();
+                                }
+                                else {
+                                    $contractSetting->settings = json_encode($settings);
+                                    $contractSetting->save();
+                                }
                             }
                         }
                     }
@@ -740,28 +744,32 @@ class HotelContractController extends Controller
                         $contractSetting->hotel_contract_market_id = $marketRate->id;
                         $contractSetting->date = $m->format('Y-m-d');
                         $settings = array();
-                        if($setCost != '' && Input::get('cost') != '') {
-                            $settings[$roomTypeId][$setCost] = Input::get('cost');
-                        }
-                        if($setPrice != '' && Input::get('price') != '') {
-                            $settings[$roomTypeId][$setPrice] = Input::get('price');
-                        }
-                        else {
-                            $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
+                        foreach ($roomTypes as $item) {
+                            if($setCost != '' && Input::get('cost') != '') {
+                                $settings[$item][$setCost] = Input::get('cost');
+                            }
+                            if($setPrice != '' && Input::get('price') != '') {
+                                $settings[$item][$setPrice] = Input::get('price');
+                            }
+                            else {
+                                $settings[$item]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
+                            }
                         }
                         $contractSetting->settings = json_encode($settings);
                         $contractSetting->save();
                     }
                     else {
                         $settings = json_decode($contractSetting->settings, true);
-                        if($setCost != '') {
-                            $settings[$roomTypeId][$setCost] = Input::get('cost');
-                        }
-                        if($setPrice != '' && Input::get('price') != '') {
-                            $settings[$roomTypeId][$setPrice] = Input::get('price');
-                        }
-                        else {
-                            $settings[$roomTypeId]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
+                        foreach ($roomTypes as $item) {
+                            if($setCost != '') {
+                                $settings[$item][$setCost] = Input::get('cost');
+                            }
+                            if($setPrice != '' && Input::get('price') != '') {
+                                $settings[$item][$setPrice] = Input::get('price');
+                            }
+                            else {
+                                $settings[$item]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
+                            }
                         }
                         $contractSetting->settings = json_encode($settings);
                         $contractSetting->save();

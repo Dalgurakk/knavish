@@ -214,6 +214,37 @@ $(document).ready(function () {
         }
     });
 
+    var tableShareRoomType = $('#modal-setting .table-room-type').dataTable({
+        "sDom": "t",
+        "autoWidth": false,
+        "columnDefs": [
+            { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
+            { 'visible': false, 'targets': [1] }
+        ],
+        "order": [[ 3, "asc" ]],
+        "lengthMenu": [[-1], ["All"]]
+    });
+
+    tableShareRoomType.find('.group-checkable').change(function () {
+        var set = jQuery(this).attr("data-set");
+        var checked = jQuery(this).is(":checked");
+        jQuery(set).each(function () {
+            if (checked) {
+                $(this).prop("checked", true);
+                $(this).parents('tr').addClass("active");
+            } else {
+                $(this).prop("checked", false);
+                $(this).parents('tr').removeClass("active");
+            }
+        });
+        //$('#modal-setting :input[name=count-board-type]').val(countSelectedRecords(tableShareRoomType));
+    });
+
+    tableShareRoomType.on('change', 'tbody tr .checkboxes', function () {
+        $(this).parents('tr').toggleClass("active");
+        //$('#modal-setting :input[name=count-room-type]').val(countSelectedRecords(tableShareRoomType));
+    });
+
     function fillContract(c) {
         var roomTypes = c.room_types;
         var measures = c.measures;
@@ -332,7 +363,7 @@ $(document).ready(function () {
                         '</div>';
             if (contract.measures[i].code == 'cost') {
                 html +=
-                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                        '<div class="col-md-7 col-sm-7 col-xs-7">' +
                             '<div class="mt-checkbox-inline">' +
                                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
                                     '<input type="checkbox" value="1" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
@@ -347,7 +378,7 @@ $(document).ready(function () {
             }
             else {
                 html +=
-                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                        '<div class="col-md-7 col-sm-7 col-xs-7">' +
                             '<div class="mt-checkbox-inline">' +
                                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
                                     '<input type="checkbox" value="" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
@@ -446,8 +477,43 @@ $(document).ready(function () {
 
             updateImport(contract.markets);
 
+            $('.share-rooms').hide();
+            var roomTypes = contract.room_types;
+            if (roomTypes.length > 1) {
+                tableShareRoomType.api().clear().draw();
+                var check =
+                    '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">' +
+                    '<input type="checkbox" class="checkboxes" value="1" />' +
+                    '<span></span>' +
+                    '</label>';
+                for (var i = 0; i < roomTypes.length; i++) {
+                    if (roomTypes[i].id != $('input[name="room-type-id"]').val()) {
+                        tableShareRoomType.api().row.add([
+                            check,
+                            roomTypes[i].id,
+                            roomTypes[i].code,
+                            roomTypes[i].name
+                        ]).draw( false );
+                        tableShareRoomType.api().columns.adjust().draw();
+                    }
+                }
+                $('.share-container').show();
+            }
+            else {
+                $('.share-container').hide();
+            }
+
             $('#modal-setting').modal('show');
         });
+    }
+
+    function getSelectedRows(table) {
+        var rows = [];
+        $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).each(function() {
+            var data = table.api().row( $(this).parents('tr') ).data();
+            rows.push(data[1]);
+        });
+        return rows;
     }
 
     var formSetting = $('#form-setting');
@@ -517,6 +583,10 @@ $(document).ready(function () {
                 };
                 ranges.push(obj);
             });
+            var rooms = getSelectedRows(tableShareRoomType);
+            var selected = $('input[name="room-type-id"]').val();
+            rooms.push(parseInt(selected));
+            formData.append('room-types', JSON.stringify(rooms));
             formData.append('ranges', JSON.stringify(ranges));
             formData.append('market', market);
             $.ajax({
@@ -632,5 +702,12 @@ $(document).ready(function () {
             $('.btn-search-submit').click();
         }
         updateImport(contract.markets);
+    });
+
+    $('input[name=share]').change(function () {
+        if ($(this).is(':checked'))
+            $('.share-rooms').show();
+        else
+            $('.share-rooms').hide();
     });
 });

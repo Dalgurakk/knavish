@@ -126,7 +126,7 @@ $(document).ready(function () {
                     return data;
                 }
             },
-            {data: 'chain', name: 'chain'},
+            {data: 'chain', name: 'chain', orderable: false},
             {
                 data: 'active',
                 name: 'active',

@@ -68,13 +68,15 @@ class HotelRoomTypeController extends Controller
         if(isset($searchActive) && $searchActive != '') {
             $query->where('hotel_room_types.active', '=', $searchActive);
         }
+
+        $records = $query->count();
+
         $query
             ->orderBy($columns[$orderBy], $orderDirection)
             ->offset($offset)
             ->limit($limit);
 
         $roomTypes = $query->get();
-        $records = count($roomTypes);
 
         $data = array(
             "draw" => Input::get('draw'),

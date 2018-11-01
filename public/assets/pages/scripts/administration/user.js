@@ -28,8 +28,8 @@ $(document).ready(function () {
         columns: [
             {data: 'id', name: 'id', visible: false},
             {data: 'username', name: 'username'},
-            {data: 'role', name: 'role'},
-            {data: 'role_id', name: 'role_id', visible: false},
+            {data: 'role', name: 'role', orderable: false},
+            {data: 'role_id', name: 'role_id', visible: false, orderable: false},
             {data: 'name', name: 'name'},
             {
                 targets: 'email',

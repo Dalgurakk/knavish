@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Market;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class MarketController extends Controller
@@ -21,7 +19,7 @@ class MarketController extends Controller
     }
 
     public function index(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $breadcrumb = array(
             0 => 'Administration',
@@ -37,18 +35,62 @@ class MarketController extends Controller
     }
 
     public function read(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
-        $markets = DB::table('markets')
-            ->select('markets.id', 'markets.code', 'markets.name', 'markets.description', 'markets.active')
-            ->where('markets.id', '>', '1')
-            ->get();
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array('markets.id', 'markets.code', 'markets.name', 'markets.description', 'markets.active');
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchCode = Input::get('columns')['1']['search']['value'];
+        $searchName = Input::get('columns')['2']['search']['value'];
+        $searchActive = Input::get('columns')['4']['search']['value'];
+        $markets = array();
 
-        return DataTables::of($markets)->make(true);
+        $query = Market::where('id', '>', '1');
+
+        if(isset($searchCode) && $searchCode != '') {
+            $query->where('markets.code', 'like', '%' . $searchCode . '%');
+        }
+        if(isset($searchName) && $searchName != '') {
+            $query->where('markets.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('markets.active', '=', $searchActive);
+        }
+
+        $records = $query->count();
+
+        $query
+            ->orderBy($columns[$orderBy], $orderDirection)
+            ->offset($offset)
+            ->limit($limit);
+        $result = $query->get();
+
+        foreach ($result as $r) {
+            $item = array(
+                'id' => $r->id,
+                'code' => $r->code,
+                'name' => $r->name,
+                'description' => $r->description,
+                'active' => $r->active
+            );
+            $markets[] = $item;
+        }
+
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $markets
+        );
+        echo json_encode($data);
     }
 
     public function create(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $rules = array(
             'code' => 'required',
@@ -84,7 +126,7 @@ class MarketController extends Controller
     }
 
     public function update(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $id = Input::get('id');
         $rules = array(
@@ -121,7 +163,7 @@ class MarketController extends Controller
     }
 
     public function delete(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $id = Input::get('id');
         $market = Market::find($id);

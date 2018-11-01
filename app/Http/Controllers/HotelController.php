@@ -63,6 +63,65 @@ class HotelController extends Controller
         $searchActive = Input::get('columns')['4']['search']['value'];
         $hotels = array();
 
+        $query = Hotel::with(['hotelChain', 'country', 'state', 'city']);
+
+        if(isset($searchName) && $searchName != '') {
+            $query->where('hotels.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchChain) && $searchChain != '') {
+            $query->whereHas('hotelChain', function ($query) use ($searchChain) {
+                $query->where('name', 'like', '%' . $searchChain . '%');
+            });
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('hotels.active', '=', $searchActive);
+        }
+
+        $records = $query->count();
+
+        $query
+            ->orderBy($columns[$orderBy], $orderDirection)
+            ->offset($offset)
+            ->limit($limit);
+
+        $result = $query->get();
+
+        foreach ($result as $r) {
+            $item = array(
+                'id' => $r->id,
+                'name' => $r->name,
+                'category' => $r->category,
+                'chain' => $r->hotelChain->name,
+                'active' => $r->active,
+                'hotel' => $r
+            );
+            $hotels[] = $item;
+        }
+
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $hotels
+        );
+        echo json_encode($data);
+    }
+
+    public function read2(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array('hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name', 'hotels.active');
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchName = Input::get('columns')['1']['search']['value'];
+        $searchChain = Input::get('columns')['3']['search']['value'];
+        $searchActive = Input::get('columns')['4']['search']['value'];
+        $hotels = array();
+
         $query = DB::table('hotels')
             ->select('hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name as chain', 'hotels.active')
             ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id');
@@ -76,13 +135,15 @@ class HotelController extends Controller
         if(isset($searchActive) && $searchActive != '') {
             $query->where('hotels.active', '=', $searchActive);
         }
+
+        $records = $query->count();
+
         $query
             ->orderBy($columns[$orderBy], $orderDirection)
             ->offset($offset)
             ->limit($limit);
 
         $result = $query->get();
-        $records = count($result);
 
         foreach ($result as $r) {
             $query = Hotel::with(['hotelChain', 'country', 'state', 'city'])

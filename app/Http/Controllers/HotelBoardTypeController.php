@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\HotelBoardType;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class HotelBoardTypeController extends Controller
@@ -36,7 +34,7 @@ class HotelBoardTypeController extends Controller
         return view('hotel.boardtype')->with($data);
     }
 
-    public function read(Request $request) {
+    public function read2(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $boardTypes = DB::table('hotel_board_types')
@@ -44,6 +42,60 @@ class HotelBoardTypeController extends Controller
             ->get();
 
         return DataTables::of($boardTypes)->make(true);
+    }
+
+    public function read(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array('hotel_board_types.id', 'hotel_board_types.code', 'hotel_board_types.name', 'hotel_board_types.description', 'hotel_board_types.active');
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchCode = Input::get('columns')['1']['search']['value'];
+        $searchName = Input::get('columns')['2']['search']['value'];
+        $searchActive = Input::get('columns')['4']['search']['value'];
+        $boardTypes = array();
+
+        $query = HotelBoardType::orderBy($columns[$orderBy], $orderDirection);
+
+        if(isset($searchCode) && $searchCode != '') {
+            $query->where('hotel_board_types.code', 'like', '%' . $searchCode . '%');
+        }
+        if(isset($searchName) && $searchName != '') {
+            $query->where('hotel_board_types.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('hotel_board_types.active', '=', $searchActive);
+        }
+
+        $records = $query->count();
+
+        $query
+            ->offset($offset)
+            ->limit($limit);
+        $result = $query->get();
+
+        foreach ($result as $r) {
+            $item = array(
+                'id' => $r->id,
+                'code' => $r->code,
+                'name' => $r->name,
+                'description' => $r->description,
+                'active' => $r->active
+            );
+            $boardTypes[] = $item;
+        }
+
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $boardTypes
+        );
+        echo json_encode($data);
     }
 
     public function create(Request $request) {

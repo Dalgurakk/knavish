@@ -20,7 +20,7 @@ class LocationController extends Controller
     }
 
     public function index(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $breadcrumb = array(
             0 => 'Administration',
@@ -36,7 +36,7 @@ class LocationController extends Controller
     }
 
     public function read(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $parentId = Input::get('id');
         $nodes = array();
@@ -80,7 +80,7 @@ class LocationController extends Controller
     }
 
     public function create(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $rules = array(
             'name' => 'required'
@@ -120,7 +120,7 @@ class LocationController extends Controller
     }
 
     public function update(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $id = Input::get('id');
         $rules = array(
@@ -156,7 +156,7 @@ class LocationController extends Controller
     }
 
     public function delete(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $id = Input::get('id');
         $location = Location::find($id);
@@ -176,7 +176,7 @@ class LocationController extends Controller
     }
 
     public function actives(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
+        $request->user()->authorizeRoles(['administrator']);
 
         $parentId = Input::get('id');
         $nodes = array();

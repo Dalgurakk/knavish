@@ -54,6 +54,108 @@ class HotelContractClientController extends Controller
         $searchActive = Input::get('columns')['6']['search']['value'];
         $contracts = array();
 
+        $query = HotelContractClient::with([
+            'hotelContract',
+            'hotelContract.priceRates',
+            'hotelContract.priceRates.market',
+            'client',
+            'priceRate',
+            'priceRate.market',
+            'hotelContract.hotel',
+            'hotelContract.hotel.hotelChain',
+            'hotelContract.hotel.country',
+            'hotelContract.hotel.state',
+            'hotelContract.hotel.city',
+            'hotelContract.roomTypes',
+            'hotelContract.paxTypes',
+            'hotelContract.boardTypes'
+        ]);
+
+        if(isset($searchName) && $searchName != '') {
+            $query->where('hotel_contract_clients.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchClient) && $searchClient != '') {
+            $query->whereHas('client', function ($query) use ($searchClient) {
+                $query->where('name', 'like', '%' . $searchClient . '%');
+            });
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('hotel_contract_clients.active', '=', $searchActive);
+        }
+        if(isset($searchValidFrom) && $searchValidFrom != '') {
+            $query->whereHas('hotelContract', function ($query) use ($searchValidFrom) {
+                $query->where('valid_from', '>=', $searchValidFrom);
+            });
+        }
+        if(isset($searchValidTo) && $searchValidTo != '') {
+            $query->whereHas('hotelContract', function ($query) use ($searchValidTo) {
+                $query->where('valid_to', '<=', $searchValidTo);
+            });
+        }
+
+        $records = $query->count();
+
+        $query
+            ->orderBy($columns[$orderBy], $orderDirection)
+            ->offset($offset)
+            ->limit($limit);
+
+        $result = $query->get();
+
+        foreach ($result as $r) {
+            $currentDate = Carbon::today();
+            $validFrom = Carbon::createFromFormat('!Y-m-d', $r->hotelContract->valid_from);
+            $validTo = Carbon::createFromFormat('!Y-m-d', $r->hotelContract->valid_to);
+            $r->valid_from = $validFrom->format('d.m.Y');
+            $r->valid_to = $validTo->format('d.m.Y');
+
+            $status = 0;
+            if ($currentDate->greaterThan($validTo))
+                $status = 3; //Old
+            else if ($currentDate->greaterThanOrEqualTo($validFrom) && $currentDate->lessThanOrEqualTo($validTo))
+                $status = 2; //In Progress
+            else if ($currentDate->lessThan($validFrom))
+                $status = 1; //Waiting
+
+            $item = array(
+                'id' => $r->id,
+                'name' => $r->name,
+                'client' => $r->client->name,
+                'valid_from' => $r->valid_from,
+                'valid_to' => $r->valid_to,
+                'active' => $r->active,
+                'status' => $status,
+                'contract' => $r
+            );
+            $contracts[] = $item;
+        }
+
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $contracts
+        );
+        echo json_encode($data);
+    }
+
+    public function read2(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array('hotel_contract_clients.id', 'hotel_contract_clients.name', 'users.username', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contract_clients.active', 'hotel_contract_clients.active');
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchName = Input::get('columns')['1']['search']['value'];
+        $searchClient = Input::get('columns')['2']['search']['value'];
+        $searchValidFrom = Input::get('columns')['3']['search']['value'];
+        $searchValidTo = Input::get('columns')['4']['search']['value'];
+        $searchActive = Input::get('columns')['6']['search']['value'];
+        $contracts = array();
+
         $query = DB::table('hotel_contract_clients')
             ->select(
                 'hotel_contract_clients.id', 'hotel_contract_clients.name', 'users.name as client', 'hotel_contracts.valid_from',
@@ -78,13 +180,15 @@ class HotelContractClientController extends Controller
             $validTo = Carbon::createFromFormat('d.m.Y', $searchValidTo);
             $query->where('hotel_contracts.valid_to', '<=', $validTo->format('Y-m-d'));
         }
+
+        $records = $query->count();
+
         $query
             ->orderBy($columns[$orderBy], $orderDirection)
             ->offset($offset)
             ->limit($limit);
 
         $result = $query->get();
-        $records = count($result);
 
         foreach ($result as $r) {
             $query = HotelContractClient::with([

@@ -28,7 +28,7 @@ $(document).ready(function () {
         columns: [
             {data: 'id', name: 'id', visible: false},
             {data: 'name', name: 'name'},
-            {data: 'description', name: 'description'},
+            {data: 'description', name: 'description', orderable: false},
             {
                 data: 'active',
                 name: 'active',

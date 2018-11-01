@@ -101,13 +101,14 @@ class HotelContractController extends Controller
                 $query->where('name', 'like', '%' . $searchHotel . '%');
             });
         }
+
+        $records = $query->count();
+
         $query
             ->orderBy($columns[$orderBy], $orderDirection)
             ->offset($offset)
             ->limit($limit);
         $result = $query->get();
-
-        $records = count($result);
 
         foreach ($result as $r) {
             $contract = $r;

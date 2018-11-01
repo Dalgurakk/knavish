@@ -30,7 +30,7 @@ $(document).ready(function () {
         columns: [
             { data: 'id', name: 'id', visible: false },
             { data: 'name', name: 'name' },
-            { data: 'client', name: 'client' },
+            { data: 'client', name: 'client', orderable: false },
             { data: 'valid_from', name: 'valid_from' },
             { data: 'valid_to', name: 'valid_to' },
             {

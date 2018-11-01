@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\HotelPaxType;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class HotelPaxTypeController extends Controller
@@ -39,11 +37,56 @@ class HotelPaxTypeController extends Controller
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        $paxTypes = DB::table('hotel_pax_types')
-            ->select('hotel_pax_types.id', 'hotel_pax_types.code', 'hotel_pax_types.name', 'hotel_pax_types.agefrom', 'hotel_pax_types.ageto', 'hotel_pax_types.active')
-            ->get();
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array('hotel_pax_types.id', 'hotel_pax_types.code', 'hotel_pax_types.name', 'hotel_pax_types.agefrom', 'hotel_pax_types.ageto', 'hotel_pax_types.active');
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchCode = Input::get('columns')['1']['search']['value'];
+        $searchName = Input::get('columns')['2']['search']['value'];
+        $searchActive = Input::get('columns')['5']['search']['value'];
+        $paxTypes = array();
 
-        return DataTables::of($paxTypes)->make(true);
+        $query = HotelPaxType::orderBy($columns[$orderBy], $orderDirection);
+
+        if(isset($searchCode) && $searchCode != '') {
+            $query->where('hotel_pax_types.code', 'like', '%' . $searchCode . '%');
+        }
+        if(isset($searchName) && $searchName != '') {
+            $query->where('hotel_pax_types.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('hotel_pax_types.active', '=', $searchActive);
+        }
+
+        $records = $query->count();
+
+        $query
+            ->offset($offset)
+            ->limit($limit);
+        $result = $query->get();
+
+        foreach ($result as $r) {
+            $item = array(
+                'id' => $r->id,
+                'code' => $r->code,
+                'name' => $r->name,
+                'agefrom' => $r->agefrom,
+                'ageto' => $r->ageto,
+                'active' => $r->active
+            );
+            $paxTypes[] = $item;
+        }
+
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $paxTypes
+        );
+        echo json_encode($data);
     }
 
     public function create(Request $request) {

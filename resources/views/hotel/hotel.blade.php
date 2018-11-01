@@ -201,12 +201,12 @@
                     </div>
                 </div>
             </div>
-            <!--div class="col-md-12 col-sm-12">
+            <div class="col-md-12 col-sm-12">
                 <div class="form-group">
-                    <label>Commercial Description</label>
-                    <textarea class="form-control" name="description" rows="4" placeholder="Commercial Description" style="resize: none;"></textarea>
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" rows="4" placeholder="Description" style="resize: none;"></textarea>
                 </div>
-            </div-->
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -297,12 +297,12 @@
                     </div>
                 </div>
             </div>
-            <!--div class="col-md-12 col-sm-12">
+            <div class="col-md-12 col-sm-12">
                 <div class="form-group">
-                    <label>Commercial Description</label>
+                    <label>Description</label>
                     <textarea class="form-control" name="description" rows="4" readonly style="resize: none;"></textarea>
                 </div>
-            </div-->
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -400,12 +400,12 @@
                     </div>
                 </div>
             </div>
-            <!--div class="col-md-12 col-sm-12">
+            <div class="col-md-12 col-sm-12">
                 <div class="form-group">
-                    <label>Commercial Description</label>
-                    <textarea class="form-control" name="description" rows="4" placeholder="Commercial Description" style="resize: none;"></textarea>
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" rows="4" placeholder="Description" style="resize: none;"></textarea>
                 </div>
-            </div-->
+            </div>
         </div>
     </div>
     <div class="modal-footer">

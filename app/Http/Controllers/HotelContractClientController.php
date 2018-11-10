@@ -268,10 +268,10 @@ class HotelContractClientController extends Controller
                 $this->response['message'] = 'Contract ' . $contract->name . ' created successfully.';
                 $this->response['data'] = $contract;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -320,10 +320,10 @@ class HotelContractClientController extends Controller
                 $this->response['message'] = 'Contract updated successfully' . $info;
                 $this->response['data'] = $contract;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -341,10 +341,10 @@ class HotelContractClientController extends Controller
             $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
             $this->response['data'] = $contract;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }
@@ -403,10 +403,10 @@ class HotelContractClientController extends Controller
             else
                 $this->response['data'] = $contract;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }

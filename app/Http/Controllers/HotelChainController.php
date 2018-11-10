@@ -120,10 +120,10 @@ class HotelChainController extends Controller
                 $this->response['message'] = 'Hotel chain ' . $hotelChain->name . ' created successfully.';
                 $this->response['data'] = $hotelChain;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -155,10 +155,10 @@ class HotelChainController extends Controller
                 $this->response['message'] = 'Hotel chain updated successfully.';
                 $this->response['data'] = $hotelChain;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -176,10 +176,10 @@ class HotelChainController extends Controller
             $this->response['message'] = 'Hotel chain ' . $hotelChain->name . ' deleted successfully.';
             $this->response['data'] = $hotelChain;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the hotel chain is in use.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['errors'] = $e->getMessage();
         }
 
         echo json_encode($this->response);

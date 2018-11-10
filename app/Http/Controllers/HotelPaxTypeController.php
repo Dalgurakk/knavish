@@ -121,10 +121,10 @@ class HotelPaxTypeController extends Controller
                 $this->response['message'] = 'Pax type ' . $paxType->code . ': ' . $paxType->name . ' created successfully.';
                 $this->response['data'] = $paxType;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -161,10 +161,10 @@ class HotelPaxTypeController extends Controller
                 $this->response['message'] = 'Pax type updated successfully.';
                 $this->response['data'] = $paxType;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -182,10 +182,10 @@ class HotelPaxTypeController extends Controller
             $this->response['message'] = 'Pax type ' . $paxType->code . ': ' . $paxType->name . ' deleted successfully.';
             $this->response['data'] = $paxType;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the pax type is in use.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }

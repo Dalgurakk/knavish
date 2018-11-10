@@ -209,10 +209,10 @@ class HotelController extends Controller
                 $this->response['message'] = 'Hotel ' . $hotel->name . ' created successfully.';
                 $this->response['data'] = $hotel;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -256,10 +256,10 @@ class HotelController extends Controller
                 $this->response['message'] = 'Hotel updated successfully.';
                 $this->response['data'] = $hotel;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -286,10 +286,10 @@ class HotelController extends Controller
             $this->response['message'] = 'Hotel ' . $hotel->name . ' deleted successfully.';
             $this->response['data'] = $hotel;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed probably the hotel is in use.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }

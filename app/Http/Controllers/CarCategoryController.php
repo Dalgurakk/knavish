@@ -70,10 +70,10 @@ class CarCategoryController extends Controller
                 $this->response['message'] = 'Category ' . $category->name . ' created successfully.';
                 $this->response['data'] = $category;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -105,10 +105,10 @@ class CarCategoryController extends Controller
                 $this->response['message'] = 'Category updated successfully.';
                 $this->response['data'] = $category;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -126,10 +126,10 @@ class CarCategoryController extends Controller
             $this->response['message'] = 'Category ' . $category->name . ' deleted successfully.';
             $this->response['data'] = $category;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the category is in use.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }

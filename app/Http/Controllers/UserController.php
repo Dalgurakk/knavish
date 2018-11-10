@@ -139,12 +139,7 @@ class UserController extends Controller
                 $this->response['message'] = 'User ' . $user->username . ' created successfully.';
                 $this->response['data'] = $user;
             }
-            catch (QueryException $e) {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error, probably the email or username already exist.';
-                $this->response['errors'] = $e->errorInfo[2];
-            }
-            catch (Exception $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
                 $this->response['message'] = 'Validation errors.';
                 $this->response['errors'] = $e->getMessage();
@@ -186,14 +181,9 @@ class UserController extends Controller
                 $this->response['message'] = 'User updated successfully.';
                 $this->response['data'] = $user;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
                 $this->response['message'] = 'Database error, probably the email or username already exist.';
-                $this->response['errors'] = $e->errorInfo[2];
-            }
-            catch (Exception $e) {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Validation errors.';
                 $this->response['errors'] = $e->getMessage();
             }
         }
@@ -213,10 +203,10 @@ class UserController extends Controller
             $this->response['message'] = 'User ' . $user->username . ' deleted successfully.';
             $this->response['data'] = $user;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the user is in use.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }

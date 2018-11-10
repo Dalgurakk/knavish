@@ -90,10 +90,10 @@ class CarBrandController extends Controller
                 $this->response['message'] = 'Model ' . $brand->name . ' created successfully.';
                 $this->response['data'] = $brand;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -144,10 +144,10 @@ class CarBrandController extends Controller
                 $this->response['message'] = 'Model updated successfully.';
                 $this->response['data'] = $brand;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -169,10 +169,10 @@ class CarBrandController extends Controller
                 unlink($this->uploadPath . $brand->image);
             }
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }
@@ -197,10 +197,10 @@ class CarBrandController extends Controller
             $this->response['message'] = 'Model ' . $brand->name . ' duplicated successfully.';
             $this->response['data'] = $new;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }

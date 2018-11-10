@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Exceptions\Exception;
 
 class HotelContractController extends Controller
 {
@@ -304,16 +305,15 @@ class HotelContractController extends Controller
                     ]);
                 }
                 DB::commit();
-
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Contract ' . $contract->name . ' created successfully.';
                 $this->response['data'] = $contract;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 DB::rollBack();
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -450,11 +450,11 @@ class HotelContractController extends Controller
                 $this->response['message'] = 'Contract updated successfully.';
                 $this->response['data'] = $contract;
             }
-            catch (QueryException $e) {
-                DB::rollback();
+            catch (\Exception $e) {
+                DB::rollBack();
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -472,10 +472,10 @@ class HotelContractController extends Controller
             $this->response['message'] = 'Contract ' . $contract->name . ' deleted successfully.';
             $this->response['data'] = $contract;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the contract is in use.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }
@@ -535,10 +535,10 @@ class HotelContractController extends Controller
             else
                 $this->response['data'] = $contract;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }
@@ -718,10 +718,10 @@ class HotelContractController extends Controller
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Petition executed successfully.';
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
                 $this->response['message'] = 'Database error, probably the email or username already exist.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);

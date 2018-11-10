@@ -73,7 +73,7 @@ class LocationController extends Controller
                 }
             }
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $nodes = array();
         }
         echo json_encode($nodes);
@@ -110,10 +110,10 @@ class LocationController extends Controller
                 $this->response['message'] = 'Location ' . $location->code . ': ' . $location->name . ' created successfully.';
                 $this->response['data'] = $location;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -146,10 +146,10 @@ class LocationController extends Controller
                 $this->response['message'] = 'Location updated successfully.';
                 $this->response['data'] = $location;
             }
-            catch (QueryException $e) {
+            catch (\Exception $e) {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error.';
-                $this->response['errors'] = $e->errorInfo[2];
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
             }
         }
         echo json_encode($this->response);
@@ -167,10 +167,10 @@ class LocationController extends Controller
             $this->response['message'] = 'Location ' . $location->name . ' deleted successfully.';
             $this->response['data'] = $location;
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the location is in use.';
-            $this->response['errors'] = $e->errorInfo[2];
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }
@@ -216,7 +216,7 @@ class LocationController extends Controller
                 }
             }
         }
-        catch (QueryException $e) {
+        catch (\Exception $e) {
             $nodes = array();
         }
         echo json_encode($nodes);

@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Hotel extends Model
+class Hotel extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     public function images() {
         return $this->hasMany('App\HotelImage');
     }

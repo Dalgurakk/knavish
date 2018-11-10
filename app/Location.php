@@ -4,10 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\NodeTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Location extends Model
+class Location extends Model implements Auditable
 {
     use NodeTrait;
+    use \OwenIt\Auditing\Auditable;
 
     public function countries() {
         return $this->hasMany('App\Location' ,'country_id', 'id');

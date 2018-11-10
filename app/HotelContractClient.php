@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class HotelContractClient extends Model
+class HotelContractClient extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     public function hotelContract() {
         return $this->belongsTo('App\HotelContract');
     }

@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class HotelContract extends Model
+class HotelContract extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     public function paxTypes() {
         return $this
             ->belongsToMany('App\HotelPaxType', 'hotel_contract_pax_type')

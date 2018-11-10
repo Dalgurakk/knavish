@@ -73,7 +73,8 @@ class HotelPaxTypeController extends Controller
                 'name' => $r->name,
                 'agefrom' => $r->agefrom,
                 'ageto' => $r->ageto,
-                'active' => $r->active
+                'active' => $r->active,
+                'object' => $r
             );
             $paxTypes[] = $item;
         }

@@ -1,16 +1,15 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use OwenIt\Auditing\Contracts\Auditable;
 
-//use OwenIt\Auditing\Contracts\Auditable;
-
-class User extends Authenticatable
+class User extends Authenticatable implements Auditable
 {
     use Notifiable;
-    //use \OwenIt\Auditing\Auditable;
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.
@@ -33,7 +32,7 @@ class User extends Authenticatable
     public function roles()
     {
         return $this
-            ->belongsToMany('App\Role')
+            ->belongsToMany('App\Models\Role')
             ->withTimestamps();
     }
 
@@ -70,6 +69,6 @@ class User extends Authenticatable
     }
 
     public function contracts() {
-        return $this->belongsTo('App\HotelContractClient');
+        return $this->belongsTo('App\Models\HotelContractClient');
     }
 }

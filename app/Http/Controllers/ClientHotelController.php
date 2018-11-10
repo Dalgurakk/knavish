@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ClientHotelExport;
-use App\HotelContract;
-use App\HotelContractClient;
+use App\Models\HotelContract;
+use App\Models\HotelContractClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

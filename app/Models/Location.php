@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Kalnoy\Nestedset\NodeTrait;
@@ -12,18 +12,18 @@ class Location extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     public function countries() {
-        return $this->hasMany('App\Location' ,'country_id', 'id');
+        return $this->hasMany('App\Models\Location' ,'country_id', 'id');
     }
 
     public function states() {
-        return $this->hasMany('App\Location' ,'state_id', 'id');
+        return $this->hasMany('App\Models\Location' ,'state_id', 'id');
     }
 
     public function cities() {
-        return $this->hasMany('App\Location' ,'city_id', 'id');
+        return $this->hasMany('App\Models\Location' ,'city_id', 'id');
     }
 
     public function parent() {
-        return $this->belongsTo('App\Location' ,'parent_id', 'id');
+        return $this->belongsTo('App\Models\Location' ,'parent_id', 'id');
     }
 }

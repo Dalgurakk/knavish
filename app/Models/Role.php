@@ -1,18 +1,18 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class HotelRoomType extends Model implements Auditable
+class Role extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
-    public function contracts()
+    public function users()
     {
         return $this
-            ->belongsToMany('App\HotelContract', 'hotel_contract_room_type')
+            ->belongsToMany('App\Models\User')
             ->withTimestamps();
     }
 }

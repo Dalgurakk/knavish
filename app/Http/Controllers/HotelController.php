@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Exports\HotelExport;
-use App\HotelChain;
-use App\HotelImage;
+use App\Models\HotelChain;
+use App\Models\HotelImage;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\Hotel;
+use App\Models\Hotel;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;

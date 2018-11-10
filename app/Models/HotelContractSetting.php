@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -11,6 +11,6 @@ class HotelContractSetting extends Model implements Auditable
 
     public function priceRate()
     {
-        return $this->belongsTo('App\HotelContractMarket');
+        return $this->belongsTo('App\Models\HotelContractMarket');
     }
 }

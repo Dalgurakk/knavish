@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\BoardTypeExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\HotelBoardType;
+use App\Models\HotelBoardType;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;

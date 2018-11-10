@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\HotelChainExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\HotelChain;
+use App\Models\HotelChain;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;

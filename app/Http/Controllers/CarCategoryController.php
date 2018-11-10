@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\CarBrand;
+use App\Models\CarBrand;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\CarCategory;
+use App\Models\CarCategory;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;

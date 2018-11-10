@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\PaxTypeExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\HotelPaxType;
+use App\Models\HotelPaxType;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;

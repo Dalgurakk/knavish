@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\MarketExport;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use App\Market;
+use App\Models\Market;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;

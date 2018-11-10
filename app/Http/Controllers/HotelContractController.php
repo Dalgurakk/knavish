@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Exports\HotelContractExport;
-use App\HotelBoardType;
-use App\HotelContract;
-use App\HotelContractMarket;
-use App\HotelContractSetting;
-use App\HotelMeasure;
-use App\HotelPaxType;
-use App\Market;
+use App\Models\HotelBoardType;
+use App\Models\HotelContract;
+use App\Models\HotelContractMarket;
+use App\Models\HotelContractSetting;
+use App\Models\HotelMeasure;
+use App\Models\HotelPaxType;
+use App\Models\Market;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;

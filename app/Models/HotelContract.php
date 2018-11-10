@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -11,44 +11,44 @@ class HotelContract extends Model implements Auditable
 
     public function paxTypes() {
         return $this
-            ->belongsToMany('App\HotelPaxType', 'hotel_contract_pax_type')
+            ->belongsToMany('App\Models\HotelPaxType', 'hotel_contract_pax_type')
             ->withTimestamps();
     }
 
     public function boardTypes() {
         return $this
-            ->belongsToMany('App\HotelBoardType', 'hotel_contract_board_type')
+            ->belongsToMany('App\Models\HotelBoardType', 'hotel_contract_board_type')
             ->withTimestamps();
     }
 
     public function roomTypes() {
         return $this
-            ->belongsToMany('App\HotelRoomType', 'hotel_contract_room_type')
+            ->belongsToMany('App\Models\HotelRoomType', 'hotel_contract_room_type')
             ->withTimestamps();
     }
 
     public function measures() {
         return $this
-            ->belongsToMany('App\HotelMeasure', 'hotel_contract_measure')
+            ->belongsToMany('App\Models\HotelMeasure', 'hotel_contract_measure')
             ->withTimestamps();
     }
 
     public function markets() {
         return $this
-            ->belongsToMany('App\Market')
+            ->belongsToMany('App\Models\Market')
             ->withPivot('type', 'value', 'round')
             ->withTimestamps();
     }
 
     public function priceRates() {
-        return $this->hasMany('App\HotelContractMarket');
+        return $this->hasMany('App\Models\HotelContractMarket');
     }
 
     public function hotel() {
-        return $this->belongsTo('App\Hotel');
+        return $this->belongsTo('App\Models\Hotel');
     }
 
     public function clientContracts() {
-        return $this->hasMany('App\HotelContractClient');
+        return $this->hasMany('App\Models\HotelContractClient');
     }
 }

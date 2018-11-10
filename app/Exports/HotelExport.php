@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Hotel;
+use App\Models\Hotel;
 
 class HotelExport extends GeneralExport
 {

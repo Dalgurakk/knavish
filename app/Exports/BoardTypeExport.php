@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\HotelBoardType;
+use App\Models\HotelBoardType;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 

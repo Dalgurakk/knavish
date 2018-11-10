@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\HotelContractClient;
+use App\Models\HotelContractClient;
 use Illuminate\Support\Facades\Auth;
 use Carbon;
 

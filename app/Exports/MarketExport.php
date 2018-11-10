@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Market;
+use App\Models\Market;
 
 class MarketExport extends GeneralExport
 {

@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\HotelRoomType;
+use App\Models\HotelRoomType;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 

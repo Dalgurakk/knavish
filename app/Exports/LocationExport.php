@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Location;
+use App\Models\Location;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 

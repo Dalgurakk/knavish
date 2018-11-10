@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\HotelPaxType;
+use App\Models\HotelPaxType;
 
 class PaxTypeExport extends GeneralExport
 {

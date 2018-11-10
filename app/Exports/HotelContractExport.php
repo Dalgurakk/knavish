@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\HotelContract;
+use App\Models\HotelContract;
 use Carbon;
 
 class HotelContractExport extends GeneralExport

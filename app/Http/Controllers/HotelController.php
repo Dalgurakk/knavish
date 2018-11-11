@@ -91,9 +91,9 @@ class HotelController extends Controller
                 'id' => $r->id,
                 'name' => $r->name,
                 'category' => $r->category,
-                'chain' => $r->hotelChain->name,
+                'chain' => isset($r->hotelChain) ? $r->hotelChain->name : '',
                 'active' => $r->active,
-                'hotel' => $r
+                'object' => $r
             );
             $hotels[] = $item;
         }

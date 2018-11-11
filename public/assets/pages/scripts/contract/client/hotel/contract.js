@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var needUpdate = false;
+    var object = null;
 
     $.fn.dataTable.ext.errMode = 'none';
     var table = $('#table').on('error.dt', function(e, settings, techNote, message) {
@@ -693,7 +694,6 @@ $(document).ready(function () {
                 .closest('.form-group').removeClass('has-error');
         },
         submitHandler: function (form) {
-            var option = $(form).find("button[type=submit]:focus").attr('data');
             var id = $('#modal-edit :input[name="id"]').val();
             var priceRate = $('#modal-edit :input[name="price-rate"]').val();
             var name = $('#modal-edit :input[name="name"]').val();
@@ -701,40 +701,55 @@ $(document).ready(function () {
             var client = $('#modal-edit :input[name="client-id"]').val();
             var active = $('#modal-edit :input[name="active"]').prop('checked') ? '1' : '0';
 
-            $.ajax({
-                "url": routeUpdate,
-                "type": "POST",
-                "data": {
-                    id: id,
-                    "price-rate": priceRate,
-                    name: name,
-                    "hotel-contract-id": contract,
-                    "client-id": client,
-                    active: active
-                },
-                "beforeSend": function() {
-                    App.showMask(true, formAdd);
-                },
-                "complete": function(xhr, textStatus) {
-                    App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
-                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                    }
-                    else {
-                        var response = $.parseJSON(xhr.responseText);
-                        if (response.status == 'success') {
-                            toastr['success'](response.message, "Success");
-                            needUpdate = true;
-                            if (option == 'accept') {
-                                $(form).find("button.cancel-form").click();
-                            }
+            var needEdit = false;
+
+            if (
+                object.name != name ||
+                object.hotel_contract_id != contract ||
+                object.client_id != client ||
+                object.hotel_contract_market_id != priceRate ||
+                object.active != active
+            ) {
+                needEdit = true;
+            }
+
+            if(needEdit) {
+                $.ajax({
+                    "url": routeUpdate,
+                    "type": "POST",
+                    "data": {
+                        id: id,
+                        "price-rate": priceRate,
+                        name: name,
+                        "hotel-contract-id": contract,
+                        "client-id": client,
+                        active: active
+                    },
+                    "beforeSend": function() {
+                        App.showMask(true, formAdd);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        App.showMask(false, formAdd);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
-                            toastr['error'](response.message, "Error");
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                needUpdate = true;
+                                $(form).find("button.cancel-form").click();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
+            else {
+                $(form).find("button.cancel-form").click();
+            }
         }
     });
 
@@ -774,7 +789,7 @@ $(document).ready(function () {
 
     $('#table tbody').on( 'click', '.dt-view', function (e) {
         var data = table.row( $(this).parents('tr') ).data();
-        var contract = data['contract'];
+        var contract = data['object'];
         var hotelContract = contract.hotel_contract;
         var client = contract.client;
         var priceRate = contract.price_rate;
@@ -865,7 +880,8 @@ $(document).ready(function () {
         formEdit.validate().resetForm();
         formEdit[0].reset();
         var data = table.row( $(this).parents('tr') ).data();
-        var contract = data['contract'];
+        object = data['object'];
+        var contract = data['object'];
         var hotelContract = contract.hotel_contract;
         var client = contract.client;
         var priceRates = hotelContract.price_rates;

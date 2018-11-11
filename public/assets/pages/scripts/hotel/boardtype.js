@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var needUpdate = false;
+    var object = null;
 
     $.fn.dataTable.ext.errMode = 'none';
     var table = $('#table').on('error.dt', function(e, settings, techNote, message) {
@@ -232,34 +233,52 @@ $(document).ready(function () {
                 .closest('.form-group').removeClass('has-error');
         },
         submitHandler: function (form) {
-            var option = $(form).find("button[type=submit]:focus").attr('data');
-            $.ajax({
-                "url": routeUpdate,
-                "type": "POST",
-                "data": formEdit.serialize(),
-                "beforeSend": function() {
-                    App.showMask(true, formEdit);
-                },
-                "complete": function(xhr, textStatus) {
-                    App.showMask(false, formEdit);
-                    if (xhr.status != '200') {
-                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                    }
-                    else {
-                        var response = $.parseJSON(xhr.responseText);
-                        if (response.status == 'success') {
-                            toastr['success'](response.message, "Success");
-                            needUpdate = true;
-                            if (option == 'accept') {
-                                $(form).find("button.cancel-form").click();
-                            }
+            var needEdit = false;
+            var formData = new FormData(formEdit[0]);
+            var active = formData.get('active') == '1' ? 1 : 0;
+            var description = object.description == null ? '' : object.description;
+            if (
+                object.code != formData.get('code') ||
+                object.name != formData.get('name') ||
+                description != formData.get('description') ||
+                object.active != active
+            ) {
+                needEdit = true;
+            }
+
+            if(needEdit) {
+                $.ajax({
+                    "url": routeUpdate,
+                    "type": "POST",
+                    //"data": formEdit.serialize(),
+                    "data": formData,
+                    "contentType": false,
+                    "processData": false,
+                    "beforeSend": function() {
+                        App.showMask(true, formEdit);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        App.showMask(false, formEdit);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
-                            toastr['error'](response.message, "Error");
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                needUpdate = true;
+                                $(form).find("button.cancel-form").click();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
+            else {
+                $(form).find("button.cancel-form").click();
+            }
         }
     });
 
@@ -283,6 +302,7 @@ $(document).ready(function () {
         formEdit.validate().resetForm();
         formEdit[0].reset();
         var data = table.row( $(this).parents('tr') ).data();
+        object = data['object'];
         $('#modal-edit :input[name=id]').val(data['id']);
         $('#modal-edit :input[name=code]').val(data['code']);
         $('#modal-edit :input[name=name]').val(data['name']);

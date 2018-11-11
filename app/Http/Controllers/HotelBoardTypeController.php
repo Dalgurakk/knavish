@@ -34,16 +34,6 @@ class HotelBoardTypeController extends Controller
         return view('hotel.boardtype')->with($data);
     }
 
-    public function read2(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $boardTypes = DB::table('hotel_board_types')
-            ->select('hotel_board_types.id', 'hotel_board_types.code', 'hotel_board_types.name', 'hotel_board_types.description', 'hotel_board_types.active')
-            ->get();
-
-        return DataTables::of($boardTypes)->make(true);
-    }
-
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
@@ -82,7 +72,8 @@ class HotelBoardTypeController extends Controller
                 'code' => $r->code,
                 'name' => $r->name,
                 'description' => $r->description,
-                'active' => $r->active
+                'active' => $r->active,
+                'object' => $r
             );
             $boardTypes[] = $item;
         }
@@ -96,6 +87,16 @@ class HotelBoardTypeController extends Controller
             "data" => $boardTypes
         );
         echo json_encode($data);
+    }
+
+    public function read2(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $boardTypes = DB::table('hotel_board_types')
+            ->select('hotel_board_types.id', 'hotel_board_types.code', 'hotel_board_types.name', 'hotel_board_types.description', 'hotel_board_types.active')
+            ->get();
+
+        return DataTables::of($boardTypes)->make(true);
     }
 
     public function create(Request $request) {

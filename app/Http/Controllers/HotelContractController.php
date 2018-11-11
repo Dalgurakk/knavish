@@ -133,7 +133,7 @@ class HotelContractController extends Controller
                 'valid_to' => $validTo->format('d.m.Y'),
                 'active' => $r->active,
                 'status' => $status,
-                'contract' => $contract
+                'object' => $contract
             );
             $contracts[] = $item;
         }

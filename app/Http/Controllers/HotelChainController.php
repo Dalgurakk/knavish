@@ -35,16 +35,6 @@ class HotelChainController extends Controller
         return view('hotel.hotelchain')->with($data);
     }
 
-    public function read2(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $hotelsChain = DB::table('hotel_hotels_chain')
-            ->select('hotel_hotels_chain.id', 'hotel_hotels_chain.name', 'hotel_hotels_chain.description', 'hotel_hotels_chain.active')
-            ->get();
-
-        return DataTables::of($hotelsChain)->make(true);
-    }
-
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
@@ -79,7 +69,8 @@ class HotelChainController extends Controller
                 'code' => $r->code,
                 'name' => $r->name,
                 'description' => $r->description,
-                'active' => $r->active
+                'active' => $r->active,
+                'object' => $r
             );
             $chain[] = $item;
         }
@@ -93,6 +84,16 @@ class HotelChainController extends Controller
             "data" => $chain
         );
         echo json_encode($data);
+    }
+
+    public function read2(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $hotelsChain = DB::table('hotel_hotels_chain')
+            ->select('hotel_hotels_chain.id', 'hotel_hotels_chain.name', 'hotel_hotels_chain.description', 'hotel_hotels_chain.active')
+            ->get();
+
+        return DataTables::of($hotelsChain)->make(true);
     }
 
     public function create(Request $request) {

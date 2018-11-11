@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var needUpdate = false;
+    var object = null;
 
     $('#modal-add [id=rate_fee_value_1_add]').TouchSpin({
         min: -1000000000,
@@ -174,6 +175,80 @@ $(document).ready(function () {
         $('tbody > tr', table).each(function() {
             $(this).removeClass('active');
         });
+    }
+
+    function similars(arr1, arr2) {
+        if(arr1.length !== arr2.length)
+            return false;
+
+        for(var i = 0; i < arr1.length; i++) {
+            var found = false;
+            for(var j = 0; j < arr2.length; j++) {
+                if(arr1[i].id == arr2[j]) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+        }
+
+        for(var i = 0; i < arr2.length; i++) {
+            var found = false;
+            for(var j = 0; j < arr1.length; j++) {
+                if(arr2[i] == arr1[j].id) {
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+        }
+        return true;
+    }
+
+    function similarMarkets(arr1, arr2) {
+        if(arr1.length !== arr2.length)
+            return false;
+
+        for(var i = 0; i < arr1.length; i++) {
+            var found = false;
+            for(var j = 0; j < arr2.length; j++) {
+                if(arr1[i].id == arr2[j].market_id) {
+                    if(
+                        arr1[i].pivot.round.toString() != arr2[j].round_type ||
+                        arr1[i].pivot.type.toString() != arr2[j].rate_type ||
+                        arr1[i].pivot.value.toFixed(2) != parseFloat(arr2[j].value).toFixed(2)
+                    ) {
+                        return false;
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+        }
+
+        for(var i = 0; i < arr2.length; i++) {
+            var found = false;
+            for(var j = 0; j < arr1.length; j++) {
+                if(arr2[i].market_id == arr1[j].id) {
+                    if(
+                        arr1[j].pivot.round.toString() != arr2[i].round_type ||
+                        arr1[j].pivot.type.toString() != arr2[i].rate_type ||
+                        arr1[j].pivot.value.toFixed(2) != parseFloat(arr2[i].value).toFixed(2)
+                    ) {
+                        return false;
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if(!found)
+                return false;
+        }
+        return true;
     }
 
     $.fn.dataTable.ext.errMode = 'none';
@@ -583,7 +658,6 @@ $(document).ready(function () {
                 .closest('.form-group').removeClass('has-error');
         },
         submitHandler: function (form) {
-            var option = $(form).find("button[type=submit]:focus").attr('data');
             var formData = new FormData(formEdit[0]);
             var measures = [];
             $('#modal-edit [name="check-measures[]"]').each(function () {
@@ -606,43 +680,67 @@ $(document).ready(function () {
                 };
                 markets.push(obj);
             });
-            formData.append('paxTypes', JSON.stringify(getSelectedRows(tableEditPaxType)));
-            formData.append('boardTypes', JSON.stringify(getSelectedRows(tableEditBoardType)));
-            formData.append('roomTypes', JSON.stringify($('#modal-edit .js-data-ajax').val()));
-            formData.append('measures', JSON.stringify(measures));
-            formData.append('markets', JSON.stringify(markets));
-            $.ajax({
-                "url": routeUpdate,
-                "type": "POST",
-                //"data": formEdit.serialize(),
-                "data": formData,
-                "contentType": false,
-                "processData": false,
-                "beforeSend": function() {
-                    App.showMask(true, formEdit);
-                },
-                "complete": function(xhr, textStatus) {
-                    App.showMask(false, formEdit);
-                    if (xhr.status != '200') {
-                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                    }
-                    else {
-                        var response = $.parseJSON(xhr.responseText);
-                        if (response.status == 'success') {
-                            toastr['success'](response.message, "Success");
-                            needUpdate = true;
-                            if (option == 'accept') {
-                                $(form).find("button.cancel-form").click();
-                            }
+            var needEdit = false;
+
+            var paxTypes = getSelectedRows(tableEditPaxType);
+            var boardTypes = getSelectedRows(tableEditBoardType);
+            var roomTypes = $('#modal-edit .js-data-ajax').val();
+            var active = formData.get('active') == '1' ? 1 : 0;
+
+            if (
+                object.name != formData.get('name') ||
+                moment(object.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') != formData.get('valid-from') ||
+                moment(object.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY') != formData.get('valid-to') ||
+                object.hotel_id != formData.get('hotel-id') ||
+                !similars(object.pax_types, paxTypes) ||
+                !similars(object.room_types, roomTypes) ||
+                !similars(object.board_types, boardTypes) ||
+                !similarMarkets(object.markets, markets) ||
+                object.active != active
+            ) {
+                needEdit = true;
+            }
+
+            if(needEdit) {
+                formData.append('paxTypes', JSON.stringify(paxTypes));
+                formData.append('boardTypes', JSON.stringify(boardTypes));
+                formData.append('roomTypes', JSON.stringify(roomTypes));
+                formData.append('measures', JSON.stringify(measures));
+                formData.append('markets', JSON.stringify(markets));
+                $.ajax({
+                    "url": routeUpdate,
+                    "type": "POST",
+                    //"data": formEdit.serialize(),
+                    "data": formData,
+                    "contentType": false,
+                    "processData": false,
+                    "beforeSend": function() {
+                        App.showMask(true, formEdit);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        App.showMask(false, formEdit);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
-                            toastr['error'](response.message, "Error");
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                needUpdate = true;
+                                $(form).find("button.cancel-form").click();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
+                            desactiveRows(tableEditBoardType);
+                            desactiveRows(tableEditPaxType);
                         }
-                        desactiveRows(tableEditBoardType);
-                        desactiveRows(tableEditPaxType);
                     }
-                }
-            });
+                });
+            }
+            else {
+                $(form).find("button.cancel-form").click();
+            }
         }
     });
 
@@ -667,7 +765,7 @@ $(document).ready(function () {
 
     $('#table tbody').on( 'click', '.dt-view', function (e) {
         var data = table.row( $(this).parents('tr') ).data();
-        var contract = data['contract'];
+        var contract = data['object'];
         var hotel = contract.hotel;
         var paxTypes = contract.pax_types;
         var boardTypes = contract.board_types;
@@ -1058,7 +1156,8 @@ $(document).ready(function () {
         formEdit.validate().resetForm();
         formEdit[0].reset();
         var data = table.row( $(this).parents('tr') ).data();
-        var contract = data['contract'];
+        object = data['object'];
+        var contract = data['object'];
         var hotel = contract.hotel;
         var paxTypes = contract.pax_types;
         var boardTypes = contract.board_types;

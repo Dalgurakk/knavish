@@ -51,6 +51,72 @@ class HotelRoomTypeController extends Controller
         $searchCode = Input::get('columns')['1']['search']['value'];
         $searchName = Input::get('columns')['2']['search']['value'];
         $searchActive = Input::get('columns')['10']['search']['value'];
+        $roomTypes = array();
+
+        $query = HotelRoomType::orderBy($columns[$orderBy], $orderDirection);
+
+        if(isset($searchCode) && $searchCode != '') {
+            $query->where('hotel_room_types.code', 'like', '%' . $searchCode . '%');
+        }
+        if(isset($searchName) && $searchName != '') {
+            $query->where('hotel_room_types.name', 'like', '%' . $searchName . '%');
+        }
+        if(isset($searchActive) && $searchActive != '') {
+            $query->where('hotel_room_types.active', '=', $searchActive);
+        }
+
+        $records = $query->count();
+
+        $query
+            ->offset($offset)
+            ->limit($limit);
+        $result = $query->get();
+
+        foreach ($result as $r) {
+            $item = array(
+                'id' => $r->id,
+                'code' => $r->code,
+                'name' => $r->name,
+                'max_pax' => $r->max_pax,
+                'max_adult' => $r->max_adult,
+                'min_adult' => $r->min_adult,
+                'max_children' => $r->max_children,
+                'min_children' => $r->min_children,
+                'max_infant' => $r->max_infant,
+                'min_infant' => $r->min_infant,
+                'active' => $r->active,
+                'object' => $r
+            );
+            $roomTypes[] = $item;
+        }
+
+        $data = array(
+            "draw" => Input::get('draw'),
+            "length" => $limit,
+            "start" => $offset,
+            "recordsTotal" => $records,
+            "recordsFiltered" => $records,
+            "data" => $roomTypes
+        );
+        echo json_encode($data);
+    }
+
+    public function read2(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $limit = Input::get('length');
+        $offset = Input::get('start') ? Input::get('start') : 0;
+        $columns = array(
+            'hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name',
+            'hotel_room_types.max_pax', 'hotel_room_types.max_adult', 'hotel_room_types.min_adult',
+            'hotel_room_types.max_children', 'hotel_room_types.min_children', 'hotel_room_types.max_infant',
+            'hotel_room_types.min_infant', 'hotel_room_types.active'
+        );
+        $orderBy = Input::get('order')['0']['column'];
+        $orderDirection = Input::get('order')['0']['dir'];
+        $searchCode = Input::get('columns')['1']['search']['value'];
+        $searchName = Input::get('columns')['2']['search']['value'];
+        $searchActive = Input::get('columns')['10']['search']['value'];
 
         $query = DB::table('hotel_room_types')
             ->select(

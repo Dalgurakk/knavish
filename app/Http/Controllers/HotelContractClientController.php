@@ -125,7 +125,7 @@ class HotelContractClientController extends Controller
                 'valid_to' => $r->valid_to,
                 'active' => $r->active,
                 'status' => $status,
-                'contract' => $r
+                'object' => $r
             );
             $contracts[] = $item;
         }

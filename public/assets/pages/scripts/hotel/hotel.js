@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var needUpdate = false;
+    var object = null;
     var inputSelected;
     var inputSelectedHidden;
 
@@ -344,44 +345,82 @@ $(document).ready(function () {
                 .closest('.form-group').removeClass('has-error');
         },
         submitHandler: function (form) {
-            var option = $(form).find("button[type=submit]:focus").attr('data');
+            var needEdit = false;
             var formData = new FormData(formEdit[0]);
-            $.ajax({
-                "url": routeUpdate,
-                "type": "POST",
-                //"data": formEdit.serialize(),
-                "data": formData,
-                "contentType": false,
-                "processData": false,
-                "beforeSend": function() {
-                    App.showMask(true, formEdit);
-                },
-                "complete": function(xhr, textStatus) {
-                    App.showMask(false, formEdit);
-                    if (xhr.status != '200') {
-                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                    }
-                    else {
-                        var response = $.parseJSON(xhr.responseText);
-                        if (response.status == 'success') {
-                            toastr['success'](response.message, "Success");
-                            needUpdate = true;
-                            if (option == 'accept') {
-                                $(form).find("button.cancel-form").click();
-                            }
+            var active = formData.get('active') == '1' ? 1 : 0;
+            var countryId = object.country == null ? '' : object.country.id;
+            var stateId = object.state == null ? '' : object.state.id;
+            var cityId = object.city == null ? '' : object.city.id;
+            var postalCode = object.postal_code == null ? '' : object.postal_code;
+            var address = object.address == null ? '' : object.address;
+            var category = object.category == null ? '' : object.category;
+            var hotelChainId = object.hotel_chain_id == null ? '' : object.hotel_chain_id;
+            var adminPhone = object.admin_phone == null ? '' : object.admin_phone;
+            var adminFax = object.admin_fax == null ? '' : object.admin_fax;
+            var webSite = object.web_site == null ? '' : object.web_site;
+            var turisticLicence = object.turistic_licence == null ? '' : object.turistic_licence;
+            var email = object.email == null ? '' : object.email;
+            var description = object.description == null ? '' : object.description;
+
+            if (
+                object.name != formData.get('name') ||
+                countryId != formData.get('country-id') ||
+                stateId != formData.get('state-id') ||
+                cityId != formData.get('city-id') ||
+                postalCode != formData.get('postal-code') ||
+                address != formData.get('address') ||
+                hotelChainId != formData.get('hotel-chain-id') ||
+                category != formData.get('category') ||
+                adminPhone != formData.get('admin-phone') ||
+                adminFax != formData.get('admin-fax') ||
+                webSite != formData.get('web-site') ||
+                turisticLicence != formData.get('turistic-licence') ||
+                description != formData.get('description') ||
+                email != formData.get('email') ||
+                object.active != active
+            ) {
+                needEdit = true;
+            }
+
+            if(needEdit) {
+                $.ajax({
+                    "url": routeUpdate,
+                    "type": "POST",
+                    //"data": formEdit.serialize(),
+                    "data": formData,
+                    "contentType": false,
+                    "processData": false,
+                    "beforeSend": function() {
+                        App.showMask(true, formEdit);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        App.showMask(false, formEdit);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
-                            toastr['error'](response.message, "Error");
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                needUpdate = true;
+                                $(form).find("button.cancel-form").click();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
+            else {
+                $(form).find("button.cancel-form").click();
+            }
         }
     });
 
     $('#table tbody').on( 'click', '.dt-view', function (e) {
         var data = table.row( $(this).parents('tr') ).data();
-        var hotel = data['hotel'];
+        var hotel = data['object'];
         var country = hotel.country != null ? hotel.country.name : '';
         var state = hotel.state != null ? hotel.state.name : '';
         var city = hotel.city != null ? hotel.city.name : '';
@@ -419,14 +458,14 @@ $(document).ready(function () {
         formEdit.validate().resetForm();
         formEdit[0].reset();
         var data = table.row( $(this).parents('tr') ).data();
-        var hotel = data['hotel'];
+        object = data['object'];
+        var hotel = data['object'];
         var country = hotel.country != null ? hotel.country.name : '';
         var countryId = hotel.country != null ? hotel.country.id : '';
         var state = hotel.state != null ? hotel.state.name : '';
         var stateId = hotel.state != null ? hotel.state.id : '';
         var city = hotel.city != null ? hotel.city.name : '';
         var cityId = hotel.city != null ? hotel.city.id : '';
-        var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
         var hotelChainId = hotel.hotel_chain_id != null ? hotel.hotel_chain_id : '';
 
         $('#modal-edit :input[name=id]').val(data['id']);

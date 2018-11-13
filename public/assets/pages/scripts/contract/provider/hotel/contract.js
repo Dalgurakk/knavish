@@ -2004,11 +2004,13 @@ $(document).ready(function () {
                         id: data['id']
                     },
                     "beforeSend": function() {
-                        App.showMask(true, formAdd);
+                        App.blockUI({
+                            target: $('.custom-container'),
+                            animate: true
+                        });
                     },
                     "complete": function(xhr, textStatus) {
                         requestDuplicate = null;
-                        App.showMask(false, formAdd);
                         if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
@@ -2024,6 +2026,7 @@ $(document).ready(function () {
                         }
                     }
                 });
+                App.unblockUI($('.custom-container'));
             });
         }
         e.preventDefault();

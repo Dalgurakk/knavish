@@ -328,6 +328,10 @@ $(document).ready(function () {
                         'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success"  data-btn-ok-icon-content="check" ' +
                         'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
                         '<i class="icon-trash btn-action-icon"></i></a>' +
+                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-duplicate" href="javascript:;" data-popout="true" data-placement="left"' +
+                        'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success btn-confirmation"  data-btn-ok-icon-content="check" ' +
+                        'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger btn-confirmation" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
+                        '<i class="icon-docs btn-action-icon"></i></a>' +
                         '<button type="submit" class="btn btn-default btn-circle btn-icon-only btn-action dt-setting">' +
                         '<i class="icon-settings btn-action-icon"></i></button>' +
                         '</div>' +
@@ -1500,37 +1504,42 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
+    var requestDelete;
     $('#table tbody').on( 'click', '.dt-delete', function (e) {
-        var data = table.row( $(this).parents('tr') ).data();
-        $(this).confirmation('show');
-        $(this).on('confirmed.bs.confirmation', function () {
-            $.ajax({
-                url: routeDelete,
-                "type": "POST",
-                "data":  {
-                    id: data['id']
-                },
-                "beforeSend": function() {
-                    App.showMask(true, formAdd);
-                },
-                "complete": function(xhr, textStatus) {
-                    App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
-                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                    }
-                    else {
-                        var response = $.parseJSON(xhr.responseText);
-                        if (response.status == 'success') {
-                            toastr['success'](response.message, "Success");
-                            table.draw();
+        if (!requestDelete) {
+            requestDelete = true;
+            var data = table.row( $(this).parents('tr') ).data();
+            $(this).confirmation('show');
+            $(this).on('confirmed.bs.confirmation', function () {
+                requestDelete = $.ajax({
+                    url: routeDelete,
+                    "type": "POST",
+                    "data":  {
+                        id: data['id']
+                    },
+                    "beforeSend": function() {
+                        App.showMask(true, formAdd);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        requestDelete = null;
+                        App.showMask(false, formAdd);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
-                            toastr['error'](response.message, "Error");
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                table.draw();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
                         }
                     }
-                }
+                });
             });
-        });
+        }
         e.preventDefault();
     });
 
@@ -1979,5 +1988,44 @@ $(document).ready(function () {
         };
         var url = routeExcel + "?" + $.param(query);
         window.location = url;
+    });
+
+    var requestDuplicate;
+    $('#table tbody').on( 'click', '.dt-duplicate', function (e) {
+        if (!requestDuplicate) {
+            requestDuplicate = true;
+            var data = table.row( $(this).parents('tr') ).data();
+            $(this).confirmation('show');
+            $(this).on('confirmed.bs.confirmation', function () {
+                requestDuplicate = $.ajax({
+                    url: routeDuplicate,
+                    "type": "POST",
+                    "data":  {
+                        id: data['id']
+                    },
+                    "beforeSend": function() {
+                        App.showMask(true, formAdd);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        requestDuplicate = null;
+                        App.showMask(false, formAdd);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                        }
+                        else {
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                table.draw();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
+                        }
+                    }
+                });
+            });
+        }
+        e.preventDefault();
     });
 });

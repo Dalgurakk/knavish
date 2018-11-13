@@ -10,7 +10,6 @@ use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
 use App\Models\HotelPaxType;
 use App\Models\Market;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +17,6 @@ use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-use Yajra\DataTables\Exceptions\Exception;
 
 class HotelContractController extends Controller
 {
@@ -476,6 +474,78 @@ class HotelContractController extends Controller
             $this->response['status'] = 'error';
             $this->response['message'] = 'The operation can not be completed, probably the contract is in use.';
             $this->response['errors'] = $e->getMessage();
+        }
+        echo json_encode($this->response);
+    }
+
+    public function duplicate(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $id = Input::get('id');
+        $contract = HotelContract::with([
+            'paxTypes',
+            'boardTypes',
+            'roomTypes',
+            'measures',
+            'priceRates',
+            'priceRates.settings'
+        ])->find($id);
+
+        if ($contract != null) {
+            $newContract = new HotelContract();
+            $newContract->name = $contract->name . ' DUPLICATED!';
+            $newContract->hotel_id = $contract->hotel_id;
+            $newContract->valid_from = $contract->valid_from;
+            $newContract->valid_to = $contract->valid_to;
+            $newContract->active = $contract->active;
+            $newContract->status = $contract->status;
+
+            DB::beginTransaction();
+            try {
+                $newContract->save();
+
+                foreach ($contract->paxTypes as $item) {
+                    $newContract->paxTypes()->attach($item->id);
+                }
+                foreach ($contract->boardTypes as $item) {
+                    $newContract->boardTypes()->attach($item->id);
+                }
+                foreach ($contract->roomTypes as $item) {
+                    $newContract->roomTypes()->attach($item->id);
+                }
+                foreach ($contract->measures as $item) {
+                    $newContract->measures()->attach($item->id);
+                }
+                foreach ($contract->priceRates as $item) {
+                    $hotelContractMarket = new HotelContractMarket();
+                    $hotelContractMarket->hotel_contract_id = $newContract->id;
+                    $hotelContractMarket->market_id = $item->market_id;
+                    $hotelContractMarket->type = $item->type;
+                    $hotelContractMarket->value = $item->value;
+                    $hotelContractMarket->round = $item->round;
+                    $hotelContractMarket->save();
+                    foreach ($item->settings as $setting) {
+                        $newSetting = new HotelContractSetting();
+                        $newSetting->hotel_contract_market_id = $hotelContractMarket->id;
+                        $newSetting->date = $setting->date;
+                        $newSetting->settings = $setting->settings;
+                        $newSetting->save();
+                    }
+                }
+                DB::commit();
+                $this->response['status'] = 'success';
+                $this->response['message'] = 'Contract ' . $contract->name . ' duplicated successfully.';
+            }
+            catch (\Exception $e) {
+                DB::rollBack();
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                $this->response['errors'] = $e->getMessage();
+            }
+        }
+        else {
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Contract invalid.';
         }
         echo json_encode($this->response);
     }

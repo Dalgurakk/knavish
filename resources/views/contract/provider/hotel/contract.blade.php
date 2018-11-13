@@ -1199,6 +1199,7 @@
     var routeRoomTypeSearchActive = "{{ route('hotel.roomtype.search.active') }}";
     var routeDelete = "{{ route('contract.provider.hotel.delete') }}";
     var routeExcel = "{{ route('contract.provider.hotel.excel') }}";
+    var routeDuplicate = "{{ route('contract.provider.hotel.duplicate') }}";
 </script>
 @stop
 

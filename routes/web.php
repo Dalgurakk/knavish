@@ -96,7 +96,7 @@ Route::post('/contract/provider/hotel/settings/data', 'HotelContractController@s
 Route::post('/contract/provider/hotel/settings/import', 'HotelContractController@import')->name('contract.provider.hotel.settings.import');
 Route::post('/contract/provider/hotel/search/active', 'HotelContractController@getActivesByName')->name('contract.provider.hotel.search.active');
 Route::get('/contract/provider/hotel/search/excel', 'HotelContractController@toExcel')->name('contract.provider.hotel.excel');
-Route::get('/contract/provider/hotel/search/excel', 'HotelContractController@toExcel')->name('contract.provider.hotel.excel');
+Route::post('/contract/provider/hotel/duplicate', 'HotelContractController@duplicate')->name('contract.provider.hotel.duplicate');
 //HotelContractClient
 Route::get('/contract/client/hotel', 'HotelContractClientController@index')->name('contract.client.hotel.index');
 Route::post('/contract/client/hotel/create', 'HotelContractClientController@create')->name('contract.client.hotel.create');

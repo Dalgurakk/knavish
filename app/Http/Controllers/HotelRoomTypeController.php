@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\RoomTypeExport;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\HotelRoomType;
 use Illuminate\Support\Facades\Input;

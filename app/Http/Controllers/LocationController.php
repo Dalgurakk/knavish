@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\LocationExport;
 use App\Models\Location;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;

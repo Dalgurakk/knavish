@@ -753,37 +753,42 @@ $(document).ready(function () {
         }
     });
 
+    var requestDelete;
     $('#table tbody').on( 'click', '.dt-delete', function (e) {
-        var data = table.row( $(this).parents('tr') ).data();
-        $(this).confirmation('show');
-        $(this).on('confirmed.bs.confirmation', function () {
-            $.ajax({
-                url: routeDelete,
-                "type": "POST",
-                "data":  {
-                    id: data['id']
-                },
-                "beforeSend": function() {
-                    App.showMask(true, formAdd);
-                },
-                "complete": function(xhr, textStatus) {
-                    App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
-                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                    }
-                    else {
-                        var response = $.parseJSON(xhr.responseText);
-                        if (response.status == 'success') {
-                            toastr['success'](response.message, "Success");
-                            table.draw();
+        if (!requestDelete) {
+            requestDelete = true;
+            var data = table.row( $(this).parents('tr') ).data();
+            $(this).confirmation('show');
+            $(this).on('confirmed.bs.confirmation', function () {
+                requestDelete = $.ajax({
+                    url: routeDelete,
+                    "type": "POST",
+                    "data":  {
+                        id: data['id']
+                    },
+                    "beforeSend": function() {
+                        App.showMask(true, formAdd);
+                    },
+                    "complete": function(xhr, textStatus) {
+                        requestDelete = null;
+                        App.showMask(false, formAdd);
+                        if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
-                            toastr['error'](response.message, "Error");
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                table.draw();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
                         }
                     }
-                }
+                });
             });
-        });
+        }
         e.preventDefault();
     });
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Exports\HotelContractClientExport;
 use App\Models\HotelContract;
 use App\Models\HotelContractClient;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;

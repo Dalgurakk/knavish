@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\CarBrand;
 use Illuminate\Support\Facades\Input;

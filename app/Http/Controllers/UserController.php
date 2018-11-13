@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
-use PHPUnit\Framework\Exception;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UserExport;

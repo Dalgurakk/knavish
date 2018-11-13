@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\PaxTypeExport;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\HotelPaxType;
 use Illuminate\Support\Facades\Input;

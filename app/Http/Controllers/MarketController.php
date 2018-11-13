@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\MarketExport;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\Market;
 use Illuminate\Support\Facades\Input;

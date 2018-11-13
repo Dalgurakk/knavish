@@ -318,13 +318,14 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
+    var requestDelete;
     $('#table tbody').on( 'click', '.dt-delete', function (e) {
-        var data = table.row( $(this).parents('tr') ).data();
-        $(this).confirmation('show');
-        var sendRequest = false;
-        $(this).on('confirmed.bs.confirmation', function () {
-            if(!sendRequest){
-                $.ajax({
+        if (!requestDelete) {
+            requestDelete = true;
+            var data = table.row( $(this).parents('tr') ).data();
+            $(this).confirmation('show');
+            $(this).on('confirmed.bs.confirmation', function () {
+                requestDelete = $.ajax({
                     url: routeDelete,
                     "type": "POST",
                     "data":  {
@@ -334,6 +335,7 @@ $(document).ready(function () {
                         App.showMask(true, formAdd);
                     },
                     "complete": function(xhr, textStatus) {
+                        requestDelete = null;
                         App.showMask(false, formAdd);
                         if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
@@ -348,13 +350,11 @@ $(document).ready(function () {
                                 toastr['error'](response.message, "Error");
                             }
                         }
-                    },
-                    success: function () {
-                        sendRequest = true;
                     }
                 });
-            }
-        });
+
+            });
+        }
         e.preventDefault();
     });
 

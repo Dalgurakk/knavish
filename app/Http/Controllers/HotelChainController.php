@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\HotelChainExport;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use App\Models\HotelChain;
 use Illuminate\Support\Facades\Input;

@@ -1830,7 +1830,15 @@ $(document).ready(function () {
         if (repo.loading) return repo.text;
         var markup =
             "<div class=''>" +
-            "<div class=''>" + repo.code + ": " + repo.name + "</div>"+
+            "<div class=''>" + repo.code + ": " + repo.name +
+            ", Max Pax: " + repo.max_pax +
+            ", Max AD: " + repo.max_adult +
+            ", Min AD: " + repo.min_adult +
+            ", Max CH: " + repo.max_children +
+            ", Min CH: " + repo.min_children +
+            ", Max INF: " + repo.max_infant +
+            ", Min INF: " + repo.min_infant +
+            "</div>"+
             "</div>";
         return markup;
     }

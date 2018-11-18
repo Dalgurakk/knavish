@@ -113,6 +113,12 @@
     <div class="modal-body">
         <div class="row">
             <div class="col-md-12">
+                <input type="hidden" name="id">
+                <div class="note note-info">
+                    <p>The code field must be unique in the system.</p>
+                </div>
+            </div>
+            <div class="col-md-12">
                 <div class="form-group">
                     <label>Code</label>
                     <input type="text" class="form-control" placeholder="Code" name="code">
@@ -245,6 +251,12 @@
     <div class="modal-body">
         <div class="row">
             <input type="hidden" name="id">
+            <div class="col-md-12">
+                <input type="hidden" name="id">
+                <div class="note note-info">
+                    <p>The code field must be unique in the system.</p>
+                </div>
+            </div>
             <div class="col-md-12">
                 <div class="form-group">
                     <label>Code</label>

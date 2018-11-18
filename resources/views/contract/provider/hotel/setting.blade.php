@@ -208,6 +208,20 @@
                             <div class="row">
                                 <div class="rooms-container">
                                     <div class="col-md-12">
+                                        <div id="search-section">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" name="search-code" placeholder="Code">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" name="search-name" placeholder="Denomination">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0">
                                             <thead>
                                             <tr>

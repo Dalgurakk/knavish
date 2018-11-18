@@ -138,7 +138,7 @@ $(document).ready(function () {
     });
 
     var tableAddRoomType = $('#modal-add .table-room-type').dataTable({
-        "sDom": "t",
+        "sDom": "tip",
         "lengthMenu": [[-1], ["All"]],
         "order": [[ 1, "asc" ]],
         "autoWidth": false,
@@ -152,7 +152,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
             { 'orderable': false, 'targets': [8] }
-        ]
+        ],
+        "pageLength": 10
     });
 
     var tableEditPaxType = $('#modal-edit .table-pax-type').dataTable({
@@ -174,7 +175,7 @@ $(document).ready(function () {
     });
 
     var tableEditRoomType = $('#modal-edit .table-room-type').dataTable({
-        "sDom": "t",
+        "sDom": "tip",
         "lengthMenu": [[-1], ["All"]],
         "order": [[ 1, "asc" ]],
         "autoWidth": false,
@@ -188,7 +189,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
             { 'orderable': false, 'targets': [8] }
-        ]
+        ],
+        "pageLength": 10
     });
 
     var tableInfoPaxType = $('#modal-info .table-pax-type').dataTable({
@@ -210,7 +212,7 @@ $(document).ready(function () {
     });
 
     var tableInfoRoomType = $('#modal-info .table-room-type').dataTable({
-        "sDom": "t",
+        "sDom": "tip",
         "lengthMenu": [[-1], ["All"]],
         "order": [[ 1, "asc" ]],
         "autoWidth": false,
@@ -224,7 +226,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
             { 'orderable': false, 'targets': [8] }
-        ]
+        ],
+        "pageLength": 10
     });
 
     $('.hotel-category').barrating({

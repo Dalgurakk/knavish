@@ -215,14 +215,15 @@ $(document).ready(function () {
     });
 
     var tableShareRoomType = $('#modal-setting .table-room-type').dataTable({
-        "sDom": "t",
+        "sDom": "tip",
         "autoWidth": false,
         "columnDefs": [
             { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
             { 'visible': false, 'targets': [1] }
         ],
         "order": [[ 3, "asc" ]],
-        "lengthMenu": [[-1], ["All"]]
+        "lengthMenu": [[-1], ["All"]],
+        "pageLength": 10
     });
 
     tableShareRoomType.find('.group-checkable').change(function () {
@@ -242,7 +243,22 @@ $(document).ready(function () {
 
     tableShareRoomType.on('change', 'tbody tr .checkboxes', function () {
         $(this).parents('tr').toggleClass("active");
+        //alert( tableShareRoomType.api().rows('.active').data().length +' row(s) selected' );
         //$('#modal-setting :input[name=count-room-type]').val(countSelectedRecords(tableShareRoomType));
+    });
+
+    $('input[name=search-code]').on('keyup', function() {
+        tableShareRoomType.api()
+            .columns(2).search($('input[name="search-code"]').val())
+            .columns(3).search($('input[name="search-name"]').val())
+            .draw();
+    });
+
+    $('input[name=search-name]').on('keyup', function() {
+        tableShareRoomType.api()
+            .columns(2).search($('input[name="search-code"]').val())
+            .columns(3).search($('input[name="search-name"]').val())
+            .draw();
     });
 
     function fillContract(c) {
@@ -509,10 +525,15 @@ $(document).ready(function () {
 
     function getSelectedRows(table) {
         var rows = [];
-        $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).each(function() {
+        /*$('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).each(function() {
             var data = table.api().row( $(this).parents('tr') ).data();
             rows.push(data[1]);
         });
+        return rows;*/
+        var selected = tableShareRoomType.api().rows('.active').data();
+        for (var i = 0; i < selected.length; i++) {
+            rows.push(selected[i][1]);
+        }
         return rows;
     }
 

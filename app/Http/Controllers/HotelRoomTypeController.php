@@ -159,7 +159,7 @@ class HotelRoomTypeController extends Controller
 
         $total = Input::get('minadult') + Input::get('minchildren') + Input::get('mininfant');
         $rules = array(
-            'code' => 'required|unique:hotel_room_types',
+            'code' => 'required',
             'name' => 'required',
             'maxadult' => 'required|integer|min:0|max:' . Input::get('maxpax'),
             'maxchildren' => 'required|integer|min:0|max:' . Input::get('maxpax'),
@@ -211,7 +211,7 @@ class HotelRoomTypeController extends Controller
         $id = Input::get('id');
         $total = Input::get('minadult') + Input::get('minchildren') + Input::get('mininfant');
         $rules = array(
-            'code' => 'required|unique:hotel_room_types',
+            'code' => 'required',
             'name' => 'required',
             'maxadult' => 'required|integer|min:0|max:' . Input::get('maxpax'),
             'maxchildren' => 'required|integer|min:0|max:' . Input::get('maxpax'),

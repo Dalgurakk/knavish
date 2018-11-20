@@ -13,12 +13,36 @@ $(document).ready(function () {
     var contract = null;
     var searched = false;
 
-    $('.date-picker').datepicker({
+    $('#modal-setting :input[name=setting-from]').datepicker({
         rtl: App.isRTL(),
         orientation: "left",
         autoclose: true,
         format: 'dd.mm.yyyy',
         orientation: "bottom"
+    }).on('changeDate', function(e) {
+        var start = $(this).val();
+        var end = $('#modal-setting :input[name=setting-to]').val();
+        var startDate = moment(start, 'DD.MM.YYYY');
+        var endDate = moment(end, 'DD.MM.YYYY');
+        if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
+            $('#modal-setting :input[name=setting-to]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+        }
+    });
+
+    $('#modal-setting :input[name=setting-to]').datepicker({
+        rtl: App.isRTL(),
+        orientation: "left",
+        autoclose: true,
+        format: 'dd.mm.yyyy',
+        orientation: "bottom"
+    }).on('changeDate', function(e) {
+        var end = $(this).val();
+        var start = $('input[name="setting-from"]').val();
+        var startDate = moment(start, 'DD.MM.YYYY');
+        var endDate = moment(end, 'DD.MM.YYYY');
+        if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
+            $('input[name="setting-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+        }
     });
 
     function searchFormat(repo) {
@@ -350,8 +374,7 @@ $(document).ready(function () {
         }
         else if (currentDate.isAfter(endDate)) {
             var tempStart = moment(endDate).startOf('month');
-            var tempEnd = moment(endDate
-            ).endOf('month');
+            var tempEnd = moment(endDate).endOf('month');
             $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
             $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
         }
@@ -683,6 +706,14 @@ $(document).ready(function () {
             autoclose: true,
             format: 'dd.mm.yyyy',
             orientation: "bottom"
+        }).on('changeDate', function(e) {
+            var start = $(this).val();
+            var end = $('input[name="setting-to-' + time + '"]').val();
+            var startDate = moment(start, 'DD.MM.YYYY');
+            var endDate = moment(end, 'DD.MM.YYYY');
+            if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
+                $('input[name="setting-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+            }
         });
 
         $('input[name="setting-to-' + time + '"]').datepicker({
@@ -691,6 +722,14 @@ $(document).ready(function () {
             autoclose: true,
             format: 'dd.mm.yyyy',
             orientation: "bottom"
+        }).on('changeDate', function(e) {
+            var end = $(this).val();
+            var start = $('input[name="setting-from-' + time + '"]').val();
+            var startDate = moment(start, 'DD.MM.YYYY');
+            var endDate = moment(end, 'DD.MM.YYYY');
+            if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
+                $('input[name="setting-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+            }
         });
 
         var startDate = moment(contract.valid_from, 'YYYY-MM-DD');

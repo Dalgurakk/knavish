@@ -285,6 +285,10 @@ $(document).ready(function () {
             .draw();
     });
 
+    $('#modal-change :input[name="change-room"]').select2({
+        width: "off"
+    });
+
     function fillContract(c) {
         var roomTypes = c.room_types;
         var measures = c.measures;
@@ -316,6 +320,7 @@ $(document).ready(function () {
         updateImport(markets);
 
         $('.room-types-list').html('');
+        $('#modal-change :input[name="change-room"]').empty();
         $.each(roomTypes, function (i, item) {
             var roomType =
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
@@ -323,6 +328,9 @@ $(document).ready(function () {
                 '<span></span>' +
                 '</label>';
             $('.room-types-list').append(roomType);
+
+            var option = '<option value="' + roomTypes[i].id + '"> ' + roomTypes[i].name + '</option>';
+            $('#modal-change :input[name="change-room"]').append(option);
         });
 
         $('input[name=from]').datepicker( "destroy" );
@@ -462,6 +470,34 @@ $(document).ready(function () {
         });
     }
 
+    function updateShare() {
+        $('.share-rooms').hide();
+        var roomTypes = contract.room_types;
+        if (roomTypes.length > 1) {
+            tableShareRoomType.api().clear().draw();
+            var check =
+                '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">' +
+                '<input type="checkbox" class="checkboxes" value="1" />' +
+                '<span></span>' +
+                '</label>';
+            for (var i = 0; i < roomTypes.length; i++) {
+                if (roomTypes[i].id != $('input[name="room-type-id"]').val()) {
+                    tableShareRoomType.api().row.add([
+                        check,
+                        roomTypes[i].id,
+                        roomTypes[i].code,
+                        roomTypes[i].name
+                    ]).draw( false );
+                    tableShareRoomType.api().columns.adjust().draw();
+                }
+            }
+            $('.share-container').show();
+        }
+        else {
+            $('.share-container').hide();
+        }
+    }
+
     function updateImport(markets) {
         $('#import-from').empty();
         $('#import-from').removeAttr('disabled');
@@ -515,32 +551,7 @@ $(document).ready(function () {
             });
 
             updateImport(contract.markets);
-
-            $('.share-rooms').hide();
-            var roomTypes = contract.room_types;
-            if (roomTypes.length > 1) {
-                tableShareRoomType.api().clear().draw();
-                var check =
-                    '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">' +
-                    '<input type="checkbox" class="checkboxes" value="1" />' +
-                    '<span></span>' +
-                    '</label>';
-                for (var i = 0; i < roomTypes.length; i++) {
-                    if (roomTypes[i].id != $('input[name="room-type-id"]').val()) {
-                        tableShareRoomType.api().row.add([
-                            check,
-                            roomTypes[i].id,
-                            roomTypes[i].code,
-                            roomTypes[i].name
-                        ]).draw( false );
-                        tableShareRoomType.api().columns.adjust().draw();
-                    }
-                }
-                $('.share-container').show();
-            }
-            else {
-                $('.share-container').hide();
-            }
+            updateShare();
 
             $('#modal-setting').modal('show');
         });
@@ -548,11 +559,6 @@ $(document).ready(function () {
 
     function getSelectedRows(table) {
         var rows = [];
-        /*$('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).each(function() {
-            var data = table.api().row( $(this).parents('tr') ).data();
-            rows.push(data[1]);
-        });
-        return rows;*/
         var selected = tableShareRoomType.api().rows('.active').data();
         for (var i = 0; i < selected.length; i++) {
             rows.push(selected[i][1]);
@@ -652,10 +658,14 @@ $(document).ready(function () {
                         var response = $.parseJSON(xhr.responseText);
                         if (response.status == 'success') {
                             toastr['success'](response.message, "Success");
-                            formSetting[0].reset();
                             needUpdate = true;
                             if (option == 'accept') {
                                 $(form).find("button.cancel-form").click();
+                                formSetting[0].reset();
+                            }
+                            else {
+                                $('#modal-setting :input[name="cost"]').val('');
+                                $('#modal-setting :input[name="price"]').val('');
                             }
                         }
                         else {
@@ -769,5 +779,28 @@ $(document).ready(function () {
             $('.share-rooms').show();
         else
             $('.share-rooms').hide();
+    });
+
+    $('input[name=change]').change(function () {
+        if ($(this).is(':checked')) {
+            $('#modal-change :input[name="change-room"]').val($('#modal-setting :input[name="room-type-id"]').val()).trigger("change");
+            $('#modal-change').modal('show');
+        }
+    });
+
+    $('.cancel-change').on('click', function(e) {
+        $('#modal-setting :input[name=change]').prop('checked', '');
+        $('#modal-setting :input[name=change]').val(0);
+    });
+
+    $('.accept-change').on('click', function(e) {
+        var id = $('#modal-change :input[name="change-room"]').val();
+        var name = $('#modal-change :input[name="change-room"]').select2('data')[0]['text'];
+        $('#modal-setting :input[name="room-type-id"]').val(id);
+        $('#modal-setting .room-name-header').html(name);
+        $('.cancel-change').click();
+        updateShare();
+        $('#modal-setting :input[name=share]').prop('checked', '');
+        $('#modal-setting :input[name=share]').val(0);
     });
 });

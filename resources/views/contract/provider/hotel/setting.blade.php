@@ -184,14 +184,18 @@
         <input type="hidden" name="room-type-id" value="0">
         <input type="hidden" name="market-id" value="0">
         <div class="row">
-            <div class="col-md-12" style="margin-bottom: 20px; display: inline-block; text-align: center;">
+            <div class="col-md-12" style="margin-bottom: 25px; display: inline-block; text-align: center;">
                 <div class="caption">
                     <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
                 </div>
             </div>
-            <div class="col-md-12 share-container" style="margin-bottom: 20px; display: inline-block; text-align: center;">
+            <div class="col-md-12 share-container" style="margin-bottom: 30px; display: inline-block; text-align: center;">
                 <label class="mt-checkbox mt-checkbox-outline no-margin-bottom share"> Share
                     <input type="checkbox" value="1" name="share"/>
+                    <span></span>
+                </label>
+                <label class="mt-checkbox mt-checkbox-outline no-margin-bottom change" style="margin-left: 20px;"> Change Room
+                    <input type="checkbox" value="1" name="change"/>
                     <span></span>
                 </label>
             </div>
@@ -306,12 +310,29 @@
         </div>
     </div>
     <div class="modal-footer">
+        <button type="submit" class="btn green" data="apply"><i class="fa fa-repeat"></i> Apply</button>
         <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>
         <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
     </div>
     </form>
 </div>
-
+<div id="modal-change" class="modal fade custom-container" tabindex="-1" data-width="450" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-change" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-hotel"></i> Select Room Type</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
+                <select class="form-control" name="change-room"></select>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn green accept-change" data="accept"><i class="fa fa-check"></i> Accept</button>
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-change"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+</div>
 @stop
 
 @section('page-plugins')

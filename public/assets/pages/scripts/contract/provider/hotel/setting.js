@@ -330,13 +330,13 @@ $(document).ready(function () {
             $('.room-types-list').append(roomType);
 
             var option = '<option value="' + roomTypes[i].id + '" data-name="' + roomTypes[i].name + '"> ' + roomTypes[i].name + ' (' +
-                'MAX PAX: ' + roomTypes[i].max_pax +
-                ', MAX AD: ' + roomTypes[i].max_adult +
-                ', MIN AD: ' + roomTypes[i].min_adult +
-                ', MAX CH: ' + roomTypes[i].max_children +
-                ', MIN CH: ' + roomTypes[i].min_children +
-                ', MAX INF: ' + roomTypes[i].max_infant +
-                ', MIN INF: ' + roomTypes[i].min_infant +
+                'Max Pax: ' + roomTypes[i].max_pax +
+                ', Max AD: ' + roomTypes[i].max_adult +
+                ', Min AD: ' + roomTypes[i].min_adult +
+                ', Max CH: ' + roomTypes[i].max_children +
+                ', Min CH: ' + roomTypes[i].min_children +
+                ', Max INF: ' + roomTypes[i].max_infant +
+                ', Min INF: ' + roomTypes[i].min_infant +
                 ')' + '</option>';
             $('#modal-change :input[name="change-room"]').append(option);
         });

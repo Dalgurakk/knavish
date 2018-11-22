@@ -316,7 +316,7 @@
     </div>
     </form>
 </div>
-<div id="modal-change" class="modal fade custom-container" tabindex="-1" data-width="450" data-backdrop="static" data-keyboard="false">
+<div id="modal-change" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-change" data-dismiss="modal" aria-hidden="true"></button>
         <h4 class="modal-title"><i class="fa fa-hotel"></i> Select Room Type</h4>

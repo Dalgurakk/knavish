@@ -329,7 +329,15 @@ $(document).ready(function () {
                 '</label>';
             $('.room-types-list').append(roomType);
 
-            var option = '<option value="' + roomTypes[i].id + '"> ' + roomTypes[i].name + '</option>';
+            var option = '<option value="' + roomTypes[i].id + '" data-name="' + roomTypes[i].name + '"> ' + roomTypes[i].name + ' (' +
+                'MAX PAX: ' + roomTypes[i].max_pax +
+                ', MAX AD: ' + roomTypes[i].max_adult +
+                ', MIN AD: ' + roomTypes[i].min_adult +
+                ', MAX CH: ' + roomTypes[i].max_children +
+                ', MIN CH: ' + roomTypes[i].min_children +
+                ', MAX INF: ' + roomTypes[i].max_infant +
+                ', MIN INF: ' + roomTypes[i].min_infant +
+                ')' + '</option>';
             $('#modal-change :input[name="change-room"]').append(option);
         });
 
@@ -795,7 +803,8 @@ $(document).ready(function () {
 
     $('.accept-change').on('click', function(e) {
         var id = $('#modal-change :input[name="change-room"]').val();
-        var name = $('#modal-change :input[name="change-room"]').select2('data')[0]['text'];
+        //var name = $('#modal-change :input[name="change-room"]').select2('data')[0]['text'];
+        var name = $('#modal-change :input[name="change-room"]').select2().find(":selected").data("name");
         $('#modal-setting :input[name="room-type-id"]').val(id);
         $('#modal-setting .room-name-header').html(name);
         $('.cancel-change').click();

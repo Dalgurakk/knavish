@@ -93,7 +93,8 @@ Route::post('/contract/provider/hotel', 'HotelContractController@getContract')->
 Route::post('/contract/provider/hotel/search', 'HotelContractController@getByName')->name('contract.provider.hotel.search');
 Route::post('/contract/provider/hotel/settings/save', 'HotelContractController@saveSettings')->name('contract.provider.hotel.settings.save');
 Route::post('/contract/provider/hotel/settings/data', 'HotelContractController@settingsByContract')->name('contract.provider.hotel.settings.data');
-Route::post('/contract/provider/hotel/settings/import', 'HotelContractController@import')->name('contract.provider.hotel.settings.import');
+Route::post('/contract/provider/hotel/settings/import/price', 'HotelContractController@importPrice')->name('contract.provider.hotel.settings.import.price');
+Route::post('/contract/provider/hotel/settings/import/cost', 'HotelContractController@importCost')->name('contract.provider.hotel.settings.import.cost');
 Route::post('/contract/provider/hotel/search/active', 'HotelContractController@getActivesByName')->name('contract.provider.hotel.search.active');
 Route::get('/contract/provider/hotel/search/excel', 'HotelContractController@toExcel')->name('contract.provider.hotel.excel');
 Route::post('/contract/provider/hotel/duplicate', 'HotelContractController@duplicate')->name('contract.provider.hotel.duplicate');

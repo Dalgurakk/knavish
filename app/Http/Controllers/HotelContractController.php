@@ -684,7 +684,7 @@ class HotelContractController extends Controller
         return $price;
     }
 
-    public function import(Request $request)    {
+    public function importPrice(Request $request)    {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         //$importType = Input::get('import-type');
@@ -793,6 +793,63 @@ class HotelContractController extends Controller
                 $this->response['message'] = 'Database error, probably the email or username already exist.';
                 $this->response['errors'] = $e->getMessage();
             }
+        }
+        echo json_encode($this->response);
+    }
+
+    public function importCost(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $fromRoom = Input::get('select-room');
+        $contractId = Input::get('contract-id');
+        $marketId = Input::get('market-id');
+        $toRoom = Input::get('room-type-id');
+        $addValue = Input::get('add-value');
+        $rateType = Input::get('rate_type');
+        $ratePercentValue = Input::get('rate_percent_value');
+        $rateFeeValue = Input::get('rate_fee_value');
+
+        try {
+            $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+            $hotelContractSettings = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->get();
+
+            foreach ($hotelContractSettings as $hotelContractSetting) {
+                $settings = json_decode($hotelContractSetting->settings, true);
+                if (array_key_exists($fromRoom, $settings)) {
+                    $settings[$toRoom][1] = $settings[$fromRoom][1];
+                    $settings[$toRoom][2] = $settings[$fromRoom][2];
+                    if ($addValue != '') {
+                        $cost = $settings[$toRoom]['1'];
+                        if ($rateType == 1) {
+                            $bonus = $ratePercentValue * $cost / 100;
+                        }
+                        else if ($rateType == 2) {
+                            $bonus = $rateFeeValue;
+                        }
+                        $settings[$toRoom]['1'] = $cost + $bonus;
+                        $settings[$toRoom]['2'] = $this->calculatePrice($cost + $bonus, $marketRate);
+                    }
+                }
+                else {
+                    unset($settings[$toRoom]);
+                }
+
+                if (empty($settings)) {
+                    $hotelContractSetting->delete();
+                }
+                else {
+                    $hotelContractSetting->settings = json_encode($settings);
+                    $hotelContractSetting->save();
+                }
+            }
+
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Petition executed successfully.';
+        }
+        catch (\Exception $e) {
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Database error, probably the email or username already exist.';
+            $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
     }

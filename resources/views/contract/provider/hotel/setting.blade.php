@@ -9,6 +9,7 @@
 <link href="{{ asset('assets/global/plugins/bootstrap-sweetalert/sweetalert.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css') }}" rel="stylesheet" type="text/css" />
 <style>
     .show-import, .show-import:focus, .show-import:hover { color: #fff; background-color: #32c5d2; border-color: #32c5d2; }
     .hide-import, .hide-import:focus, .hide-import:hover { color: #32c5d2; background-color: #fff; border-color: #32c5d2; }
@@ -316,6 +317,7 @@
     </div>
     </form>
 </div>
+
 <div id="modal-change" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-change" data-dismiss="modal" aria-hidden="true"></button>
@@ -333,6 +335,67 @@
         <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-change"><i class="fa fa-close"></i> Cancel</button>
     </div>
 </div>
+
+<div id="modal-import" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-import" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-download"></i> Import</h4>
+    </div>
+    <form id="form-import">
+    <div class="modal-body">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12" style="margin-bottom: 25px; display: inline-block; text-align: center;">
+                    <div class="caption">
+                        <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="note note-info">
+                    <p>This will overwrite the current configuration of the room.</p>
+                </div>
+            </div>
+            <div class="col-md-12" style="padding-bottom: 10px;">
+                <div class="form-group">
+                    <label>Import From</label>
+                    <select class="form-control" name="select-room"></select>
+                </div>
+            </div>
+            <div class="col-md-12 share-container" style="margin-bottom: 30px; display: inline-block; text-align: center;">
+                <label class="mt-checkbox mt-checkbox-outline no-margin-bottom set-add-value"> Add Value
+                    <input type="checkbox" value="1" name="add-value"/>
+                    <span></span>
+                </label>
+            </div>
+            <div class="col-md-12" style="text-align: center;">
+                <div class="mt-radio-list" style="padding: 0;">
+                    <label class="mt-radio mt-radio-outline custom-radio" style="max-width: 300px; display: inline-block; margin-bottom: 0;">
+                        <input type="radio" name="rate_type" value="2" data-target="rate_fee_value" checked>
+                        <div class="form-group">
+                            <input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value" id="rate_fee_value" disabled/>
+                        </div>
+                        <span style="margin-top: 8px;"></span>
+                    </label>
+                </div>
+                <div class="mt-radio-list" style="padding: 0;">
+                    <label class="mt-radio mt-radio-outline custom-radio" style="max-width: 300px; display: inline-block; margin-bottom: 0;">
+                        <input type="radio" name="rate_type" value="1" data-target="rate_percent_value">
+                        <div class="form-group">
+                            <input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value" id="rate_percent_value" disabled/>
+                        </div>
+                        <span style="margin-top: 8px;"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn green accept-import" data="accept"><i class="fa fa-download"></i> Import</button>
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-import"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+    </form>
+</div>
 @stop
 
 @section('page-plugins')
@@ -348,12 +411,15 @@
 <script src="{{ asset('assets/global/scripts/datatable.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/datatables/datatables.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/fuelux/js/spinner.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js') }}" type="text/javascript"></script>
 <script>
     var routeSearch = "{{ route('contract.provider.hotel.search') }}";
     var routeContract = "{{ route('contract.provider.hotel') }}";
     var routeData = "{{ route('contract.provider.hotel.settings.data') }}";
     var routeSave = "{{ route('contract.provider.hotel.settings.save') }}";
-    var routeImport = "{{ route('contract.provider.hotel.settings.import') }}";
+    var routeImportPrice = "{{ route('contract.provider.hotel.settings.import.price') }}";
+    var routeImportCost = "{{ route('contract.provider.hotel.settings.import.cost') }}";
     var contractId = '{{ $contract_id }}';
 </script>
 @stop

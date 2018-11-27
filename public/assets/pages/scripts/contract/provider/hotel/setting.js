@@ -152,7 +152,7 @@ $(document).ready(function () {
             function(isConfirm){
                 if (isConfirm){
                     $.ajax({
-                        url: routeImport,
+                        url: routeImportPrice,
                         "type": "POST",
                         "data":  {
                             "contract-id": contract.id,
@@ -289,6 +289,10 @@ $(document).ready(function () {
         width: "off"
     });
 
+    $('#modal-import :input[name="select-room"]').select2({
+        width: "off"
+    });
+
     function fillContract(c) {
         var roomTypes = c.room_types;
         var measures = c.measures;
@@ -420,12 +424,16 @@ $(document).ready(function () {
                 html +=
                         '<div class="col-md-7 col-sm-7 col-xs-7">' +
                             '<div class="mt-checkbox-inline">' +
-                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                                    '<input type="checkbox" value="1" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Set' +
+                                    '<input type="checkbox" class="set" value="1" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
                                     '<span></span>' +
                                 '</label>' +
-                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Unset' +
-                                    '<input type="checkbox" value="0" name="unset-cost" />' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Unset' +
+                                    '<input type="checkbox" class="set" value="0" name="unset-cost" />' +
+                                    '<span></span>' +
+                                '</label>' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15"> Import' +
+                                    '<input type="checkbox" class="set" value="0" name="import-cost" />' +
                                     '<span></span>' +
                                 '</label>' +
                             '</div>' +
@@ -436,7 +444,7 @@ $(document).ready(function () {
                         '<div class="col-md-7 col-sm-7 col-xs-7">' +
                             '<div class="mt-checkbox-inline">' +
                                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                                    '<input type="checkbox" value="" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
+                                    '<input type="checkbox" class="set" value="" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
                                     '<span></span>' +
                                 '</label>' +
                             '</div>' +
@@ -458,6 +466,27 @@ $(document).ready(function () {
                     //$('input[name=' + name + ']').val('');
                 }
             });
+
+            $('.cancel-import').on('click', function(e) {
+                $('input[name="import-cost"]').prop('checked', '');
+                $('input[name="import-cost"]').val(0);
+            });
+
+            $('input[name=import-cost]').change(function () {
+                if ($(this).is(':checked')) {
+                    //$('#modal-import :input[name="select-room"]').val($('#modal-setting :input[name="room-type-id"]').val()).trigger("change");
+                    $('input[name="set-cost"]').prop('checked', '');
+                    $('input[name="unset-cost"]').prop('checked', '');
+                    var room = $('#modal-setting .room-name-header').html();
+                    $('#modal-import .room-name-header').html(room);
+                    $('input[name=add-value]').prop('checked', '');
+                    $('input[name="rate_fee_value"]').attr('disabled', 'disabled').val('');
+                    $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
+                    $('input[data-target="rate_fee_value"]').prop('checked', true).attr('disabled', 'disabled');
+                    $('input[data-target="rate_percent_value"]').attr('disabled', 'disabled');
+                    $('#modal-import').modal('show');
+                }
+            });
         }
 
         $('input[name="unset-cost"]').change(function() {
@@ -465,7 +494,8 @@ $(document).ready(function () {
                 $('.measure-input').prop('readonly', true);
                 $('.measure-input').val('');
                 $('input[name^=set-]').prop('checked', '');
-                $('input[name^=set-]').attr('onclick', 'return false;');
+                $('input[name="import-cost"]').prop('checked', '');
+                //$('input[name^=set-]').attr('onclick', 'return false;');
                 formSetting.validate();
                 $('input[name="cost"]').rules('remove', 'required');
             }
@@ -474,6 +504,14 @@ $(document).ready(function () {
                 $('input[name^=set-]').attr('onclick', '');
                 formSetting.validate();
                 $('input[name="cost"]').rules('add', 'required');
+            }
+        });
+
+        $('input[name="set-cost"]').change(function() {
+            if($(this).is(":checked")) {
+                $('input[name="cost"]').rules('add', 'required');
+                $('input[name="unset-cost"]').prop('checked', '');
+                $('input[name="import-cost"]').prop('checked', '');
             }
         });
     }
@@ -523,6 +561,25 @@ $(document).ready(function () {
         }
     }
 
+    function updateImportCost(roomTypes) {
+        $('#modal-import :input[name="select-room"]').empty();
+        $.each(roomTypes, function (i, item) {
+            var option = '<option value="' + roomTypes[i].id + '" data-name="' + roomTypes[i].name + '"> ' + roomTypes[i].name + ' (' +
+                'Max Pax: ' + roomTypes[i].max_pax +
+                ', Max AD: ' + roomTypes[i].max_adult +
+                ', Min AD: ' + roomTypes[i].min_adult +
+                ', Max CH: ' + roomTypes[i].max_children +
+                ', Min CH: ' + roomTypes[i].min_children +
+                ', Max INF: ' + roomTypes[i].max_infant +
+                ', Min INF: ' + roomTypes[i].min_infant +
+                ')' + '</option>';
+
+            if(roomTypes[i].id != $('#modal-setting :input[name="room-type-id"]').val()) {
+                $('#modal-import :input[name="select-room"]').append(option);
+            }
+        });
+    }
+
     function renderTable(from, to, contract) {
         $('.item-setting').on('click', function() {
             formSetting.validate();
@@ -560,6 +617,7 @@ $(document).ready(function () {
 
             updateImport(contract.markets);
             updateShare();
+            updateImportCost(contract.room_types);
 
             $('#modal-setting').modal('show');
         });
@@ -809,7 +867,151 @@ $(document).ready(function () {
         $('#modal-setting .room-name-header').html(name);
         $('.cancel-change').click();
         updateShare();
+        updateImportCost(contract.room_types);
         $('#modal-setting :input[name=share]').prop('checked', '');
         $('#modal-setting :input[name=share]').val(0);
+    });
+
+    $('#modal-import [id=rate_fee_value]').TouchSpin({
+        min: -1000000000,
+        max: 1000000000,
+        stepinterval: 50,
+        decimals: 2,
+        maxboostedstep: 10000000,
+        prefix: '$'
+    });
+
+    $('#modal-import [id=rate_percent_value]').TouchSpin({
+        min: 0,
+        max: 100,
+        step: 1,
+        decimals: 2,
+        boostat: 5,
+        maxboostedstep: 10,
+        postfix: '%'
+    });
+
+    $('input[name=add-value]').on('click', function(e) {
+        if ($(this).is(':checked')) {
+            $('input[name="rate_fee_value"]').removeAttr('disabled');
+            $('input[data-target="rate_fee_value"]').removeAttr('disabled');
+            $('input[data-target="rate_percent_value"]').removeAttr('disabled');
+
+        }
+        else {
+            $('input[name="rate_fee_value"]').attr('disabled', 'disabled').val('');
+            $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
+            $('input[data-target="rate_fee_value"]').attr('disabled', 'disabled').prop('checked', true);
+            $('input[data-target="rate_percent_value"]').attr('disabled', 'disabled');
+        }
+    });
+
+    $('input[name="rate_type"]').change(function() {
+        var type = $(this).val();
+        if (type == 1) {
+            $('input[name="rate_fee_value"]').attr('disabled', 'disabled').val('');
+            $('input[name="rate_percent_value"]').removeAttr('disabled');
+        }
+        else {
+            $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
+            $('input[name="rate_fee_value"]').removeAttr('disabled');
+        }
+    });
+
+
+    var formImport = $('#form-import');
+    formImport.validate({
+        errorElement: 'span',
+        errorClass: 'help-block help-block-error',
+        focusInvalid: false,
+        ignore: "",
+        /*rules: {
+            "cost" : {
+                required: true
+            },
+            "setting-from" : {
+                required: true
+            },
+            "setting-to" : {
+                required: true
+            }
+        },*/
+        errorPlacement: function (error, element) {
+            if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
+                if (element.parents('.mt-radio-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-list')[0]);
+                }
+                if (element.parents('.mt-checkbox-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-list')[0]);
+                }
+            } else if (element.parents('.mt-radio-inline').size() > 0 || element.parents('.mt-checkbox-inline').size() > 0) {
+                if (element.parents('.mt-radio-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-inline')[0]);
+                }
+                if (element.parents('.mt-checkbox-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-inline')[0]);
+                }
+            } else if (element.parent(".input-group").size() > 0) {
+                error.insertAfter(element.parent(".input-group"));
+            } else if (element.attr("data-error-container")) {
+                error.appendTo(element.attr("data-error-container"));
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        invalidHandler: function (event, validator) {
+            toastr['error']("Please check the entry fields.", "Error");
+        },
+        highlight: function (element) {
+            $(element)
+                .closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element)
+                .closest('.form-group').removeClass('has-error');
+        },
+        success: function (label) {
+            label
+                .closest('.form-group').removeClass('has-error');
+        },
+        submitHandler: function (form) {
+            var contractId = $('#modal-setting :input[name="contract-id"]').val();
+            var roomTypeId = $('#modal-setting :input[name="room-type-id"]').val();
+            var marketId = $('#modal-setting :input[name="market-id"]').val();
+            var formData = new FormData(formImport[0]);
+
+            formData.append('contract-id', contractId);
+            formData.append('room-type-id', roomTypeId);
+            formData.append('market-id', marketId);
+            $.ajax({
+                "url": routeImportCost,
+                "type": "POST",
+                "data": formData,
+                "contentType": false,
+                "processData": false,
+                //"data": formSetting.serialize(),
+                "beforeSend": function() {
+                    App.showMask(true, formImport);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formImport);
+                    if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdate = true;
+                            $(form).find("button.cancel-import").click();
+                            formImport[0].reset();
+                        }
+                        else {
+                            toastr['error'](response.message, "Error");
+                        }
+                    }
+                }
+            });
+        }
     });
 });

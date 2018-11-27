@@ -787,7 +787,7 @@ $(document).ready(function () {
             var end = $('input[name="setting-to-' + time + '"]').val();
             var startDate = moment(start, 'DD.MM.YYYY');
             var endDate = moment(end, 'DD.MM.YYYY');
-            if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
+            if (start != 0 && start != '' && (end == 0 || end == '' || moment(endDate).isBefore(startDate))) {
                 $('input[name="setting-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
             }
         });
@@ -803,7 +803,7 @@ $(document).ready(function () {
             var start = $('input[name="setting-from-' + time + '"]').val();
             var startDate = moment(start, 'DD.MM.YYYY');
             var endDate = moment(end, 'DD.MM.YYYY');
-            if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
+            if (end != 0 && end != '' && (start == 0 || start == '' || moment(endDate).isBefore(startDate))) {
                 $('input[name="setting-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
             }
         });

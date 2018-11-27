@@ -346,6 +346,11 @@ var App = function() {
             container: 'body',
             title: 'Search'
         });
+        $('.portlet > .portlet-title > .actions > .excel').tooltip({
+            trigger: 'hover',
+            container: 'body',
+            title: 'Export to Excel'
+        });
         $('.portlet > .portlet-title > .actions > .delete').tooltip({
             trigger: 'hover',
             container: 'body',

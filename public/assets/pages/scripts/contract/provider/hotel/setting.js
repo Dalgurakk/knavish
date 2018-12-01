@@ -380,7 +380,7 @@ $(document).ready(function () {
         var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
         var currentDate = moment();
 
-        if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
+        /*if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
             var tempStart = moment(currentDate).startOf('month');
             var tempEnd = moment(currentDate).endOf('month');
             $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
@@ -397,11 +397,14 @@ $(document).ready(function () {
             var tempEnd = moment(endDate).endOf('month');
             $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
             $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
-        }
+        }*/
+
         $('input[name=from]').datepicker( "setStartDate" , new Date(startDate));
         $('input[name=from]').datepicker( "setEndDate" , new Date(endDate));
         $('input[name=to]').datepicker( "setStartDate" , new Date(startDate));
         $('input[name=to]').datepicker( "setEndDate" , new Date(endDate));
+        $('input[name=from]').datepicker( "setDate" , new Date(startDate));
+        $('input[name=to]').datepicker( "setDate" , new Date(endDate));
 
         $('#modal-setting :input[name=setting-from]').datepicker( "setStartDate" , new Date(startDate));
         $('#modal-setting :input[name=setting-from]').datepicker( "setEndDate" , new Date(endDate));

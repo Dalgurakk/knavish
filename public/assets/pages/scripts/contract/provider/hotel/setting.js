@@ -379,32 +379,36 @@ $(document).ready(function () {
         var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
         var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
         var currentDate = moment();
+        var tempStart = currentDate;
+        var tempEnd = currentDate;
 
-        /*if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
-            var tempStart = moment(currentDate).startOf('month');
-            var tempEnd = moment(currentDate).endOf('month');
-            $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
-            $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
+        if (currentDate.isSameOrBefore(endDate) && currentDate.isSameOrAfter(startDate)){
+            tempStart = moment(currentDate).startOf('month');
+            tempEnd = moment(currentDate).endOf('month');
         }
         else if (currentDate.isBefore(startDate)) {
-            var tempStart = moment(startDate).startOf('month');
-            var tempEnd = moment(startDate).endOf('month');
-            $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
-            $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
+            tempStart = moment(startDate).startOf('month');
+            tempEnd = moment(startDate).endOf('month');
         }
         else if (currentDate.isAfter(endDate)) {
-            var tempStart = moment(endDate).startOf('month');
-            var tempEnd = moment(endDate).endOf('month');
-            $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
-            $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
-        }*/
+            tempStart = moment(endDate).startOf('month');
+            tempEnd = moment(endDate).endOf('month');alert(tempStart.format('DD.MM.YYYY') + '   ---   ' + tempEnd.format('DD.MM.YYYY'));
+        }
+
+        if(tempStart.isBefore(startDate)) {
+            tempStart = startDate;
+        }
+        if(tempEnd.isAfter(endDate)) {
+            tempStart = endDate;
+        }
+
+        $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
+        $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
 
         $('input[name=from]').datepicker( "setStartDate" , new Date(startDate));
         $('input[name=from]').datepicker( "setEndDate" , new Date(endDate));
         $('input[name=to]').datepicker( "setStartDate" , new Date(startDate));
         $('input[name=to]').datepicker( "setEndDate" , new Date(endDate));
-        $('input[name=from]').datepicker( "setDate" , new Date(startDate));
-        $('input[name=to]').datepicker( "setDate" , new Date(endDate));
 
         $('#modal-setting :input[name=setting-from]').datepicker( "setStartDate" , new Date(startDate));
         $('#modal-setting :input[name=setting-from]').datepicker( "setEndDate" , new Date(endDate));

@@ -392,7 +392,7 @@ $(document).ready(function () {
         }
         else if (currentDate.isAfter(endDate)) {
             tempStart = moment(endDate).startOf('month');
-            tempEnd = moment(endDate).endOf('month');alert(tempStart.format('DD.MM.YYYY') + '   ---   ' + tempEnd.format('DD.MM.YYYY'));
+            tempEnd = moment(endDate).endOf('month');
         }
 
         if(tempStart.isBefore(startDate)) {
@@ -401,7 +401,7 @@ $(document).ready(function () {
         if(tempEnd.isAfter(endDate)) {
             tempStart = endDate;
         }
-
+        //alert(tempStart.format('DD.MM.YYYY') + '   ---   ' + tempEnd.format('DD.MM.YYYY'));
         $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
         $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
 

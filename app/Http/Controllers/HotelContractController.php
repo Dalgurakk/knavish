@@ -342,117 +342,135 @@ class HotelContractController extends Controller
         }
         else {
             $contract = HotelContract::with(['priceRates', 'priceRates.settings'])->find($id);
-            $contract->name = Input::get('name');
-            $contract->hotel_id = Input::get('hotel-id');
-            $contract->valid_from = Carbon::createFromFormat('d.m.Y', Input::get('valid-from'))->format('Y-m-d');
-            $contract->valid_to = Carbon::createFromFormat('d.m.Y', Input::get('valid-to'))->format('Y-m-d');
-            $contract->active = Input::get('active') == 1 ? true : false;
-            $contract->status = Input::get('status');
 
-            DB::beginTransaction();
-            try {
-                $roomTypes = json_decode(Input::get('roomTypes'), true);
-                $boardTypes = json_decode(Input::get('boardTypes'));
-                $markets = json_decode(Input::get('markets'));
-                $paxTypes = json_decode(Input::get('paxTypes'));
-                $temp = json_decode(Input::get('measures'));
-                $unusedRooms = array();
+            if ($contract != null) {
+                $validFrom = Carbon::createFromFormat('d.m.Y', Input::get('valid-from'));
+                $validTo = Carbon::createFromFormat('d.m.Y', Input::get('valid-to'));
+                $contract->name = Input::get('name');
+                $contract->hotel_id = Input::get('hotel-id');
+                $contract->valid_from = $validFrom->format('Y-m-d');
+                $contract->valid_to = $validTo->format('Y-m-d');
+                $contract->active = Input::get('active') == 1 ? true : false;
+                $contract->status = Input::get('status');
 
-                foreach ($contract->roomTypes as $contractRoom) {
-                    $flag = false;
-                    foreach($roomTypes as $roomtype) {
-                        if($roomtype == $contractRoom->id) {
-                            $flag = true;
-                            break;
-                        }
-                    }
-                    if (!$flag) {
-                        $unusedRooms[] = $contractRoom;
-                    }
-                }
+                DB::beginTransaction();
+                try {
+                    $roomTypes = json_decode(Input::get('roomTypes'), true);
+                    $boardTypes = json_decode(Input::get('boardTypes'));
+                    $markets = json_decode(Input::get('markets'));
+                    $paxTypes = json_decode(Input::get('paxTypes'));
+                    $temp = json_decode(Input::get('measures'));
+                    $unusedRooms = array();
 
-                $measures = array(1, 2);
-                foreach ($temp as $key => $val) {
-                    if($val == 1 || $val == 2) continue;
-                    else $measures[] = $val;
-                }
-
-                $syncMarkets = array();
-                foreach ($markets as $k) {
-                    $syncMarkets[$k->market_id] = array(
-                        'type' => $k->rate_type,
-                        'value' => $k->value,
-                        'round' => $k->round_type
-                    );
-
-                    if ($k->update_price == '1') {
-                        foreach ($contract->priceRates as $r) {
-                            if ($k->market_id == $r->market_id) {
-                                if ($k->rate_type != $r->type || $k->value != $r->value || $k->round_type != $r->round) {
-                                    foreach ($r->settings as $s) {
-                                        $settings = json_decode($s->settings, true);
-                                        foreach($settings as $key => $data){
-                                            $aux = $r;
-                                            $aux->type = $k->rate_type;
-                                            $aux->value = $k->value;
-                                            $aux->round = $k->round_type;
-                                            $data['2'] = $this->calculatePrice($data['1'], $aux);
-                                            $settings[$key] = $data;
-                                        }
-                                        $s->settings = json_encode($settings);
-                                        $s->save();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                $contract->markets()->sync($syncMarkets);
-                $contract->roomTypes()->sync($roomTypes);
-                $contract->boardTypes()->sync($boardTypes);
-                $contract->paxTypes()->sync($paxTypes);
-                $contract->measures()->sync($measures);
-                $contract->save();
-
-                if (count($unusedRooms) > 0) {
                     foreach ($contract->priceRates as $priceRate) {
                         foreach ($priceRate->settings as $setting) {
-                            $contractSettings = json_decode($setting->settings, true);
-                            foreach ($unusedRooms as $unusedRoom) {
-                                if (array_key_exists($unusedRoom->id, $contractSettings)) {
-                                    unset($contractSettings[$unusedRoom->id]);
-                                    if (empty($contractSettings)) {
-                                        $setting->delete();
-                                    }
-                                    else {
-                                        $setting->settings = json_encode($contractSettings);
-                                        $setting->save();
+                            $date = Carbon::createFromFormat('Y-m-d', $setting->date);
+                            if ($date->lessThan($validFrom) || $date->greaterThan($validTo)) {
+                                $setting->delete();
+                            }
+                        }
+                    }
+
+                    foreach ($contract->roomTypes as $contractRoom) {
+                        $flag = false;
+                        foreach($roomTypes as $roomtype) {
+                            if($roomtype == $contractRoom->id) {
+                                $flag = true;
+                                break;
+                            }
+                        }
+                        if (!$flag) {
+                            $unusedRooms[] = $contractRoom;
+                        }
+                    }
+
+                    $measures = array(1, 2);
+                    foreach ($temp as $key => $val) {
+                        if($val == 1 || $val == 2) continue;
+                        else $measures[] = $val;
+                    }
+
+                    $syncMarkets = array();
+                    foreach ($markets as $k) {
+                        $syncMarkets[$k->market_id] = array(
+                            'type' => $k->rate_type,
+                            'value' => $k->value,
+                            'round' => $k->round_type
+                        );
+
+                        if ($k->update_price == '1') {
+                            foreach ($contract->priceRates as $r) {
+                                if ($k->market_id == $r->market_id) {
+                                    if ($k->rate_type != $r->type || $k->value != $r->value || $k->round_type != $r->round) {
+                                        foreach ($r->settings as $s) {
+                                            $settings = json_decode($s->settings, true);
+                                            foreach($settings as $key => $data){
+                                                $aux = $r;
+                                                $aux->type = $k->rate_type;
+                                                $aux->value = $k->value;
+                                                $aux->round = $k->round_type;
+                                                $data['2'] = $this->calculatePrice($data['1'], $aux);
+                                                $settings[$key] = $data;
+                                            }
+                                            $s->settings = json_encode($settings);
+                                            $s->save();
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                if ($contract->active != 1) {
-                    $clientContracts = $contract->clientContracts;
-                    foreach ($clientContracts as $c) {
-                        $c->active = false;
-                        $c->save();
+                    $contract->markets()->sync($syncMarkets);
+                    $contract->roomTypes()->sync($roomTypes);
+                    $contract->boardTypes()->sync($boardTypes);
+                    $contract->paxTypes()->sync($paxTypes);
+                    $contract->measures()->sync($measures);
+                    $contract->save();
+
+                    if (count($unusedRooms) > 0) {
+                        foreach ($contract->priceRates as $priceRate) {
+                            foreach ($priceRate->settings as $setting) {
+                                $contractSettings = json_decode($setting->settings, true);
+                                foreach ($unusedRooms as $unusedRoom) {
+                                    if (array_key_exists($unusedRoom->id, $contractSettings)) {
+                                        unset($contractSettings[$unusedRoom->id]);
+                                        if (empty($contractSettings)) {
+                                            $setting->delete();
+                                        }
+                                        else {
+                                            $setting->settings = json_encode($contractSettings);
+                                            $setting->save();
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
 
-                DB::commit();
-                $this->response['status'] = 'success';
-                $this->response['message'] = 'Contract updated successfully.';
-                $this->response['data'] = $contract;
+                    if ($contract->active != 1) {
+                        $clientContracts = $contract->clientContracts;
+                        foreach ($clientContracts as $c) {
+                            $c->active = false;
+                            $c->save();
+                        }
+                    }
+
+                    DB::commit();
+                    $this->response['status'] = 'success';
+                    $this->response['message'] = 'Contract updated successfully.';
+                    $this->response['data'] = $contract;
+                }
+                catch (\Exception $e) {
+                    DB::rollBack();
+                    $this->response['status'] = 'error';
+                    $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+                    $this->response['errors'] = $e->getMessage();
+                }
             }
-            catch (\Exception $e) {
-                DB::rollBack();
+            else {
                 $this->response['status'] = 'error';
-                $this->response['message'] = 'Something was wrong, please contact the system administrator.';
-                $this->response['errors'] = $e->getMessage();
+                $this->response['message'] = 'Contract invalid.';
             }
         }
         echo json_encode($this->response);
@@ -986,6 +1004,9 @@ class HotelContractController extends Controller
             }
         ])->where('id', $id)->first();
 
+        $validFrom = Carbon::createFromFormat('!Y-m-d', $contract->valid_from);
+        $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
+
         if ($contract === null) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'Invalid contract.';
@@ -1007,9 +1028,10 @@ class HotelContractController extends Controller
                         '<div class="portlet box green">' .
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                        '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
+                        /*<i class="fa fa-calendar"></i>' .*/
+                        $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
                         '<div class="tools tools-setting">' .
-                        '<!--a href="" class="fullscreen"> </a-->' .
+                        /*'<a href="" class="fullscreen"> </a>' .*/
                         '<a href="javascript:;" class="collapse"> </a>' .
                         '</div>' .
                         '</div>' .
@@ -1055,13 +1077,17 @@ class HotelContractController extends Controller
 
                             for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
                                 $value = '';
-                                if (array_key_exists($i->format('Y-m-d'), $settings)) {
-                                    $data = $settings[$i->format('Y-m-d')];
-                                    if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
-                                        $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
+                                $usableClass = 'item-disabled';
+                                if ($validFrom->lessThanOrEqualTo($i) && $validTo->greaterThanOrEqualTo($i)) {
+                                    $usableClass = 'item-setting';
+                                    if (array_key_exists($i->format('Y-m-d'), $settings)) {
+                                        $data = $settings[$i->format('Y-m-d')];
+                                        if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
+                                            $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
+                                    }
                                 }
                                 $table .=
-                                    '<td class="column-setting item-setting"' .
+                                    '<td class="column-setting ' . $usableClass . '" ' .
                                     'data-date="' . $i->format('Y-m-d') . '" ' .
                                     'data-measure-id="' . $rows[$v]->id . '"' .
                                     'data-room-type-id="' . $roomTypes[$r]->id . '" ' .

@@ -37,6 +37,7 @@
 .caption-setting { font-size: 13px !important; padding: 6px 0 5px !important; font-weight: 600; }
 .tools-setting { font-size: 13px !important; padding: 6px 0 0 !important; }
 .table-setting .item-setting:hover { background-color: #f2f2f2; cursor: pointer; }
+.table-setting .item-disabled { background-color: #e3defc4d; cursor: default; }
 .column-setting { width: 2.9%; }
 .head-setting { vertical-align: top !important; background-color: #e8f0fc; border:1px solid #fff !important; }
 .head-setting-invalid { background-color: #fff !important; border: 1px solid #fff !important;}

@@ -11,7 +11,7 @@ $(document).ready(function () {
         "processing": true,
         "serverSide": true,
         "sDom": "ltip",
-        "iDisplayLength" : 10,
+        "iDisplayLength" : 25,
         "ajax": {
             "url": routeRead,
             "type": "POST",

@@ -468,6 +468,9 @@ class HotelContractClientController extends Controller
             }
         ])->where('id', $clientContract->hotel_contract_id)->first();
 
+        $validFrom = Carbon::createFromFormat('!Y-m-d', $contract->valid_from);
+        $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
+
         if ($contract === null) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'Invalid contract.';
@@ -489,9 +492,10 @@ class HotelContractClientController extends Controller
                         '<div class="portlet box green">' .
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                        '<!--i class="fa fa-calendar"></i-->' . $m->format("F Y") . ' - ' . $clientContract->priceRate->market->name . '</div>' .
+                        /*'<i class="fa fa-calendar"></i>' .*/
+                        $m->format("F Y") . ' - ' . $clientContract->priceRate->market->name . '</div>' .
                         '<div class="tools tools-setting">' .
-                        '<!--a href="" class="fullscreen"> </a-->' .
+                        /*'<a href="" class="fullscreen"> </a>' .*/
                         '<a href="javascript:;" class="collapse"> </a>' .
                         '</div>' .
                         '</div>' .
@@ -537,13 +541,17 @@ class HotelContractClientController extends Controller
 
                             for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
                                 $value = '';
-                                if (array_key_exists($i->format('Y-m-d'), $settings)) {
-                                    $data = $settings[$i->format('Y-m-d')];
-                                    if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
-                                        $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
+                                $usableClass = 'item-disabled';
+                                if ($validFrom->lessThanOrEqualTo($i) && $validTo->greaterThanOrEqualTo($i)) {
+                                    $usableClass = 'item-setting';
+                                    if (array_key_exists($i->format('Y-m-d'), $settings)) {
+                                        $data = $settings[$i->format('Y-m-d')];
+                                        if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
+                                            $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
+                                    }
                                 }
                                 $table .=
-                                    '<td class="column-setting item-setting"' .
+                                    '<td class="column-setting ' . $usableClass . '" ' .
                                     'data-date="' . $i->format('Y-m-d') . '" ' .
                                     'data-measure-id="' . $rows[$v]->id . '"' .
                                     'data-room-type-id="' . $roomTypes[$r]->id . '" ' .

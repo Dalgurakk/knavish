@@ -48,7 +48,7 @@
                         <i class="fa fa-file-excel-o"></i>
                     </a>
                     <div class="btn-group">
-                        <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">10</a>
+                        <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown" data-toggle="dropdown" href="javascript:;">25</a>
                         <ul class="dropdown-menu dropdown-options">
                             <li>
                                 <a href="javascript:;" class="lenght-option" data="10">10</a>

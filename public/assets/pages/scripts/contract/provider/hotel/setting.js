@@ -393,22 +393,23 @@ $(document).ready(function () {
         else if (currentDate.isAfter(endDate)) {
             tempStart = moment(endDate).startOf('month');
             tempEnd = moment(endDate).endOf('month');
+            console.log(endDate.format('DD.MM.YYYY'));
         }
 
         if(tempStart.isBefore(startDate)) {
             tempStart = startDate;
         }
         if(tempEnd.isAfter(endDate)) {
-            tempStart = endDate;
+            tempEnd = endDate;
         }
-        //alert(tempStart.format('DD.MM.YYYY') + '   ---   ' + tempEnd.format('DD.MM.YYYY'));
-        $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
-        $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
 
         $('input[name=from]').datepicker( "setStartDate" , new Date(startDate));
         $('input[name=from]').datepicker( "setEndDate" , new Date(endDate));
         $('input[name=to]').datepicker( "setStartDate" , new Date(startDate));
         $('input[name=to]').datepicker( "setEndDate" , new Date(endDate));
+
+        $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
+        $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
 
         $('#modal-setting :input[name=setting-from]').datepicker( "setStartDate" , new Date(startDate));
         $('#modal-setting :input[name=setting-from]').datepicker( "setEndDate" , new Date(endDate));

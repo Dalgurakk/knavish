@@ -890,12 +890,12 @@ $(document).ready(function () {
     });
 
     $('#modal-import [id=rate_percent_value]').TouchSpin({
-        min: 0,
-        max: 100,
+        min: -1000000000,
+        max: 1000000000,
         step: 1,
         decimals: 2,
-        boostat: 5,
-        maxboostedstep: 10,
+        /*boostat: 5,*/
+        maxboostedstep: 10000000,
         postfix: '%'
     });
 

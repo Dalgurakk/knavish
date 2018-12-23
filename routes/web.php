@@ -27,6 +27,9 @@ Route::post('/administration/location/update', 'LocationController@update')->nam
 Route::post('/administration/location/delete', 'LocationController@delete')->name('administration.location.delete');
 Route::post('/administration/location/read/active', 'LocationController@actives')->name('administration.location.read.active');
 Route::get('/administration/location/export/excel', 'LocationController@toExcel')->name('administration.location.excel');
+//Trace
+Route::get('/administration/trace', 'TraceController@index')->name('administration.trace.index');
+Route::post('/administration/trace/read', 'TraceController@read')->name('administration.trace.read');
 //CarModel
 Route::get('/car/model', 'CarBrandController@index')->name('car.model.index');
 Route::post('/car/model/read', 'CarBrandController@read')->name('car.model.read');

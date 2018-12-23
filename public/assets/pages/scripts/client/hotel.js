@@ -29,6 +29,7 @@ $(document).ready(function () {
             { data: 'id', name: 'id', visible: false },
             { data: 'name', name: 'name' },
             { data: 'hotel', name: 'hotel', orderable: false },
+            { data: 'location', name: 'location', orderable: false },
             { data: 'valid_from', name: 'valid_from', orderable: false },
             { data: 'valid_to', name: 'valid_to', orderable: false },
             {
@@ -90,6 +91,7 @@ $(document).ready(function () {
         e.preventDefault();
         $('#search-section :input[name=name]').val('');
         $('#search-section :input[name=hotel]').val('');
+        $('#search-section :input[name=location]').val('');
         $('#search-section :input[name=valid-from]').val('');
         $('#search-section :input[name=valid-to]').val('');
     });
@@ -99,6 +101,7 @@ $(document).ready(function () {
         table
             .columns('name:name').search($('#search-section :input[name=name]').val())
             .columns('hotel:name').search($('#search-section :input[name=hotel]').val())
+            .columns('location:name').search($('#search-section :input[name=location]').val())
             .columns('valid_from:name').search($('#search-section :input[name=valid-from]').val())
             .columns('valid_to:name').search($('#search-section :input[name=valid-to]').val())
             .draw();
@@ -144,7 +147,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [5] },
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
-            { 'orderable': false, 'targets': [8] }
+            { 'orderable': false, 'targets': [8] },
+            { 'orderable': false, 'targets': [9] }
         ],
         "pageLength": 10
     });
@@ -211,6 +215,7 @@ $(document).ready(function () {
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
                 roomTypes[i].max_pax,
+                roomTypes[i].min_pax,
                 roomTypes[i].max_adult,
                 roomTypes[i].min_adult,
                 roomTypes[i].max_children,
@@ -227,6 +232,7 @@ $(document).ready(function () {
         var query = {
             name: $('#search-section :input[name=name]').val(),
             hotel: $('#search-section :input[name=hotel]').val(),
+            location: $('#search-section :input[name=location]').val(),
             validFrom: $('#search-section :input[name=valid-from]').val(),
             validTo: $('#search-section :input[name=valid-to]').val(),
             active: $('#search-section :input[name=active]').val()

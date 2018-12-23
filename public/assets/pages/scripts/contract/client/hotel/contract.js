@@ -31,9 +31,10 @@ $(document).ready(function () {
         columns: [
             { data: 'id', name: 'id', visible: false },
             { data: 'name', name: 'name' },
+            { data: 'location', name: 'location', orderable:false, /*visible:false*/ },
             { data: 'client', name: 'client', orderable: false },
-            { data: 'valid_from', name: 'valid_from' },
-            { data: 'valid_to', name: 'valid_to' },
+            { data: 'valid_from', name: 'valid_from', orderable: false },
+            { data: 'valid_to', name: 'valid_to', orderable: false },
             {
                 data: 'status',
                 name: 'status',
@@ -151,7 +152,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [5] },
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
-            { 'orderable': false, 'targets': [8] }
+            { 'orderable': false, 'targets': [8] },
+            { 'orderable': false, 'targets': [9] }
         ],
         "pageLength": 10
     });
@@ -188,7 +190,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [5] },
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
-            { 'orderable': false, 'targets': [8] }
+            { 'orderable': false, 'targets': [8] },
+            { 'orderable': false, 'targets': [9] }
         ],
         "pageLength": 10
     });
@@ -225,7 +228,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [5] },
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
-            { 'orderable': false, 'targets': [8] }
+            { 'orderable': false, 'targets': [8] },
+            { 'orderable': false, 'targets': [9] }
         ],
         "pageLength": 10
     });
@@ -372,6 +376,7 @@ $(document).ready(function () {
                     roomTypes[i].id,
                     roomTypes[i].code + ': ' + roomTypes[i].name,
                     roomTypes[i].max_pax,
+                    roomTypes[i].min_pax,
                     roomTypes[i].max_adult,
                     roomTypes[i].min_adult,
                     roomTypes[i].max_children,
@@ -516,6 +521,7 @@ $(document).ready(function () {
                     roomTypes[i].id,
                     roomTypes[i].code + ': ' + roomTypes[i].name,
                     roomTypes[i].max_pax,
+                    roomTypes[i].min_pax,
                     roomTypes[i].max_adult,
                     roomTypes[i].min_adult,
                     roomTypes[i].max_children,
@@ -872,6 +878,7 @@ $(document).ready(function () {
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
                 roomTypes[i].max_pax,
+                roomTypes[i].min_pax,
                 roomTypes[i].max_adult,
                 roomTypes[i].min_adult,
                 roomTypes[i].max_children,
@@ -970,6 +977,7 @@ $(document).ready(function () {
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
                 roomTypes[i].max_pax,
+                roomTypes[i].min_pax,
                 roomTypes[i].max_adult,
                 roomTypes[i].min_adult,
                 roomTypes[i].max_children,
@@ -992,6 +1000,7 @@ $(document).ready(function () {
     $('.btn-search-reset').on('click', function (e) {
         e.preventDefault();
         $('#search-section :input[name=name]').val('');
+        $('#search-section :input[name=location]').val('');
         $('#search-section :input[name=client]').val('');
         $('#search-section :input[name=active]').val('');
         $('#search-section :input[name=valid-from]').val('');
@@ -1023,6 +1032,7 @@ $(document).ready(function () {
         e.preventDefault();
         table
             .columns('name:name').search($('#search-section :input[name=name]').val())
+            .columns('location:name').search($('#search-section :input[name=location]').val())
             .columns('client:name').search($('#search-section :input[name=client]').val())
             .columns('valid_from:name').search($('#search-section :input[name=valid-from]').val())
             .columns('valid_to:name').search($('#search-section :input[name=valid-to]').val())
@@ -1033,6 +1043,7 @@ $(document).ready(function () {
     $('.excel').on('click',function(){
         var query = {
             name: $('#search-section :input[name=name]').val(),
+            location: $('#search-section :input[name=location]').val(),
             client: $('#search-section :input[name=client]').val(),
             validFrom: $('#search-section :input[name=valid-from]').val(),
             validTo: $('#search-section :input[name=valid-to]').val(),

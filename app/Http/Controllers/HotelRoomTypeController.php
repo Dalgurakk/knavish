@@ -43,7 +43,7 @@ class HotelRoomTypeController extends Controller
             'hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name',
             'hotel_room_types.max_pax', 'hotel_room_types.max_adult', 'hotel_room_types.min_adult',
             'hotel_room_types.max_children', 'hotel_room_types.min_children', 'hotel_room_types.max_infant',
-            'hotel_room_types.min_infant', 'hotel_room_types.active'
+            'hotel_room_types.min_infant', 'hotel_room_types.active', 'hotel_room_types.min_pax'
         );
         $orderBy = Input::get('order')['0']['column'];
         $orderDirection = Input::get('order')['0']['dir'];
@@ -77,6 +77,7 @@ class HotelRoomTypeController extends Controller
                 'code' => $r->code,
                 'name' => $r->name,
                 'max_pax' => $r->max_pax,
+                'min_pax' => $r->min_pax,
                 'max_adult' => $r->max_adult,
                 'min_adult' => $r->min_adult,
                 'max_children' => $r->max_children,
@@ -88,60 +89,6 @@ class HotelRoomTypeController extends Controller
             );
             $roomTypes[] = $item;
         }
-
-        $data = array(
-            "draw" => Input::get('draw'),
-            "length" => $limit,
-            "start" => $offset,
-            "recordsTotal" => $records,
-            "recordsFiltered" => $records,
-            "data" => $roomTypes
-        );
-        echo json_encode($data);
-    }
-
-    public function read2(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $limit = Input::get('length');
-        $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array(
-            'hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name',
-            'hotel_room_types.max_pax', 'hotel_room_types.max_adult', 'hotel_room_types.min_adult',
-            'hotel_room_types.max_children', 'hotel_room_types.min_children', 'hotel_room_types.max_infant',
-            'hotel_room_types.min_infant', 'hotel_room_types.active'
-        );
-        $orderBy = Input::get('order')['0']['column'];
-        $orderDirection = Input::get('order')['0']['dir'];
-        $searchCode = Input::get('columns')['1']['search']['value'];
-        $searchName = Input::get('columns')['2']['search']['value'];
-        $searchActive = Input::get('columns')['10']['search']['value'];
-
-        $query = DB::table('hotel_room_types')
-            ->select(
-                'hotel_room_types.id', 'hotel_room_types.code', 'hotel_room_types.name',
-                'hotel_room_types.max_pax', 'hotel_room_types.max_adult', 'hotel_room_types.min_adult',
-                'hotel_room_types.max_children', 'hotel_room_types.min_children', 'hotel_room_types.max_infant',
-                'hotel_room_types.min_infant', 'hotel_room_types.active');
-
-        if(isset($searchCode) && $searchCode != '') {
-            $query->where('hotel_room_types.code', 'like', '%' . $searchCode . '%');
-        }
-        if(isset($searchName) && $searchName != '') {
-            $query->where('hotel_room_types.name', 'like', '%' . $searchName . '%');
-        }
-        if(isset($searchActive) && $searchActive != '') {
-            $query->where('hotel_room_types.active', '=', $searchActive);
-        }
-
-        $records = $query->count();
-
-        $query
-            ->orderBy($columns[$orderBy], $orderDirection)
-            ->offset($offset)
-            ->limit($limit);
-
-        $roomTypes = $query->get();
 
         $data = array(
             "draw" => Input::get('draw'),
@@ -167,7 +114,8 @@ class HotelRoomTypeController extends Controller
             'minadult' => 'required|integer|min:0|max:' . Input::get('maxadult'),
             'minchildren' => 'required|integer|min:0|max:' . Input::get('maxchildren'),
             'mininfant' => 'required|integer|min:0|max:' . Input::get('maxinfant'),
-            'maxpax' => 'required|integer|min:1|min:' . $total
+            'maxpax' => 'required|integer|min:' . $total,
+            'minpax' => 'required|integer|min:1'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -182,6 +130,7 @@ class HotelRoomTypeController extends Controller
             $roomType->name = Input::get('name');
             $roomType->description = null;
             $roomType->max_pax = Input::get('maxpax');
+            $roomType->min_pax = Input::get('minpax');
             $roomType->max_adult = Input::get('maxadult');
             $roomType->min_adult = Input::get('minadult');
             $roomType->max_children = Input::get('maxchildren');
@@ -219,7 +168,8 @@ class HotelRoomTypeController extends Controller
             'minadult' => 'required|integer|min:0|max:' . Input::get('maxadult'),
             'minchildren' => 'required|integer|min:0|max:' . Input::get('maxchildren'),
             'mininfant' => 'required|integer|min:0|max:' . Input::get('maxinfant'),
-            'maxpax' => 'required|integer|min:1|min:' . $total
+            'maxpax' => 'required|integer|min:' . $total,
+            'minpax' => 'required|integer|min:1'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -235,6 +185,7 @@ class HotelRoomTypeController extends Controller
             $roomType->name = Input::get('name');
             $roomType->description = null;
             $roomType->max_pax = Input::get('maxpax');
+            $roomType->min_pax = Input::get('minpax');
             $roomType->max_adult = Input::get('maxadult');
             $roomType->min_adult = Input::get('minadult');
             $roomType->max_children = Input::get('maxchildren');
@@ -316,9 +267,9 @@ class HotelRoomTypeController extends Controller
         $request->user()->authorizeRoles(['administrator']);
 
         $settings = array(
-            'headerRange' => 'A4:K4',
+            'headerRange' => 'A4:L4',
             'headerText' => 'Room Types',
-            'cellRange' => 'A6:K6'
+            'cellRange' => 'A6:L6'
         );
 
         $parameters = array(

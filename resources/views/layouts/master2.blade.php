@@ -307,6 +307,13 @@ License: You must have a valid license purchased only from themeforest(the above
                                             <span class="{{ isset($submenuLocations) ? 'selected' : '' }}"></span>
                                         </a>
                                     </li>
+                                    <li class="nav-item start {{ isset($submenuTrace) ? 'active open' : '' }}">
+                                        <a href="{{ route('administration.trace.index') }}" class="nav-link ">
+                                            <i class="fa fa-check"></i>
+                                            <span class="title">Traces</span>
+                                            <span class="{{ isset($submenuTrace) ? 'selected' : '' }}"></span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endif

@@ -15,4 +15,16 @@ class Controller extends BaseController
     public function currentDate() {
         return Carbon::now()->format('d.m.Y');
     }
+
+    function getRealQuery($query, $dumpIt = false)
+    {
+        $params = array_map(function ($item) {
+            return "'{$item}'";
+        }, $query->getBindings());
+        $result = str_replace_array('\?', $params, $query->toSql());
+        if ($dumpIt) {
+            dd($result);
+        }
+        return $result;
+    }
 }

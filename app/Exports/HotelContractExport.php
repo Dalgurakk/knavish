@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\HotelContract;
+use App\Models\Location;
 use Carbon;
 
 class HotelContractExport extends GeneralExport
@@ -34,6 +35,28 @@ class HotelContractExport extends GeneralExport
         }
         if ($this->parameters['active'] != '') {
             $query->where('active', $this->parameters['active']);
+        }
+        if($this->parameters['location'] != '') {
+            $locations = Location::where('name', 'like', '%' . $this->parameters['location'] . '%')->get();
+            $allLocationIds = array();
+            foreach ($locations as $location) {
+                $allLocations = Location::descendantsAndSelf($location->id);
+                foreach ($allLocations as $aux) {
+                    $allLocationIds[] = $aux->id;
+                }
+            }
+            $query->whereHas('hotel', function ($query) use ($allLocationIds) {
+                $query
+                    ->whereHas('country', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    })
+                    ->orWhereHas('state', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    })
+                    ->orWhereHas('city', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    });
+            });
         }
         $items = $query->get();
         $filtered = $items->map(function ($item, $index) {

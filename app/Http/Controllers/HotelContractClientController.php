@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\HotelContractClientExport;
 use App\Models\HotelContract;
 use App\Models\HotelContractClient;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -43,14 +44,15 @@ class HotelContractClientController extends Controller
 
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array('hotel_contract_clients.id', 'hotel_contract_clients.name', 'users.username', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contract_clients.active', 'hotel_contract_clients.active');
+        $columns = array('hotel_contract_clients.id', 'hotel_contract_clients.name', 'hotel.location', 'users.username', 'hotel_contract_clients.valid_from', 'hotel_contract_clients.valid_to', 'hotel_contract_clients.active', 'hotel_contract_clients.active');
         $orderBy = Input::get('order')['0']['column'];
         $orderDirection = Input::get('order')['0']['dir'];
         $searchName = Input::get('columns')['1']['search']['value'];
-        $searchClient = Input::get('columns')['2']['search']['value'];
-        $searchValidFrom = Input::get('columns')['3']['search']['value'];
-        $searchValidTo = Input::get('columns')['4']['search']['value'];
-        $searchActive = Input::get('columns')['6']['search']['value'];
+        $searchLocation = Input::get('columns')['2']['search']['value'];
+        $searchClient = Input::get('columns')['3']['search']['value'];
+        $searchValidFrom = Input::get('columns')['4']['search']['value'];
+        $searchValidTo = Input::get('columns')['5']['search']['value'];
+        $searchActive = Input::get('columns')['7']['search']['value'];
         $contracts = array();
 
         $query = HotelContractClient::with([
@@ -83,12 +85,36 @@ class HotelContractClientController extends Controller
         }
         if(isset($searchValidFrom) && $searchValidFrom != '') {
             $query->whereHas('hotelContract', function ($query) use ($searchValidFrom) {
-                $query->where('valid_from', '>=', $searchValidFrom);
+                $validFrom = Carbon::createFromFormat('d.m.Y', $searchValidFrom);
+                $query->where('hotel_contracts.valid_from', '>=', $validFrom->format('Y-m-d'));
             });
         }
         if(isset($searchValidTo) && $searchValidTo != '') {
             $query->whereHas('hotelContract', function ($query) use ($searchValidTo) {
-                $query->where('valid_to', '<=', $searchValidTo);
+                $validTo = Carbon::createFromFormat('d.m.Y', $searchValidTo);
+                $query->where('hotel_contracts.valid_to', '<=', $validTo->format('Y-m-d'));
+            });
+        }
+        if(isset($searchLocation) && $searchLocation != '') {
+            $locations = Location::where('name', 'like', '%' . $searchLocation . '%')->get();
+            $allLocationIds = array();
+            foreach ($locations as $location) {
+                $allLocations = Location::descendantsAndSelf($location->id);
+                foreach ($allLocations as $aux) {
+                    $allLocationIds[] = $aux->id;
+                }
+            }
+            $query->whereHas('hotelContract.hotel', function ($query) use ($allLocationIds) {
+                $query
+                    ->whereHas('country', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    })
+                    ->orWhereHas('state', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    })
+                    ->orWhereHas('city', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    });
             });
         }
 
@@ -116,9 +142,19 @@ class HotelContractClientController extends Controller
             else if ($currentDate->lessThan($validFrom))
                 $status = 1; //Waiting
 
+            $location = 'Undefined';
+            $hotel = $r->hotelContract->hotel;
+            if (isset($hotel->city->name) && $hotel->city->name != null)
+                $location = $hotel->city->name;
+            else if (isset($hotel->state->name) && $hotel->state->name != null)
+                $location = $hotel->state->name;
+            else if (isset($hotel->country->name) && $hotel->country->name != null)
+                $location = $hotel->country->name;
+
             $item = array(
                 'id' => $r->id,
                 'name' => $r->name,
+                'location' => $location,
                 'client' => $r->client->name,
                 'valid_from' => $r->valid_from,
                 'valid_to' => $r->valid_to,
@@ -594,6 +630,7 @@ class HotelContractClientController extends Controller
 
         $parameters = array(
             'name'=> Input::get('name'),
+            'location'=> Input::get('location'),
             'client'=> Input::get('client'),
             'validFrom'=> Input::get('validFrom'),
             'validTo'=> Input::get('validTo'),

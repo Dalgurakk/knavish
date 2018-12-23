@@ -31,6 +31,7 @@ $(document).ready(function () {
             {data: 'code', name: 'code'},
             {data: 'name', name: 'name', width: '35%'},
             {data: 'max_pax', name: 'maxpax'},
+            {data: 'min_pax', name: 'minpax'},
             {data: 'max_adult', name: 'maxadult'},
             {data: 'min_adult', name: 'minadult'},
             {data: 'max_children', name: 'maxchildren'},
@@ -125,8 +126,14 @@ $(document).ready(function () {
             maxpax: {
                 required: true,
                 digits: true,
-                min:1,
+                min: '#modal-add :input[name=minpax]',
                 addTotalPaxValue: true
+            },
+            minpax: {
+                required: true,
+                digits: true,
+                min:1,
+                notGreaterThan: '#modal-add :input[name=maxpax]'
             },
             maxadult: {
                 required: true,
@@ -166,6 +173,9 @@ $(document).ready(function () {
             }
         },
         messages: {
+            minpax: {
+                notGreaterThan: 'Must not be greater than Max Pax.'
+            },
             maxadult: {
                 notGreaterThan: 'Must not be greater than Max Pax.'
             },
@@ -288,8 +298,14 @@ $(document).ready(function () {
             maxpax: {
                 required: true,
                 digits: true,
-                min:1,
+                min: '#modal-edit :input[name=minpax]',
                 editTotalPaxValue: true
+            },
+            minpax: {
+                required: true,
+                digits: true,
+                min: 1,
+                notGreaterThan: '#modal-edit :input[name=maxpax]'
             },
             maxadult: {
                 required: true,
@@ -329,6 +345,9 @@ $(document).ready(function () {
             }
         },
         messages: {
+            minpax: {
+                notGreaterThan: 'Must not be greater than Max Pax.'
+            },
             maxadult: {
                 notGreaterThan: 'Must not be greater than Max Pax.'
             },
@@ -390,11 +409,12 @@ $(document).ready(function () {
             var needEdit = false;
             var formData = new FormData(formEdit[0]);
             var active = formData.get('active') == '1' ? 1 : 0;
-            console.log(object);
+            //console.log(object);
             if (
                 object.code != formData.get('code') ||
                 object.name != formData.get('name') ||
                 object.max_pax != formData.get('maxpax') ||
+                object.min_pax != formData.get('minpax') ||
                 object.max_adult != formData.get('maxadult') ||
                 object.min_adult != formData.get('minadult') ||
                 object.max_children != formData.get('maxchildren') ||
@@ -446,7 +466,7 @@ $(document).ready(function () {
         $('#modal-info :input[name=code]').val(data['code']);
         $('#modal-info :input[name=name]').val(data['name']);
         $('#modal-info :input[name=maxpax]').val(data['max_pax']);
-        $('#modal-info :input[name=maxpax]').val(data['max_pax']);
+        $('#modal-info :input[name=minpax]').val(data['min_pax']);
         $('#modal-info :input[name=maxadult]').val(data['max_adult']);
         $('#modal-info :input[name=minadult]').val(data['min_adult']);
         $('#modal-info :input[name=maxchildren]').val(data['max_children']);
@@ -473,7 +493,7 @@ $(document).ready(function () {
         $('#modal-edit :input[name=code]').val(data['code']);
         $('#modal-edit :input[name=name]').val(data['name']);
         $('#modal-edit :input[name=maxpax]').val(data['max_pax']);
-        $('#modal-edit :input[name=maxpax]').val(data['max_pax']);
+        $('#modal-edit :input[name=minpax]').val(data['min_pax']);
         $('#modal-edit :input[name=maxadult]').val(data['max_adult']);
         $('#modal-edit :input[name=minadult]').val(data['min_adult']);
         $('#modal-edit :input[name=maxchildren]').val(data['max_children']);

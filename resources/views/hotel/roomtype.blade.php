@@ -87,6 +87,7 @@
                             <th class="">Code</th>
                             <th class="">Denomination</th>
                             <th class="">Max Pax</th>
+                            <th class="">Min Pax</th>
                             <th class="">Max AD</th>
                             <th class="">Min AD</th>
                             <th class="">Max CH</th>
@@ -114,9 +115,9 @@
         <div class="row">
             <div class="col-md-12">
                 <input type="hidden" name="id">
-                <div class="note note-info">
+                <!--div class="note note-info">
                     <p>The code field must be unique in the system.</p>
-                </div>
+                </div-->
             </div>
             <div class="col-md-12">
                 <div class="form-group">
@@ -145,15 +146,19 @@
                     <label>Max Infant</label>
                     <input type="text" class="form-control" placeholder="Max Infant" name="maxinfant">
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px; margin-bottom: 4px;"> Enabled
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
                             <input type="checkbox" value="1" name="active"/>
                             <span></span>
                         </label>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Min Pax</label>
+                    <input type="text" class="form-control" placeholder="Min Pax" name="minpax">
                 </div>
                 <div class="form-group">
                     <label>Min Adult</label>
@@ -212,15 +217,19 @@
                     <label>Max Infant</label>
                     <input type="text" class="form-control" name="maxinfant" readonly>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px; margin-bottom: 4px;"> Enabled
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
                             <input type="checkbox" value="1" name="active" onclick="return false;"/>
                             <span></span>
                         </label>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Min Pax</label>
+                    <input type="text" class="form-control" name="minpax" readonly>
                 </div>
                 <div class="form-group">
                     <label>Min Adult</label>
@@ -253,9 +262,9 @@
             <input type="hidden" name="id">
             <div class="col-md-12">
                 <input type="hidden" name="id">
-                <div class="note note-info">
+                <!--div class="note note-info">
                     <p>The code field must be unique in the system.</p>
-                </div>
+                </div-->
             </div>
             <div class="col-md-12">
                 <div class="form-group">
@@ -284,15 +293,19 @@
                     <label>Max Infant</label>
                     <input type="text" class="form-control" placeholder="Max Infant" name="maxinfant">
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group no-margin-bottom">
                     <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="margin-top: 15px; margin-bottom: 4px;"> Enabled
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
                             <input type="checkbox" value="1" name="active"/>
                             <span></span>
                         </label>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Min Pax</label>
+                    <input type="text" class="form-control" placeholder="Min Pax" name="minpax">
                 </div>
                 <div class="form-group">
                     <label>Min Adult</label>

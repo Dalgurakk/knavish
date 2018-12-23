@@ -97,6 +97,13 @@
                             </div>
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fa fa-globe"></i>
+                                        <input type="text" class="form-control" name="location" placeholder="Location"> </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="form-group">
                                     <div class="input-icon left">
                                         <i class="fa fa-check"></i>
                                         <select class="form-control" name="active">
@@ -121,6 +128,7 @@
                             <th class="">Id</th>
                             <th class="">Denomination</th>
                             <th class="">Hotel</th>
+                            <th class="">Location</th>
                             <th class="">Valid From</th>
                             <th class="">Valid To</th>
                             <th class="">Status</th>
@@ -338,6 +346,7 @@
                                         <th> Id </th>
                                         <th> Room Type </th>
                                         <th> Max Pax </th>
+                                        <th> Min Pax </th>
                                         <th> Max AD </th>
                                         <th> Min AD </th>
                                         <th> Max CH </th>
@@ -678,6 +687,7 @@
                                         <th> Id </th>
                                         <th> Room Type </th>
                                         <th> Max Pax </th>
+                                        <th> Min Pax </th>
                                         <th> Max AD </th>
                                         <th> Min AD </th>
                                         <th> Max CH </th>
@@ -996,6 +1006,7 @@
                                         <th> Id </th>
                                         <th> Room Type </th>
                                         <th> Max Pax </th>
+                                        <th> Min Pax </th>
                                         <th> Max AD </th>
                                         <th> Min AD </th>
                                         <th> Max CH </th>

@@ -281,6 +281,7 @@ $(document).ready(function () {
             { data: 'id', name: 'id', visible: false },
             { data: 'name', name: 'name' },
             { data: 'hotel', name: 'hotel', orderable: false },
+            { data: 'location', name: 'location', orderable: false, /*visible: false*/ },
             { data: 'valid_from', name: 'valid_from' },
             { data: 'valid_to', name: 'valid_to' },
             {
@@ -973,6 +974,7 @@ $(document).ready(function () {
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
                 roomTypes[i].max_pax,
+                roomTypes[i].min_pax,
                 roomTypes[i].max_adult,
                 roomTypes[i].min_adult,
                 roomTypes[i].max_children,
@@ -1411,6 +1413,7 @@ $(document).ready(function () {
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
                 roomTypes[i].max_pax,
+                roomTypes[i].min_pax,
                 roomTypes[i].max_adult,
                 roomTypes[i].min_adult,
                 roomTypes[i].max_children,
@@ -1469,6 +1472,7 @@ $(document).ready(function () {
                     values.id,
                     values.code + ': ' + values.name,
                     values.max_pax,
+                    values.min_pax,
                     values.max_adult,
                     values.min_adult,
                     values.max_children,
@@ -1557,6 +1561,7 @@ $(document).ready(function () {
         $('#search-section :input[name=active]').val('');
         $('#search-section :input[name=valid-from]').val('');
         $('#search-section :input[name=valid-to]').val('');
+        $('#search-section :input[name=location]').val('');
     });
 
     $('.btn-search-cancel').on('click', function (e) {
@@ -1572,6 +1577,7 @@ $(document).ready(function () {
             .columns('valid_from:name').search($('#search-section :input[name=valid-from]').val())
             .columns('valid_to:name').search($('#search-section :input[name=valid-to]').val())
             .columns('active:name').search($('#search-section :input[name=active]').val())
+            .columns('location:name').search($('#search-section :input[name=location]').val())
             .draw();
     });
 
@@ -1713,7 +1719,8 @@ $(document).ready(function () {
             { 'orderable': false, 'targets': [5] },
             { 'orderable': false, 'targets': [6] },
             { 'orderable': false, 'targets': [7] },
-            { 'orderable': false, 'targets': [8] }
+            { 'orderable': false, 'targets': [8] },
+            { 'orderable': false, 'targets': [9] }
         ],
         "language": {
             "emptyTable": "No room type selected"
@@ -1834,14 +1841,15 @@ $(document).ready(function () {
         var markup =
             "<div class=''>" +
             "<div class=''>" + repo.code + ": " + repo.name +
-            ", Max Pax: " + repo.max_pax +
+            " (Max Pax: " + repo.max_pax +
+            ", Min Pax: " + repo.min_pax +
             ", Max AD: " + repo.max_adult +
             ", Min AD: " + repo.min_adult +
             ", Max CH: " + repo.max_children +
             ", Min CH: " + repo.min_children +
             ", Max INF: " + repo.max_infant +
             ", Min INF: " + repo.min_infant +
-            "</div>"+
+            ")</div>"+
             "</div>";
         return markup;
     }
@@ -1953,6 +1961,7 @@ $(document).ready(function () {
                 values.id,
                 values.code + ': ' + values.name,
                 values.max_pax,
+                values.min_pax,
                 values.max_adult,
                 values.min_adult,
                 values.max_children,
@@ -1993,6 +2002,7 @@ $(document).ready(function () {
         var query = {
             name: $('#search-section :input[name=name]').val(),
             hotel: $('#search-section :input[name=hotel]').val(),
+            location: $('#search-section :input[name=location]').val(),
             validFrom: $('#search-section :input[name=valid-from]').val(),
             validTo: $('#search-section :input[name=valid-to]').val(),
             active: $('#search-section :input[name=active]').val()

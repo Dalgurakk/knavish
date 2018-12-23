@@ -9,6 +9,7 @@ use App\Models\HotelContractMarket;
 use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
 use App\Models\HotelPaxType;
+use App\Models\Location;
 use App\Models\Market;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
@@ -59,14 +60,15 @@ class HotelContractController extends Controller
 
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array('hotel_contracts.id', 'hotel_contracts.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.active', 'hotel_contracts.hotel_id');
+        $columns = array('hotel_contracts.id', 'hotel_contracts.name', 'hotels.name', 'hotel.location', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.active', 'hotel_contracts.hotel_id');
         $orderBy = Input::get('order')['0']['column'];
         $orderDirection = Input::get('order')['0']['dir'];
         $searchName = Input::get('columns')['1']['search']['value'];
         $searchHotel = Input::get('columns')['2']['search']['value'];
-        $searchValidFrom = Input::get('columns')['3']['search']['value'];
-        $searchValidTo = Input::get('columns')['4']['search']['value'];
-        $searchActive = Input::get('columns')['6']['search']['value'];
+        $searchLocation = Input::get('columns')['3']['search']['value'];
+        $searchValidFrom = Input::get('columns')['4']['search']['value'];
+        $searchValidTo = Input::get('columns')['5']['search']['value'];
+        $searchActive = Input::get('columns')['7']['search']['value'];
         $contracts = array();
 
         $query = HotelContract::with([
@@ -100,6 +102,28 @@ class HotelContractController extends Controller
                 $query->where('name', 'like', '%' . $searchHotel . '%');
             });
         }
+        if(isset($searchLocation) && $searchLocation != '') {
+            $locations = Location::where('name', 'like', '%' . $searchLocation . '%')->get();
+            $allLocationIds = array();
+            foreach ($locations as $location) {
+                $allLocations = Location::descendantsAndSelf($location->id);
+                foreach ($allLocations as $aux) {
+                    $allLocationIds[] = $aux->id;
+                }
+            }
+            $query->whereHas('hotel', function ($query) use ($allLocationIds) {
+                $query
+                    ->whereHas('country', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    })
+                    ->orWhereHas('state', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    })
+                    ->orWhereHas('city', function ($query) use ($allLocationIds) {
+                        $query->whereIn('id', $allLocationIds);
+                    });
+            });
+        }
 
         $records = $query->count();
 
@@ -107,6 +131,7 @@ class HotelContractController extends Controller
             ->orderBy($columns[$orderBy], $orderDirection)
             ->offset($offset)
             ->limit($limit);
+
         $result = $query->get();
 
         foreach ($result as $r) {
@@ -123,12 +148,21 @@ class HotelContractController extends Controller
             else if ($currentDate->lessThan($validFrom))
                 $status = 1; //Waiting
 
+            $location = 'Undefined';
+            if (isset($r->hotel->city->name) && $r->hotel->city->name != null)
+                $location = $r->hotel->city->name;
+            else if (isset($r->hotel->state->name) && $r->hotel->state->name != null)
+                $location = $r->hotel->state->name;
+            else if (isset($r->hotel->country->name) && $r->hotel->country->name != null)
+                $location = $r->hotel->country->name;
+
             $item = array(
                 'id' => $r->id,
                 'name' => $r->name,
                 'hotel' => $r->hotel->name,
                 'valid_from' => $validFrom->format('d.m.Y'),
                 'valid_to' => $validTo->format('d.m.Y'),
+                'location' => $location ,
                 'active' => $r->active,
                 'status' => $status,
                 'object' => $contract
@@ -1132,6 +1166,7 @@ class HotelContractController extends Controller
         $parameters = array(
             'name'=> Input::get('name'),
             'hotel'=> Input::get('hotel'),
+            'location'=> Input::get('location'),
             'validFrom'=> Input::get('validFrom'),
             'validTo'=> Input::get('validTo'),
             'active' => Input::get('active'),

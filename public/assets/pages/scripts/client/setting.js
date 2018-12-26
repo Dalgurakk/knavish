@@ -124,6 +124,11 @@ $(document).ready(function () {
                         if (response.status == 'success') {
                             var table = response.table;
                             $('.result-container').html('');
+                            $('.result-container').html('' +
+                                '<div class="note note-info">'+
+                                '<p>Costing and pricing are all per person per night.</p>' +
+                                '</div>'
+                            );
                             $('.result-container').append(table);
                             renderTable(response.from, response.to, contract);
                         }

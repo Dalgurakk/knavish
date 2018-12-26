@@ -226,6 +226,11 @@ $(document).ready(function () {
                         if (response.status == 'success') {
                             var table = response.table;
                             $('.result-container').html('');
+                            $('.result-container').html('' +
+                                '<div class="note note-info">'+
+                                    '<p>Costing and pricing are all per person per night.</p>' +
+                                '</div>'
+                            );
                             $('.result-container').append(table);
                             renderTable(response.from, response.to, contract);
                         }
@@ -335,6 +340,7 @@ $(document).ready(function () {
 
             var option = '<option value="' + roomTypes[i].id + '" data-name="' + roomTypes[i].name + '"> ' + roomTypes[i].name + ' (' +
                 'Max Pax: ' + roomTypes[i].max_pax +
+                ', Min Pax: ' + roomTypes[i].min_pax +
                 ', Max AD: ' + roomTypes[i].max_adult +
                 ', Min AD: ' + roomTypes[i].min_adult +
                 ', Max CH: ' + roomTypes[i].max_children +
@@ -574,6 +580,7 @@ $(document).ready(function () {
         $.each(roomTypes, function (i, item) {
             var option = '<option value="' + roomTypes[i].id + '" data-name="' + roomTypes[i].name + '"> ' + roomTypes[i].name + ' (' +
                 'Max Pax: ' + roomTypes[i].max_pax +
+                ', Min Pax: ' + roomTypes[i].min_pax +
                 ', Max AD: ' + roomTypes[i].max_adult +
                 ', Min AD: ' + roomTypes[i].min_adult +
                 ', Max CH: ' + roomTypes[i].max_children +
@@ -582,9 +589,9 @@ $(document).ready(function () {
                 ', Min INF: ' + roomTypes[i].min_infant +
                 ')' + '</option>';
 
-            if(roomTypes[i].id != $('#modal-setting :input[name="room-type-id"]').val()) {
+            //if(roomTypes[i].id != $('#modal-setting :input[name="room-type-id"]').val()) {
                 $('#modal-import :input[name="select-room"]').append(option);
-            }
+            //}
         });
     }
 

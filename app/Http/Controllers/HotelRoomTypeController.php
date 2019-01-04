@@ -137,7 +137,7 @@ class HotelRoomTypeController extends Controller
             $roomType->min_children = Input::get('minchildren');
             $roomType->max_infant = Input::get('maxinfant');
             $roomType->min_infant = Input::get('mininfant');
-            $roomType->active = Input::get('active') == 1 ? true : false;
+            $roomType->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $roomType->save();
@@ -192,7 +192,7 @@ class HotelRoomTypeController extends Controller
             $roomType->min_children = Input::get('minchildren');
             $roomType->max_infant = Input::get('maxinfant');
             $roomType->min_infant = Input::get('mininfant');
-            $roomType->active = Input::get('active') == 1 ? true : false;
+            $roomType->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $roomType->save();

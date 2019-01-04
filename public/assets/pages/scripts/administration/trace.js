@@ -23,7 +23,10 @@ $(document).ready(function () {
                 "to": $('#search-to').val()
             },
             "complete": function(xhr, textStatus) {
-                if (xhr.status != '200') {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
                     toastr['error']("Please check your connection and try again.", "Error on loading the content");
                 }
             }

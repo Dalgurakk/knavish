@@ -27,7 +27,7 @@ class LocationController extends Controller
         );
 
         $data['breadcrumb'] = $breadcrumb;
-        $data['menuAdministration'] = 'selected';
+        $data['menuNomenclators'] = 'selected';
         $data['submenuLocations'] = 'selected';
         $data['currentDate'] = parent::currentDate();
 
@@ -96,7 +96,7 @@ class LocationController extends Controller
             $location->code = Input::get('code');
             $location->name = Input::get('name');
             $location->icon = (Input::get('icon') != 'empty') ? ('glyphicon ' . Input::get('icon')) : 'glyphicon glyphicon-question-sign';
-            $location->active = Input::get('active') == 1 ? true : false;
+            $location->active = Input::get('active') == 1 ? 1 : 0;
 
             $parentId = Input::get('parent-id');
             if ($parentId != 0) {
@@ -137,7 +137,7 @@ class LocationController extends Controller
             $location->code = Input::get('code');
             $location->name = Input::get('name');
             $location->icon = (Input::get('icon') != 'empty') ? ('glyphicon ' . Input::get('icon')) : 'glyphicon glyphicon-question-sign';
-            $location->active = Input::get('active') == 1 ? true : false;
+            $location->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $location->save();

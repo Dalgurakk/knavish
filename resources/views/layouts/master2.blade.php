@@ -270,6 +270,30 @@ License: You must have a valid license purchased only from themeforest(the above
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item {{ isset($menuNomenclators) ? 'active open' : '' }}">
+                            <a href="{{ route('administration.market.index') }}" class="nav-link nav-toggle">
+                                <i class="fa fa-diamond"></i>
+                                <span class="title">Nomenclators</span>
+                                <span class="{{ isset($menuNomenclators) ? 'selected' : '' }}"></span>
+                                <span class="arrow"></span>
+                            </a>
+                            <ul class="sub-menu">
+                                <li class="nav-item start {{ isset($submenuMarket) ? 'active open' : '' }}">
+                                    <a href="{{ route('administration.market.index') }}" class="nav-link ">
+                                        <i class="fa fa-tag"></i>
+                                        <span class="title">Price Rates</span>
+                                        <span class="{{ isset($submenuMarket) ? 'selected' : '' }}"></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item start {{ isset($submenuLocations) ? 'active open' : '' }}">
+                                    <a href="{{ route('administration.location.index') }}" class="nav-link ">
+                                        <i class="fa fa-globe"></i>
+                                        <span class="title">Locations</span>
+                                        <span class="{{ isset($submenuLocations) ? 'selected' : '' }}"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <!--li class="nav-item ">
                             <a href="javascript:;" class="nav-link nav-toggle">
                                 <i class="fa fa-microphone "></i>
@@ -293,23 +317,9 @@ License: You must have a valid license purchased only from themeforest(the above
                                             <span class="{{ isset($submenuUser) ? 'selected' : '' }}"></span>
                                         </a>
                                     </li>
-                                    <li class="nav-item start {{ isset($submenuMarket) ? 'active open' : '' }}">
-                                        <a href="{{ route('administration.market.index') }}" class="nav-link ">
-                                            <i class="fa fa-tag"></i>
-                                            <span class="title">Price Rates</span>
-                                            <span class="{{ isset($submenuMarket) ? 'selected' : '' }}"></span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item start {{ isset($submenuLocations) ? 'active open' : '' }}">
-                                        <a href="{{ route('administration.location.index') }}" class="nav-link ">
-                                            <i class="fa fa-globe"></i>
-                                            <span class="title">Locations</span>
-                                            <span class="{{ isset($submenuLocations) ? 'selected' : '' }}"></span>
-                                        </a>
-                                    </li>
                                     <li class="nav-item start {{ isset($submenuTrace) ? 'active open' : '' }}">
                                         <a href="{{ route('administration.trace.index') }}" class="nav-link ">
-                                            <i class="fa fa-check"></i>
+                                            <i class="fa fa-binoculars"></i>
                                             <span class="title">Traces</span>
                                             <span class="{{ isset($submenuTrace) ? 'selected' : '' }}"></span>
                                         </a>

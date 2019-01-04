@@ -20,7 +20,10 @@ $(document).ready(function () {
             "url": routeRead,
             "type": "POST",
             "complete": function(xhr, textStatus) {
-                if (xhr.status != '200') {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
                     toastr['error']("Please check your connection and try again.", "Error on loading the content");
                 }
             }
@@ -244,7 +247,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -406,58 +412,38 @@ $(document).ready(function () {
                 .closest('.form-group').removeClass('has-error');
         },
         submitHandler: function (form) {
-            var needEdit = false;
             var formData = new FormData(formEdit[0]);
-            var active = formData.get('active') == '1' ? 1 : 0;
-            //console.log(object);
-            if (
-                object.code != formData.get('code') ||
-                object.name != formData.get('name') ||
-                object.max_pax != formData.get('maxpax') ||
-                object.min_pax != formData.get('minpax') ||
-                object.max_adult != formData.get('maxadult') ||
-                object.min_adult != formData.get('minadult') ||
-                object.max_children != formData.get('maxchildren') ||
-                object.min_children != formData.get('minchildren') ||
-                object.max_infant != formData.get('maxinfant') ||
-                object.min_infant != formData.get('mininfant') ||
-                object.active != active
-            ) {
-                needEdit = true;
-            }
-            if(needEdit) {
-                $.ajax({
-                    "url": routeUpdate,
-                    "type": "POST",
-                    //"data": formEdit.serialize(),
-                    "data": formData,
-                    "contentType": false,
-                    "processData": false,
-                    "beforeSend": function() {
-                        App.showMask(true, formEdit);
-                    },
-                    "complete": function(xhr, textStatus) {
-                        App.showMask(false, formEdit);
-                        if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+            $.ajax({
+                "url": routeUpdate,
+                "type": "POST",
+                //"data": formEdit.serialize(),
+                "data": formData,
+                "contentType": false,
+                "processData": false,
+                "beforeSend": function() {
+                    App.showMask(true, formEdit);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formEdit);
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdate = true;
+                            $(form).find("button.cancel-form").click();
                         }
                         else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                needUpdate = true;
-                                $(form).find("button.cancel-form").click();
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
+                            toastr['error'](response.message, "Error");
                         }
                     }
-                });
-            }
-            else {
-                $(form).find("button.cancel-form").click();
-            }
+                }
+            });
         }
     });
 
@@ -525,12 +511,15 @@ $(document).ready(function () {
                         id: data['id']
                     },
                     "beforeSend": function() {
-                        App.showMask(true, formAdd);
+                        App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
                         requestDelete = null;
-                        App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
+                        App.showMask(false, $('#table'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
@@ -564,15 +553,15 @@ $(document).ready(function () {
                         id: data['id']
                     },
                     "beforeSend": function() {
-                        App.blockUI({
-                            target: $('.custom-container'),
-                            animate: true
-                        });
+                        App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
                         requestDuplicate = null;
-                        App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
+                        App.showMask(false, $('#table'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {

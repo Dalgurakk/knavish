@@ -478,7 +478,7 @@
                         </div>
                     </div>
                 </div>
-                <!--div class="portlet box green ">
+                <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
@@ -487,7 +487,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="note note-info">
-                                    <p>The variables Price and Allotment are added by default.</p>
+                                    <p>The variables Cost and Price are added by default.</p>
                                 </div>
                             </div>
                             <div class="mt-checkbox-list">
@@ -506,7 +506,7 @@
                             </div>
                         </div>
                     </div>
-                </div-->
+                </div>
             </div>
         </div>
     </div>
@@ -781,7 +781,7 @@
                         </div>
                     </div>
                 </div>
-                <!--div class="portlet box green ">
+                <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
@@ -800,7 +800,7 @@
                             </div>
                         </div>
                     </div>
-                </div-->
+                </div>
             </div>
         </div>
     </div>
@@ -1141,7 +1141,7 @@
                         </div>
                     </div>
                 </div>
-                <!--div class="portlet box green ">
+                <div class="portlet box green ">
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
@@ -1150,7 +1150,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="note note-info">
-                                    <p>The variables Price and Allotment are added by default.</p>
+                                    <p>The variables Cost and Price are added by default.</p>
                                 </div>
                             </div>
                             <div class="mt-checkbox-list">
@@ -1169,7 +1169,7 @@
                             </div>
                         </div>
                     </div>
-                </div-->
+                </div>
             </div>
         </div>
     </div>

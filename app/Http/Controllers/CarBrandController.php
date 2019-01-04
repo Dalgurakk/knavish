@@ -75,7 +75,7 @@ class CarBrandController extends Controller
             $brand->name = Input::get('name');
             $brand->description = Input::get('description');
             $brand->car_category_id = Input::get('category-id');
-            $brand->active = Input::get('active') == 1 ? true : false;
+            $brand->active = Input::get('active') == 1 ? 1 : 0;
 
             if (Input::file('image')) {
                 $image = Input::file('image');
@@ -120,7 +120,7 @@ class CarBrandController extends Controller
             $brand->name = Input::get('name');
             $brand->description = Input::get('description');
             $brand->car_category_id = Input::get('category-id');
-            $brand->active = Input::get('active') == 1 ? true : false;
+            $brand->active = Input::get('active') == 1 ? 1 : 0;
             $oldImage = $brand->image;
 
             if ($imageOperation != '0') {

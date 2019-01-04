@@ -8,7 +8,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 class HotelContractMarket extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
-
     protected $table = 'hotel_contract_market';
 
     public function settings() {
@@ -21,5 +20,9 @@ class HotelContractMarket extends Model implements Auditable
 
     public function market() {
         return $this->belongsTo('App\Models\Market');
+    }
+
+    public function settingsOrigin() {
+        return $this->hasMany('App\Models\HotelContractSettingOrigin');
     }
 }

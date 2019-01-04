@@ -9,8 +9,20 @@ class HotelContractSetting extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
-    public function priceRate()
+    public function roomType()
     {
-        return $this->belongsTo('App\Models\HotelContractMarket');
+        return $this->hasOne('App\Models\HotelRoomType', 'id', 'hotel_room_type_id');
     }
+
+    public function contract()
+    {
+        return $this->belongsTo('App\Models\HotelContract');
+    }
+
+    public function prices()
+    {
+        return $this->hasMany('App\Models\HotelContractPrice');
+    }
+
+
 }

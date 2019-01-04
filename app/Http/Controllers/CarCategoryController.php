@@ -62,7 +62,7 @@ class CarCategoryController extends Controller
             $category = new CarCategory();
             $category->name = Input::get('name');
             $category->description = Input::get('description');
-            $category->active = Input::get('active') == 1 ? true : false;
+            $category->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $category->save();
@@ -97,7 +97,7 @@ class CarCategoryController extends Controller
             $category = CarCategory::find($id);
             $category->name = Input::get('name');
             $category->description = Input::get('description');
-            $category->active = Input::get('active') == 1 ? true : false;
+            $category->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $category->save();

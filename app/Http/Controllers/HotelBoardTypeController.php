@@ -117,7 +117,7 @@ class HotelBoardTypeController extends Controller
             $boardType->code = Input::get('code');
             $boardType->name = Input::get('name');
             $boardType->description = Input::get('description');
-            $boardType->active = Input::get('active') == 1 ? true : false;
+            $boardType->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $boardType->save();
@@ -154,7 +154,7 @@ class HotelBoardTypeController extends Controller
             $boardType->code = Input::get('code');
             $boardType->name = Input::get('name');
             $boardType->description = Input::get('description');
-            $boardType->active = Input::get('active') == 1 ? true : false;
+            $boardType->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $boardType->save();

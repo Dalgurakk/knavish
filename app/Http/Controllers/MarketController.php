@@ -26,7 +26,7 @@ class MarketController extends Controller
         );
 
         $data['breadcrumb'] = $breadcrumb;
-        $data['menuAdministration'] = 'selected';
+        $data['menuNomenclators'] = 'selected';
         $data['submenuMarket'] = 'selected';
         $data['currentDate'] = parent::currentDate();
 
@@ -107,7 +107,7 @@ class MarketController extends Controller
             $market->code = Input::get('code');
             $market->name = Input::get('name');
             $market->description = Input::get('description');
-            $market->active = Input::get('active') == 1 ? true : false;
+            $market->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $market->save();
@@ -144,7 +144,7 @@ class MarketController extends Controller
             $market->code = Input::get('code');
             $market->name = Input::get('name');
             $market->description = Input::get('description');
-            $market->active = Input::get('active') == 1 ? true : false;
+            $market->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $market->save();

@@ -101,7 +101,6 @@ class TraceController extends Controller
         $result = $query->get();
 
         foreach ($result as $r) {
-            //print_r($r->created_at);die;
             $item = array(
                 'id' => $r->id,
                 'user_type' => $r->user_type,
@@ -110,12 +109,13 @@ class TraceController extends Controller
                 'user_email' => $r->user_email,
                 'user_name' => $r->user_name,
                 'event' => $r->event,
-                'auditable_type' => $r->auditable_type,
+                'auditable_type' => substr($r->auditable_type, 11),
                 'auditable_id' => $r->auditable_id,
                 'url' => $r->url,
                 'ip_address' => $r->ip_address,
                 'user_agent' => $r->user_agent,
                 'created_at' => $r->created_at->format('d.m.Y'),
+                //'created_at' => $r->created_at->format('H:i:s'),
                 'object' => $r
             );
             $traces[] = $item;

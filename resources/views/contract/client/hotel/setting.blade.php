@@ -134,7 +134,7 @@
 <script src="{{ asset('assets/global/plugins/jquery-validation/js/additional-methods.min.js') }}" type="text/javascript"></script>
 <script>
     var routeSearch = "{{ route('contract.client.hotel.search') }}";
-    var routeClient = "{{ route('contract.client.hotel') }}";
+    var routeContract = "{{ route('contract.client.hotel') }}";
     var routeData = "{{ route('contract.client.hotel.settings.data') }}";
     var contractId = '{{ $contract_id }}';
 </script>

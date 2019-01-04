@@ -44,11 +44,19 @@ class HotelContract extends Model implements Auditable
         return $this->hasMany('App\Models\HotelContractMarket');
     }
 
+    public function roomTypeRelations() {
+        return $this->hasMany('App\Models\HotelContractRoomType');
+    }
+
     public function hotel() {
         return $this->belongsTo('App\Models\Hotel');
     }
 
     public function clientContracts() {
         return $this->hasMany('App\Models\HotelContractClient');
+    }
+
+    public function settings() {
+        return $this->hasMany('App\Models\HotelContractSetting');
     }
 }

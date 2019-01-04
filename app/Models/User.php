@@ -11,6 +11,10 @@ class User extends Authenticatable implements Auditable
     use Notifiable;
     use \OwenIt\Auditing\Auditable;
 
+    protected $auditExclude = [
+        'remember_token',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *

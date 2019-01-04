@@ -33,6 +33,11 @@ $(document).ready(function () {
                     results: data
                 };
             },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+            },
             cache: true
         },
         escapeMarkup: function(markup) {
@@ -67,7 +72,10 @@ $(document).ready(function () {
         },
         "complete": function(xhr, textStatus) {
             App.showMask(false, formSearch);
-            if (xhr.status != '200') {
+            if (xhr.status == '419') {
+                location.reload(true);
+            }
+            else if (xhr.status != '200') {
                 toastr['error']("Please check your connection and try again.", "Error on loading the content");
             }
             else {
@@ -116,7 +124,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formSearch);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -126,7 +137,7 @@ $(document).ready(function () {
                             $('.result-container').html('');
                             $('.result-container').html('' +
                                 '<div class="note note-info">'+
-                                '<p>Costing and pricing are all per person per night.</p>' +
+                                '<p>Pricing are all per person per night.</p>' +
                                 '</div>'
                             );
                             $('.result-container').append(table);

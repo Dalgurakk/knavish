@@ -112,7 +112,7 @@ class HotelChainController extends Controller
             $hotelChain = new HotelChain();
             $hotelChain->name = Input::get('name');
             $hotelChain->description = Input::get('description');
-            $hotelChain->active = Input::get('active') == 1 ? true : false;
+            $hotelChain->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $hotelChain->save();
@@ -147,7 +147,7 @@ class HotelChainController extends Controller
             $hotelChain = HotelChain::find($id);
             $hotelChain->name = Input::get('name');
             $hotelChain->description = Input::get('description');
-            $hotelChain->active = Input::get('active') == 1 ? true : false;
+            $hotelChain->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $hotelChain->save();

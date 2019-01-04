@@ -21,7 +21,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
 <head>
     <meta charset="utf-8" />
-    <title>Royal App | Internal Error</title>
+    <title>Royal App | Page Expired</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <meta content="This is your Royal Tropical Tour App" name="description" />
@@ -49,12 +49,12 @@ License: You must have a valid license purchased only from themeforest(the above
 <body class=" page-404-full-page">
 <div class="row">
     <div class="col-md-12 page-404">
-        <div class="number font-red"> 500 </div>
+        <div class="number font-red"> 419 </div>
         <div class="details">
-            <h3>Oops! Something went wrong.</h3>
-            <p> We are fixing it! Please come back in a while.
+            <h3>The page has expired due to inactivity.</h3>
+            <p> Please refresh and try again.
                 <br/>
-                <a href="{{ route('home') }}" class="btn red btn-outline" style="margin-top: 20px;"> Return home </a></p>
+                <a href="" class="btn red btn-outline refresh" style="margin-top: 20px;"> Refresh </a></p>
         </div>
     </div>
 </div>
@@ -76,5 +76,19 @@ License: You must have a valid license purchased only from themeforest(the above
 <!-- END THEME GLOBAL SCRIPTS -->
 <!-- BEGIN THEME LAYOUT SCRIPTS -->
 <!-- END THEME LAYOUT SCRIPTS -->
+<script>
+    function decodeHTML(html) {
+        var txt = document.createElement('textarea');
+        txt.innerHTML = html;
+        return txt.value;
+    };
+
+    $(document).ready(function()
+    {
+        $('.refresh').on('click', function(e) {
+            location.reload(true);
+        });
+    })
+</script>
 </body>
 </html>

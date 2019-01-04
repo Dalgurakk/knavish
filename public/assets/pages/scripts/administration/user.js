@@ -19,7 +19,10 @@ $(document).ready(function () {
             "url": routeRead,
             "type": "POST",
             "complete": function(xhr, textStatus) {
-                if (xhr.status != '200') {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
                     toastr['error']("Please check your connection and try again.", "Error on loading the content");
                 }
             }
@@ -173,7 +176,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -277,11 +283,14 @@ $(document).ready(function () {
                     id: data['id']
                 },
                 "beforeSend": function() {
-                    App.showMask(true, formAdd);
+                    App.showMask(true, $('#table'));
                 },
                 "complete": function(xhr, textStatus) {
-                    App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    App.showMask(false, $('#table'));
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {

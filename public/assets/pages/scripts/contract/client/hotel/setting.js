@@ -33,6 +33,11 @@ $(document).ready(function () {
                     results: data
                 };
             },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+            },
             cache: true
         },
         escapeMarkup: function(markup) {
@@ -57,7 +62,7 @@ $(document).ready(function () {
     });
 
     $.ajax({
-        "url": routeClient,
+        "url": routeContract,
         "type": "POST",
         "data": {
             contractId: contractId
@@ -67,7 +72,10 @@ $(document).ready(function () {
         },
         "complete": function(xhr, textStatus) {
             App.showMask(false, formSearch);
-            if (xhr.status != '200') {
+            if (xhr.status == '419') {
+                location.reload(true);
+            }
+            else if (xhr.status != '200') {
                 toastr['error']("Please check your connection and try again.", "Error on loading the content");
             }
             else {
@@ -116,7 +124,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formSearch);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -130,7 +141,6 @@ $(document).ready(function () {
                                 '</div>'
                             );
                             $('.result-container').append(table);
-                            renderTable(response.from, response.to, contract);
                         }
                         else {
                             toastr['error'](response.message, "Error");
@@ -220,7 +230,6 @@ $(document).ready(function () {
         else if (currentDate.isAfter(endDate)) {
             tempStart = moment(endDate).startOf('month');
             tempEnd = moment(endDate).endOf('month');
-            console.log(endDate.format('DD.MM.YYYY'));
         }
 
         if(tempStart.isBefore(startDate)) {
@@ -237,55 +246,5 @@ $(document).ready(function () {
 
         $('input[name=from]').datepicker( "setDate" , new Date(tempStart));
         $('input[name=to]').datepicker( "setDate" , new Date(tempEnd));
-
-        $('.measures-container').html('');
-
-        for (var i = 0; i < contract.measures.length; i++) {
-            var html =
-                '<div class="row">' +
-                '<div class="col-md-12">' +
-                '<div class="col-md-6 col-sm-6 col-xs-6">' +
-                '<div class="form-group">' +
-                '<label>' + contract.measures[i].name + '</label>' +
-                '<input type="text" class="form-control" name="' + contract.measures[i].code + '" readonly>' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-md-6 col-sm-6 col-xs-6">' +
-                '<div class="mt-checkbox-list">' +
-                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15"> Set' +
-                '<input type="checkbox" value="" name="set-' + contract.measures[i].code + '" data-set="' + contract.measures[i].code + '" data-measure-id="' + contract.measures[i].id + '" />' +
-                '<span></span>' +
-                '</label>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
-            $('.measures-container').append(html);
-            $('input[name="set-' + contract.measures[i].code + '"]').change(function() {
-                var name = $(this).attr('data-set');
-                if($(this).is(":checked")) {
-                    $('input[name=' + name + ']').prop('readonly', '');
-                    $(this).val($(this).attr('data-measure-id'));
-                }
-                else {
-                    $(this).val('0');
-                    $('input[name=' + name + ']').prop('readonly', true);
-                }
-            });
-        }
-    }
-
-    function renderTable(from, to, contract) {
-        $('.item-setting').on('click', function() {
-            var room = $(this).parents('table').find('th:first').html();
-            var date = $(this).attr('data-date');
-            var measure = $(this).parents('tr').find('td:first').attr('data-measure-code');
-
-            for (var i = 0; i < contract.measures.length; i++) {
-                var date = $(this).attr('data-date');
-                var measureId = contract.measures[i].id;
-                var value = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]').html();
-            }
-        });
     }
 });

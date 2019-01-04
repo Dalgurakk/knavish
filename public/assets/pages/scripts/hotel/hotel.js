@@ -97,7 +97,10 @@ $(document).ready(function () {
             "url": routeRead,
             "type": "POST",
             "complete": function(xhr, textStatus) {
-                if (xhr.status != '200') {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
                     toastr['error']("Please check your connection and try again.", "Error on loading the content");
                 }
                 $('.br-readonly').on('click', function(e) {
@@ -261,7 +264,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -345,76 +351,38 @@ $(document).ready(function () {
                 .closest('.form-group').removeClass('has-error');
         },
         submitHandler: function (form) {
-            var needEdit = false;
             var formData = new FormData(formEdit[0]);
-            var active = formData.get('active') == '1' ? 1 : 0;
-            var countryId = object.country == null ? '' : object.country.id;
-            var stateId = object.state == null ? '' : object.state.id;
-            var cityId = object.city == null ? '' : object.city.id;
-            var postalCode = object.postal_code == null ? '' : object.postal_code;
-            var address = object.address == null ? '' : object.address;
-            var category = object.category == null ? '' : object.category;
-            var hotelChainId = object.hotel_chain_id == null ? '' : object.hotel_chain_id;
-            var adminPhone = object.admin_phone == null ? '' : object.admin_phone;
-            var adminFax = object.admin_fax == null ? '' : object.admin_fax;
-            var webSite = object.web_site == null ? '' : object.web_site;
-            var turisticLicence = object.turistic_licence == null ? '' : object.turistic_licence;
-            var email = object.email == null ? '' : object.email;
-            var description = object.description == null ? '' : object.description;
-
-            if (
-                object.name != formData.get('name') ||
-                countryId != formData.get('country-id') ||
-                stateId != formData.get('state-id') ||
-                cityId != formData.get('city-id') ||
-                postalCode != formData.get('postal-code') ||
-                address != formData.get('address') ||
-                hotelChainId != formData.get('hotel-chain-id') ||
-                category != formData.get('category') ||
-                adminPhone != formData.get('admin-phone') ||
-                adminFax != formData.get('admin-fax') ||
-                webSite != formData.get('web-site') ||
-                turisticLicence != formData.get('turistic-licence') ||
-                description != formData.get('description') ||
-                email != formData.get('email') ||
-                object.active != active
-            ) {
-                needEdit = true;
-            }
-
-            if(needEdit) {
-                $.ajax({
-                    "url": routeUpdate,
-                    "type": "POST",
-                    //"data": formEdit.serialize(),
-                    "data": formData,
-                    "contentType": false,
-                    "processData": false,
-                    "beforeSend": function() {
-                        App.showMask(true, formEdit);
-                    },
-                    "complete": function(xhr, textStatus) {
-                        App.showMask(false, formEdit);
-                        if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+            $.ajax({
+                "url": routeUpdate,
+                "type": "POST",
+                //"data": formEdit.serialize(),
+                "data": formData,
+                "contentType": false,
+                "processData": false,
+                "beforeSend": function() {
+                    App.showMask(true, formEdit);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formEdit);
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdate = true;
+                            $(form).find("button.cancel-form").click();
                         }
                         else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                needUpdate = true;
-                                $(form).find("button.cancel-form").click();
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
+                            toastr['error'](response.message, "Error");
                         }
                     }
-                });
-            }
-            else {
-                $(form).find("button.cancel-form").click();
-            }
+                }
+            });
         }
     });
 
@@ -517,7 +485,10 @@ $(document).ready(function () {
                     "complete": function(xhr, textStatus) {
                         requestDelete = null;
                         App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
@@ -550,7 +521,14 @@ $(document).ready(function () {
             dataType: 'json',
             data: { id: id },
             type: "POST",
-            context: $('#fileupload')[0]
+            context: $('#fileupload')[0],
+            "complete": function(xhr, textStatus) {
+                requestDelete = null;
+                App.showMask(false, formAdd);
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+            }
         }).always(function () {
             $(this).removeClass('fileupload-processing');
         }).done(function (result) {

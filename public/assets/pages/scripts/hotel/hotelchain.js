@@ -20,7 +20,10 @@ $(document).ready(function () {
             "url": routeRead,
             "type": "POST",
             "complete": function(xhr, textStatus) {
-                if (xhr.status != '200') {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
                     toastr['error']("Please check your connection and try again.", "Error on loading the content");
                 }
             }
@@ -146,7 +149,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -226,48 +232,34 @@ $(document).ready(function () {
                 .closest('.form-group').removeClass('has-error');
         },
         submitHandler: function (form) {
-            var needEdit = false;
-            var formData = new FormData(formEdit[0]);
-            var active = formData.get('active') == '1' ? 1 : 0;
-            var description = object.description == null ? '' : object.description;
-            if (
-                object.name != formData.get('name') ||
-                description != formData.get('description') ||
-                object.active != active
-            ) {
-                needEdit = true;
-            }
-
-            if(needEdit) {
-                $.ajax({
-                    "url": routeUpdate,
-                    "type": "POST",
-                    "data": formEdit.serialize(),
-                    "beforeSend": function() {
-                        App.showMask(true, formEdit);
-                    },
-                    "complete": function(xhr, textStatus) {
-                        App.showMask(false, formEdit);
-                        if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+            $.ajax({
+                "url": routeUpdate,
+                "type": "POST",
+                "data": formEdit.serialize(),
+                "beforeSend": function() {
+                    App.showMask(true, formEdit);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formEdit);
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdate = true;
+                            $(form).find("button.cancel-form").click();
                         }
                         else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                needUpdate = true;
-                                $(form).find("button.cancel-form").click();
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
+                            toastr['error'](response.message, "Error");
                         }
                     }
-                });
-            }
-            else {
-                $(form).find("button.cancel-form").click();
-            }
+                }
+            });
         }
     });
 
@@ -324,7 +316,10 @@ $(document).ready(function () {
                     "complete": function(xhr, textStatus) {
                         requestDelete = null;
                         App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {

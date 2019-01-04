@@ -65,7 +65,10 @@ $(document).ready(function () {
                         },
                         "complete": function(xhr, textStatus) {
                             App.showMask(false, $('.node-data'));
-                            if (xhr.status != '200') {
+                            if (xhr.status == '419') {
+                                location.reload(true);
+                            }
+                            else if (xhr.status != '200') {
                                 toastr['error']("Please check your connection and try again.", "Error on loading the content");
                             }
                             else {
@@ -306,7 +309,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -380,7 +386,6 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var option = $(form).find("button[type=submit]:focus").attr('data');
-
             $.ajax({
                 "url": routeUpdate,
                 "type": "POST",
@@ -390,7 +395,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formEdit);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {

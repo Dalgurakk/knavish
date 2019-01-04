@@ -112,7 +112,7 @@ class HotelPaxTypeController extends Controller
             $paxType->agefrom = Input::get('agefrom');
             $paxType->ageto = Input::get('ageto');
             $paxType->description = null;
-            $paxType->active = Input::get('active') == 1 ? true : false;
+            $paxType->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $paxType->save();
@@ -152,7 +152,7 @@ class HotelPaxTypeController extends Controller
             $paxType->name = Input::get('name');
             $paxType->agefrom = Input::get('agefrom');
             $paxType->ageto = Input::get('ageto');
-            $paxType->active = Input::get('active') == 1 ? true : false;
+            $paxType->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $paxType->save();

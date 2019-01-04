@@ -174,7 +174,7 @@
     <div class="col-xs-12 result-container"></div>
 </div>
 
-<div id="modal-setting" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
+<div id="modal-setting" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
         <h4 class="modal-title"><i class="icon-settings"></i> Settings</h4>
@@ -282,7 +282,7 @@
                                     </div>
                                     <div class="col-md-2 col-sm-2 col-xs-2">
                                         <div class="form-group">
-                                            <a class="btn blue btn-outline add-row" href="javascript:;">
+                                            <a class="btn blue btn-outline add-row add-row-setting" href="javascript:;">
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </div>
@@ -318,7 +318,7 @@
     </form>
 </div>
 
-<div id="modal-change" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
+<div id="modal-change" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-change" data-dismiss="modal" aria-hidden="true"></button>
         <h4 class="modal-title"><i class="fa fa-hotel"></i> Select Room Type</h4>
@@ -336,7 +336,7 @@
     </div>
 </div>
 
-<div id="modal-import" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
+<div id="modal-import" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-import" data-dismiss="modal" aria-hidden="true"></button>
         <h4 class="modal-title"><i class="fa fa-download"></i> Import</h4>
@@ -351,41 +351,100 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12">
-                <div class="note note-info">
-                    <p>This will overwrite the current configuration of the room.</p>
-                </div>
-            </div>
-            <div class="col-md-12" style="padding-bottom: 10px;">
-                <div class="form-group">
-                    <label>Import From</label>
-                    <select class="form-control" name="select-room"></select>
-                </div>
-            </div>
-            <div class="col-md-12 share-container" style="margin-bottom: 30px; display: inline-block; text-align: center;">
-                <label class="mt-checkbox mt-checkbox-outline no-margin-bottom set-add-value"> Add Value
-                    <input type="checkbox" value="1" name="add-value"/>
+            <div class="col-md-12 share-container" style="margin-bottom: 25px; display: inline-block; text-align: center;">
+                <label class="mt-checkbox mt-checkbox-outline no-margin-bottom set-all-dates"> All Dates
+                    <input type="checkbox" value="1" name="all-dates"/>
                     <span></span>
                 </label>
             </div>
-            <div class="col-md-12" style="text-align: center;">
-                <div class="mt-radio-list" style="padding: 0;">
-                    <label class="mt-radio mt-radio-outline custom-radio" style="max-width: 300px; display: inline-block; margin-bottom: 0;">
-                        <input type="radio" name="rate_type" value="2" data-target="rate_fee_value" checked>
-                        <div class="form-group">
-                            <input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value" id="rate_fee_value" disabled/>
+            <div class="col-md-12 all-dates-container" style="display: none;">
+                <div class="portlet box green porlet-setting">
+                    <div class="portlet-title porlet-title-setting">
+                        <div class="caption caption-setting">
+                            <i class="fa fa-calendar"></i>Ranges</div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="import-range-container">
+                                <div class="range">
+                                    <div class="col-md-5 col-sm-5 col-xs-5">
+                                        <div class="form-group">
+                                            <label>From</label>
+                                            <div class="input-icon left">
+                                                <i class="fa fa-calendar"></i>
+                                                <input type="text" class="form-control date-picker" name="import-from">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-sm-5 col-xs-5">
+                                        <div class="form-group">
+                                            <label>To</label>
+                                            <div class="input-icon left">
+                                                <i class="fa fa-calendar"></i>
+                                                <input type="text" class="form-control date-picker" name="import-to">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">
+                                        <div class="form-group">
+                                            <a class="btn blue btn-outline add-row add-row-import" href="javascript:;">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <span style="margin-top: 8px;"></span>
-                    </label>
+                    </div>
                 </div>
-                <div class="mt-radio-list" style="padding: 0;">
-                    <label class="mt-radio mt-radio-outline custom-radio" style="max-width: 300px; display: inline-block; margin-bottom: 0;">
-                        <input type="radio" name="rate_type" value="1" data-target="rate_percent_value">
-                        <div class="form-group">
-                            <input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value" id="rate_percent_value" disabled/>
+            </div>
+            <div class="col-md-12">
+                <div class="portlet box green porlet-setting">
+                    <div class="portlet-title porlet-title-setting">
+                        <div class="caption caption-setting">
+                            <i class="fa fa-download"></i>Import</div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="note note-info">
+                                    <p>This will overwrite the current configuration of the room.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-12" style="padding-bottom: 10px;">
+                                <div class="form-group">
+                                    <label>From</label>
+                                    <select class="form-control" name="select-room"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 share-container" style="margin-bottom: 15px; display: inline-block; text-align: center;">
+                                <label class="mt-checkbox mt-checkbox-outline no-margin-bottom set-add-value" style="margin-left: 10px;"> Add Value
+                                    <input type="checkbox" value="1" name="add-value"/>
+                                    <span></span>
+                                </label>
+                            </div>
+                            <div class="col-md-12 add-value-container" style="text-align: center; margin-top: 15px; display: none;">
+                                <div class="mt-radio-list" style="padding: 0;">
+                                    <label class="mt-radio mt-radio-outline custom-radio" style="max-width: 300px; display: inline-block; margin-bottom: 0;">
+                                        <input type="radio" name="rate_type" value="2" data-target="rate_fee_value" checked>
+                                        <div class="form-group">
+                                            <input class="form-control fee" placeholder="Fee" type="text" value="" name="rate_fee_value" id="rate_fee_value" disabled/>
+                                        </div>
+                                        <span style="margin-top: 8px;"></span>
+                                    </label>
+                                </div>
+                                <div class="mt-radio-list" style="padding: 0;">
+                                    <label class="mt-radio mt-radio-outline custom-radio" style="max-width: 300px; display: inline-block; margin-bottom: 0;">
+                                        <input type="radio" name="rate_type" value="1" data-target="rate_percent_value">
+                                        <div class="form-group">
+                                            <input class="form-control percent" placeholder="Percent" type="text" value="" name="rate_percent_value" id="rate_percent_value" disabled/>
+                                        </div>
+                                        <span style="margin-top: 8px;"></span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <span style="margin-top: 8px;"></span>
-                    </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -418,12 +477,12 @@
     var routeContract = "{{ route('contract.provider.hotel') }}";
     var routeData = "{{ route('contract.provider.hotel.settings.data') }}";
     var routeSave = "{{ route('contract.provider.hotel.settings.save') }}";
-    var routeImportPrice = "{{ route('contract.provider.hotel.settings.import.price') }}";
-    var routeImportCost = "{{ route('contract.provider.hotel.settings.import.cost') }}";
+    var routeImportCostFromPriceRate = "{{ route('contract.provider.hotel.settings.import.costFromPriceRate') }}";
+    var routeImportCostFromRoomtype = "{{ route('contract.provider.hotel.settings.import.costFromRoomType') }}";
     var contractId = '{{ $contract_id }}';
 </script>
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.min.js') }}" type="text/javascript"></script>
 @stop

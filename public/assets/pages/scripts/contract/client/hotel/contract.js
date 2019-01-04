@@ -19,7 +19,10 @@ $(document).ready(function () {
             "url": routeRead,
             "type": "POST",
             "complete": function(xhr, textStatus) {
-                if (xhr.status != '200') {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
                     toastr['error']("Please check your connection and try again.", "Error on loading the content");
                 }
                 $('.br-readonly').on('click', function(e) {
@@ -270,6 +273,11 @@ $(document).ready(function () {
                     results: data
                 };
             },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+            },
             cache: true
         },
         escapeMarkup: function(markup) {
@@ -297,6 +305,11 @@ $(document).ready(function () {
                 return {
                     results: data
                 };
+            },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
             },
             cache: true
         },
@@ -407,6 +420,11 @@ $(document).ready(function () {
                     results: data
                 };
             },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+            },
             cache: true
         },
         escapeMarkup: function(markup) {
@@ -441,6 +459,11 @@ $(document).ready(function () {
                 return {
                     results: data
                 };
+            },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
             },
             cache: true
         },
@@ -617,7 +640,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -709,56 +735,41 @@ $(document).ready(function () {
             var contract = $('#modal-edit :input[name="hotel-contract-id"]').val();
             var client = $('#modal-edit :input[name="client-id"]').val();
             var active = $('#modal-edit :input[name="active"]').prop('checked') ? '1' : '0';
-
-            var needEdit = false;
-
-            if (
-                object.name != name ||
-                object.hotel_contract_id != contract ||
-                object.client_id != client ||
-                object.hotel_contract_market_id != priceRate ||
-                object.active != active
-            ) {
-                needEdit = true;
-            }
-
-            if(needEdit) {
-                $.ajax({
-                    "url": routeUpdate,
-                    "type": "POST",
-                    "data": {
-                        id: id,
-                        "price-rate": priceRate,
-                        name: name,
-                        "hotel-contract-id": contract,
-                        "client-id": client,
-                        active: active
-                    },
-                    "beforeSend": function() {
-                        App.showMask(true, formAdd);
-                    },
-                    "complete": function(xhr, textStatus) {
-                        App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+            $.ajax({
+                "url": routeUpdate,
+                "type": "POST",
+                "data": {
+                    id: id,
+                    "price-rate": priceRate,
+                    name: name,
+                    "hotel-contract-id": contract,
+                    "client-id": client,
+                    active: active
+                },
+                "beforeSend": function() {
+                    App.showMask(true, formEdit);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formEdit);
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdate = true;
+                            $(form).find("button.cancel-form").click();
                         }
                         else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                needUpdate = true;
-                                $(form).find("button.cancel-form").click();
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
+                            toastr['error'](response.message, "Error");
                         }
                     }
-                });
-            }
-            else {
-                $(form).find("button.cancel-form").click();
-            }
+                }
+            });
         }
     });
 
@@ -776,12 +787,15 @@ $(document).ready(function () {
                         id: data['id']
                     },
                     "beforeSend": function() {
-                        App.showMask(true, formAdd);
+                        App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
                         requestDelete = null;
-                        App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
+                        App.showMask(false, $('#table'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {

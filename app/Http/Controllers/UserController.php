@@ -128,7 +128,7 @@ class UserController extends Controller
             $user->email = Input::get('email');
             $user->password = bcrypt(Input::get('password'));
             $user->username = Input::get('username');
-            $user->active = Input::get('active') == 1 ? true : false;
+            $user->active = Input::get('active') == 1 ? 1 : 0;
 
             try {
                 $user->save();
@@ -168,7 +168,7 @@ class UserController extends Controller
             $user->name = Input::get('name');
             $user->email = Input::get('email');
             $user->username = Input::get('username');
-            $user->active = Input::get('active') == 1 ? true : false;
+            $user->active = Input::get('active') == 1 ? 1 : 0;
             if (Input::get('password') != '')
                 $user->password = bcrypt(Input::get('password'));
 

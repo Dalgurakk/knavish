@@ -177,80 +177,6 @@ $(document).ready(function () {
         });
     }
 
-    function similars(arr1, arr2) {
-        if(arr1.length !== arr2.length)
-            return false;
-
-        for(var i = 0; i < arr1.length; i++) {
-            var found = false;
-            for(var j = 0; j < arr2.length; j++) {
-                if(arr1[i].id == arr2[j]) {
-                    found = true;
-                    break;
-                }
-            }
-            if(!found)
-                return false;
-        }
-
-        for(var i = 0; i < arr2.length; i++) {
-            var found = false;
-            for(var j = 0; j < arr1.length; j++) {
-                if(arr2[i] == arr1[j].id) {
-                    found = true;
-                    break;
-                }
-            }
-            if(!found)
-                return false;
-        }
-        return true;
-    }
-
-    function similarMarkets(arr1, arr2) {
-        if(arr1.length !== arr2.length)
-            return false;
-
-        for(var i = 0; i < arr1.length; i++) {
-            var found = false;
-            for(var j = 0; j < arr2.length; j++) {
-                if(arr1[i].id == arr2[j].market_id) {
-                    if(
-                        arr1[i].pivot.round.toString() != arr2[j].round_type ||
-                        arr1[i].pivot.type.toString() != arr2[j].rate_type ||
-                        arr1[i].pivot.value.toFixed(2) != parseFloat(arr2[j].value).toFixed(2)
-                    ) {
-                        return false;
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if(!found)
-                return false;
-        }
-
-        for(var i = 0; i < arr2.length; i++) {
-            var found = false;
-            for(var j = 0; j < arr1.length; j++) {
-                if(arr2[i].market_id == arr1[j].id) {
-                    if(
-                        arr1[j].pivot.round.toString() != arr2[i].round_type ||
-                        arr1[j].pivot.type.toString() != arr2[i].rate_type ||
-                        arr1[j].pivot.value.toFixed(2) != parseFloat(arr2[i].value).toFixed(2)
-                    ) {
-                        return false;
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if(!found)
-                return false;
-        }
-        return true;
-    }
-
     $.fn.dataTable.ext.errMode = 'none';
     var table = $('#table').on('error.dt', function(e, settings, techNote, message) {
 
@@ -268,7 +194,10 @@ $(document).ready(function () {
             "url": routeRead,
             "type": "POST",
             "complete": function(xhr, textStatus) {
-                if (xhr.status != '200') {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
                     toastr['error']("Please check your connection and try again.", "Error on loading the content");
                 }
                 $('.br-readonly').on('click', function(e) {
@@ -529,7 +458,10 @@ $(document).ready(function () {
                 },
                 "complete": function(xhr, textStatus) {
                     App.showMask(false, formAdd);
-                    if (xhr.status != '200') {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
@@ -692,60 +624,48 @@ $(document).ready(function () {
             var roomTypes = $('#modal-edit .js-data-ajax').val();
             var active = formData.get('active') == '1' ? 1 : 0;
 
-            if (
-                object.name != formData.get('name') ||
-                moment(object.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') != formData.get('valid-from') ||
-                moment(object.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY') != formData.get('valid-to') ||
-                object.hotel_id != formData.get('hotel-id') ||
-                !similars(object.pax_types, paxTypes) ||
-                !similars(object.room_types, roomTypes) ||
-                !similars(object.board_types, boardTypes) ||
-                !similarMarkets(object.markets, markets) ||
-                object.active != active
-            ) {
-                needEdit = true;
-            }
-
-            if(needEdit) {
-                formData.append('paxTypes', JSON.stringify(paxTypes));
-                formData.append('boardTypes', JSON.stringify(boardTypes));
-                formData.append('roomTypes', JSON.stringify(roomTypes));
-                formData.append('measures', JSON.stringify(measures));
-                formData.append('markets', JSON.stringify(markets));
-                $.ajax({
-                    "url": routeUpdate,
-                    "type": "POST",
-                    //"data": formEdit.serialize(),
-                    "data": formData,
-                    "contentType": false,
-                    "processData": false,
-                    "beforeSend": function() {
-                        App.showMask(true, formEdit);
-                    },
-                    "complete": function(xhr, textStatus) {
-                        App.showMask(false, formEdit);
-                        if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+            formData.append('paxTypes', JSON.stringify(paxTypes));
+            formData.append('boardTypes', JSON.stringify(boardTypes));
+            formData.append('roomTypes', JSON.stringify(roomTypes));
+            formData.append('measures', JSON.stringify(measures));
+            formData.append('markets', JSON.stringify(markets));
+            $.ajax({
+                "url": routeUpdate,
+                "type": "POST",
+                //"data": formEdit.serialize(),
+                "data": formData,
+                "contentType": false,
+                "processData": false,
+                "beforeSend": function() {
+                    App.showMask(true, formEdit);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formEdit);
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdate = true;
+                            $(form).find("button.cancel-form").click();
                         }
                         else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                needUpdate = true;
-                                $(form).find("button.cancel-form").click();
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
-                            desactiveRows(tableEditBoardType);
-                            desactiveRows(tableEditPaxType);
+                            toastr['error'](response.message, "Error");
                         }
+                        desactiveRows(tableEditBoardType);
+                        desactiveRows(tableEditPaxType);
                     }
-                });
-            }
-            else {
-                $(form).find("button.cancel-form").click();
-            }
+                }
+            });
+
         }
     });
 
@@ -1004,6 +924,11 @@ $(document).ready(function () {
                 return {
                     results: data
                 };
+            },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
             },
             cache: true
         },
@@ -1455,6 +1380,11 @@ $(document).ready(function () {
                         results: data
                     };
                 },
+                "complete": function(xhr, textStatus) {
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                },
                 cache: true
             },
             escapeMarkup: function(markup) {
@@ -1522,12 +1452,15 @@ $(document).ready(function () {
                         id: data['id']
                     },
                     "beforeSend": function() {
-                        App.showMask(true, formAdd);
+                        App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
                         requestDelete = null;
-                        App.showMask(false, formAdd);
-                        if (xhr.status != '200') {
+                        App.showMask(false, $('#table'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
@@ -1889,6 +1822,11 @@ $(document).ready(function () {
                     results: data
                 };
             },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+            },
             cache: true
         },
         escapeMarkup: function(markup) {
@@ -1943,6 +1881,11 @@ $(document).ready(function () {
                 return {
                     results: data
                 };
+            },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
             },
             cache: true
         },
@@ -2025,14 +1968,15 @@ $(document).ready(function () {
                         id: data['id']
                     },
                     "beforeSend": function() {
-                        App.blockUI({
-                            target: $('.custom-container'),
-                            animate: true
-                        });
+                        App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
                         requestDuplicate = null;
-                        if (xhr.status != '200') {
+                        App.showMask(false, $('#table'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
                             toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
@@ -2047,7 +1991,6 @@ $(document).ready(function () {
                         }
                     }
                 });
-                App.unblockUI($('.custom-container'));
             });
         }
         e.preventDefault();

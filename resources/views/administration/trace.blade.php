@@ -16,7 +16,7 @@
         <div class="portlet light custom-container">
             <div class="portlet-title">
                 <div class="caption">
-                    <i class="fa fa-check "></i>Traces List </div>
+                    <i class="fa fa-binoculars "></i>Traces List </div>
                 <div class="actions">
                     <a class="btn btn-circle btn-icon-only btn-default search" href="javascript:;">
                         <i class="fa fa-search"></i>

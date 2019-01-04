@@ -108,69 +108,6 @@ class HotelController extends Controller
         echo json_encode($data);
     }
 
-    public function read2(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $limit = Input::get('length');
-        $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array('hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name', 'hotels.active');
-        $orderBy = Input::get('order')['0']['column'];
-        $orderDirection = Input::get('order')['0']['dir'];
-        $searchName = Input::get('columns')['1']['search']['value'];
-        $searchChain = Input::get('columns')['3']['search']['value'];
-        $searchActive = Input::get('columns')['4']['search']['value'];
-        $hotels = array();
-
-        $query = DB::table('hotels')
-            ->select('hotels.id', 'hotels.name', 'hotels.category', 'hotel_hotels_chain.name as chain', 'hotels.active')
-            ->leftJoin('hotel_hotels_chain', 'hotel_hotels_chain.id', '=', 'hotels.hotel_chain_id');
-
-        if(isset($searchName) && $searchName != '') {
-            $query->where('hotels.name', 'like', '%' . $searchName . '%');
-        }
-        if(isset($searchChain) && $searchChain != '') {
-            $query->where('hotel_hotels_chain.name', 'like', '%' . $searchChain . '%');
-        }
-        if(isset($searchActive) && $searchActive != '') {
-            $query->where('hotels.active', '=', $searchActive);
-        }
-
-        $records = $query->count();
-
-        $query
-            ->orderBy($columns[$orderBy], $orderDirection)
-            ->offset($offset)
-            ->limit($limit);
-
-        $result = $query->get();
-
-        foreach ($result as $r) {
-            $query = Hotel::with(['hotelChain', 'country', 'state', 'city'])
-                ->where('id', $r->id)->get();
-
-            $hotel = $query[0];
-            $item = array(
-                'id' => $r->id,
-                'name' => $r->name,
-                'category' => $r->category,
-                'chain' => $r->chain,
-                'active' => $r->active,
-                'hotel' => $hotel
-            );
-            $hotels[] = $item;
-        }
-
-        $data = array(
-            "draw" => Input::get('draw'),
-            "length" => $limit,
-            "start" => $offset,
-            "recordsTotal" => $records,
-            "recordsFiltered" => $records,
-            "data" => $hotels
-        );
-        echo json_encode($data);
-    }
-
     public function create(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
@@ -199,7 +136,7 @@ class HotelController extends Controller
             $hotel->admin_fax = Input::get('admin-fax');
             $hotel->web_site = Input::get('web-site');
             $hotel->turistic_licence = Input::get('turistic-licence');
-            $hotel->active = Input::get('active') == 1 ? true : false;
+            $hotel->active = Input::get('active') == 1 ? 1 : 0;
             $hotel->email = Input::get('email');
 
             try {
@@ -246,7 +183,7 @@ class HotelController extends Controller
             $hotel->admin_fax = Input::get('admin-fax');
             $hotel->web_site = Input::get('web-site');
             $hotel->turistic_licence = Input::get('turistic-licence');
-            $hotel->active = Input::get('active') == 1 ? true : false;
+            $hotel->active = Input::get('active') == 1 ? 1 : 0;
             $hotel->email = Input::get('email');
 
             try {

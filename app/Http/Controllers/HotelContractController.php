@@ -6,6 +6,8 @@ use App\Exports\HotelContractExport;
 use App\Models\HotelBoardType;
 use App\Models\HotelContract;
 use App\Models\HotelContractMarket;
+use App\Models\HotelContractPrice;
+use App\Models\HotelContractRoomType;
 use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
 use App\Models\HotelPaxType;
@@ -38,8 +40,8 @@ class HotelContractController extends Controller
 
         $paxTypes = HotelPaxType::where('active', '1')->get();
         $boardTypes = HotelBoardType::where('active', '1')->get();
-        //$measures = HotelMeasure::where('active', '1')->orderBy('id', 'asc')->get();
-        $measures = HotelMeasure::where('active', '1')->whereIn('code', ['cost', 'price'])->orderBy('id', 'asc')->get();
+        $measures = HotelMeasure::where('active', '1')->orderBy('id', 'asc')->get();
+        //$measures = HotelMeasure::where('active', '1')->whereIn('code', ['cost', 'price'])->orderBy('id', 'asc')->get();
         $markets = Market::where('active', '1')->get();
 
         $data['breadcrumb'] = $breadcrumb;
@@ -181,98 +183,6 @@ class HotelContractController extends Controller
         echo json_encode($data);
     }
 
-    public function read2(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $limit = Input::get('length');
-        $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array('hotel_contracts.id', 'hotel_contracts.name', 'hotels.name', 'hotel_contracts.valid_from', 'hotel_contracts.valid_to', 'hotel_contracts.active', 'hotel_contracts.active', 'hotel_contracts.hotel_id');
-        $orderBy = Input::get('order')['0']['column'];
-        $orderDirection = Input::get('order')['0']['dir'];
-        $searchName = Input::get('columns')['1']['search']['value'];
-        $searchHotel = Input::get('columns')['2']['search']['value'];
-        $searchValidFrom = Input::get('columns')['3']['search']['value'];
-        $searchValidTo = Input::get('columns')['4']['search']['value'];
-        $searchActive = Input::get('columns')['6']['search']['value'];
-        $contracts = array();
-
-        $query = DB::table('hotel_contracts')
-            ->select(
-                'hotel_contracts.id', 'hotel_contracts.name', 'hotels.name as hotel', 'hotel_contracts.valid_from',
-                'hotel_contracts.valid_to', 'hotel_contracts.active')
-            ->join('hotels', 'hotels.id', '=', 'hotel_contracts.hotel_id');
-
-        if(isset($searchName) && $searchName != '') {
-            $query->where('hotel_contracts.name', 'like', '%' . $searchName . '%');
-        }
-        if(isset($searchHotel) && $searchHotel != '') {
-            $query->where('hotels.name', 'like', '%' . $searchHotel . '%');
-        }
-        if(isset($searchActive) && $searchActive != '') {
-            $query->where('hotel_contracts.active', '=', $searchActive);
-        }
-        if(isset($searchValidFrom) && $searchValidFrom != '') {
-            $validFrom = Carbon::createFromFormat('d.m.Y', $searchValidFrom);
-            $query->where('hotel_contracts.valid_from', '>=', $validFrom->format('Y-m-d'));
-        }
-        if(isset($searchValidTo) && $searchValidTo != '') {
-            $validTo = Carbon::createFromFormat('d.m.Y', $searchValidTo);
-            $query->where('hotel_contracts.valid_to', '<=', $validTo->format('Y-m-d'));
-        }
-        $query
-            ->orderBy($columns[$orderBy], $orderDirection)
-            ->offset($offset)
-            ->limit($limit);
-
-        $result = $query->get();
-        $records = count($result);
-
-        foreach ($result as $r) {
-            $query = HotelContract::with([
-                'hotel', 'hotel.hotelChain', 'hotel.country', 'hotel.state', 'hotel.city',
-                'roomTypes', 'paxTypes', 'boardTypes', 'markets', 'measures'])
-                ->where('id', $r->id)->get();
-
-            $contract = $query[0];
-
-            $currentDate = Carbon::today();
-            $validFrom = Carbon::createFromFormat('!Y-m-d', $r->valid_from);
-            $validTo = Carbon::createFromFormat('!Y-m-d', $r->valid_to);
-            $r->valid_from = $validFrom->format('d.m.Y');
-            $r->valid_to = $validTo->format('d.m.Y');
-
-            $status = 0;
-            if ($currentDate->greaterThan($validTo))
-                $status = 3; //Old
-            else if ($currentDate->greaterThanOrEqualTo($validFrom) && $currentDate->lessThanOrEqualTo($validTo))
-                $status = 2; //In Progress
-            else if ($currentDate->lessThan($validFrom))
-                $status = 1; //Waiting
-
-            $item = array(
-                'id' => $r->id,
-                'name' => $r->name,
-                'hotel' => $r->hotel,
-                'valid_from' => $r->valid_from,
-                'valid_to' => $r->valid_to,
-                'active' => $r->active,
-                'status' => $status,
-                'contract' => $contract
-            );
-            $contracts[] = $item;
-        }
-
-        $data = array(
-            "draw" => Input::get('draw'),
-            "length" => $limit,
-            "start" => $offset,
-            "recordsTotal" => $records,
-            "recordsFiltered" => $records,
-            "data" => $contracts
-        );
-        echo json_encode($data);
-    }
-
     public function create(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
@@ -285,6 +195,7 @@ class HotelContractController extends Controller
             'roomTypes' => 'required|json',
             'boardTypes' => 'required|json',
             'paxTypes' => 'required|json',
+            'measures' => 'required|json',
             'markets' => 'required|json'
         );
 
@@ -301,7 +212,7 @@ class HotelContractController extends Controller
             $contract->hotel_id = Input::get('hotel-id');
             $contract->valid_from = Carbon::createFromFormat('!d.m.Y', Input::get('valid-from'))->format('Y-m-d');
             $contract->valid_to = Carbon::createFromFormat('!d.m.Y', Input::get('valid-to'))->format('Y-m-d');
-            $contract->active = Input::get('active') == 1 ? true : false;
+            $contract->active = Input::get('active') == 1 ? 1 : 0;
             $contract->status = Input::get('status');
 
             DB::beginTransaction();
@@ -311,12 +222,8 @@ class HotelContractController extends Controller
                 $boardTypes = json_decode(Input::get('boardTypes'));
                 $paxTypes = json_decode(Input::get('paxTypes'));
                 $markets = json_decode(Input::get('markets'));
-                $temp = json_decode(Input::get('measures'));
-                $measures = array(1, 2);
-                foreach ($temp as $key => $val) {
-                    if($val == 1 || $val == 2) continue;
-                    else $measures[] = $val;
-                }
+                $measures = json_decode(Input::get('measures'));
+
                 foreach ($roomTypes as $r) {
                     $contract->roomTypes()->attach($r);
                 }
@@ -375,7 +282,7 @@ class HotelContractController extends Controller
             $this->response['errors'] = $validator->errors();
         }
         else {
-            $contract = HotelContract::with(['priceRates', 'priceRates.settings'])->find($id);
+            $contract = HotelContract::find($id);
 
             if ($contract != null) {
                 $validFrom = Carbon::createFromFormat('d.m.Y', Input::get('valid-from'));
@@ -384,7 +291,7 @@ class HotelContractController extends Controller
                 $contract->hotel_id = Input::get('hotel-id');
                 $contract->valid_from = $validFrom->format('Y-m-d');
                 $contract->valid_to = $validTo->format('Y-m-d');
-                $contract->active = Input::get('active') == 1 ? true : false;
+                $contract->active = Input::get('active') == 1 ? 1 : 0;
                 $contract->status = Input::get('status');
 
                 DB::beginTransaction();
@@ -393,36 +300,7 @@ class HotelContractController extends Controller
                     $boardTypes = json_decode(Input::get('boardTypes'));
                     $markets = json_decode(Input::get('markets'));
                     $paxTypes = json_decode(Input::get('paxTypes'));
-                    $temp = json_decode(Input::get('measures'));
-                    $unusedRooms = array();
-
-                    foreach ($contract->priceRates as $priceRate) {
-                        foreach ($priceRate->settings as $setting) {
-                            $date = Carbon::createFromFormat('Y-m-d', $setting->date);
-                            if ($date->lessThan($validFrom) || $date->greaterThan($validTo)) {
-                                $setting->delete();
-                            }
-                        }
-                    }
-
-                    foreach ($contract->roomTypes as $contractRoom) {
-                        $flag = false;
-                        foreach($roomTypes as $roomtype) {
-                            if($roomtype == $contractRoom->id) {
-                                $flag = true;
-                                break;
-                            }
-                        }
-                        if (!$flag) {
-                            $unusedRooms[] = $contractRoom;
-                        }
-                    }
-
-                    $measures = array(1, 2);
-                    foreach ($temp as $key => $val) {
-                        if($val == 1 || $val == 2) continue;
-                        else $measures[] = $val;
-                    }
+                    $measures = json_decode(Input::get('measures'));
 
                     $syncMarkets = array();
                     foreach ($markets as $k) {
@@ -431,26 +309,19 @@ class HotelContractController extends Controller
                             'value' => $k->value,
                             'round' => $k->round_type
                         );
-
+                        $priceRate = new HotelContractMarket();
+                        $priceRate->type = $k->rate_type;
+                        $priceRate->value = $k->value;
+                        $priceRate->round = $k->round_type;
                         if ($k->update_price == '1') {
-                            foreach ($contract->priceRates as $r) {
-                                if ($k->market_id == $r->market_id) {
-                                    if ($k->rate_type != $r->type || $k->value != $r->value || $k->round_type != $r->round) {
-                                        foreach ($r->settings as $s) {
-                                            $settings = json_decode($s->settings, true);
-                                            foreach($settings as $key => $data){
-                                                $aux = $r;
-                                                $aux->type = $k->rate_type;
-                                                $aux->value = $k->value;
-                                                $aux->round = $k->round_type;
-                                                $data['2'] = $this->calculatePrice($data['1'], $aux);
-                                                $settings[$key] = $data;
-                                            }
-                                            $s->settings = json_encode($settings);
-                                            $s->save();
-                                        }
-                                    }
-                                }
+                            $query = HotelContractPrice::where('market_id', $k->market_id)
+                                ->whereHas('setting', function ($query) use ($contract) {
+                                    $query->where('hotel_contract_id', $contract->id);
+                                });
+                            $prices = $query->get();
+                            foreach ($prices as $price) {
+                                $price->price_adult = $this->calculatePrice($price->cost_adult, $priceRate);
+                                $price->save();
                             }
                         }
                     }
@@ -461,26 +332,6 @@ class HotelContractController extends Controller
                     $contract->paxTypes()->sync($paxTypes);
                     $contract->measures()->sync($measures);
                     $contract->save();
-
-                    if (count($unusedRooms) > 0) {
-                        foreach ($contract->priceRates as $priceRate) {
-                            foreach ($priceRate->settings as $setting) {
-                                $contractSettings = json_decode($setting->settings, true);
-                                foreach ($unusedRooms as $unusedRoom) {
-                                    if (array_key_exists($unusedRoom->id, $contractSettings)) {
-                                        unset($contractSettings[$unusedRoom->id]);
-                                        if (empty($contractSettings)) {
-                                            $setting->delete();
-                                        }
-                                        else {
-                                            $setting->settings = json_encode($contractSettings);
-                                            $setting->save();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
 
                     if ($contract->active != 1) {
                         $clientContracts = $contract->clientContracts;
@@ -540,7 +391,9 @@ class HotelContractController extends Controller
             'roomTypes',
             'measures',
             'priceRates',
-            'priceRates.settings'
+            'roomTypeRelations',
+            'settings',
+            'settings.prices'
         ])->find($id);
 
         if ($contract != null) {
@@ -562,26 +415,57 @@ class HotelContractController extends Controller
                 foreach ($contract->boardTypes as $item) {
                     $newContract->boardTypes()->attach($item->id);
                 }
-                foreach ($contract->roomTypes as $item) {
-                    $newContract->roomTypes()->attach($item->id);
-                }
                 foreach ($contract->measures as $item) {
                     $newContract->measures()->attach($item->id);
                 }
+                $contractRoomTypes = array();
+                foreach ($contract->roomTypeRelations as $item) {
+                    $contractRoomType = new HotelContractRoomType();
+                    $contractRoomType->hotel_contract_id = $newContract->id;
+                    $contractRoomType->hotel_room_type_id = $item->hotel_room_type_id;
+                    $contractRoomType->save();
+                    $contractRoomTypes[$item->id] = $contractRoomType->id;
+                }
+                $priceRates = array();
                 foreach ($contract->priceRates as $item) {
-                    $hotelContractMarket = new HotelContractMarket();
-                    $hotelContractMarket->hotel_contract_id = $newContract->id;
-                    $hotelContractMarket->market_id = $item->market_id;
-                    $hotelContractMarket->type = $item->type;
-                    $hotelContractMarket->value = $item->value;
-                    $hotelContractMarket->round = $item->round;
-                    $hotelContractMarket->save();
-                    foreach ($item->settings as $setting) {
-                        $newSetting = new HotelContractSetting();
-                        $newSetting->hotel_contract_market_id = $hotelContractMarket->id;
-                        $newSetting->date = $setting->date;
-                        $newSetting->settings = $setting->settings;
-                        $newSetting->save();
+                    $priceRate = new HotelContractMarket();
+                    $priceRate->hotel_contract_id = $newContract->id;
+                    $priceRate->market_id = $item->market_id;
+                    $priceRate->type = $item->type;
+                    $priceRate->value = $item->value;
+                    $priceRate->round = $item->round;
+                    $priceRate->save();
+                    $priceRates[$item->id] = $priceRate->id;
+                }
+                foreach ($contract->settings as $setting) {
+                    $newSetting = new HotelContractSetting();
+                    $newSetting->hotel_contract_id = $newContract->id;
+                    $newSetting->hotel_contract_room_type_id = $contractRoomTypes[$setting->hotel_contract_room_type_id];
+                    $newSetting->hotel_room_type_id = $setting->hotel_room_type_id;
+                    $newSetting->date = $setting->date;
+                    $newSetting->capacity = $setting->capacity;
+                    $newSetting->allotment = $setting->allotment;
+                    $newSetting->release = $setting->release;
+                    $newSetting->stop_sale = $setting->stop_sale;
+                    $newSetting->save();
+                    foreach ($setting->prices as $price) {
+                        $newPrice = new HotelContractPrice();
+                        $newPrice->hotel_contract_setting_id = $newSetting->id;
+                        $newPrice->price_rate_id = $priceRates[$price->price_rate_id];
+                        $newPrice->market_id = $price->market_id;
+                        $newPrice->cost_adult = $price->cost_adult;
+                        $newPrice->price_adult = $price->price_adult;
+                        $newPrice->cost_children_1 = $price->cost_children_1;
+                        $newPrice->price_children_1 = $price->price_children_1;
+                        $newPrice->cost_children_2 = $price->cost_children_2;
+                        $newPrice->price_children_2 = $price->price_children_2;
+                        $newPrice->cost_children_3 = $price->cost_children_3;
+                        $newPrice->price_children_3 = $price->price_children_3;
+                        $newPrice->cost_children_4 = $price->cost_children_4;
+                        $newPrice->price_children_4 = $price->price_children_4;
+                        $newPrice->cost_children_5 = $price->cost_children_5;
+                        $newPrice->price_children_5 = $price->price_children_5;
+                        $newPrice->save();
                     }
                 }
                 DB::commit();
@@ -597,7 +481,7 @@ class HotelContractController extends Controller
         }
         else {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Contract invalid.';
+            $this->response['message'] = 'Invalid contract.';
         }
         echo json_encode($this->response);
     }
@@ -736,120 +620,74 @@ class HotelContractController extends Controller
         return $price;
     }
 
-    public function importPrice(Request $request)    {
+    public function importCostFromPriceRate(Request $request)    {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
-        //$importType = Input::get('import-type');
-        $priceRate = Input::get('price-rate');
+        $priceRateFrom = Input::get('price-rate-from');
         $contractId = Input::get('contract-id');
-        $marketId = Input::get('market-id');
-        $roomTypeId = Input::get('room-type-id');
+        $priceRateTo = Input::get('price-rate-to');
 
-        $importType = '2';
-
-        if ($importType == '1') {
-            $fromPriceRate = HotelContractMarket::with([
-                'settings'
-            ])
-                ->where('market_id', $priceRate)
+        try {
+            $toPriceRate = HotelContractMarket::where('market_id', $priceRateTo)
                 ->where('hotel_contract_id', $contractId)
                 ->first();
 
-            $toPriceRate = HotelContractMarket::with([
-                'settings'
-            ])
-                ->where('market_id', $marketId)
-                ->where('hotel_contract_id', $contractId)
-                ->first();
+            $query = HotelContractPrice::where('market_id', $priceRateFrom)
+                ->whereHas('setting', function ($query) use ($contractId) {
+                    $query->where('hotel_contract_id', $contractId);
+                });
+            $prices = $query->get();
 
-            $fromContractSetting = $fromPriceRate['settings'];
-            $toContractSetting = $toPriceRate['settings'];
-
-            foreach ($toContractSetting as $contractSetting) {
-                $settings = json_decode($contractSetting->settings, true);
-                if (array_key_exists($roomTypeId, $settings)) {
-                    unset($settings[$roomTypeId]);
-                    if (empty($settings)) {
-                        $contractSetting->delete();
-                    }
-                    else {
-                        $contractSetting->settings = json_encode($settings);
-                        $contractSetting->save();
-                    }
-                }
-            }
-            foreach ($fromContractSetting as $from) {
-                $founded = false;
-                $temp = null;
-                foreach ($toContractSetting as $to) {
-                    if ($from->date == $to->date) {
-                        $founded = true;
-                        $temp = $to;
-                        break;
-                    }
-                }
-                if ($founded) {
-                    $contractSetting = $temp;
-                    $fromSettings = json_decode($from->settings, true);
-                    $toSettings = json_decode($to->settings, true);
-                    $toSettings[$roomTypeId] = $fromSettings[$roomTypeId];
-                    $toSettings[$roomTypeId]['2'] = $this->calculatePrice($toSettings[$roomTypeId]['1'], $toPriceRate);
-                    $contractSetting->settings = json_encode($toSettings);
-                    $contractSetting->save();
-                }
-                else {
-                    $contractSetting = new HotelContractSetting();
-                    $contractSetting->hotel_contract_market_id = $toPriceRate->id;
-                    $contractSetting->date = $from->date;
-                    $fromSettings = json_decode($from->settings, true);
-                    $newSettings = array();
-                    $newSettings[$roomTypeId] = $fromSettings[$roomTypeId];
-                    $newSettings[$roomTypeId]['2'] = $this->calculatePrice($newSettings[$roomTypeId]['1'], $toPriceRate);
-                    $contractSetting->settings = json_encode($newSettings);
-                    $contractSetting->save();
-                }
-            }
-        }
-        else {
-            try {
-                $fromPriceRate = HotelContractMarket::with([
-                    'settings'
-                ])
-                    ->where('market_id', $priceRate)
-                    ->where('hotel_contract_id', $contractId)
-                    ->first();
-
-                $toPriceRate = HotelContractMarket::where('market_id', $marketId)
-                    ->where('hotel_contract_id', $contractId)
-                    ->first();
-
-                HotelContractSetting::where('hotel_contract_market_id', $toPriceRate->id)->delete();
-
-                foreach ($fromPriceRate['settings'] as $fromContractSetting) {
-                    $contractSetting = new HotelContractSetting();
-                    $contractSetting->hotel_contract_market_id = $toPriceRate->id;
-                    $contractSetting->date = $fromContractSetting['date'];
-                    $newSettings = json_decode($fromContractSetting['settings'], true);
-
-                    foreach ($newSettings as $key => $value) {
-                        $newSettings[$key]['2'] = $this->calculatePrice($value['1'], $toPriceRate);
-                    }
-                    $contractSetting->settings = json_encode($newSettings);
-                    $contractSetting->save();
+            if (count($prices) > 0) {
+                HotelContractPrice::where('price_rate_id', $toPriceRate->id)->delete();
+                foreach ($prices as $price) {
+                    $newPrice = new HotelContractPrice();
+                    $newPrice->hotel_contract_setting_id = $price->hotel_contract_setting_id;
+                    $newPrice->price_rate_id = $toPriceRate->id;
+                    $newPrice->market_id = $toPriceRate->market_id;
+                    $newPrice->cost_adult = $price->cost_adult;
+                    $newPrice->price_adult = $price->cost_adult != null ? $this->calculatePrice($price->cost_adult, $toPriceRate) : null;
+                    $newPrice->cost_children_1 = $price->cost_children_1;
+                    $newPrice->price_children_1 = $price->cost_children_1 != null ? $this->calculatePrice($price->cost_children_1, $toPriceRate) : null;
+                    $newPrice->cost_children_2 = $price->cost_children_2;
+                    $newPrice->price_children_2 = $price->cost_children_2 != null ? $this->calculatePrice($price->cost_children_2, $toPriceRate) : null;
+                    $newPrice->cost_children_3 = $price->cost_children_3;
+                    $newPrice->price_children_3 = $price->cost_children_3 != null ? $this->calculatePrice($price->cost_children_3, $toPriceRate) : null;
+                    $newPrice->cost_children_4 = $price->cost_children_4;
+                    $newPrice->price_children_4 = $price->cost_children_4 != null ? $this->calculatePrice($price->cost_children_4, $toPriceRate) : null;
+                    $newPrice->cost_children_5 = $price->cost_children_5;
+                    $newPrice->price_children_5 = $price->cost_children_5 != null ? $this->calculatePrice($price->cost_children_5, $toPriceRate) : null;
+                    $newPrice->save();
                 }
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Petition executed successfully.';
             }
-            catch (\Exception $e) {
-                $this->response['status'] = 'error';
-                $this->response['message'] = 'Database error, probably the email or username already exist.';
-                $this->response['errors'] = $e->getMessage();
+            else {
+                $this->response['status'] = 'warning';
+                $this->response['message'] = 'There is not prices to import.';
             }
         }
+        catch (\Exception $e) {
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
+        }
+
         echo json_encode($this->response);
     }
 
-    public function importCost(Request $request) {
+    public function calcBonus($rate, $cost, $type) {
+        $bonus = 0;
+        if ($type == 1) {
+            $bonus = $rate * $cost / 100;
+        }
+        else if ($type == 2) {
+            $bonus = $rate;
+        }
+        return $bonus;
+    }
+
+    public function importCostFromRoomType(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $fromRoom = Input::get('select-room');
@@ -860,47 +698,144 @@ class HotelContractController extends Controller
         $rateType = Input::get('rate_type');
         $ratePercentValue = Input::get('rate_percent_value');
         $rateFeeValue = Input::get('rate_fee_value');
+        $ranges = Input::get('ranges');
+        $ranges = json_decode($ranges);
+        $contract = null;
+        $rateBonus = $ratePercentValue != '' ? $ratePercentValue : $rateFeeValue;
 
         try {
-            $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
-            $hotelContractSettings = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->get();
+            if (Input::get('all-dates') != null) {
+                $contract = HotelContract::where('id', $contractId)->first();
+                $from = Carbon::createFromFormat('Y-m-d', $contract->valid_from);
+                $to = Carbon::createFromFormat('Y-m-d', $contract->valid_to);
+                $range = array(
+                    'from' => $from->format('d.m.Y'),
+                    'to' => $to->format('d.m.Y')
+                );
+                $ranges = array();
+                $ranges[] = (object) $range;
+            }
+            $priceRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+            foreach($ranges as $range) {
+                $start = Carbon::createFromFormat('d.m.Y', $range->from);
+                $end = Carbon::createFromFormat('d.m.Y', $range->to);
 
-            foreach ($hotelContractSettings as $hotelContractSetting) {
-                $settings = json_decode($hotelContractSetting->settings, true);
-                if (array_key_exists($fromRoom, $settings)) {
-                    $settings[$toRoom][1] = $settings[$fromRoom][1];
-                    $settings[$toRoom][2] = $settings[$fromRoom][2];
+                if ($fromRoom == $toRoom) {
                     if ($addValue != '') {
-                        $cost = $settings[$toRoom]['1'];
-                        if ($rateType == 1) {
-                            $bonus = $ratePercentValue * $cost / 100;
+                        $query = HotelContractPrice::where('price_rate_id', $priceRate->id)
+                            ->whereHas('setting', function ($query) use ($contractId, $fromRoom, $start, $end) {
+                                $query
+                                    ->where('hotel_contract_id', $contractId)
+                                    ->where('hotel_room_type_id', $fromRoom)
+                                    ->where('date', '>=', $start->format('Y-m-d'))
+                                    ->where('date', '<=', $end->format('Y-m-d'));
+                            });
+                        $prices = $query->get();
+
+                        foreach ($prices as $price) {
+                            if ($price->cost_adult != null) {
+                                $price->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
+                                $price->price_adult = $this->calculatePrice($price->cost_adult, $priceRate);
+                            }
+                            /*if ($price->cost_children_1 != null) {
+                                $price->cost_children_1 = $price->cost_children_1 + $this->calcBonus($rateBonus, $price->cost_children_1, $rateType);
+                                $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $priceRate);
+                            }
+                            if ($price->cost_children_2 != null) {
+                                $price->cost_children_2 = $price->cost_children_2 + $this->calcBonus($rateBonus, $price->cost_children_2, $rateType);
+                                $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $priceRate);
+                            }
+                            if ($price->cost_children_3 != null) {
+                                $price->cost_children_3 = $price->cost_children_3 + $this->calcBonus($rateBonus, $price->cost_children_3, $rateType);
+                                $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $priceRate);
+                            }
+                            if ($price->cost_children_4 != null) {
+                                $price->cost_children_4 = $price->cost_children_4 + $this->calcBonus($rateBonus, $price->cost_children_4, $rateType);
+                                $price->price_children_4 = $this->calculatePrice($price->cost_children_1, $priceRate);
+                            }
+                            if ($price->cost_children_5 != null) {
+                                $price->cost_children_5 = $price->cost_children_5 + $this->calcBonus($rateBonus, $price->cost_children_5, $rateType);
+                                $price->price_children_5 = $this->calculatePrice($price->cost_children_5, $priceRate);
+                            }*/
+                            $price->save();
                         }
-                        else if ($rateType == 2) {
-                            $bonus = $rateFeeValue;
-                        }
-                        $settings[$toRoom]['1'] = $cost + $bonus;
-                        $settings[$toRoom]['2'] = $this->calculatePrice($cost + $bonus, $marketRate);
                     }
                 }
                 else {
-                    unset($settings[$toRoom]);
-                }
+                    HotelContractPrice::where('price_rate_id', $priceRate->id)
+                    ->whereHas('setting', function ($query) use ($contractId, $toRoom, $start, $end) {
+                        $query
+                            ->where('hotel_contract_id', $contractId)
+                            ->where('hotel_room_type_id', $toRoom)
+                            ->where('date', '>=', $start->format('Y-m-d'))
+                            ->where('date', '<=', $end->format('Y-m-d'));
+                    })->delete();
 
-                if (empty($settings)) {
-                    $hotelContractSetting->delete();
-                }
-                else {
-                    $hotelContractSetting->settings = json_encode($settings);
-                    $hotelContractSetting->save();
+                    $query = HotelContractPrice::with('setting')->where('price_rate_id', $priceRate->id)
+                        ->whereHas('setting', function ($query) use ($contractId, $fromRoom, $start, $end) {
+                            $query
+                                ->where('hotel_contract_id', $contractId)
+                                ->where('hotel_room_type_id', $fromRoom)
+                                ->where('date', '>=', $start->format('Y-m-d'))
+                                ->where('date', '<=', $end->format('Y-m-d'));
+                        });
+                    $prices = $query->get();
+
+                    foreach ($prices as $price) {
+                        $setting = HotelContractSetting::where('date', $price->setting->date)
+                            ->where('hotel_room_type_id', $toRoom)
+                            ->where('hotel_contract_id', $contractId)
+                            ->first();
+
+                        if($setting === null) {
+                            $setting = new HotelContractSetting();
+                            $contractRoomType = HotelContractRoomType::where('hotel_contract_id', $contractId)
+                                ->where('hotel_room_type_id', $toRoom)->first();
+                            $setting->hotel_contract_id = $contractId;
+                            $setting->hotel_contract_room_type_id = $contractRoomType->id;
+                            $setting->hotel_room_type_id = $toRoom;
+                            $setting->date = $price->setting->date;
+                            $setting->save();
+                        }
+
+                        $newPrice = new HotelContractPrice();
+                        $newPrice->hotel_contract_setting_id = $setting->id;
+                        $newPrice->price_rate_id = $priceRate->id;
+                        $newPrice->market_id = $price->market_id;
+                        if ($price->cost_adult != null) {
+                            $newPrice->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
+                            $newPrice->price_adult = $this->calculatePrice($newPrice->cost_adult, $priceRate);
+                        }
+                        if ($price->cost_children_1 != null) {
+                            $newPrice->cost_children_1 = $price->cost_children_1 + $this->calcBonus($rateBonus, $price->cost_children_1, $rateType);
+                            $newPrice->price_children_1 = $this->calculatePrice($newPrice->cost_children_1, $priceRate);
+                        }
+                        if ($price->cost_children_2 != null) {
+                            $newPrice->cost_children_2 = $price->cost_children_2 + $this->calcBonus($rateBonus, $price->cost_children_2, $rateType);
+                            $newPrice->price_children_2 = $this->calculatePrice($newPrice->cost_children_2, $priceRate);
+                        }
+                        if ($price->cost_children_3 != null) {
+                            $newPrice->cost_children_3 = $price->cost_children_3 + $this->calcBonus($rateBonus, $price->cost_children_3, $rateType);
+                            $newPrice->price_children_3 = $this->calculatePrice($newPrice->cost_children_3, $priceRate);
+                        }
+                        if ($price->cost_children_4 != null) {
+                            $newPrice->cost_children_4 = $price->cost_children_4 + $this->calcBonus($rateBonus, $price->cost_children_4, $rateType);
+                            $newPrice->price_children_4 = $this->calculatePrice($newPrice->cost_children_1, $priceRate);
+                        }
+                        if ($price->cost_children_5 != null) {
+                            $newPrice->cost_children_5 = $price->cost_children_5 + $this->calcBonus($rateBonus, $price->cost_children_5, $rateType);
+                            $newPrice->price_children_5 = $this->calculatePrice($newPrice->cost_children_5, $priceRate);
+                        }
+                        $newPrice->save();
+                    }
                 }
             }
-
             $this->response['status'] = 'success';
             $this->response['message'] = 'Petition executed successfully.';
         }
         catch (\Exception $e) {
             $this->response['status'] = 'error';
-            $this->response['message'] = 'Database error, probably the email or username already exist.';
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
             $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
@@ -913,91 +848,187 @@ class HotelContractController extends Controller
         $marketId = Input::get('market-id');
         $setPrice = Input::get('set-price');
         $setCost = Input::get('set-cost');
-        //$roomTypeId = Input::get('room-type-id');
+        $setAllotment = Input::get('set-allotment');
+        $setRelease = Input::get('set-release');
+        $setStopSale = Input::get('set-stop_sale');
+        $unsetStopSale = Input::get('unset-stop_sale');
+        $unsetAllotment = Input::get('unset-allotment');
+        $unsetRelease = Input::get('unset-release');
         $unsetCost = Input::get('unset-cost');
         $roomTypes = Input::get('room-types');
         $roomTypes = json_decode($roomTypes);
         $ranges = Input::get('ranges');
         $ranges = json_decode($ranges);
 
-        if($unsetCost != '') {
-            $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+        $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+        foreach($ranges as $range) {
+            $start = Carbon::createFromFormat('d.m.Y', $range->from);
+            $end = Carbon::createFromFormat('d.m.Y', $range->to);
 
-            foreach($ranges as $range) {
-                $start = Carbon::createFromFormat('d.m.Y', $range->from);
-                $end = Carbon::createFromFormat('d.m.Y', $range->to);
-
-                for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
-                    $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
-                    if ($contractSetting != null) {
-                        $settings = json_decode($contractSetting->settings, true);
-                        foreach ($roomTypes as $item) {
-                            if (array_key_exists($item, $settings)) {
-                                unset($settings[$item]);
-                                if (empty($settings)) {
-                                    $contractSetting->delete();
-                                }
-                                else {
-                                    $contractSetting->settings = json_encode($settings);
-                                    $contractSetting->save();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
-            foreach($ranges as $range) {
-                $start = Carbon::createFromFormat('d.m.Y', $range->from);
-                $end = Carbon::createFromFormat('d.m.Y', $range->to);
-
-                for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
-                    $contractSetting = HotelContractSetting::where('hotel_contract_market_id', $marketRate->id)->where('date', $m->format('Y-m-d'))->first();
-                    if ($contractSetting === null) {
-                        $contractSetting = new HotelContractSetting();
-                        $contractSetting->hotel_contract_market_id = $marketRate->id;
-                        $contractSetting->date = $m->format('Y-m-d');
-                        $settings = array();
-                        foreach ($roomTypes as $item) {
-                            if($setCost != '' && Input::get('cost') != '') {
-                                $settings[$item][$setCost] = Input::get('cost');
-                            }
-                            if($setPrice != '' && Input::get('price') != '') {
-                                $settings[$item][$setPrice] = Input::get('price');
-                            }
-                            else {
-                                $settings[$item]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
-                            }
-                        }
-                        $contractSetting->settings = json_encode($settings);
-                        $contractSetting->save();
+            for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
+                foreach ($roomTypes as $roomTypeId) {
+                    $contractSetting = HotelContractSetting::with('prices', 'roomType')
+                        ->where('hotel_contract_id', $contractId)
+                        ->where('date', $m->format('Y-m-d'))
+                        ->where('hotel_room_type_id', $roomTypeId)
+                        ->first();
+                    if (isset($unsetCost) && isset($unsetAllotment) && isset($unsetRelease) && isset($unsetStopSale)) {
+                        $contractSetting->delete();
                     }
                     else {
-                        $settings = json_decode($contractSetting->settings, true);
-                        foreach ($roomTypes as $item) {
-                            if($setCost != '') {
-                                $settings[$item][$setCost] = Input::get('cost');
+                        $contractRoomType = HotelContractRoomType::where('hotel_room_type_id', $roomTypeId)->where('hotel_contract_id', $contractId)->first();
+                        if ($contractSetting === null) {
+                            $contractSetting = new HotelContractSetting();
+                        }
+                        $contractSetting->hotel_contract_id = $contractId;
+                        $contractSetting->hotel_contract_room_type_id = $contractRoomType->id;
+                        $contractSetting->hotel_room_type_id = $roomTypeId;
+                        $contractSetting->date = $m->format('Y-m-d');
+                        if (isset($unsetAllotment)) {
+                            $contractSetting->capacity = 0;
+                            $contractSetting->allotment = null;
+                        }
+                        else if($setAllotment != '') {
+                            $contractSetting->capacity = Input::get('allotment');
+                            $contractSetting->allotment = Input::get('allotment');
+                        }
+                        if (isset($unsetRelease)) {
+                            $contractSetting->release = null;
+                        }
+                        else if($setRelease != '') {
+                            $contractSetting->release = Input::get('release');
+                        }
+                        if (isset($unsetStopSale)) {
+                            $contractSetting->stop_sale = null;
+                        }
+                        else if($setStopSale != '') {
+                            $contractSetting->stop_sale = Input::get('stop_sale') == '1' ? 1 : 0;
+                        }
+
+                        $contractSetting->save();
+
+                        if (isset($unsetCost)) {
+                            $price = null;
+                            foreach($contractSetting->prices as $item) {
+                                if($item->hotel_contract_setting_id == $contractSetting->id && $item->market_id == $marketRate->market_id) {
+                                    $price = $item;
+                                    break;
+                                }
                             }
-                            if($setPrice != '' && Input::get('price') != '') {
-                                $settings[$item][$setPrice] = Input::get('price');
-                            }
-                            else {
-                                $settings[$item]['2'] = $this->calculatePrice(Input::get('cost'), $marketRate);
+                            if ($price != null) {
+                                $price->delete();
                             }
                         }
-                        $contractSetting->settings = json_encode($settings);
-                        $contractSetting->save();
+                        else if($setCost != '' || $setPrice != '') {
+                            $price = null;
+                            foreach($contractSetting->prices as $item) {
+                                if($item->hotel_contract_setting_id == $contractSetting->id && $item->market_id == $marketRate->market_id) {
+                                    $price = $item;
+                                    break;
+                                }
+                            }
+                            if ($price === null) {
+                                $price = new HotelContractPrice();
+                                $price->market_id = $marketRate->market_id;
+                                $price->price_rate_id = $marketRate->id;
+                            }
+                            $price->hotel_contract_setting_id = $contractSetting->id;
+                            $roomType = $contractSetting->roomType;
+                            if($setCost != '') {
+                                $price->cost_adult = Input::get('cost');
+                                if (isset($roomType->max_children) && $roomType->max_children > 0 && $roomType->max_children <= 5) {
+                                    if ($roomType->max_children == 1) {
+                                        $price->cost_children_1 = Input::get('cost_children_1');
+                                    }
+                                    else if ($roomType->max_children == 2) {
+                                        $price->cost_children_1 = Input::get('cost_children_1');
+                                        $price->cost_children_2 = Input::get('cost_children_2');
+                                    }
+                                    else if ($roomType->max_children == 3) {
+                                        $price->cost_children_1 = Input::get('cost_children_1');
+                                        $price->cost_children_2 = Input::get('cost_children_2');
+                                        $price->cost_children_3 = Input::get('cost_children_3');
+                                    }
+                                    else if ($roomType->max_children == 4) {
+                                        $price->cost_children_1 = Input::get('cost_children_1');
+                                        $price->cost_children_2 = Input::get('cost_children_2');
+                                        $price->cost_children_3 = Input::get('cost_children_3');
+                                        $price->cost_children_4 = Input::get('cost_children_4');
+                                    }
+                                    else if ($roomType->max_children == 5) {
+                                        $price->cost_children_1 = Input::get('cost_children_1');
+                                        $price->cost_children_2 = Input::get('cost_children_2');
+                                        $price->cost_children_3 = Input::get('cost_children_3');
+                                        $price->cost_children_4 = Input::get('cost_children_4');
+                                        $price->cost_children_5 = Input::get('cost_children_5');
+                                    }
+                                }
+                            }
+                            if($setPrice != '' && Input::get('price') != '') {
+                                $price->price_adult = Input::get('price');
+                                if ($roomType->max_children == 1) {
+                                    $price->price_children_1 = Input::get('price_children_1');
+                                }
+                                else if ($roomType->max_children == 2) {
+                                    $price->price_children_1 = Input::get('price_children_1');
+                                    $price->price_children_2 = Input::get('price_children_2');
+                                }
+                                else if ($roomType->max_children == 3) {
+                                    $price->price_children_1 = Input::get('price_children_1');
+                                    $price->price_children_2 = Input::get('price_children_2');
+                                    $price->price_children_3 = Input::get('price_children_3');
+                                }
+                                else if ($roomType->max_children == 4) {
+                                    $price->price_children_1 = Input::get('price_children_1');
+                                    $price->price_children_2 = Input::get('price_children_2');
+                                    $price->price_children_3 = Input::get('price_children_3');
+                                    $price->price_children_4 = Input::get('price_children_4');
+                                }
+                                else if ($roomType->max_children == 5) {
+                                    $price->price_children_1 = Input::get('price_children_1');
+                                    $price->price_children_2 = Input::get('price_children_2');
+                                    $price->price_children_3 = Input::get('price_children_3');
+                                    $price->price_children_4 = Input::get('price_children_4');
+                                    $price->price_children_5 = Input::get('price_children_5');
+                                }
+                            }
+                            else {
+                                $price->price_adult = $this->calculatePrice($price->cost_adult, $marketRate);
+                                if ($roomType->max_children == 1) {
+                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
+                                }
+                                else if ($roomType->max_children == 2) {
+                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
+                                    $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $marketRate);
+                                }
+                                else if ($roomType->max_children == 3) {
+                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
+                                    $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $marketRate);
+                                    $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $marketRate);
+                                }
+                                else if ($roomType->max_children == 4) {
+                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
+                                    $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $marketRate);
+                                    $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $marketRate);
+                                    $price->price_children_4 = $this->calculatePrice($price->cost_children_4, $marketRate);
+                                }
+                                else if ($roomType->max_children == 5) {
+                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
+                                    $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $marketRate);
+                                    $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $marketRate);
+                                    $price->price_children_4 = $this->calculatePrice($price->cost_children_4, $marketRate);
+                                    $price->price_children_5 = $this->calculatePrice($price->cost_children_5, $marketRate);
+                                }
+                            }
+                            $price->save();
+                        }
                     }
                 }
             }
         }
-
         $this->response['status'] = 'success';
         $this->response['message'] = 'Petition executed successfully.';
         //$this->response['data'] = $contractSetting;
-
         echo json_encode($this->response);
     }
 
@@ -1027,34 +1058,44 @@ class HotelContractController extends Controller
             'priceRates' => function($query) use ($market) {
                 $query->where('market_id', $market);
             },
-            'priceRates.settings' => function($query) use ($start, $end){
+            'settings' => function($query) use ($start, $end){
                 $query
                     ->orderBy('date', 'asc')
                     ->where('date', '>=', $start->format('Y-m-d'))
                     ->where('date', '<=', $end->format('Y-m-d'));
+            },
+            'settings.prices' => function($query) use ($market) {
+                $query->where('market_id', $market);
             },
             'markets' => function($query) use ($market) {
                 $query->where('market_id', $market);
             }
         ])->where('id', $id)->first();
 
-        $validFrom = Carbon::createFromFormat('!Y-m-d', $contract->valid_from);
-        $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
-
         if ($contract === null) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'Invalid contract.';
         }
         else {
-            $settings = array();
+            $validFrom = Carbon::createFromFormat('!Y-m-d', $contract->valid_from);
+            $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
 
+            $settings = array();
             if (isset ($contract->priceRates[0])) {
-                foreach ($contract->priceRates[0]->settings as $s) {
-                    $settings[$s->date] = json_decode($s->settings, true);
+                foreach ($contract->settings as $setting) {
+                    if (isset($setting->prices[0])) {
+                        $object = $setting->prices[0];
+                    }
+                    else {
+                        $object = new HotelContractPrice();
+                    }
+                    $object->allotment = $setting->allotment;
+                    $object->release = $setting->release;
+                    $object->stop_sale = $setting->stop_sale;
+                    $settings[$setting->date][$setting->hotel_room_type_id] = $object;
                 }
 
                 $roomTypes = $contract->roomTypes;
-                $rows = $contract->measures;
                 $tables = '';
 
                 for ($m = $start; $m->lessThanOrEqualTo($end); $m->addMonth()) {
@@ -1073,6 +1114,34 @@ class HotelContractController extends Controller
                         '<div class="table-responsive">';
 
                     for ($r = 0; $r < count($roomTypes); $r++) {
+                        $rows = $contract->measures;
+                        if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 5) {
+                            $measures = $rows;
+                            $rows = array();
+                            foreach ($measures as $measure) {
+                                $rows[] = $measure;
+                                if ($measure->code == 'cost') {
+                                    for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
+                                        $newMeasure = new HotelMeasure();
+                                        $newMeasure->id = 1000 + $x;
+                                        $newMeasure->name = 'Cost CH ' . $x;
+                                        $newMeasure->active = 1;
+                                        $newMeasure->code = 'cost_children_' . $x;
+                                        $rows[] = $newMeasure;
+                                    }
+                                }
+                                else if ($measure->code == 'price') {
+                                    for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
+                                        $newMeasure = new HotelMeasure();
+                                        $newMeasure->id = 2000 + $x;
+                                        $newMeasure->name = 'price CH ' . $x;
+                                        $newMeasure->active = 1;
+                                        $newMeasure->code = 'price_children_' . $x;
+                                        $rows[] = $newMeasure;
+                                    }
+                                }
+                            }
+                        }
                         $table .=
                             '<table class="table table-striped table-bordered table-setting" data-room="' . $roomTypes[$r]->id . '">' .
                             '<thead>' .
@@ -1101,10 +1170,16 @@ class HotelContractController extends Controller
                             '<tbody>';
 
                         for ($v = 0; $v < count($rows); $v++) {
-                            $table .=
+                            if ($rows[$v]->code == 'cost' || $rows[$v]->code == 'price') {
+                                $table .=
+                                '<tr data-row="' . $rows[$v]->id . '">' .
+                                '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name . ' Ad') . '</td>';
+                            }
+                            else {
+                                $table .=
                                 '<tr data-row="' . $rows[$v]->id . '">' .
                                 '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
-
+                            }
                             $month = $m->format('d.m.Y');
                             $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
                             $monthEnd = Carbon::createFromFormat('d.m.Y', $month)->endOfMonth();
@@ -1116,8 +1191,24 @@ class HotelContractController extends Controller
                                     $usableClass = 'item-setting';
                                     if (array_key_exists($i->format('Y-m-d'), $settings)) {
                                         $data = $settings[$i->format('Y-m-d')];
-                                        if (isset($data[$roomTypes[$r]->id][$rows[$v]->id]))
-                                            $value = $data[$roomTypes[$r]->id][$rows[$v]->id];
+                                        if (isset($data[$roomTypes[$r]->id])) {
+                                            $object = $data[$roomTypes[$r]->id];
+                                            if ($rows[$v]->code == 'cost') $value = $object->cost_adult;
+                                            else if ($rows[$v]->code == 'cost_children_1') $value = $object->cost_children_1;
+                                            else if ($rows[$v]->code == 'cost_children_2') $value = $object->cost_children_2;
+                                            else if ($rows[$v]->code == 'cost_children_3') $value = $object->cost_children_3;
+                                            else if ($rows[$v]->code == 'cost_children_4') $value = $object->cost_children_4;
+                                            else if ($rows[$v]->code == 'cost_children_5') $value = $object->cost_children_5;
+                                            else if ($rows[$v]->code == 'price') $value = $object->price_adult;
+                                            else if ($rows[$v]->code == 'price_children_1') $value = $object->price_children_1;
+                                            else if ($rows[$v]->code == 'price_children_2') $value = $object->price_children_2;
+                                            else if ($rows[$v]->code == 'price_children_3') $value = $object->price_children_3;
+                                            else if ($rows[$v]->code == 'price_children_4') $value = $object->price_children_4;
+                                            else if ($rows[$v]->code == 'price_children_5') $value = $object->price_children_5;
+                                            else if ($rows[$v]->code == 'allotment') $value = $object->allotment;
+                                            else if ($rows[$v]->code == 'release') $value = $object->release;
+                                            else if ($rows[$v]->code == 'stop_sale') $value = $object->stop_sale == 1 ? 'X' : '';
+                                        }
                                     }
                                 }
                                 $table .=
@@ -1173,5 +1264,60 @@ class HotelContractController extends Controller
             'settings' => $settings
         );
         return Excel::download(new HotelContractExport($parameters), 'Hotel Contracts.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+
+    public function migrate(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $query = HotelContract::with([
+            'measures',
+            'roomTypes',
+            'priceRates',
+            'priceRates.settingsOrigin',
+            'markets'
+        ]);
+        $contracts = $query->get();
+        print_r('Total: '.count($contracts));
+
+        foreach ($contracts as $contract) {
+            $priceRates = $contract->priceRates;
+            //echo ('<PRE>');print_r($priceRates);die;
+            foreach ($priceRates as $priceRate) {
+                $settingsOrigin = $priceRate->settingsOrigin;
+                foreach ($settingsOrigin as $settingOrigin) {
+                    $oldSettings = $settingOrigin->settings;
+                    $oldSettings = json_decode($oldSettings, true);
+                    foreach ($oldSettings as $key => $value) {
+                        try {
+                            //echo ('<PRE>');print_r($oldSettings);die;
+                            DB::beginTransaction();
+                            $contractRoomType = HotelContractRoomType::where('hotel_room_type_id', $key)->where('hotel_contract_id', $contract->id)->first();
+                            $contractSetting = new HotelContractSetting();
+                            $contractSetting->hotel_contract_id = $contract->id;
+                            $contractSetting->hotel_contract_room_type_id = $contractRoomType->id;
+                            $contractSetting->hotel_room_type_id = $contractRoomType->hotel_room_type_id;
+                            $contractSetting->date = $settingOrigin->date;
+                            $contractSetting->save();
+
+                            $price = new HotelContractPrice();
+                            $price->hotel_contract_setting_id = $contractSetting->id;
+                            $price->market_id = $priceRate->market_id;
+                            $price->price_rate_id = $priceRate->id;
+                            $price->cost_adult = $oldSettings[$contractRoomType->hotel_room_type_id][1];
+                            $price->price_adult = $oldSettings[$contractRoomType->hotel_room_type_id][2];
+                            $price->save();
+                            //echo ('<PRE>');print_r($price);die;
+                            DB::commit();
+                        }
+                        catch (\Exception $e) {
+                            DB::rollBack();
+                            print_r('<br>Error: '.$e->getMessage());
+                        }
+                    }
+                }
+            }
+            print_r('<br>Migrated Contract: ' . $contract->id);
+        }
+        print_r('<br><br>Finish Migration !!!');
     }
 }

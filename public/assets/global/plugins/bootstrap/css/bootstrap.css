@@ -5182,7 +5182,7 @@ button.close {
 
 .tooltip {
   position: absolute;
-  z-index: 1030;
+  z-index: 10060;
   display: block;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: normal;

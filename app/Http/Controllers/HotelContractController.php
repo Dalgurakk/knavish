@@ -11,6 +11,7 @@ use App\Models\HotelContractRoomType;
 use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
 use App\Models\HotelPaxType;
+use App\Models\HotelRoomType;
 use App\Models\Location;
 use App\Models\Market;
 use Illuminate\Http\Request;
@@ -461,10 +462,6 @@ class HotelContractController extends Controller
                         $newPrice->price_children_2 = $price->price_children_2;
                         $newPrice->cost_children_3 = $price->cost_children_3;
                         $newPrice->price_children_3 = $price->price_children_3;
-                        $newPrice->cost_children_4 = $price->cost_children_4;
-                        $newPrice->price_children_4 = $price->price_children_4;
-                        $newPrice->cost_children_5 = $price->cost_children_5;
-                        $newPrice->price_children_5 = $price->price_children_5;
                         $newPrice->save();
                     }
                 }
@@ -653,10 +650,18 @@ class HotelContractController extends Controller
                     $newPrice->price_children_2 = $price->cost_children_2 != null ? $this->calculatePrice($price->cost_children_2, $toPriceRate) : null;
                     $newPrice->cost_children_3 = $price->cost_children_3;
                     $newPrice->price_children_3 = $price->cost_children_3 != null ? $this->calculatePrice($price->cost_children_3, $toPriceRate) : null;
-                    $newPrice->cost_children_4 = $price->cost_children_4;
-                    $newPrice->price_children_4 = $price->cost_children_4 != null ? $this->calculatePrice($price->cost_children_4, $toPriceRate) : null;
-                    $newPrice->cost_children_5 = $price->cost_children_5;
-                    $newPrice->price_children_5 = $price->cost_children_5 != null ? $this->calculatePrice($price->cost_children_5, $toPriceRate) : null;
+                    if ($price->cost_children_1_use_adult_type != null) {
+                        $newPrice->cost_children_1_use_adult_type = $price->cost_children_1_use_adult_type;
+                        $newPrice->cost_children_1_use_adult_rate = $price->cost_children_1_use_adult_rate;
+                    }
+                    if ($price->cost_children_2_use_adult_type != null) {
+                        $newPrice->cost_children_2_use_adult_type = $price->cost_children_2_use_adult_type;
+                        $newPrice->cost_children_2_use_adult_rate = $price->cost_children_2_use_adult_rate;
+                    }
+                    if ($price->cost_children_3_use_adult_type != null) {
+                        $newPrice->cost_children_3_use_adult_type = $price->cost_children_3_use_adult_type;
+                        $newPrice->cost_children_3_use_adult_rate = $price->cost_children_3_use_adult_rate;
+                    }
                     $newPrice->save();
                 }
                 $this->response['status'] = 'success';
@@ -704,25 +709,54 @@ class HotelContractController extends Controller
         $rateBonus = $ratePercentValue != '' ? $ratePercentValue : $rateFeeValue;
 
         try {
-            if (Input::get('all-dates') != null) {
-                $contract = HotelContract::where('id', $contractId)->first();
-                $from = Carbon::createFromFormat('Y-m-d', $contract->valid_from);
-                $to = Carbon::createFromFormat('Y-m-d', $contract->valid_to);
-                $range = array(
-                    'from' => $from->format('d.m.Y'),
-                    'to' => $to->format('d.m.Y')
-                );
-                $ranges = array();
-                $ranges[] = (object) $range;
-            }
             $priceRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
-            foreach($ranges as $range) {
-                $start = Carbon::createFromFormat('d.m.Y', $range->from);
-                $end = Carbon::createFromFormat('d.m.Y', $range->to);
+            $fromRoomType = HotelRoomType::where('id', $fromRoom)->first();
+            $toRoomType = HotelRoomType::where('id', $toRoom)->first();
 
-                if ($fromRoom == $toRoom) {
-                    if ($addValue != '') {
-                        $query = HotelContractPrice::where('price_rate_id', $priceRate->id)
+            if ($fromRoomType === null || $toRoomType === null) {
+                $this->response['status'] = 'warning';
+                $this->response['message'] = 'Undefined room type or not exist.';
+            }
+            else {
+                foreach($ranges as $range) {
+                    $start = Carbon::createFromFormat('d.m.Y', $range->from);
+                    $end = Carbon::createFromFormat('d.m.Y', $range->to);
+
+                    if ($fromRoom == $toRoom) {
+                        if ($addValue != '') {
+                            $query = HotelContractPrice::where('price_rate_id', $priceRate->id)
+                                ->whereHas('setting', function ($query) use ($contractId, $fromRoom, $start, $end) {
+                                    $query
+                                        ->where('hotel_contract_id', $contractId)
+                                        ->where('hotel_room_type_id', $fromRoom)
+                                        ->where('date', '>=', $start->format('Y-m-d'))
+                                        ->where('date', '<=', $end->format('Y-m-d'));
+                                });
+                            $prices = $query->get();
+
+                            foreach ($prices as $price) {
+                                if ($price->cost_adult != null) {
+                                    $price->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
+                                    $price->price_adult = $this->calculatePrice($price->cost_adult, $priceRate);
+                                }
+                                if ($price->cost_children_1 != null) {
+                                    $price->cost_children_1 = $price->cost_children_1 + $this->calcBonus($rateBonus, $price->cost_children_1, $rateType);
+                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $priceRate);
+                                }
+                                if ($price->cost_children_2 != null) {
+                                    $price->cost_children_2 = $price->cost_children_2 + $this->calcBonus($rateBonus, $price->cost_children_2, $rateType);
+                                    $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $priceRate);
+                                }
+                                if ($price->cost_children_3 != null) {
+                                    $price->cost_children_3 = $price->cost_children_3 + $this->calcBonus($rateBonus, $price->cost_children_3, $rateType);
+                                    $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $priceRate);
+                                }
+                                $price->save();
+                            }
+                        }
+                    }
+                    else {
+                        $query = HotelContractPrice::with('setting')->where('price_rate_id', $priceRate->id)
                             ->whereHas('setting', function ($query) use ($contractId, $fromRoom, $start, $end) {
                                 $query
                                     ->where('hotel_contract_id', $contractId)
@@ -733,100 +767,91 @@ class HotelContractController extends Controller
                         $prices = $query->get();
 
                         foreach ($prices as $price) {
-                            if ($price->cost_adult != null) {
-                                $price->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
-                                $price->price_adult = $this->calculatePrice($price->cost_adult, $priceRate);
-                            }
-                            /*if ($price->cost_children_1 != null) {
-                                $price->cost_children_1 = $price->cost_children_1 + $this->calcBonus($rateBonus, $price->cost_children_1, $rateType);
-                                $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $priceRate);
-                            }
-                            if ($price->cost_children_2 != null) {
-                                $price->cost_children_2 = $price->cost_children_2 + $this->calcBonus($rateBonus, $price->cost_children_2, $rateType);
-                                $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $priceRate);
-                            }
-                            if ($price->cost_children_3 != null) {
-                                $price->cost_children_3 = $price->cost_children_3 + $this->calcBonus($rateBonus, $price->cost_children_3, $rateType);
-                                $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $priceRate);
-                            }
-                            if ($price->cost_children_4 != null) {
-                                $price->cost_children_4 = $price->cost_children_4 + $this->calcBonus($rateBonus, $price->cost_children_4, $rateType);
-                                $price->price_children_4 = $this->calculatePrice($price->cost_children_1, $priceRate);
-                            }
-                            if ($price->cost_children_5 != null) {
-                                $price->cost_children_5 = $price->cost_children_5 + $this->calcBonus($rateBonus, $price->cost_children_5, $rateType);
-                                $price->price_children_5 = $this->calculatePrice($price->cost_children_5, $priceRate);
-                            }*/
-                            $price->save();
-                        }
-                    }
-                }
-                else {
-                    HotelContractPrice::where('price_rate_id', $priceRate->id)
-                    ->whereHas('setting', function ($query) use ($contractId, $toRoom, $start, $end) {
-                        $query
-                            ->where('hotel_contract_id', $contractId)
-                            ->where('hotel_room_type_id', $toRoom)
-                            ->where('date', '>=', $start->format('Y-m-d'))
-                            ->where('date', '<=', $end->format('Y-m-d'));
-                    })->delete();
-
-                    $query = HotelContractPrice::with('setting')->where('price_rate_id', $priceRate->id)
-                        ->whereHas('setting', function ($query) use ($contractId, $fromRoom, $start, $end) {
-                            $query
+                            $setting = HotelContractSetting::where('date', $price->setting->date)
+                                ->where('hotel_room_type_id', $toRoom)
                                 ->where('hotel_contract_id', $contractId)
-                                ->where('hotel_room_type_id', $fromRoom)
-                                ->where('date', '>=', $start->format('Y-m-d'))
-                                ->where('date', '<=', $end->format('Y-m-d'));
-                        });
-                    $prices = $query->get();
+                                ->first();
+                            $contractPrice = null;
+                            if($setting === null) {
+                                $setting = new HotelContractSetting();
+                                $contractRoomType = HotelContractRoomType::where('hotel_contract_id', $contractId)
+                                    ->where('hotel_room_type_id', $toRoom)->first();
+                                $setting->hotel_contract_id = $contractId;
+                                $setting->hotel_contract_room_type_id = $contractRoomType->id;
+                                $setting->hotel_room_type_id = $toRoom;
+                                $setting->date = $price->setting->date;
+                                $setting->save();
 
-                    foreach ($prices as $price) {
-                        $setting = HotelContractSetting::where('date', $price->setting->date)
-                            ->where('hotel_room_type_id', $toRoom)
-                            ->where('hotel_contract_id', $contractId)
-                            ->first();
+                                $contractPrice = new HotelContractPrice();
+                                $contractPrice->hotel_contract_setting_id = $setting->id;
+                                $contractPrice->price_rate_id = $priceRate->id;
+                                $contractPrice->market_id = $price->market_id;
+                                if ($price->cost_adult != null) {
+                                    $contractPrice->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
+                                    $contractPrice->price_adult = $this->calculatePrice($contractPrice->cost_adult, $priceRate);
+                                }
+                                if ($toRoomType->max_children >= 1 && $fromRoomType->max_children >= 1 && $price->cost_children_1 != null) {
+                                    $contractPrice->cost_children_1 = $price->cost_children_1 + $this->calcBonus($rateBonus, $price->cost_children_1, $rateType);
+                                    $contractPrice->price_children_1 = $this->calculatePrice($contractPrice->cost_children_1, $priceRate);
+                                    $contractPrice->cost_children_1_use_adult_type = null; //$price->cost_children_1_use_adult_type;
+                                    $contractPrice->cost_children_1_use_adult_rate = null; //$price->cost_children_1_use_adult_rate;
+                                }
+                                if ($toRoomType->max_children > 1 && $fromRoomType->max_children <= 2 && $price->cost_children_2 != null) {
+                                    $contractPrice->cost_children_2 = $price->cost_children_2 + $this->calcBonus($rateBonus, $price->cost_children_2, $rateType);
+                                    $contractPrice->price_children_2 = $this->calculatePrice($contractPrice->cost_children_2, $priceRate);
+                                    $contractPrice->cost_children_2_use_adult_type = null; //$price->cost_children_2_use_adult_type;
+                                    $contractPrice->cost_children_2_use_adult_rate = null; //$price->cost_children_2_use_adult_rate;
+                                }
+                                if ($toRoomType->max_children > 2 && $fromRoomType->max_children <= 3 && $price->cost_children_3 != null) {
+                                    $contractPrice->cost_children_3 = $price->cost_children_3 + $this->calcBonus($rateBonus, $price->cost_children_3, $rateType);
+                                    $contractPrice->price_children_3 = $this->calculatePrice($contractPrice->cost_children_3, $priceRate);
+                                    $contractPrice->cost_children_3_use_adult_type = null; //$price->cost_children_3_use_adult_type;
+                                    $contractPrice->cost_children_3_use_adult_rate = null; //$price->cost_children_3_use_adult_rate;
+                                }
+                                $contractPrice->save();
+                            }
+                            else {
+                                $contractPrice = HotelContractPrice::where('hotel_contract_setting_id', $setting->id)
+                                    ->where('price_rate_id', $priceRate->id)->first();
 
-                        if($setting === null) {
-                            $setting = new HotelContractSetting();
-                            $contractRoomType = HotelContractRoomType::where('hotel_contract_id', $contractId)
-                                ->where('hotel_room_type_id', $toRoom)->first();
-                            $setting->hotel_contract_id = $contractId;
-                            $setting->hotel_contract_room_type_id = $contractRoomType->id;
-                            $setting->hotel_room_type_id = $toRoom;
-                            $setting->date = $price->setting->date;
-                            $setting->save();
+                                if ($contractPrice === null) {
+                                    $contractPrice = new HotelContractPrice();
+                                    $contractPrice->hotel_contract_setting_id = $setting->id;
+                                    $contractPrice->price_rate_id = $priceRate->id;
+                                    $contractPrice->market_id = $price->market_id;
+                                    if ($price->cost_adult != null) {
+                                        $contractPrice->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
+                                        $contractPrice->price_adult = $this->calculatePrice($contractPrice->cost_adult, $priceRate);
+                                    }
+                                    $contractPrice->save();
+                                }
+                                else {
+                                    if ($price->cost_adult != null) {
+                                        $contractPrice->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
+                                        $contractPrice->price_adult = $this->calculatePrice($contractPrice->cost_adult, $priceRate);
+                                    }
+                                    if ($toRoomType->max_children >= 1 && $fromRoomType->max_children >= 1 && $price->cost_children_1 != null) {
+                                        $contractPrice->cost_children_1 = $price->cost_children_1 + $this->calcBonus($rateBonus, $price->cost_children_1, $rateType);
+                                        $contractPrice->price_children_1 = $this->calculatePrice($contractPrice->cost_children_1, $priceRate);
+                                        $contractPrice->cost_children_1_use_adult_type = null; //$price->cost_children_1_use_adult_type;
+                                        $contractPrice->cost_children_1_use_adult_rate = null; //$price->cost_children_1_use_adult_rate;
+                                    }
+                                    if ($toRoomType->max_children > 1 && $toRoomType->max_children <= 2 && $fromRoomType->max_children <= 2 && $price->cost_children_2 != null) {
+                                        $contractPrice->cost_children_2 = $price->cost_children_2 + $this->calcBonus($rateBonus, $price->cost_children_2, $rateType);
+                                        $contractPrice->price_children_2 = $this->calculatePrice($contractPrice->cost_children_2, $priceRate);
+                                        $contractPrice->cost_children_2_use_adult_type = null; //$price->cost_children_2_use_adult_type;
+                                        $contractPrice->cost_children_2_use_adult_rate = null; //$price->cost_children_2_use_adult_rate;
+                                    }
+                                    if ($toRoomType->max_children > 2 && $toRoomType->max_children <= 3 && $fromRoomType->max_children <= 3 && $price->cost_children_3 != null) {
+                                        $contractPrice->cost_children_3 = $price->cost_children_3 + $this->calcBonus($rateBonus, $price->cost_children_3, $rateType);
+                                        $contractPrice->price_children_3 = $this->calculatePrice($contractPrice->cost_children_3, $priceRate);
+                                        $contractPrice->cost_children_3_use_adult_type = null; //$price->cost_children_3_use_adult_type;
+                                        $contractPrice->cost_children_3_use_adult_rate = null; //$price->cost_children_3_use_adult_rate;
+                                    }
+                                    $contractPrice->save();
+                                }
+                            }
                         }
-
-                        $newPrice = new HotelContractPrice();
-                        $newPrice->hotel_contract_setting_id = $setting->id;
-                        $newPrice->price_rate_id = $priceRate->id;
-                        $newPrice->market_id = $price->market_id;
-                        if ($price->cost_adult != null) {
-                            $newPrice->cost_adult = $price->cost_adult + $this->calcBonus($rateBonus, $price->cost_adult, $rateType);
-                            $newPrice->price_adult = $this->calculatePrice($newPrice->cost_adult, $priceRate);
-                        }
-                        if ($price->cost_children_1 != null) {
-                            $newPrice->cost_children_1 = $price->cost_children_1 + $this->calcBonus($rateBonus, $price->cost_children_1, $rateType);
-                            $newPrice->price_children_1 = $this->calculatePrice($newPrice->cost_children_1, $priceRate);
-                        }
-                        if ($price->cost_children_2 != null) {
-                            $newPrice->cost_children_2 = $price->cost_children_2 + $this->calcBonus($rateBonus, $price->cost_children_2, $rateType);
-                            $newPrice->price_children_2 = $this->calculatePrice($newPrice->cost_children_2, $priceRate);
-                        }
-                        if ($price->cost_children_3 != null) {
-                            $newPrice->cost_children_3 = $price->cost_children_3 + $this->calcBonus($rateBonus, $price->cost_children_3, $rateType);
-                            $newPrice->price_children_3 = $this->calculatePrice($newPrice->cost_children_3, $priceRate);
-                        }
-                        if ($price->cost_children_4 != null) {
-                            $newPrice->cost_children_4 = $price->cost_children_4 + $this->calcBonus($rateBonus, $price->cost_children_4, $rateType);
-                            $newPrice->price_children_4 = $this->calculatePrice($newPrice->cost_children_1, $priceRate);
-                        }
-                        if ($price->cost_children_5 != null) {
-                            $newPrice->cost_children_5 = $price->cost_children_5 + $this->calcBonus($rateBonus, $price->cost_children_5, $rateType);
-                            $newPrice->price_children_5 = $this->calculatePrice($newPrice->cost_children_5, $priceRate);
-                        }
-                        $newPrice->save();
                     }
                 }
             }
@@ -839,6 +864,18 @@ class HotelContractController extends Controller
             $this->response['errors'] = $e->getMessage();
         }
         echo json_encode($this->response);
+    }
+
+    public function getCostFromAdult($adultCost, $type, $rate) {
+        $cost = 0;
+        if ($type == 1) {
+            $bonus = $rate * $adultCost / 100;
+            $cost = $adultCost + $bonus;
+        }
+        else if ($type == 2) {
+            $cost = $adultCost + $rate;
+        }
+        return $cost;
     }
 
     public function saveSettings(Request $request) {
@@ -936,31 +973,84 @@ class HotelContractController extends Controller
                             $roomType = $contractSetting->roomType;
                             if($setCost != '') {
                                 $price->cost_adult = Input::get('cost');
-                                if (isset($roomType->max_children) && $roomType->max_children > 0 && $roomType->max_children <= 5) {
+                                if (isset($roomType->max_children) && $roomType->max_children > 0 && $roomType->max_children <= 3) {
                                     if ($roomType->max_children == 1) {
-                                        $price->cost_children_1 = Input::get('cost_children_1');
+                                        if (Input::get('use-adult-cost_children_1') != '') {
+                                            $type = Input::get('use-adult-type-cost_children_1');
+                                            $rate = Input::get('use-adult-rate-cost_children_1');
+                                            $price->cost_children_1_use_adult_type = $type;
+                                            $price->cost_children_1_use_adult_rate = $rate;
+                                            $price->cost_children_1 = $this->getCostFromAdult($price->cost_adult, $type, $rate);
+                                        }
+                                        else {
+                                            $price->cost_children_1 = Input::get('cost_children_1');
+                                            $price->cost_children_1_use_adult_type = null;
+                                            $price->cost_children_1_use_adult_rate = null;
+                                        }
                                     }
                                     else if ($roomType->max_children == 2) {
-                                        $price->cost_children_1 = Input::get('cost_children_1');
-                                        $price->cost_children_2 = Input::get('cost_children_2');
+                                        if (Input::get('use-adult-cost_children_1') != '') {
+                                            $type = Input::get('use-adult-type-cost_children_1');
+                                            $rate = Input::get('use-adult-rate-cost_children_1');
+                                            $price->cost_children_1_use_adult_type = $type;
+                                            $price->cost_children_1_use_adult_rate = $rate;
+                                            $price->cost_children_1 = $this->getCostFromAdult($price->cost_adult, $type, $rate);
+                                        }
+                                        else {
+                                            $price->cost_children_1 = Input::get('cost_children_1');
+                                            $price->cost_children_1_use_adult_type = null;
+                                            $price->cost_children_1_use_adult_rate = null;
+                                        }
+                                        if (Input::get('use-adult-cost_children_2') != '') {
+                                            $type = Input::get('use-adult-type-cost_children_2');
+                                            $rate = Input::get('use-adult-rate-cost_children_2');
+                                            $price->cost_children_2_use_adult_type = $type;
+                                            $price->cost_children_2_use_adult_rate = $rate;
+                                            $price->cost_children_2 = $this->getCostFromAdult($price->cost_adult, $type, $rate);
+                                        }
+                                        else {
+                                            $price->cost_children_2 = Input::get('cost_children_2');
+                                            $price->cost_children_2_use_adult_type = null;
+                                            $price->cost_children_2_use_adult_rate = null;
+                                        }
                                     }
                                     else if ($roomType->max_children == 3) {
-                                        $price->cost_children_1 = Input::get('cost_children_1');
-                                        $price->cost_children_2 = Input::get('cost_children_2');
-                                        $price->cost_children_3 = Input::get('cost_children_3');
-                                    }
-                                    else if ($roomType->max_children == 4) {
-                                        $price->cost_children_1 = Input::get('cost_children_1');
-                                        $price->cost_children_2 = Input::get('cost_children_2');
-                                        $price->cost_children_3 = Input::get('cost_children_3');
-                                        $price->cost_children_4 = Input::get('cost_children_4');
-                                    }
-                                    else if ($roomType->max_children == 5) {
-                                        $price->cost_children_1 = Input::get('cost_children_1');
-                                        $price->cost_children_2 = Input::get('cost_children_2');
-                                        $price->cost_children_3 = Input::get('cost_children_3');
-                                        $price->cost_children_4 = Input::get('cost_children_4');
-                                        $price->cost_children_5 = Input::get('cost_children_5');
+                                        if (Input::get('use-adult-cost_children_1') != '') {
+                                            $type = Input::get('use-adult-type-cost_children_1');
+                                            $rate = Input::get('use-adult-rate-cost_children_1');
+                                            $price->cost_children_1_use_adult_type = $type;
+                                            $price->cost_children_1_use_adult_rate = $rate;
+                                            $price->cost_children_1 = $this->getCostFromAdult($price->cost_adult, $type, $rate);
+                                        }
+                                        else {
+                                            $price->cost_children_1 = Input::get('cost_children_1');
+                                            $price->cost_children_1_use_adult_type = null;
+                                            $price->cost_children_1_use_adult_rate = null;
+                                        }
+                                        if (Input::get('use-adult-cost_children_2') != '') {
+                                            $type = Input::get('use-adult-type-cost_children_2');
+                                            $rate = Input::get('use-adult-rate-cost_children_2');
+                                            $price->cost_children_2_use_adult_type = $type;
+                                            $price->cost_children_2_use_adult_rate = $rate;
+                                            $price->cost_children_2 = $this->getCostFromAdult($price->cost_adult, $type, $rate);
+                                        }
+                                        else {
+                                            $price->cost_children_2 = Input::get('cost_children_2');
+                                            $price->cost_children_2_use_adult_type = null;
+                                            $price->cost_children_2_use_adult_rate = null;
+                                        }
+                                        if (Input::get('use-adult-cost_children_3') != '') {
+                                            $type = Input::get('use-adult-type-cost_children_3');
+                                            $rate = Input::get('use-adult-rate-cost_children_3');
+                                            $price->cost_children_3_use_adult_type = $type;
+                                            $price->cost_children_3_use_adult_rate = $rate;
+                                            $price->cost_children_3 = $this->getCostFromAdult($price->cost_adult, $type, $rate);
+                                        }
+                                        else {
+                                            $price->cost_children_3 = Input::get('cost_children_3');
+                                            $price->cost_children_3_use_adult_type = null;
+                                            $price->cost_children_3_use_adult_rate = null;
+                                        }
                                     }
                                 }
                             }
@@ -978,19 +1068,6 @@ class HotelContractController extends Controller
                                     $price->price_children_2 = Input::get('price_children_2');
                                     $price->price_children_3 = Input::get('price_children_3');
                                 }
-                                else if ($roomType->max_children == 4) {
-                                    $price->price_children_1 = Input::get('price_children_1');
-                                    $price->price_children_2 = Input::get('price_children_2');
-                                    $price->price_children_3 = Input::get('price_children_3');
-                                    $price->price_children_4 = Input::get('price_children_4');
-                                }
-                                else if ($roomType->max_children == 5) {
-                                    $price->price_children_1 = Input::get('price_children_1');
-                                    $price->price_children_2 = Input::get('price_children_2');
-                                    $price->price_children_3 = Input::get('price_children_3');
-                                    $price->price_children_4 = Input::get('price_children_4');
-                                    $price->price_children_5 = Input::get('price_children_5');
-                                }
                             }
                             else {
                                 $price->price_adult = $this->calculatePrice($price->cost_adult, $marketRate);
@@ -1005,19 +1082,6 @@ class HotelContractController extends Controller
                                     $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
                                     $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $marketRate);
                                     $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $marketRate);
-                                }
-                                else if ($roomType->max_children == 4) {
-                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
-                                    $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $marketRate);
-                                    $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $marketRate);
-                                    $price->price_children_4 = $this->calculatePrice($price->cost_children_4, $marketRate);
-                                }
-                                else if ($roomType->max_children == 5) {
-                                    $price->price_children_1 = $this->calculatePrice($price->cost_children_1, $marketRate);
-                                    $price->price_children_2 = $this->calculatePrice($price->cost_children_2, $marketRate);
-                                    $price->price_children_3 = $this->calculatePrice($price->cost_children_3, $marketRate);
-                                    $price->price_children_4 = $this->calculatePrice($price->cost_children_4, $marketRate);
-                                    $price->price_children_5 = $this->calculatePrice($price->cost_children_5, $marketRate);
                                 }
                             }
                             $price->save();
@@ -1081,8 +1145,9 @@ class HotelContractController extends Controller
             $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
 
             $settings = array();
-            if (isset ($contract->priceRates[0])) {
+            if (isset($contract->priceRates) && count($contract->priceRates) > 0) {
                 foreach ($contract->settings as $setting) {
+                    $object = null;
                     if (isset($setting->prices[0])) {
                         $object = $setting->prices[0];
                     }
@@ -1115,7 +1180,7 @@ class HotelContractController extends Controller
 
                     for ($r = 0; $r < count($roomTypes); $r++) {
                         $rows = $contract->measures;
-                        if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 5) {
+                        if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 3) {
                             $measures = $rows;
                             $rows = array();
                             foreach ($measures as $measure) {
@@ -1186,6 +1251,9 @@ class HotelContractController extends Controller
 
                             for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
                                 $value = '';
+                                $showValue = '';
+                                $useAdultType = '';
+                                $useAdultRate = '';
                                 $usableClass = 'item-disabled';
                                 if ($validFrom->lessThanOrEqualTo($i) && $validTo->greaterThanOrEqualTo($i)) {
                                     $usableClass = 'item-setting';
@@ -1193,31 +1261,44 @@ class HotelContractController extends Controller
                                         $data = $settings[$i->format('Y-m-d')];
                                         if (isset($data[$roomTypes[$r]->id])) {
                                             $object = $data[$roomTypes[$r]->id];
-                                            if ($rows[$v]->code == 'cost') $value = $object->cost_adult;
-                                            else if ($rows[$v]->code == 'cost_children_1') $value = $object->cost_children_1;
-                                            else if ($rows[$v]->code == 'cost_children_2') $value = $object->cost_children_2;
-                                            else if ($rows[$v]->code == 'cost_children_3') $value = $object->cost_children_3;
-                                            else if ($rows[$v]->code == 'cost_children_4') $value = $object->cost_children_4;
-                                            else if ($rows[$v]->code == 'cost_children_5') $value = $object->cost_children_5;
-                                            else if ($rows[$v]->code == 'price') $value = $object->price_adult;
-                                            else if ($rows[$v]->code == 'price_children_1') $value = $object->price_children_1;
-                                            else if ($rows[$v]->code == 'price_children_2') $value = $object->price_children_2;
-                                            else if ($rows[$v]->code == 'price_children_3') $value = $object->price_children_3;
-                                            else if ($rows[$v]->code == 'price_children_4') $value = $object->price_children_4;
-                                            else if ($rows[$v]->code == 'price_children_5') $value = $object->price_children_5;
-                                            else if ($rows[$v]->code == 'allotment') $value = $object->allotment;
-                                            else if ($rows[$v]->code == 'release') $value = $object->release;
-                                            else if ($rows[$v]->code == 'stop_sale') $value = $object->stop_sale == 1 ? 'X' : '';
+                                            if ($rows[$v]->code == 'cost') { $value = $object->cost_adult; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'cost_children_1') { $value = $object->cost_children_1; $showValue = $value; $useAdultType = $object->cost_children_1_use_adult_type; $useAdultRate = $object->cost_children_1_use_adult_rate; }
+                                            else if ($rows[$v]->code == 'cost_children_2') { $value = $object->cost_children_2; $showValue = $value; $useAdultType = $object->cost_children_2_use_adult_type; $useAdultRate = $object->cost_children_2_use_adult_rate; }
+                                            else if ($rows[$v]->code == 'cost_children_3') { $value = $object->cost_children_3; $showValue = $value; $useAdultType = $object->cost_children_3_use_adult_type; $useAdultRate = $object->cost_children_3_use_adult_rate; }
+                                            else if ($rows[$v]->code == 'price') { $value = $object->price_adult; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_1') { $value = $object->price_children_1; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_2') { $value = $object->price_children_2; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_3') { $value = $object->price_children_3; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'allotment') { $value = $object->allotment; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; }
                                         }
                                     }
                                 }
-                                $table .=
-                                    '<td class="column-setting ' . $usableClass . '" ' .
-                                    'data-date="' . $i->format('Y-m-d') . '" ' .
-                                    'data-measure-id="' . $rows[$v]->id . '"' .
-                                    'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
-                                    'data-market-id="' . $market . '" ' .
-                                    '>' . $value . '</td>';
+                                if ($rows[$v]->code == 'cost_children_1' || $rows[$v]->code == 'cost_children_2' || $rows[$v]->code == 'cost_children_3') {
+                                    $table .=
+                                        '<td class="column-setting ' . $usableClass . '" ' .
+                                        'data="' . $value . '" ' .
+                                        'data-date="' . $i->format('Y-m-d') . '" ' .
+                                        'data-measure-id="' . $rows[$v]->id . '"' .
+                                        'data-measure-code="' . $rows[$v]->code . '"' .
+                                        'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
+                                        'data-market-id="' . $market . '" ' .
+                                        'data-use-adult-type="' . $useAdultType . '" ' .
+                                        'data-use-adult-rate="' . $useAdultRate . '" ' .
+                                        '>' . $showValue . '</td>';
+                                }
+                                else {
+                                    $table .=
+                                        '<td class="column-setting ' . $usableClass . '" ' .
+                                        'data="' . $value . '" ' .
+                                        'data-date="' . $i->format('Y-m-d') . '" ' .
+                                        'data-measure-id="' . $rows[$v]->id . '"' .
+                                        'data-measure-code="' . $rows[$v]->code . '"' .
+                                        'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
+                                        'data-market-id="' . $market . '" ' .
+                                        '>' . $showValue . '</td>';
+                                }
                             }
                             $table .=
                                 '</tr>';
@@ -1264,60 +1345,5 @@ class HotelContractController extends Controller
             'settings' => $settings
         );
         return Excel::download(new HotelContractExport($parameters), 'Hotel Contracts.xlsx', \Maatwebsite\Excel\Excel::XLSX);
-    }
-
-    public function migrate(Request $request) {
-        $request->user()->authorizeRoles(['administrator', 'commercial']);
-
-        $query = HotelContract::with([
-            'measures',
-            'roomTypes',
-            'priceRates',
-            'priceRates.settingsOrigin',
-            'markets'
-        ]);
-        $contracts = $query->get();
-        print_r('Total: '.count($contracts));
-
-        foreach ($contracts as $contract) {
-            $priceRates = $contract->priceRates;
-            //echo ('<PRE>');print_r($priceRates);die;
-            foreach ($priceRates as $priceRate) {
-                $settingsOrigin = $priceRate->settingsOrigin;
-                foreach ($settingsOrigin as $settingOrigin) {
-                    $oldSettings = $settingOrigin->settings;
-                    $oldSettings = json_decode($oldSettings, true);
-                    foreach ($oldSettings as $key => $value) {
-                        try {
-                            //echo ('<PRE>');print_r($oldSettings);die;
-                            DB::beginTransaction();
-                            $contractRoomType = HotelContractRoomType::where('hotel_room_type_id', $key)->where('hotel_contract_id', $contract->id)->first();
-                            $contractSetting = new HotelContractSetting();
-                            $contractSetting->hotel_contract_id = $contract->id;
-                            $contractSetting->hotel_contract_room_type_id = $contractRoomType->id;
-                            $contractSetting->hotel_room_type_id = $contractRoomType->hotel_room_type_id;
-                            $contractSetting->date = $settingOrigin->date;
-                            $contractSetting->save();
-
-                            $price = new HotelContractPrice();
-                            $price->hotel_contract_setting_id = $contractSetting->id;
-                            $price->market_id = $priceRate->market_id;
-                            $price->price_rate_id = $priceRate->id;
-                            $price->cost_adult = $oldSettings[$contractRoomType->hotel_room_type_id][1];
-                            $price->price_adult = $oldSettings[$contractRoomType->hotel_room_type_id][2];
-                            $price->save();
-                            //echo ('<PRE>');print_r($price);die;
-                            DB::commit();
-                        }
-                        catch (\Exception $e) {
-                            DB::rollBack();
-                            print_r('<br>Error: '.$e->getMessage());
-                        }
-                    }
-                }
-            }
-            print_r('<br>Migrated Contract: ' . $contract->id);
-        }
-        print_r('<br><br>Finish Migration !!!');
     }
 }

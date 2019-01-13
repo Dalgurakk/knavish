@@ -177,7 +177,7 @@ $(document).ready(function () {
         else {
             swal({
                 title: 'Confirmation',
-                text: 'Are you sure you want to import the costs from the ' + $('#import-from option:selected').text() + ' price rate to the ' + $('#market option:selected').text() + ' price rate?',
+                text: 'Are you sure you want to import the costs from the ' + $('#import-cost-from-rate option:selected').text() + ' price rate to the ' + $('#market option:selected').text() + ' price rate?',
                 type: null,
                 allowOutsideClick: false,
                 showConfirmButton: true,
@@ -196,7 +196,7 @@ $(document).ready(function () {
                         "type": "POST",
                         "data":  {
                             "contract-id": contract.id,
-                            "price-rate-from": $('#import-from').val(),
+                            "price-rate-from": $('#import-cost-from-rate').val(),
                             "price-rate-to": $('#market').val()
                         },
                         "beforeSend": function() {
@@ -450,7 +450,6 @@ $(document).ready(function () {
         else if (currentDate.isAfter(endDate)) {
             tempStart = moment(endDate).startOf('month');
             tempEnd = moment(endDate).endOf('month');
-            console.log(endDate.format('DD.MM.YYYY'));
         }
 
         if(tempStart.isBefore(startDate)) {
@@ -508,18 +507,18 @@ $(document).ready(function () {
     }
 
     function updateImport(markets) {
-        $('#import-from').empty();
-        $('#import-from').removeAttr('disabled');
+        $('#import-cost-from-rate').empty();
+        $('#import-cost-from-rate').removeAttr('disabled');
         $('.btn-import').removeAttr('disabled');
 
         if (markets.length > 1) {
             $("#market option:not(:selected)").each(function(i){
                 var option = '<option value="' + $(this).val() + '"> ' + $(this).text() + '</option>';
-                $('#import-from').append(option);
+                $('#import-cost-from-rate').append(option);
             });
         }
         else {
-            $('#import-from').attr('disabled', 'disabled');
+            $('#import-cost-from-rate').attr('disabled', 'disabled');
             $('.btn-import').attr('disabled', 'disabled');
         }
     }
@@ -546,6 +545,80 @@ $(document).ready(function () {
         });
     }
 
+    var formUseAdult = $('#form-use-adult');
+    formUseAdult.validate({
+        errorElement: 'span',
+        errorClass: 'help-block help-block-error',
+        focusInvalid: false,
+        ignore: "",
+        errorPlacement: function (error, element) {
+            if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
+                if (element.parents('.mt-radio-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-list')[0]);
+                }
+                if (element.parents('.mt-checkbox-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-list')[0]);
+                }
+            } else if (element.parents('.mt-radio-inline').size() > 0 || element.parents('.mt-checkbox-inline').size() > 0) {
+                if (element.parents('.mt-radio-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-inline')[0]);
+                }
+                if (element.parents('.mt-checkbox-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-inline')[0]);
+                }
+            } else if (element.parent(".input-group").size() > 0) {
+                error.insertAfter(element.parent(".input-group"));
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        invalidHandler: function (event, validator) {
+            toastr['error']("Please check the entry fields.", "Error");
+        },
+        highlight: function (element) {
+            $(element)
+                .closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element)
+                .closest('.form-group').removeClass('has-error');
+        },
+        success: function (label) {
+            label
+                .closest('.form-group').removeClass('has-error');
+        },
+        submitHandler: function (form) {
+            $('.active-use-adult').each(function() {
+                var measure = $(this).attr('data-set');
+                if($(this).prop('checked')) {
+                    var rate = $('input[name="' + measure + '_rate"]').val();
+                    var type = $('#' + measure + '_type').val();
+                    var bonus = '';
+                    if (type == 1)
+                        bonus = '(' + rate + '%)';
+                    else
+                        bonus = '($' + rate + ')';
+                    $('[data-set="' + measure + '"][data-type="rate"]').val(rate);
+                    $('[data-set="' + measure + '"][data-type="type"]').val(type);
+                    $('.label_' + measure).html('From Adult ' + bonus);
+                    $('input[name="' + measure + '"]').prop('readonly', true);
+                    $('input[name="' + measure + '"]').rules('remove', 'required');
+                    $('input[name="use-adult-' + measure + '"]').prop('checked', true);
+                }
+                else {
+                    $('[data-set="' + measure + '"][data-type="rate"]').val('');
+                    $('[data-set="' + measure + '"][data-type="type"]').val('');
+                    $('.label_' + measure).html('From Adult');
+                    $('input[name="' + measure + '"]').prop('readonly', false);
+                    $('input[name="' + measure + '"]').rules('add', 'required');
+                    $('input[name="use-adult-' + measure + '"]').prop('checked', false);
+                }
+            });
+            $('.cancel-use-adult').click();
+            return false;
+        }
+    });
+
     function renderTable(from, to, contract) {
         var roomTypes = contract.room_types;
         $('.item-setting').on('click', function() {
@@ -563,6 +636,9 @@ $(document).ready(function () {
             });
             $('input[name^="stop_sale"]').each(function(i) {
                 $(this).rules('remove', 'required');
+            });
+            $('#modal-setting .expand').each(function () {
+                $(this).click();
             });
 
             var selectedRoomId = $(this).attr('data-room-type-id');
@@ -606,7 +682,7 @@ $(document).ready(function () {
                             '</div>' +
                         '</div>';
                     $('.measures-container').append(html);
-                    if (room != null && room.max_children > 0 && room.max_children <= 5) {
+                    if (room != null && room.max_children > 0 && room.max_children <= 3) {
                         for (var j = 1; j <= room.max_children; j++) {
                             var htmlPlus =
                         '<div class="row">' +
@@ -617,6 +693,16 @@ $(document).ready(function () {
                                         '<input type="text" class="form-control measure-input" name="' + measures[i].code + '_children_' + j + '" readonly>' +
                                     '</div>' +
                                 '</div>' +
+                                '<div class="col-md-7 col-sm-7 col-xs-7 label_contentainer" style="display: none;">' +
+                                    '<div class="mt-checkbox-inline">' +
+                                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"><p class="label_' + measures[i].code + '_children_' + j + '">From Adult</p>' +
+                                            '<input type="checkbox" class="set use-adult" value="1" name="use-adult-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '"/>' +
+                                            '<span></span>' +
+                                        '</label>' +
+                                        '<input type="hidden" value="" name="use-adult-rate-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '" data-type="rate"/>' +
+                                        '<input type="hidden" value="" name="use-adult-type-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '" data-type="type"/>' +
+                                    '</div>' +
+                                '</div>' +
                             '</div>' +
                         '</div>';
                             $('.measures-container').append(htmlPlus);
@@ -625,29 +711,121 @@ $(document).ready(function () {
 
                     $('input[name=import-cost]').change(function () {
                         if ($(this).is(':checked')) {
-                            //$('#modal-import :input[name="select-room"]').val($('#modal-setting :input[name="room-type-id"]').val()).trigger("change");
                             $('input[name="set-cost"]').prop('checked', '');
                             $('input[name="unset-cost"]').prop('checked', '');
                             formImport.validate().resetForm();
                             formImport[0].reset();
-                            $('input[name="import-from"]').rules('remove', 'required');
-                            $('input[name="import-to"]').rules('remove', 'required');
                             var dateFrom = contract.valid_from;
                             var dateTo = contract.valid_to;
                             $('#modal-import :input[name=import-from]').datepicker("setDate" , new Date(moment(dateFrom, 'YYYY-MM-DD')));
                             $('#modal-import :input[name=import-to]').datepicker("setDate" , new Date(moment(dateTo, 'YYYY-MM-DD')));
-                            //var room = $('#modal-setting .room-name-header').html();
-                            $('#modal-import .room-name-header').html(room.name);
+                            $('#modal-import .room-name-header').html(room.code + ': ' + room.name);
                             $('input[name=add-value]').prop('checked', '');
                             $('input[name="rate_fee_value"]').attr('disabled', 'disabled').val('');
                             $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
                             $('input[data-target="rate_fee_value"]').prop('checked', true).attr('disabled', 'disabled');
                             $('input[data-target="rate_percent_value"]').attr('disabled', 'disabled');
                             $('.add-value-container').hide();
-                            $('.all-dates-container').hide();
-                            $('input[name="all-dates"]').prop('checked', 'checked');
+                            $('#modal-import .range-optional').each(function () {
+                                $(this).remove();
+                            });
+                            $('#modal-import .expand').each(function () {
+                                $(this).click();
+                            });
                             $('#modal-import').modal('show');
                         }
+                    });
+
+                    $('.use-adult').on('click', function(e) {
+                        e.preventDefault();
+                        var dataSet = $(this).attr('data-set');
+                        $('.from-adult-content').html('');
+                        var id = $("#modal-setting :input[name=room-type-id]").val();
+                        var rooms = contract.room_types;
+                        var room = null;
+                        for (var i = 0; i < rooms.length; i++) {
+                            if (id == rooms[i].id) {
+                                room = rooms[i];
+                                break;
+                            }
+                        }
+                        for (var i = 1; i <= room.max_children; i++) {
+                            var html = '';
+                            if (i > 1)
+                                html = '<hr>';
+                            html +=
+                            '<div class="children-setting" style="margin-bottom: 10px;margin-top: 10px;">' +
+                                '<div class="row">' +
+                                    '<div class="col-md-12">' +
+                                        '<div class="row">' +
+                                            '<div class="col-md-12">' +
+                                                '<label class=""> Cost Children ' + i + '</label>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="col-md-12" style="margin-top: 10px;">' +
+                                        '<div class="row" style="margin-top: 5px;">' +
+                                            '<div class="col-md-4">' +
+                                                '<div class="form-group">' +
+                                                    '<label>Rate</label>' +
+                                                    '<input type="text" class="form-control use-adult-input-rate" name="cost_children_' + i + '_rate">' +
+                                                '</div>' +
+                                            '</div>' +
+                                            '<div class="col-md-4">' +
+                                                '<label>Type</label>' +
+                                                '<div class="form-group">' +
+                                                    '<select class="form-control" name="cost_children_' + i + '_type" id="cost_children_' + i + '_type">' +
+                                                        '<option value="1">Percent</option>' +
+                                                        '<option value="2">Fee</option>' +
+                                                    '</select>' +
+                                                '</div>' +
+                                            '</div>' +
+                                            '<div class="col-md-4">' +
+                                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 24px;"> Enable' +
+                                                    '<input class="active-use-adult" type="checkbox" value="1" name="cost_children_' + i + '_active" data-set="cost_children_' + i + '"/>' +
+                                                    '<span></span>' +
+                                                '</label>' +
+                                            '</div>' +
+                                            /*'<div class="col-md-4">' +
+                                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 24px;"> Update Related' +
+                                                    '<input type="checkbox" value="1" name="cost_children_' + i + '_update_related"/>' +
+                                                    '<span></span>' +
+                                                '</label>' +
+                                            '</div>' +*/
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>';
+                            $('.from-adult-content').append(html);
+                            $('input[name="cost_children_' + i + '_active"]').on('click', function() {
+                                var rowPref = $(this).attr('data-set');
+                                if ($(this).prop('checked')) {
+                                    $('input[name="' + rowPref + '_rate"]').rules('add', 'required');
+                                }
+                                else {
+                                    $('input[name="' + rowPref + '_rate"]').rules('remove', 'required');
+                                }
+                            });
+                        }
+                        $('.use-adult').each(function() {
+                            $('.active-use-adult').each(function() {
+                                var auxRow = $(this).attr('data-set');
+                                $('input[name="' + auxRow + '_rate"]').rules('remove', 'required');
+                                $('input[name="' + auxRow + '_active"]').rules('remove', 'required');
+                                //$('input[name="' + auxRow + '_update_related"]').rules('remove', 'required');
+                            });
+                            var rowPref = $(this).attr('data-set');
+                            var rate = $('[data-set="' + rowPref + '"][data-type="rate"]').val();
+                            var type = $('[data-set="' + rowPref + '"][data-type="type"]').val();
+                            if (rate != '' && type != '') {
+                                $('input[name="' + rowPref + '_rate"]').val(rate);
+                                $('#' + rowPref + '_type').val(type);
+                                $('input[name="' + rowPref + '_active"]').prop('checked', true);
+                            }
+                        });
+                        $('input[name="' + dataSet + '_rate"]').rules('add', 'required');
+                        $('input[name="' + dataSet + '_active"]').prop('checked', true);
+                        $('#modal-use-adult').modal('show');
                     });
 
                     $('.cancel-import').on('click', function(e) {
@@ -676,7 +854,7 @@ $(document).ready(function () {
                             '</div>' +
                         '</div>';
                     $('.measures-container').append(html);
-                    if (room != null && room.max_children > 0 && room.max_children <= 5) {
+                    if (room != null && room.max_children > 0 && room.max_children <= 3) {
                         for (var j = 1; j <= room.max_children; j++) {
                             var htmlPlus =
                         '<div class="row">' +
@@ -700,7 +878,7 @@ $(document).ready(function () {
                                 '<div class="col-md-5 col-sm-5 col-xs-5">' +
                                     '<div class="form-group">' +
                                         '<label>' + measures[i].name + '</label>' +
-                                        '<select id="select-stop-sale" class="form-control measure-input" name="' + measures[i].code + '" readonly="">' +
+                                        '<select id="select-stop-sale" class="form-control measure-input" name="' + measures[i].code + '" readonly="" disabled="disabled">' +
                                             '<option value="0">No</option>' +
                                             '<option value="1">Yes</option>' +
                                         '</select>' +
@@ -723,22 +901,26 @@ $(document).ready(function () {
                     $('.measures-container').append(html);
                     $('#select-stop-sale').val(0).change();
                     $('input[name="set-' + measures[i].code + '"]').change(function() {
+                        var code = $(this).attr('data-set');
                         if($(this).is(":checked")) {
                             $('#select-stop-sale').removeAttr('readonly', '');
-                            $(this).val('1');
+                            $('input[name="unset-' + code + '"]').prop('checked', '');
+                            $('#select-stop-sale').removeAttr('disabled');
+                            $(this).val(1);
                         }
                         else {
                             $('#select-stop-sale').attr('readonly', true);
+                            $('#select-stop-sale').attr('disabled', 'disabled');
                         }
                     });
                     $('input[name="unset-' + measures[i].code + '"]').change(function() {
                         var code = $(this).attr('data-unset');
                         if($(this).is(":checked")) {
                             $('input[name=' + code + ']').prop('readonly', true);
-                            //$('input[name=' + code + ']').rules('remove', 'required');
-                            $('input[name=' + code + ']').val('');
+                            //$('input[name=' + code + ']').val('');
                             $('input[name="set-' + code + '"]').prop('checked', '');
                             $(this).val($(this).attr('data-measure-id'));
+                            $('#select-stop-sale').attr('disabled', 'disabled');
                         }
                         else {
                             $(this).val('0');
@@ -790,7 +972,7 @@ $(document).ready(function () {
                         if($(this).is(":checked")) {
                             $('input[name=' + code + ']').prop('readonly', true);
                             $('input[name=' + code + ']').rules('remove', 'required');
-                            $('input[name=' + code + ']').val('');
+                            //$('input[name=' + code + ']').val('');
                             $('input[name="set-' + code + '"]').prop('checked', '');
                             $(this).val($(this).attr('data-measure-id'));
                         }
@@ -805,8 +987,11 @@ $(document).ready(function () {
                 if($(this).is(":checked")) {
                     $('input[name^="cost"]').each(function(i) {
                         $(this).rules('add', 'required');
-                        $(this).prop('readonly', '');
+                        var code = $(this).attr('name');
+                        if ($('.use-adult[data-set="' + code + '"]').prop('checked') == false || code == 'cost')
+                            $(this).prop('readonly', '');
                     });
+                    $('.label_contentainer').show();
                     $('input[name="unset-cost"]').prop('checked', '');
                     $('input[name="import-cost"]').prop('checked', '');
                 }
@@ -815,6 +1000,7 @@ $(document).ready(function () {
                         $(this).rules('remove', 'required');
                         $(this).prop('readonly', true);
                     });
+                    $('.label_contentainer').hide();
                     $('input[name="unset-cost"]').prop('checked', '');
                     $('input[name="import-cost"]').prop('checked', '');
                 }
@@ -825,7 +1011,7 @@ $(document).ready(function () {
                     $('input[name^="cost"]').each(function(i) {
                         $(this).rules('remove', 'required');
                         $(this).prop('readonly', true);
-                        $(this).val('');
+                        //$(this).val('');
                         $('input[name="set-price"]').prop('checked', '');
                         $('input[name=set-cost]').prop('checked', '');
                         $('input[name="import-cost"]').prop('checked', '');
@@ -833,8 +1019,9 @@ $(document).ready(function () {
                     $('input[name^="price"]').each(function(i) {
                         $(this).rules('remove', 'required');
                         $(this).prop('readonly', true);
-                        $(this).val('');
+                        //$(this).val('');
                     });
+                    $('.label_contentainer').hide();
                 }
             });
 
@@ -862,7 +1049,7 @@ $(document).ready(function () {
             formSetting.validate().resetForm();
             formSetting[0].reset();
             //var room = $(this).parents('table').find('th:first').html();
-            $('#modal-setting .room-name-header').html(room.name);
+            $('#modal-setting .room-name-header').html(room.code + ': ' + room.name);
 
             var date = $(this).attr('data-date');
             $('#modal-setting :input[name=setting-from]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
@@ -885,7 +1072,7 @@ $(document).ready(function () {
             $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
 
             var measures = contract.measures;
-            if (room.max_children > 0 && room.max_children < 5) {
+            if (room.max_children > 0 && room.max_children < 3) {
                 var measuresTemp = measures;
                 measures = [];
                 for (var i = 0; i < measuresTemp.length; i ++) {
@@ -918,9 +1105,27 @@ $(document).ready(function () {
             for (var i = 0; i < measures.length; i++) {
                 var date = $(this).attr('data-date');
                 var measureId = measures[i].id;
-                var value = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]').html();
+                var item = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]');
+                var value = item.attr('data');
+                var code = item.attr('data-measure-code');
+                if (code == 'cost_children_1' || code == 'cost_children_2' || code == 'cost_children_3') {
+                    var type = item.attr('data-use-adult-type');
+                    var rate = item.attr('data-use-adult-rate');
+                    var bonus = '';
+                    if (type == 1)
+                        bonus = '(' + rate + '%)';
+                    else
+                        bonus = '($' + rate + ')';
+                    if (type != ''){
+                        $('.use-adult[data-set="' + code + '"]').prop('checked', true);
+                        $('.label_' + code).html('From Adult ' + bonus);
+                        $('[data-set="' + code + '"][data-type="rate"]').val(rate);
+                        $('[data-set="' + code + '"][data-type="type"]').val(type);
+                        $('input[name="' + code + '"]').prop('readonly', true);
+                        $('input[name="' + code + '"]').rules('remove', 'required');
+                    }
+                }
                 if (measures[i].code == 'stop_sale') {
-                    value = value == 'X' ? '1' : 0;
                     $('#select-stop-sale').val(value).change();
                 }
                 else {
@@ -949,6 +1154,10 @@ $(document).ready(function () {
         return rows;
     }
 
+    jQuery.validator.addMethod("validDate", function(value, element) {
+        return this.optional(element) || moment(value,"DD.MM.YYYY",true).isValid();
+    }, "Invalid date, use dd.mm.yyyy.");
+
     var formSetting = $('#form-setting');
     formSetting.validate({
         errorElement: 'span',
@@ -957,10 +1166,12 @@ $(document).ready(function () {
         ignore: "",
         rules: {
             "setting-from" : {
-                required: true
+                required: true,
+                validDate: true
             },
             "setting-to" : {
-                required: true
+                required: true,
+                validDate: true
             }
         },
         errorPlacement: function (error, element) {
@@ -1271,13 +1482,21 @@ $(document).ready(function () {
 
     $('.accept-change').on('click', function(e) {
         var id = $('#modal-change :input[name="change-room"]').val();
+        var rooms = contract.room_types;
         //var name = $('#modal-change :input[name="change-room"]').select2('data')[0]['text'];
-        var name = $('#modal-change :input[name="change-room"]').select2().find(":selected").data("name");
+        //var name = $('#modal-change :input[name="change-room"]').select2().find(":selected").data("name");
+        var room = null;
+        for (var i = 0; i < rooms.length; i++) {
+            if (id == rooms[i].id) {
+                room = rooms[i];
+                break;
+            }
+        }
         $('#modal-setting :input[name="room-type-id"]').val(id);
-        $('#modal-setting .room-name-header').html(name);
+        $('#modal-setting .room-name-header').html(room.code + ': ' + room.name);
         $('.cancel-change').click();
         updateShare();
-        updateImportCost(contract.room_types);
+        updateImportCost(rooms);
         $('#modal-setting :input[name=share]').prop('checked', '');
         $('#modal-setting :input[name=share]').val(0);
     });
@@ -1292,6 +1511,25 @@ $(document).ready(function () {
     });
 
     $('#modal-import [id=rate_percent_value]').TouchSpin({
+        min: -1000000000,
+        max: 1000000000,
+        step: 1,
+        decimals: 2,
+        /*boostat: 5,*/
+        maxboostedstep: 10000000,
+        postfix: '%'
+    });
+
+    $('#modal-use-adult [id=use-adult-rate_fee_value]').TouchSpin({
+        min: -1000000000,
+        max: 1000000000,
+        stepinterval: 50,
+        decimals: 2,
+        maxboostedstep: 10000000,
+        prefix: '$'
+    });
+
+    $('#modal-use-adult [id=use-adult-rate_percent_value]').TouchSpin({
         min: -1000000000,
         max: 1000000000,
         step: 1,
@@ -1318,22 +1556,6 @@ $(document).ready(function () {
         }
     });
 
-    $('input[name=all-dates]').on('click', function(e) {
-        if ($(this).is(':checked')) {
-            $('.all-dates-container').hide();
-            $('#modal-import :input[name=import-from]').rules('remove', 'required');
-            $('#modal-import :input[name=import-to]').rules('remove', 'required');
-        }
-        else {
-            $('#modal-import .range-optional').each(function () {
-                $(this).remove();
-            });
-            $('#modal-import :input[name=import-from]').rules('add', 'required');
-            $('#modal-import :input[name=import-to]').rules('add', 'required');
-            $('.all-dates-container').show()
-        }
-    });
-
     $('input[name="rate_type"]').change(function() {
         var type = $(this).val();
         if (type == 1) {
@@ -1346,6 +1568,24 @@ $(document).ready(function () {
         }
     });
 
+    $('input[name="use-adult-type"]').change(function() {
+        var type = $(this).val();
+        if (type == 1) {
+            $('input[name="use-adult-rate_fee_value"]').attr('disabled', 'disabled').val('');
+            $('input[name="use-adult-rate_percent_value"]').removeAttr('disabled');
+        }
+        else {
+            $('input[name="use-adult-rate_percent_value"]').attr('disabled', 'disabled').val('');
+            $('input[name="use-adult-rate_fee_value"]').removeAttr('disabled');
+        }
+        $('input[name=use-adult-rate-type]').val(type);
+    });
+
+    $('.cancel-use-adult').on('click', function(e) {
+        $('.use-adult-input-rate').each(function() {
+            $(this).rules('remove', 'required');
+        });
+    });
 
     var formImport = $('#form-import');
     formImport.validate({
@@ -1353,6 +1593,16 @@ $(document).ready(function () {
         errorClass: 'help-block help-block-error',
         focusInvalid: false,
         ignore: "",
+        rules: {
+            "import-from": {
+                required: true,
+                validDate: true
+            },
+            "import-to": {
+                required: true,
+                validDate: true
+            }
+        },
         errorPlacement: function (error, element) {
             if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
                 if (element.parents('.mt-radio-list').size() > 0) {

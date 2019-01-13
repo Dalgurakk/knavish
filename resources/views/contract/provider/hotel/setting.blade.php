@@ -100,7 +100,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Import Cost From</label>
-                                                <select class="form-control" name="import-from" id="import-from"></select>
+                                                <select class="form-control" name="import-cost-from-rate" id="import-cost-from-rate"></select>
                                             </div>
                                         </div>
                                         <div class="col-md-12">
@@ -208,6 +208,8 @@
                         <div class="portlet-title porlet-title-setting">
                             <div class="caption caption-setting">
                                 <i class="fa fa-hotel"></i>Rooms</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
                         </div>
                         <div class="portlet-body">
                             <div class="row">
@@ -257,6 +259,8 @@
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
                             <i class="fa fa-calendar"></i>Range Date</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -300,6 +304,8 @@
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
                             <i class="icon-settings"></i>Sets</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -351,17 +357,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 share-container" style="margin-bottom: 25px; display: inline-block; text-align: center;">
-                <label class="mt-checkbox mt-checkbox-outline no-margin-bottom set-all-dates"> All Dates
-                    <input type="checkbox" value="1" name="all-dates"/>
-                    <span></span>
-                </label>
-            </div>
-            <div class="col-md-12 all-dates-container" style="display: none;">
+            <div class="col-md-12 all-dates-container">
                 <div class="portlet box green porlet-setting">
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
                             <i class="fa fa-calendar"></i>Ranges</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -402,7 +404,9 @@
                 <div class="portlet box green porlet-setting">
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
-                            <i class="fa fa-download"></i>Import</div>
+                            <i class="fa fa-download"></i>Import From</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -413,7 +417,7 @@
                             </div>
                             <div class="col-md-12" style="padding-bottom: 10px;">
                                 <div class="form-group">
-                                    <label>From</label>
+                                    <label>Room</label>
                                     <select class="form-control" name="select-room"></select>
                                 </div>
                             </div>
@@ -452,6 +456,65 @@
     <div class="modal-footer">
         <button type="submit" class="btn green accept-import" data="accept"><i class="fa fa-download"></i> Import</button>
         <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-import"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+    </form>
+</div>
+
+<div id="modal-use-adult" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
+    <form id="form-use-adult">
+    <div class="modal-header">
+        <button type="button" class="close cancel-use-adult" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-child"></i> From Adult</h4>
+    </div>
+    <div class="modal-body from-adult-content">
+        <div class="children-setting" style="margin-bottom: 10px;margin-top: 10px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class=""> Cost Children 1
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" style="margin-top: 10px;">
+                    <div class="row" style="margin-top: 5px;">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Rate</label>
+                                <input type="text" class="form-control" name="children1-rate">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Type</label>
+                            <div class="form-group">
+                                <select class="form-control" name="children1-type">
+                                    <option value="1">Percent</option>
+                                    <option value="2">Fee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 22px;"> Enable
+                                <input type="checkbox" value="1" name="children1-active"/>
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+
+                            <label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 22px;"> Update Related
+                                <input type="checkbox" value="1" name="children1-update-related"/>
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn green accept-use-adult" data="accept"><i class="fa fa-check"></i> Accept</button>
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-use-adult"><i class="fa fa-close"></i> Cancel</button>
     </div>
     </form>
 </div>

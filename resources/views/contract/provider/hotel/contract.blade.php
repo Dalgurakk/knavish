@@ -1127,7 +1127,7 @@
                                                 <div class="col-md-4 col-sm-4 col-xs-12">
                                                     <div class="mt-checkbox-list" style="padding: 0">
                                                         <label class="mt-checkbox mt-checkbox-outline">
-                                                            <input type="checkbox" name="update_prices_1_edit" value="1"> Update related prices
+                                                            <input type="checkbox" name="update_prices_1_edit" value="1"> Update Related Prices
                                                             <span></span>
                                                         </label>
                                                     </div>

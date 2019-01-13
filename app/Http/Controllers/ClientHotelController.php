@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ClientHotelExport;
 use App\Models\HotelContract;
 use App\Models\HotelContractClient;
+use App\Models\HotelContractPrice;
 use App\Models\HotelMeasure;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -273,6 +274,7 @@ class ClientHotelController extends Controller
         $contract = HotelContract::with([
             'measures' => function($query) use ($measures) {
                 $query
+                    ->where('code', '<>', 'cost')
                     ->whereIn('hotel_measure_id', $measures)
                     ->orderBy('id', 'asc');
             },
@@ -291,9 +293,6 @@ class ClientHotelController extends Controller
                 $query->where('market_id', $market);
             }
         ])->where('id', $clientContract->hotel_contract_id)->first();
-
-        $validFrom = Carbon::createFromFormat('!Y-m-d', $contract->valid_from);
-        $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
 
         if ($contract === null) {
             $this->response['status'] = 'error';
@@ -327,7 +326,7 @@ class ClientHotelController extends Controller
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
                         /*<i class="fa fa-calendar"></i>' .*/
-                        $m->format("F Y") . /*' - ' . $contract->markets[0]->name .*/ '</div>' .
+                        $m->format("F Y") . '</div>' .
                         '<div class="tools tools-setting">' .
                         /*'<a href="" class="fullscreen"> </a>' .*/
                         '<a href="javascript:;" class="collapse"> </a>' .
@@ -338,22 +337,12 @@ class ClientHotelController extends Controller
 
                     for ($r = 0; $r < count($roomTypes); $r++) {
                         $rows = $contract->measures;
-                        if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 5) {
+                        if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 3) {
                             $measures = $rows;
                             $rows = array();
                             foreach ($measures as $measure) {
                                 $rows[] = $measure;
-                                if ($measure->code == 'cost') {
-                                    for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
-                                        $newMeasure = new HotelMeasure();
-                                        $newMeasure->id = 1000 + $x;
-                                        $newMeasure->name = 'Cost CH ' . $x;
-                                        $newMeasure->active = 1;
-                                        $newMeasure->code = 'cost_children_' . $x;
-                                        $rows[] = $newMeasure;
-                                    }
-                                }
-                                else if ($measure->code == 'price') {
+                                if ($measure->code == 'price') {
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
                                         $newMeasure->id = 2000 + $x;
@@ -409,6 +398,7 @@ class ClientHotelController extends Controller
 
                             for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
                                 $value = '';
+                                $showValue = '';
                                 $usableClass = 'item-disabled';
                                 if ($validFrom->lessThanOrEqualTo($i) && $validTo->greaterThanOrEqualTo($i)) {
                                     $usableClass = 'item-setting';
@@ -416,31 +406,24 @@ class ClientHotelController extends Controller
                                         $data = $settings[$i->format('Y-m-d')];
                                         if (isset($data[$roomTypes[$r]->id])) {
                                             $object = $data[$roomTypes[$r]->id];
-                                            if ($rows[$v]->code == 'cost') $value = $object->cost_adult;
-                                            else if ($rows[$v]->code == 'cost_children_1') $value = $object->cost_children_1;
-                                            else if ($rows[$v]->code == 'cost_children_2') $value = $object->cost_children_2;
-                                            else if ($rows[$v]->code == 'cost_children_3') $value = $object->cost_children_3;
-                                            else if ($rows[$v]->code == 'cost_children_4') $value = $object->cost_children_4;
-                                            else if ($rows[$v]->code == 'cost_children_5') $value = $object->cost_children_5;
-                                            else if ($rows[$v]->code == 'price') $value = $object->price_adult;
-                                            else if ($rows[$v]->code == 'price_children_1') $value = $object->price_children_1;
-                                            else if ($rows[$v]->code == 'price_children_2') $value = $object->price_children_2;
-                                            else if ($rows[$v]->code == 'price_children_3') $value = $object->price_children_3;
-                                            else if ($rows[$v]->code == 'price_children_4') $value = $object->price_children_4;
-                                            else if ($rows[$v]->code == 'price_children_5') $value = $object->price_children_5;
-                                            else if ($rows[$v]->code == 'allotment') $value = $object->allotment;
-                                            else if ($rows[$v]->code == 'release') $value = $object->release;
-                                            else if ($rows[$v]->code == 'stop_sale') $value = $object->stop_sale == 1 ? 'X' : '';
+                                            if ($rows[$v]->code == 'price') { $value = $object->price_adult; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_1') { $value = $object->price_children_1; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_2') { $value = $object->price_children_2; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_3') { $value = $object->price_children_3; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'allotment') { $value = $object->allotment; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; }
                                         }
                                     }
                                 }
                                 $table .=
                                     '<td class="column-setting ' . $usableClass . '" ' .
+                                    'data="' . $value . '" ' .
                                     'data-date="' . $i->format('Y-m-d') . '" ' .
                                     'data-measure-id="' . $rows[$v]->id . '"' .
                                     'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
                                     'data-market-id="' . $market . '" ' .
-                                    '>' . $value . '</td>';
+                                    '>' . $showValue . '</td>';
                             }
                             $table .=
                                 '</tr>';

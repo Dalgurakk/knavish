@@ -281,7 +281,7 @@ $(document).ready(function () {
                                 '</div>'
                             );
                             $('.result-container').append(table);
-                            renderTable(response.from, response.to, contract);
+                            operateTable(response.from, response.to, contract);
                         }
                         else {
                             toastr['error'](response.message, "Error");
@@ -619,7 +619,7 @@ $(document).ready(function () {
         }
     });
 
-    function renderTable(from, to, contract) {
+    function operateTable(from, to, contract) {
         var roomTypes = contract.room_types;
         $('.item-setting').on('click', function() {
             $('input[name^="cost"]').each(function(i) {
@@ -890,10 +890,10 @@ $(document).ready(function () {
                                             '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
                                             '<span></span>' +
                                         '</label>' +
-                                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Unset' +
+                                        /*'<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Unset' +
                                             '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
                                             '<span></span>' +
-                                        '</label>' +
+                                        '</label>' +*/
                                     '</div>' +
                                 '</div>' +
                             '</div>' +
@@ -1126,7 +1126,8 @@ $(document).ready(function () {
                     }
                 }
                 if (measures[i].code == 'stop_sale') {
-                    $('#select-stop-sale').val(value).change();
+                    var option = value == 1 ? 1 : 0;
+                    $('#select-stop-sale').val(option).change();
                 }
                 else {
                     $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
@@ -1224,7 +1225,8 @@ $(document).ready(function () {
                     count ++;
             });
             if (count == 0) {
-                toastr['warning']('There are not sets or unsets to submit.', "Warning");
+                //toastr['warning']('There are not sets or unsets to submit.', "Warning");
+                $(form).find("button.cancel-form").click();
             }
             else {
                 var formData = new FormData(formSetting[0]);
@@ -1520,25 +1522,6 @@ $(document).ready(function () {
         postfix: '%'
     });
 
-    $('#modal-use-adult [id=use-adult-rate_fee_value]').TouchSpin({
-        min: -1000000000,
-        max: 1000000000,
-        stepinterval: 50,
-        decimals: 2,
-        maxboostedstep: 10000000,
-        prefix: '$'
-    });
-
-    $('#modal-use-adult [id=use-adult-rate_percent_value]').TouchSpin({
-        min: -1000000000,
-        max: 1000000000,
-        step: 1,
-        decimals: 2,
-        /*boostat: 5,*/
-        maxboostedstep: 10000000,
-        postfix: '%'
-    });
-
     $('input[name=add-value]').on('click', function(e) {
         if ($(this).is(':checked')) {
             $('input[name="rate_fee_value"]').removeAttr('disabled');
@@ -1566,19 +1549,6 @@ $(document).ready(function () {
             $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
             $('input[name="rate_fee_value"]').removeAttr('disabled');
         }
-    });
-
-    $('input[name="use-adult-type"]').change(function() {
-        var type = $(this).val();
-        if (type == 1) {
-            $('input[name="use-adult-rate_fee_value"]').attr('disabled', 'disabled').val('');
-            $('input[name="use-adult-rate_percent_value"]').removeAttr('disabled');
-        }
-        else {
-            $('input[name="use-adult-rate_percent_value"]').attr('disabled', 'disabled').val('');
-            $('input[name="use-adult-rate_fee_value"]').removeAttr('disabled');
-        }
-        $('input[name=use-adult-rate-type]').val(type);
     });
 
     $('.cancel-use-adult').on('click', function(e) {

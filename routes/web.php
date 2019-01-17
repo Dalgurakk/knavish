@@ -1,7 +1,6 @@
 <?php
 Auth::routes();
 //Home
-//Route::get('/migrate', 'HotelContractController@migrate')->name('migrate');
 Route::get('/', 'HomeController@index')->name('home');
 //Dashboard
 Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
@@ -112,6 +111,7 @@ Route::get('/contract/client/hotel/settings', 'HotelContractClientController@set
 Route::post('/contract/client/hotel', 'HotelContractClientController@getContract')->name('contract.client.hotel');
 Route::post('/contract/client/hotel/search', 'HotelContractClientController@getByName')->name('contract.client.hotel.search');
 Route::post('/contract/client/hotel/settings/data', 'HotelContractClientController@settingsByContract')->name('contract.client.hotel.settings.data');
+Route::post('/contract/client/hotel/settings/save', 'HotelContractClientController@saveSettings')->name('contract.client.hotel.settings.save');
 Route::get('/contract/client/hotel/search/excel', 'HotelContractClientController@toExcel')->name('contract.client.hotel.excel');
 //Client
 Route::get('/client/hotel', 'ClientHotelController@hotel')->name('client.hotel.index');

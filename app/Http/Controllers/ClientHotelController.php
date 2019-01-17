@@ -120,10 +120,8 @@ class ClientHotelController extends Controller
             $currentDate = Carbon::today();
             $validFrom = Carbon::createFromFormat('!Y-m-d', $r->hotelContract->valid_from);
             $validTo = Carbon::createFromFormat('!Y-m-d', $r->hotelContract->valid_to);
-            $r->hotelContract->valid_from = $validFrom->format('d.m.Y');
-            $r->hotelContract->valid_to = $validTo->format('d.m.Y');
-
             $status = 0;
+
             if ($currentDate->greaterThan($validTo))
                 $status = 3; //Old
             else if ($currentDate->greaterThanOrEqualTo($validFrom) && $currentDate->lessThanOrEqualTo($validTo))
@@ -145,8 +143,8 @@ class ClientHotelController extends Controller
                 'name' => $r->name,
                 'hotel' => $r->hotelContract->hotel->name,
                 'location' => $location,
-                'valid_from' => $r->hotelContract->valid_from,
-                'valid_to' => $r->hotelContract->valid_to,
+                'valid_from' => $validFrom->format('d.m.Y'),
+                'valid_to' => $validTo->format('d.m.Y'),
                 'status' => $status,
                 'contract' => $r
             );
@@ -291,6 +289,9 @@ class ClientHotelController extends Controller
             },
             'settings.prices' => function($query) use ($market) {
                 $query->where('market_id', $market);
+            },
+            'settings.clientSetttings' => function($query) use ($clientContract) {
+                $query->where('hotel_contract_client_id', $clientContract->id);
             }
         ])->where('id', $clientContract->hotel_contract_id)->first();
 
@@ -311,9 +312,32 @@ class ClientHotelController extends Controller
                     else {
                         $object = new HotelContractPrice();
                     }
-                    $object->allotment = $setting->allotment;
-                    $object->release = $setting->release;
-                    $object->stop_sale = $setting->stop_sale;
+                    if (isset($setting->clientSetttings) && count($setting->clientSetttings) > 0) {
+                        $clientSettting = $setting->clientSetttings[0];
+                        if (!is_null($clientSettting->allotment)) {
+                            $object->allotment = $clientSettting->allotment;
+                        }
+                        else {
+                            $object->allotment = $setting->allotment;
+                        }
+                        if (!is_null($clientSettting->release)) {
+                            $object->release = $clientSettting->release;
+                        }
+                        else {
+                            $object->release = $setting->release;
+                        }
+                        if (!is_null($clientSettting->stop_sale) /*&& $clientSettting->stop_sale == 1*/) {
+                            $object->stop_sale = $clientSettting->stop_sale;
+                        }
+                        else {
+                            $object->stop_sale = $setting->stop_sale;
+                        }
+                    }
+                    else {
+                        $object->allotment = $setting->allotment;
+                        $object->release = $setting->release;
+                        $object->stop_sale = $setting->stop_sale;
+                    }
                     $settings[$setting->date][$setting->hotel_room_type_id] = $object;
                 }
 

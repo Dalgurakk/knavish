@@ -20,4 +20,8 @@ class HotelContractClient extends Model implements Auditable
     public function priceRate() {
         return $this->hasOne('App\Models\HotelContractMarket', 'id', 'hotel_contract_market_id');
     }
+
+    public function settings() {
+        return $this->hasMany('App\Models\HotelContractClientSetting');
+    }
 }

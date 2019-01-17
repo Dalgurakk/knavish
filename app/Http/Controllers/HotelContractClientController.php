@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ProviderConfiguration;
 use App\Exports\HotelContractClientExport;
 use App\Models\HotelContract;
 use App\Models\HotelContractClient;
+use App\Models\HotelContractClientSetting;
 use App\Models\HotelContractPrice;
+use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
 use App\Models\Location;
 use Illuminate\Http\Request;
@@ -146,11 +149,11 @@ class HotelContractClientController extends Controller
 
             $location = 'Undefined';
             $hotel = $r->hotelContract->hotel;
-            if (isset($hotel->city->name) && $hotel->city->name != null)
+            if (isset($hotel->city->name) && !is_null($hotel->city->name))
                 $location = $hotel->city->name;
-            else if (isset($hotel->state->name) && $hotel->state->name != null)
+            else if (isset($hotel->state->name) && !is_null($hotel->state->name))
                 $location = $hotel->state->name;
-            else if (isset($hotel->country->name) && $hotel->country->name != null)
+            else if (isset($hotel->country->name) && !is_null($hotel->country->name))
                 $location = $hotel->country->name;
 
             $item = array(
@@ -336,7 +339,7 @@ class HotelContractClientController extends Controller
         }
         try {
             $contract = $query->first();
-            if ($contract === null) {
+            if (is_null($contract)) {
                 $this->response['status'] = 'error';
                 $this->response['data'] = null;
                 $this->response['message'] = 'Contract not available.';
@@ -373,6 +376,117 @@ class HotelContractClientController extends Controller
         echo json_encode($contracts);
     }
 
+    public function saveSettings(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $contractclientId = Input::get('contract-client-id');
+        $setAllotment = Input::get('set-allotment');
+        $setRelease = Input::get('set-release');
+        $setStopSale = Input::get('set-stop_sale');
+        $roomTypes = Input::get('room-types');
+        $roomTypes = json_decode($roomTypes);
+        $ranges = Input::get('ranges');
+        $ranges = json_decode($ranges);
+
+        DB::beginTransaction();
+        try {
+            $clientContract = HotelContractClient::with('hotelContract')->where('id', $contractclientId)->first();
+            $providerContract = $clientContract->hotelContract;
+
+            foreach($ranges as $range) {
+                $start = Carbon::createFromFormat('d.m.Y', $range->from);
+                $end = Carbon::createFromFormat('d.m.Y', $range->to);
+
+                for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
+                    foreach ($roomTypes as $roomTypeId) {
+                        $query = HotelContractSetting::with([
+                            'clientSetttings' => function($query) use ($clientContract) {
+                                $query->where('hotel_contract_client_id', $clientContract->id);
+                            }
+                        ])
+                            ->where('hotel_contract_id', $providerContract->id)
+                            ->where('date', $m->format('Y-m-d'))
+                            ->where('hotel_room_type_id', $roomTypeId);
+                        $providerSetting = $query->first();
+
+                        if (is_null($providerSetting)) {
+                            throw new ProviderConfiguration('There is no some provider contract configuration for the selected range.');
+                        }
+                        else {
+                            $clientSetting = null;
+                            if(isset($providerSetting->clientSetttings) && count($providerSetting->clientSetttings) > 0) {
+                                $clientSetting = $providerSetting->clientSetttings[0];
+                            }
+                            else {
+                                $clientSetting = new HotelContractClientSetting();
+                                $clientSetting->hotel_contract_client_id = $clientContract->id;
+                                $clientSetting->hotel_contract_setting_id = $providerSetting->id;
+                            }
+                            if($setAllotment != '') {
+                                $allotment = Input::get('allotment');
+                                if(!is_null($providerSetting->capacity) && $providerSetting->capacity >= $allotment) {
+                                    $clientSetting->capacity = Input::get('allotment');
+                                    $clientSetting->allotment = Input::get('allotment');
+                                }
+                                else {
+                                    throw new ProviderConfiguration('Provider allotment setting insufficient or missing for the selected range.');
+                                }
+                            }
+                            else if (Input::get('unset-allotment')){
+                                $clientSetting->capacity = null;
+                                $clientSetting->allotment = null;
+                            }
+                            if($setRelease != '') {
+                                $release = Input::get('release');
+                                if(!is_null($providerSetting->release) && $providerSetting->release >= $release) {
+                                    $clientSetting->release = Input::get('release');
+                                }
+                                else {
+                                    throw new ProviderConfiguration('Provider release setting insufficient or missing for the selected range.');
+                                }
+                            }
+                            else if (Input::get('unset-release')){
+                                $clientSetting->release = null;
+                            }
+                            if($setStopSale != '') {
+                                if(!is_null($providerSetting->stop_sale) && $providerSetting->stop_sale != 1) {
+                                    $clientSetting->stop_sale = Input::get('stop_sale') == '1' ? 1 : 0;
+                                }
+                                else {
+                                    throw new ProviderConfiguration('Stop sales setting not allowed for the selected range.');
+                                }
+                            }
+                            else if (Input::get('unset-stop_sale')){
+                                $clientSetting->stop_sale = null;
+                            }
+                            if (!is_null($clientSetting->id) && is_null($clientSetting->capacity) && is_null($clientSetting->allotment) && is_null($clientSetting->release) && is_null($clientSetting->stop_sale)) {
+                                $clientSetting->delete();
+                            }
+                            else {
+                                $clientSetting->save();
+                            }
+                        }
+                    }
+                }
+            }
+            DB::commit();
+            $this->response['status'] = 'success';
+            $this->response['message'] = 'Petition executed successfully.';
+        }
+        catch (ProviderConfiguration $e) {
+            DB::rollBack();
+            $this->response['status'] = 'error';
+            $this->response['message'] = $e->getMessage();
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
+        }
+        echo json_encode($this->response);
+    }
+
     public function settingsByContract(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
@@ -406,10 +520,13 @@ class HotelContractClientController extends Controller
             },
             'settings.prices' => function($query) use ($market) {
                 $query->where('market_id', $market);
+            },
+            'settings.clientSetttings' => function($query) use ($clientContract) {
+                $query->where('hotel_contract_client_id', $clientContract->id);
             }
         ])->where('id', $clientContract->hotel_contract_id)->first();
 
-        if ($contract === null) {
+        if (is_null($contract)) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'Invalid contract.';
         }
@@ -426,9 +543,44 @@ class HotelContractClientController extends Controller
                     else {
                         $object = new HotelContractPrice();
                     }
-                    $object->allotment = $setting->allotment;
-                    $object->release = $setting->release;
-                    $object->stop_sale = $setting->stop_sale;
+                    if (isset($setting->clientSetttings) && count($setting->clientSetttings) > 0) {
+                        $clientSettting = $setting->clientSetttings[0];
+                        if (!is_null($clientSettting->allotment)) {
+                            $object->allotment = $clientSettting->allotment;
+                            $object->allotment_from_provider = 0;
+                        }
+                        else {
+                            $object->allotment = $setting->allotment;
+                            $object->allotment_from_provider = 1;
+                        }
+                        if (!is_null($clientSettting->release)) {
+                            $object->release = $clientSettting->release;
+                            $object->release_from_provider = 0;
+                        }
+                        else {
+                            $object->release = $setting->release;
+                            $object->release_from_provider = 1;
+                        }
+                        if (!is_null($clientSettting->stop_sale) /*&& $clientSettting->stop_sale == 1*/) {
+                            $object->stop_sale = $clientSettting->stop_sale;
+                            $object->stop_sale_from_provider = 0;
+                        }
+                        else {
+                            $object->stop_sale = $setting->stop_sale;
+                            $object->stop_sale_from_provider = 1;
+                        }
+                        /*$object->allotment = !is_null($clientSettting->allotment) ? $clientSettting->allotment : $setting->allotment;
+                        $object->release = !is_null($clientSettting->release) ? $clientSettting->release : $setting->release;
+                        $object->stop_sale = !is_null($clientSettting->stop_sale) ? $clientSettting->stop_sale : $setting->stop_sale;*/
+                    }
+                    else {
+                        $object->allotment = $setting->allotment;
+                        $object->allotment_from_provider = 1;
+                        $object->release = $setting->release;
+                        $object->release_from_provider = 1;
+                        $object->stop_sale = $setting->stop_sale;
+                        $object->stop_sale_from_provider = 1;
+                    }
                     $settings[$setting->date][$setting->hotel_room_type_id] = $object;
                 }
 
@@ -523,6 +675,8 @@ class HotelContractClientController extends Controller
 
                             for ($i = $monthStart; $i->lessThanOrEqualTo($monthEnd); $i->addDay()) {
                                 $value = '';
+                                $showValue = '';
+                                $fromProvider = '';
                                 $usableClass = 'item-disabled';
                                 if ($validFrom->lessThanOrEqualTo($i) && $validTo->greaterThanOrEqualTo($i)) {
                                     $usableClass = 'item-setting';
@@ -530,31 +684,29 @@ class HotelContractClientController extends Controller
                                         $data = $settings[$i->format('Y-m-d')];
                                         if (isset($data[$roomTypes[$r]->id])) {
                                             $object = $data[$roomTypes[$r]->id];
-                                            if ($rows[$v]->code == 'cost') $value = $object->cost_adult;
-                                            else if ($rows[$v]->code == 'cost_children_1') $value = $object->cost_children_1;
-                                            else if ($rows[$v]->code == 'cost_children_2') $value = $object->cost_children_2;
-                                            else if ($rows[$v]->code == 'cost_children_3') $value = $object->cost_children_3;
-                                            else if ($rows[$v]->code == 'cost_children_4') $value = $object->cost_children_4;
-                                            else if ($rows[$v]->code == 'cost_children_5') $value = $object->cost_children_5;
-                                            else if ($rows[$v]->code == 'price') $value = $object->price_adult;
-                                            else if ($rows[$v]->code == 'price_children_1') $value = $object->price_children_1;
-                                            else if ($rows[$v]->code == 'price_children_2') $value = $object->price_children_2;
-                                            else if ($rows[$v]->code == 'price_children_3') $value = $object->price_children_3;
-                                            else if ($rows[$v]->code == 'price_children_4') $value = $object->price_children_4;
-                                            else if ($rows[$v]->code == 'price_children_5') $value = $object->price_children_5;
-                                            else if ($rows[$v]->code == 'allotment') $value = $object->allotment;
-                                            else if ($rows[$v]->code == 'release') $value = $object->release;
-                                            else if ($rows[$v]->code == 'stop_sale') $value = $object->stop_sale == 1 ? 'X' : '';
+                                            if ($rows[$v]->code == 'cost') { $value = $object->cost_adult; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'cost_children_1') { $value = $object->cost_children_1; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'cost_children_2') { $value = $object->cost_children_2; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'cost_children_3') { $value = $object->cost_children_3; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price') { $value = $object->price_adult; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_1') { $value = $object->price_children_1; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_2') { $value = $object->price_children_2; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'price_children_3') { $value = $object->price_children_3; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'allotment') { $value = $object->allotment; $showValue = $value; $fromProvider = $object->allotment_from_provider; }
+                                            else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; $fromProvider = $object->release_from_provider; }
+                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; $fromProvider = $object->stop_sale_from_provider; }
                                         }
                                     }
                                 }
                                 $table .=
                                     '<td class="column-setting ' . $usableClass . '" ' .
+                                    'data="' . $value . '" ' .
                                     'data-date="' . $i->format('Y-m-d') . '" ' .
                                     'data-measure-id="' . $rows[$v]->id . '"' .
                                     'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
                                     'data-market-id="' . $market . '" ' .
-                                    '>' . $value . '</td>';
+                                    'data-from-provider="' . $fromProvider . '" ' .
+                                    '>' . $showValue . '</td>';
                             }
                             $table .=
                                 '</tr>';

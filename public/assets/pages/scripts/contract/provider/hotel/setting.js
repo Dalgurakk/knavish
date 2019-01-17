@@ -244,7 +244,7 @@ $(document).ready(function () {
                 roomTypes.push($(this).val());
             });
             var rows = [];
-            $('[name="row-selected"]:checked').each(function () {
+            $('.row-selected:checked').each(function () {
                 rows.push($(this).val());
             });
             $.ajax({
@@ -361,12 +361,33 @@ $(document).ready(function () {
         $('.result-container').html('');
         $('.measures-list').html('');
         $.each(measures, function (i, item) {
-            var measure =
+            /*var measure =
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
                 '<input type="checkbox" name="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
                 '<span></span>' +
                 '</label>';
+            $('.measures-list').append(measure);*/
+            var measure =
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
+                '<input type="checkbox" class="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
+                '<span></span>' +
+                '</label>' +
+                '</div>';
+            if (measures[i].code == 'cost' || measures[i].code == 'price') {
+                measure +=
+                '<div class="col-md-6">' +
+                '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
+                '<input type="checkbox" class="row-expanded" value="' + measures[i].code + '"> Expand' +
+                '<span></span>' +
+                '</label>' +
+                '</div>';
+            }
+            measure += '</div>';
+
             $('.measures-list').append(measure);
+
         });
 
         $('#market').empty();
@@ -1143,6 +1164,24 @@ $(document).ready(function () {
             updateImportCost(contract.room_types);
 
             $('#modal-setting').modal('show');
+        });
+        $('.measure-detail').on('click', function () {
+            var parent = $(this).attr('data');
+            if ($(this).hasClass('closed')) {
+                $(this).removeClass('closed');
+                $(this).addClass('opened');
+                $(this).html('-');
+                $('tr[data-parent="' + parent + '"]').removeClass('hidden');
+            }
+            else {
+                $(this).removeClass('opened');
+                $(this).addClass('closed');
+                $(this).html('+');
+                $('tr[data-parent="' + parent + '"]').addClass('hidden');
+            }
+        });
+        $('.row-expanded:checked').each(function () {
+            $('.measure-detail[data-measure="' + $(this).val() + '"]').click();
         });
     }
 

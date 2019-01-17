@@ -616,6 +616,7 @@ class HotelContractClientController extends Controller
                                         $newMeasure->name = 'Cost CH ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'cost_children_' . $x;
+                                        $newMeasure->parent = 'cost-' . $roomTypes[$r]->id;
                                         $rows[] = $newMeasure;
                                     }
                                 }
@@ -626,6 +627,7 @@ class HotelContractClientController extends Controller
                                         $newMeasure->name = 'price CH ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'price_children_' . $x;
+                                        $newMeasure->parent = 'price-' . $roomTypes[$r]->id;
                                         $rows[] = $newMeasure;
                                     }
                                 }
@@ -662,12 +664,21 @@ class HotelContractClientController extends Controller
                             if ($rows[$v]->code == 'cost' || $rows[$v]->code == 'price') {
                                 $table .=
                                     '<tr data-row="' . $rows[$v]->id . '">' .
-                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name . ' Ad') . '</td>';
+                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name . ' Ad');
+                                if ($roomTypes[$r]->max_children > 0) {
+                                    $table .= '<button class="measure-detail btn-default closed" data="' . $rows[$v]->code . '-' . $roomTypes[$r]->id .'" data-measure="' . $rows[$v]->code . '">+</button>';
+                                }
+                                $table .= '</td>';
                             }
                             else {
                                 $table .=
-                                    '<tr data-row="' . $rows[$v]->id . '">' .
-                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
+                                    '<tr data-row="' . $rows[$v]->id . '"';
+                                if (isset($rows[$v]->parent)) {
+                                    $table .= ' data-parent="' . $rows[$v]->parent . '" class="hidden"';
+                                }
+                                $table .=
+                                    '><td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
+
                             }
                             $month = $m->format('d.m.Y');
                             $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();

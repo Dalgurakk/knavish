@@ -660,7 +660,18 @@ $(document).ready(function () {
 
     function operateTable(from, to, contract) {
         var roomTypes = contract.hotel_contract.room_types;
+        var contractMeasures = contract.hotel_contract.measures;
         $('.item-setting').on('click', function() {
+            var haasStopSale = false;
+            for (var i = 0; i < contractMeasures.length; i++) {
+                if (contractMeasures[i].code == 'stop_sale') {
+                    haasStopSale = true;
+                    break;
+                }
+            }
+            if (!haasStopSale)
+                return false;
+
             $('input[name^="cost"]').each(function(i) {
                 $(this).rules('remove', 'required');
             });

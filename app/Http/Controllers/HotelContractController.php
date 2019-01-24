@@ -947,6 +947,7 @@ class HotelContractController extends Controller
                                     if ($contractSetting->allotment_sold == 0) {
                                         $contractSetting->allotment_base = $allotment;
                                         $contractSetting->allotment = $allotment;
+                                        $contractSetting->allotment_sold = 0;
                                     }
                                     else {
                                         if ($allotment <= $contractSetting->allotment_sold) {
@@ -1287,8 +1288,9 @@ class HotelContractController extends Controller
                         $count = 0;
 
                         for ($d = $monthStart; $d->lessThanOrEqualTo($monthEnd); $d->addDay()) {
+                            $isSundayClass = $d->dayOfWeek == 0 ? ' sunday ' : '';
                             $table .=
-                                '<th class="column-setting head-setting">' . $d->format("d") . '</th>';
+                                '<th class="column-setting head-setting' . $isSundayClass . '">' . $d->format("D")[0] . $d->format("d") . '</th>';
                             $count ++;
                         }
                         if ($count < 31) {

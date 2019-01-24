@@ -47,6 +47,6 @@
 .margin-right-30 { margin-right: 30px !important; }
 .stop-sales { color: #ed3723; font-weight: bold; font-size: 11px; }
 .measure-detail { padding: 0px 0px; margin-left: 5px; border: 1px solid #c7c7c7; min-width: 13px; line-height: 12px; border-radius: 3px !important; }
-.sunday { color: #B90001; background-color: #f0f0f0;}
+.sunday { color: blue; background-color: #f0f0f0;}
 /*.sub-name { display: inline-block }
 .sub-name { display: inline-block }*/

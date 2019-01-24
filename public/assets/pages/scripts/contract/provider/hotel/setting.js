@@ -742,7 +742,6 @@ $(document).ready(function () {
                             var dateTo = contract.valid_to;
                             $('#modal-import :input[name=import-from]').datepicker("setDate" , new Date(moment(dateFrom, 'YYYY-MM-DD')));
                             $('#modal-import :input[name=import-to]').datepicker("setDate" , new Date(moment(dateTo, 'YYYY-MM-DD')));
-                            $('#modal-import .room-name-header').html(room.code + ': ' + room.name);
                             $('input[name=add-value]').prop('checked', '');
                             $('input[name="rate_fee_value"]').attr('disabled', 'disabled').val('');
                             $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
@@ -1545,6 +1544,7 @@ $(document).ready(function () {
         }
         $('#modal-setting :input[name="room-type-id"]').val(id);
         $('#modal-setting .room-name-header').html(room.code + ': ' + room.name);
+        $('#modal-import .room-name-header').html(room.code + ': ' + room.name);
         $('.cancel-change').click();
         updateShare();
         updateImportCost(rooms);

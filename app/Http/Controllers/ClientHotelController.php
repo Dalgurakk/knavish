@@ -304,8 +304,9 @@ class ClientHotelController extends Controller
             $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
 
             $settings = array();
-            if (isset ($contract->priceRates[0])) {
+            if (isset($contract->priceRates) && count($contract->priceRates) > 0) {
                 foreach ($contract->settings as $setting) {
+                    $object = null;
                     if (isset($setting->prices[0])) {
                         $object = $setting->prices[0];
                     }
@@ -320,13 +321,19 @@ class ClientHotelController extends Controller
                         else {
                             $object->allotment = $setting->allotment;
                         }
+                        if (!is_null($clientSettting->allotment_sold) && $clientSettting->allotment_sold > 0) {
+                            $object->allotment_sold = $clientSettting->allotment_sold;
+                        }
+                        else {
+                            $object->allotment_sold = 0;
+                        }
                         if (!is_null($clientSettting->release)) {
                             $object->release = $clientSettting->release;
                         }
                         else {
                             $object->release = $setting->release;
                         }
-                        if (!is_null($clientSettting->stop_sale) /*&& $clientSettting->stop_sale == 1*/) {
+                        if (!is_null($clientSettting->stop_sale) && $clientSettting->stop_sale == 1) {
                             $object->stop_sale = $clientSettting->stop_sale;
                         }
                         else {
@@ -335,6 +342,7 @@ class ClientHotelController extends Controller
                     }
                     else {
                         $object->allotment = $setting->allotment;
+                        $object->allotment_sold = 0;
                         $object->release = $setting->release;
                         $object->stop_sale = $setting->stop_sale;
                     }
@@ -361,16 +369,16 @@ class ClientHotelController extends Controller
 
                     for ($r = 0; $r < count($roomTypes); $r++) {
                         $rows = $contract->measures;
-                        if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 3) {
-                            $measures = $rows;
-                            $rows = array();
-                            foreach ($measures as $measure) {
-                                $rows[] = $measure;
+                        $measures = $rows;
+                        $rows = array();
+                        foreach ($measures as $measure) {
+                            $rows[] = $measure;
+                            if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 3) {
                                 if ($measure->code == 'price') {
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
                                         $newMeasure->id = 2000 + $x;
-                                        $newMeasure->name = 'price CH ' . $x;
+                                        $newMeasure->name = 'Price CH ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'price_children_' . $x;
                                         $newMeasure->parent = 'price-' . $roomTypes[$r]->id;
@@ -378,12 +386,21 @@ class ClientHotelController extends Controller
                                     }
                                 }
                             }
+                            if ($measure->code == 'allotment') {
+                                $newMeasure = new HotelMeasure();
+                                $newMeasure->id = 3001;
+                                $newMeasure->name = 'Allot. Sold';
+                                $newMeasure->active = 1;
+                                $newMeasure->code = 'allotment_sold';
+                                $newMeasure->parent = 'allotment-' . $roomTypes[$r]->id;
+                                $rows[] = $newMeasure;
+                            }
                         }
                         $table .=
                             '<table class="table table-striped table-bordered table-setting" data-room="' . $roomTypes[$r]->id . '">' .
                             '<thead>' .
                             '<tr>' .
-                            '<th class="room-name head-setting">' . strtoupper($roomTypes[$r]->name) . '</th>';
+                            '<th class="room-name head-setting">' . strtoupper($roomTypes[$r]->code) . ': ' . strtoupper($roomTypes[$r]->name) . '</th>';
 
                         $month = $m->format('d.m.Y');
                         $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
@@ -416,6 +433,13 @@ class ClientHotelController extends Controller
                                 }
                                 $table .= '</td>';
                             }
+                            else if ($rows[$v]->code == 'allotment') {
+                                $table .=
+                                    '<tr data-row="' . $rows[$v]->id . '">' .
+                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name);
+                                $table .= '<button class="measure-detail btn-default closed" data="' . $rows[$v]->code . '-' . $roomTypes[$r]->id .'" data-measure="' . $rows[$v]->code . '">+</button>';
+                                $table .= '</td>';
+                            }
                             else {
                                 $table .=
                                     '<tr data-row="' . $rows[$v]->id . '"';
@@ -444,6 +468,7 @@ class ClientHotelController extends Controller
                                             else if ($rows[$v]->code == 'price_children_2') { $value = $object->price_children_2; $showValue = $value; }
                                             else if ($rows[$v]->code == 'price_children_3') { $value = $object->price_children_3; $showValue = $value; }
                                             else if ($rows[$v]->code == 'allotment') { $value = $object->allotment; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'allotment_sold') { $value = $object->allotment_sold; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
                                             else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; }
                                         }

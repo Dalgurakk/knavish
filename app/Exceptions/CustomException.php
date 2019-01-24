@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ProviderConfiguration extends Exception
+class CustomException extends Exception
 {
     //
 }

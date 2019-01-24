@@ -172,17 +172,17 @@ $(document).ready(function () {
                 '</label>';*/
             var measure =
                 '<div class="row">' +
-                '<div class="col-md-6">' +
+                '<div class="col-md-5">' +
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
                 '<input type="checkbox" class="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
                 '<span></span>' +
                 '</label>' +
                 '</div>';
-            if (measures[i].code == 'cost' || measures[i].code == 'price') {
+            if (measures[i].code == 'price' || measures[i].code == 'allotment') {
                 measure +=
-                    '<div class="col-md-6">' +
+                    '<div class="col-md-7">' +
                     '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                    '<input type="checkbox" class="row-expanded" value="' + measures[i].code + '"> Expand' +
+                    '<input type="checkbox" class="row-expanded" value="' + measures[i].code + '"> Expand ' + measures[i].name +
                     '<span></span>' +
                     '</label>' +
                     '</div>';
@@ -195,7 +195,7 @@ $(document).ready(function () {
         $.each(roomTypes, function (i, item) {
             var roomType =
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
+                '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].code + ': ' + roomTypes[i].name +
                 '<span></span>' +
                 '</label>';
             $('.room-types-list').append(roomType);

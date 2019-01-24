@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CustomException;
 use App\Exports\HotelContractExport;
 use App\Models\HotelBoardType;
 use App\Models\HotelContract;
@@ -445,7 +446,7 @@ class HotelContractController extends Controller
                     $newSetting->hotel_contract_room_type_id = $contractRoomTypes[$setting->hotel_contract_room_type_id];
                     $newSetting->hotel_room_type_id = $setting->hotel_room_type_id;
                     $newSetting->date = $setting->date;
-                    $newSetting->capacity = $setting->capacity;
+                    $newSetting->allotment_base = $setting->allotment_base;
                     $newSetting->allotment = $setting->allotment;
                     $newSetting->release = $setting->release;
                     $newSetting->stop_sale = $setting->stop_sale;
@@ -923,18 +924,42 @@ class HotelContractController extends Controller
                             $contractRoomType = HotelContractRoomType::where('hotel_room_type_id', $roomTypeId)->where('hotel_contract_id', $contractId)->first();
                             if (is_null($contractSetting)) {
                                 $contractSetting = new HotelContractSetting();
+                                $contractSetting->hotel_contract_id = $contractId;
+                                $contractSetting->hotel_contract_room_type_id = $contractRoomType->id;
+                                $contractSetting->hotel_room_type_id = $roomTypeId;
+                                $contractSetting->date = $m->format('Y-m-d');
                             }
-                            $contractSetting->hotel_contract_id = $contractId;
-                            $contractSetting->hotel_contract_room_type_id = $contractRoomType->id;
-                            $contractSetting->hotel_room_type_id = $roomTypeId;
-                            $contractSetting->date = $m->format('Y-m-d');
                             if (isset($unsetAllotment)) {
-                                $contractSetting->capacity = 0;
+                                if (isset($contractSetting->allotment_sold) && $contractSetting->allotment_sold > 0)
+                                    throw new CustomException('There are allotments sold in the selected range.');
+                                $contractSetting->allotment_base = null;
+                                $contractSetting->allotment_sold = null;
                                 $contractSetting->allotment = null;
                             }
                             else if($setAllotment != '') {
-                                $contractSetting->capacity = Input::get('allotment');
-                                $contractSetting->allotment = Input::get('allotment');
+                                $allotment = Input::get('allotment');
+                                if (is_null($contractSetting->allotment_base)) {
+                                    $contractSetting->allotment_base = $allotment;
+                                    $contractSetting->allotment_sold = 0;
+                                    $contractSetting->allotment = $allotment;
+                                }
+                                else {
+                                    if ($contractSetting->allotment_sold == 0) {
+                                        $contractSetting->allotment_base = $allotment;
+                                        $contractSetting->allotment = $allotment;
+                                    }
+                                    else {
+                                        if ($allotment <= $contractSetting->allotment_sold) {
+                                            $contractSetting->allotment_base = $contractSetting->allotment_sold;
+                                            $contractSetting->allotment = 0;
+                                        }
+                                        else {
+                                            $rate = $allotment - $contractSetting->allotment_base;
+                                            $contractSetting->allotment_base = $allotment;
+                                            $contractSetting->allotment = $contractSetting->allotment + $rate;
+                                        }
+                                    }
+                                }
                             }
                             if (isset($unsetRelease)) {
                                 $contractSetting->release = null;
@@ -1102,6 +1127,11 @@ class HotelContractController extends Controller
             $this->response['message'] = 'Petition executed successfully.';
             //$this->response['data'] = $contractSetting;
         }
+        catch (CustomException $e) {
+            DB::rollBack();
+            $this->response['status'] = 'error';
+            $this->response['message'] = $e->getMessage();
+        }
         catch (\Exception $e) {
             DB::rollBack();
             $this->response['status'] = 'error';
@@ -1151,6 +1181,8 @@ class HotelContractController extends Controller
             }
         ])->where('id', $id)->first();
 
+        $operateMeasures = $contract->measures;
+
         if (is_null($contract)) {
             $this->response['status'] = 'error';
             $this->response['message'] = 'Invalid contract.';
@@ -1170,6 +1202,8 @@ class HotelContractController extends Controller
                         $object = new HotelContractPrice();
                     }
                     $object->allotment = $setting->allotment;
+                    $object->allotment_sold = $setting->allotment_sold;
+                    $object->allotment_base = $setting->allotment_base;
                     $object->release = $setting->release;
                     $object->stop_sale = $setting->stop_sale;
                     $settings[$setting->date][$setting->hotel_room_type_id] = $object;
@@ -1195,11 +1229,11 @@ class HotelContractController extends Controller
 
                     for ($r = 0; $r < count($roomTypes); $r++) {
                         $rows = $contract->measures;
-                        if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 3) {
-                            $measures = $rows;
-                            $rows = array();
-                            foreach ($measures as $measure) {
-                                $rows[] = $measure;
+                        $measures = $rows;
+                        $rows = array();
+                        foreach ($measures as $measure) {
+                            $rows[] = $measure;
+                            if ($roomTypes[$r]->max_children > 0 && $roomTypes[$r]->max_children < 3) {
                                 if ($measure->code == 'cost') {
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
@@ -1215,7 +1249,7 @@ class HotelContractController extends Controller
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
                                         $newMeasure->id = 2000 + $x;
-                                        $newMeasure->name = 'price CH ' . $x;
+                                        $newMeasure->name = 'Price CH ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'price_children_' . $x;
                                         $newMeasure->parent = 'price-' . $roomTypes[$r]->id;
@@ -1223,7 +1257,24 @@ class HotelContractController extends Controller
                                     }
                                 }
                             }
+                            if ($measure->code == 'allotment') {
+                                $newMeasure = new HotelMeasure();
+                                $newMeasure->id = 3001;
+                                $newMeasure->name = 'Allot. Sold';
+                                $newMeasure->active = 1;
+                                $newMeasure->code = 'allotment_sold';
+                                $newMeasure->parent = 'allotment-' . $roomTypes[$r]->id;
+                                $rows[] = $newMeasure;
+                                $newMeasure = new HotelMeasure();
+                                $newMeasure->id = 3002;
+                                $newMeasure->name = 'Allot. Base';
+                                $newMeasure->active = 1;
+                                $newMeasure->code = 'allotment_base';
+                                $newMeasure->parent = 'allotment-' . $roomTypes[$r]->id;
+                                $rows[] = $newMeasure;
+                            }
                         }
+
                         $table .=
                             '<table class="table table-striped table-bordered table-setting" data-room="' . $roomTypes[$r]->id . '">' .
                             '<thead>' .
@@ -1261,6 +1312,13 @@ class HotelContractController extends Controller
                                 }
                                 $table .= '</td>';
                             }
+                            else if ($rows[$v]->code == 'allotment') {
+                                $table .=
+                                    '<tr data-row="' . $rows[$v]->id . '">' .
+                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name);
+                                $table .= '<button class="measure-detail btn-default closed" data="' . $rows[$v]->code . '-' . $roomTypes[$r]->id .'" data-measure="' . $rows[$v]->code . '">+</button>';
+                                $table .= '</td>';
+                            }
                             else {
                                 $table .=
                                 '<tr data-row="' . $rows[$v]->id . '"';
@@ -1295,6 +1353,8 @@ class HotelContractController extends Controller
                                             else if ($rows[$v]->code == 'price_children_2') { $value = $object->price_children_2; $showValue = $value; }
                                             else if ($rows[$v]->code == 'price_children_3') { $value = $object->price_children_3; $showValue = $value; }
                                             else if ($rows[$v]->code == 'allotment') { $value = $object->allotment; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'allotment_sold') { $value = $object->allotment_sold; $showValue = $value; }
+                                            else if ($rows[$v]->code == 'allotment_base') { $value = $object->allotment_base; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
                                             else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; }
                                         }
@@ -1341,6 +1401,7 @@ class HotelContractController extends Controller
                 $this->response['status'] = 'success';
                 $this->response['from'] = $from;
                 $this->response['to'] = $to;
+                $this->response['operateMeasures'] = $operateMeasures;
                 $this->response['table'] = $tables;
             }
             else {

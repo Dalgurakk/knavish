@@ -51,6 +51,9 @@
                                                 <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
                                             </div>
                                         </div>
+                                        <div class="col-md-12">
+                                            <a class="btn green" style="margin-top:5px;" href="{{ route('contract.provider.hotel.index') }}"> <i class="fa fa-arrow-circle-left"></i> Contracts</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

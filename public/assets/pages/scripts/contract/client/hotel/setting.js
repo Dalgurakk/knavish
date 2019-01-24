@@ -2,6 +2,7 @@ $(document).ready(function () {
     var needUpdate = false;
     var formSearch = $('#search-accomodation');
     var contract = null;
+    var operateMeasures = null;
 
     function searchFormat(repo) {
         if (repo.loading) return repo.text;
@@ -342,6 +343,7 @@ $(document).ready(function () {
                                 '</div>'
                             );
                             $('.result-container').append(table);//console.log(contract);
+                            operateMeasures = response.operateMeasures;
                             operateTable(response.from, response.to, contract);
                         }
                         else {
@@ -515,17 +517,17 @@ $(document).ready(function () {
                 '</label>';*/
             var measure =
                 '<div class="row">' +
-                '<div class="col-md-6">' +
+                '<div class="col-md-5">' +
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
                 '<input type="checkbox" class="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
                 '<span></span>' +
                 '</label>' +
                 '</div>';
-            if (measures[i].code == 'cost' || measures[i].code == 'price') {
+            if (measures[i].code == 'cost' || measures[i].code == 'price' || measures[i].code == 'allotment') {
                 measure +=
-                '<div class="col-md-6">' +
+                '<div class="col-md-7">' +
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                '<input type="checkbox" class="row-expanded" value="' + measures[i].code + '"> Expand' +
+                '<input type="checkbox" class="row-expanded" value="' + measures[i].code + '"> Expand ' + measures[i].name +
                 '<span></span>' +
                 '</label>' +
                 '</div>';
@@ -539,7 +541,7 @@ $(document).ready(function () {
         $.each(roomTypes, function (i, item) {
             var roomType =
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].name +
+                '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].code + ': ' + roomTypes[i].name +
                 '<span></span>' +
                 '</label>';
             $('.room-types-list').append(roomType);
@@ -694,7 +696,7 @@ $(document).ready(function () {
             var selectedRoomId = $(this).attr('data-room-type-id');
             $("#modal-setting :input[name=room-type-id]").val(selectedRoomId);
             var room = null;
-            var measures = contract.hotel_contract.measures;
+            var measures = operateMeasures;
             for (var j = 0; j < roomTypes.length; j++) {
                 if (roomTypes[j].id == selectedRoomId) {
                     room = roomTypes[j];
@@ -833,7 +835,7 @@ $(document).ready(function () {
             $("#modal-setting :input[name=contract-client-id]").val(contract.id);
             $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
 
-            var measures = contract.hotel_contract.measures;
+            var measures = operateMeasures;
 
             for (var i = 0; i < measures.length; i++) {
                 var date = $(this).attr('data-date');

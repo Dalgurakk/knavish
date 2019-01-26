@@ -1151,11 +1151,11 @@ $(document).ready(function () {
                         $('input[name="' + code + '"]').rules('remove', 'required');
                     }
                 }
-                if (measures[i].code == 'stop_sale') {
+                else if (measures[i].code == 'stop_sale') {
                     var option = value == 1 ? 1 : 0;
                     $('#select-stop-sale').val(option).change();
                 }
-                if (measures[i].code == 'allotment') {
+                else if (measures[i].code == 'allotment') {
                     value = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="3002"]').attr('data');
                     $('#modal-setting :input[name="' + measures[i].code + '"]').val(value)
                 }

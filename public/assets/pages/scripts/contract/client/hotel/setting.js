@@ -842,6 +842,7 @@ $(document).ready(function () {
                 var measureId = measures[i].id;
                 var item = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]');
                 var value = item.attr('data');
+
                 if (measures[i].code == 'stop_sale' || measures[i].code == 'allotment' || measures[i].code == 'release') {
                     var fromProvider = item.attr('data-from-provider');
                     if (fromProvider == 1) {
@@ -851,7 +852,8 @@ $(document).ready(function () {
                         $('#modal-setting :input[name=set-' + measures[i].code + ']').click();
                     }
                     if (measures[i].code == 'stop_sale') {
-                        $('#select-stop-sale').val(value).change();
+                        var option = value == 1 ? 1 : 0;
+                        $('#select-stop-sale').val(option).change();
                     }
                     else {
                         $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);

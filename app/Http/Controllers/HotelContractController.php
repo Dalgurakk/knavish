@@ -909,6 +909,9 @@ class HotelContractController extends Controller
             foreach($ranges as $range) {
                 $start = Carbon::createFromFormat('d.m.Y', $range->from);
                 $end = Carbon::createFromFormat('d.m.Y', $range->to);
+                $now = Carbon::now();
+                if ($start->lessThan($now))
+                    throw new CustomException('Can not update dates less than ' . $now->format('d.m.Y') . '.');
 
                 for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
                     foreach ($roomTypes as $roomTypeId) {

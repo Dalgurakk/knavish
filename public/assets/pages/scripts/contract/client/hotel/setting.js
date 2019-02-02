@@ -714,8 +714,9 @@ $(document).ready(function () {
                         '<div class="form-group">' +
                         '<label>' + measures[i].name + '</label>' +
                         '<select id="select-stop-sale" class="form-control measure-input" name="' + measures[i].code + '" readonly="" disabled="disabled">' +
-                        '<option value="0">No</option>' +
-                        '<option value="1">Yes</option>' +
+                        '<option value="0">Open Sales</option>' +
+                        '<option value="1">Stop Sales</option>' +
+                        '<option value="2">On Request</option>' +
                         '</select>' +
                         '</div>' +
                         '</div>' +
@@ -852,8 +853,8 @@ $(document).ready(function () {
                         $('#modal-setting :input[name=set-' + measures[i].code + ']').click();
                     }
                     if (measures[i].code == 'stop_sale') {
-                        var option = value == 1 ? 1 : 0;
-                        $('#select-stop-sale').val(option).change();
+                        value = value == '' ? 0 : value;
+                        $('#select-stop-sale').val(value).change();
                     }
                     else {
                         $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);

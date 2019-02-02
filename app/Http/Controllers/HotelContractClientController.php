@@ -396,7 +396,10 @@ class HotelContractClientController extends Controller
             foreach($ranges as $range) {
                 $start = Carbon::createFromFormat('d.m.Y', $range->from);
                 $end = Carbon::createFromFormat('d.m.Y', $range->to);
-
+                $now = Carbon::createFromFormat('d.m.Y', $this->currentDate());
+                if ($start->lessThan($now)) {
+                    throw new CustomException('Can not update dates less than ' . $now->format('d.m.Y') . '.');
+                }
                 for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
                     foreach ($roomTypes as $roomTypeId) {
                         $query = HotelContractSetting::with([
@@ -449,8 +452,13 @@ class HotelContractClientController extends Controller
                                 $clientSetting->release = null;
                             }
                             if($setStopSale != '') {
-                                if(!is_null($providerSetting->stop_sale) && $providerSetting->stop_sale != 1) {
-                                    $clientSetting->stop_sale = Input::get('stop_sale') == '1' ? 1 : 0;
+                                $stopSale = Input::get('stop_sale') != '' ? Input::get('stop_sale') : 0;
+                                if(!is_null($providerSetting->stop_sale) && $providerSetting->stop_sale != 1 && $stopSale >= 0 && $stopSale <= 2) {
+                                    if ($providerSetting->stop_sale == 0)
+                                        $clientSetting->stop_sale = $stopSale;
+                                    else if ($providerSetting->stop_sale == 2 && $stopSale > 0)
+                                        $clientSetting->stop_sale = $stopSale;
+                                    else throw new CustomException('Stop sales setting not allowed for the selected range.');
                                 }
                                 else {
                                     throw new CustomException('Stop sales setting not allowed for the selected range.');
@@ -568,7 +576,7 @@ class HotelContractClientController extends Controller
                             $object->release = $setting->release;
                             $object->release_from_provider = 1;
                         }
-                        if (!is_null($clientSettting->stop_sale) && $clientSettting->stop_sale == 1) {
+                        if (!is_null($clientSettting->stop_sale) /*&& $clientSettting->stop_sale == 1*/) {
                             $object->stop_sale = $clientSettting->stop_sale;
                             $object->stop_sale_from_provider = 0;
                         }
@@ -738,7 +746,7 @@ class HotelContractClientController extends Controller
                                             else if ($rows[$v]->code == 'allotment_sold') { $value = $object->allotment_sold; $showValue = $value; }
                                             else if ($rows[$v]->code == 'allotment_base') { $value = $object->allotment_base; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; $fromProvider = $object->release_from_provider; }
-                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; $fromProvider = $object->stop_sale_from_provider; }
+                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = ''; if ($object->stop_sale == 1) $showValue = '<span class="stop-sales">SS</span>'; else if ($object->stop_sale == 2) $showValue = '<span class="on-request">RQ</span>'; }
                                         }
                                     }
                                 }

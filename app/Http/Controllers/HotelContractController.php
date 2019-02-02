@@ -909,10 +909,10 @@ class HotelContractController extends Controller
             foreach($ranges as $range) {
                 $start = Carbon::createFromFormat('d.m.Y', $range->from);
                 $end = Carbon::createFromFormat('d.m.Y', $range->to);
-                $now = Carbon::now();
-                if ($start->lessThan($now))
+                $now = Carbon::createFromFormat('d.m.Y', $this->currentDate());
+                if ($start->lessThan($now)) {
                     throw new CustomException('Can not update dates less than ' . $now->format('d.m.Y') . '.');
-
+                }
                 for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
                     foreach ($roomTypes as $roomTypeId) {
                         $contractSetting = HotelContractSetting::with('prices', 'roomType')
@@ -975,7 +975,8 @@ class HotelContractController extends Controller
                                 $contractSetting->stop_sale = null;
                             }
                             else if($setStopSale != '') {
-                                $stopSale = Input::get('stop_sale') == '1' ? 1 : 0;
+                                $temp = Input::get('stop_sale');
+                                $stopSale = (isset($temp) && $temp != '') ? $temp : 0;
                                 $contractSetting->stop_sale = $stopSale;
                                 DB::table('hotel_contract_client_settings')
                                     ->where('hotel_contract_setting_id', $contractSetting->id)
@@ -1361,7 +1362,7 @@ class HotelContractController extends Controller
                                             else if ($rows[$v]->code == 'allotment_sold') { $value = $object->allotment_sold; $showValue = $value; }
                                             else if ($rows[$v]->code == 'allotment_base') { $value = $object->allotment_base; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
-                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; }
+                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = ''; if ($object->stop_sale == 1) $showValue = '<span class="stop-sales">SS</span>'; else if ($object->stop_sale == 2) $showValue = '<span class="on-request">RQ</span>'; }
                                         }
                                     }
                                 }

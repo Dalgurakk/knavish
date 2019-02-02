@@ -333,7 +333,7 @@ class ClientHotelController extends Controller
                         else {
                             $object->release = $setting->release;
                         }
-                        if (!is_null($clientSettting->stop_sale) && $clientSettting->stop_sale == 1) {
+                        if (!is_null($clientSettting->stop_sale) /*&& $clientSettting->stop_sale == 1*/) {
                             $object->stop_sale = $clientSettting->stop_sale;
                         }
                         else {
@@ -471,7 +471,7 @@ class ClientHotelController extends Controller
                                             else if ($rows[$v]->code == 'allotment') { $value = $object->allotment; $showValue = $value; }
                                             else if ($rows[$v]->code == 'allotment_sold') { $value = $object->allotment_sold; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
-                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = $object->stop_sale == 1 ? '<span class="stop-sales">SS</span>' : ''; }
+                                            else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = ''; if ($object->stop_sale == 1) $showValue = '<span class="stop-sales">SS</span>'; else if ($object->stop_sale == 2) $showValue = '<span class="on-request">RQ</span>'; }
                                         }
                                     }
                                 }

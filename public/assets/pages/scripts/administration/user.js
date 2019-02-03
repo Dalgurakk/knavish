@@ -272,40 +272,45 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
+    var requestDelete = false;
     $('#table tbody').on( 'click', '.dt-delete', function (e) {
-        var data = table.row( $(this).parents('tr') ).data();
-        $(this).confirmation('show');
-        $(this).on('confirmed.bs.confirmation', function () {
-            $.ajax({
-                url: routeDelete,
-                "type": "POST",
-                "data":  {
-                    id: data['id']
-                },
-                "beforeSend": function() {
-                    App.showMask(true, $('#table'));
-                },
-                "complete": function(xhr, textStatus) {
-                    App.showMask(false, $('#table'));
-                    if (xhr.status == '419') {
-                        location.reload(true);
-                    }
-                    else if (xhr.status != '200') {
-                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                    }
-                    else {
-                        var response = $.parseJSON(xhr.responseText);
-                        if (response.status == 'success') {
-                            toastr['success'](response.message, "Success");
-                            table.draw();
+        if (!requestDelete) {
+            var data = table.row($(this).parents('tr')).data();
+            $(this).confirmation('show');
+            $(this).on('confirmed.bs.confirmation', function () {
+                requestDelete = true;
+                $.ajax({
+                    url: routeDelete,
+                    "type": "POST",
+                    "data": {
+                        id: data['id']
+                    },
+                    "beforeSend": function () {
+                        App.showMask(true, $('#table'));
+                    },
+                    "complete": function (xhr, textStatus) {
+                        requestDelete = false;
+                        App.showMask(false, $('#table'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
                         }
                         else {
-                            toastr['error'](response.message, "Error");
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                table.draw();
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
                         }
                     }
-                }
+                });
             });
-        });
+        }
         e.preventDefault();
     });
 

@@ -6,15 +6,16 @@ $(document).ready(function () {
         min: -1000000000,
         max: 1000000000,
         stepinterval: 50,
+        step: 0.01,
         decimals: 2,
-        maxboostedstep: 10000000,
+        maxboostedstep: 10,
         prefix: '$'
     });
 
     $('#modal-add [id=rate_percent_value_1_add]').TouchSpin({
-        min: 0,
+        min: -100,
         max: 100,
-        step: 1,
+        step: 0.01,
         decimals: 2,
         boostat: 5,
         maxboostedstep: 10,
@@ -85,15 +86,16 @@ $(document).ready(function () {
                 min: -1000000000,
                 max: 1000000000,
                 stepinterval: 50,
+                step: 0.01,
                 decimals: 2,
-                maxboostedstep: 10000000,
+                maxboostedstep: 10,
                 prefix: '$'
             });
 
             $('#rate_percent_value_' + value + '_add').TouchSpin({
-                min: 0,
+                min: -100,
                 max: 100,
-                step: 1,
+                step: 0.01,
                 decimals: 2,
                 boostat: 5,
                 maxboostedstep: 10,
@@ -673,15 +675,16 @@ $(document).ready(function () {
         min: -1000000000,
         max: 1000000000,
         stepinterval: 50,
+        step: 0.01,
         decimals: 2,
-        maxboostedstep: 10000000,
+        maxboostedstep: 10,
         prefix: '$'
     });
 
     $('#rate_percent_value_1_info').TouchSpin({
-        min: 0,
+        min: -100,
         max: 100,
-        step: 1,
+        step: 0.01,
         decimals: 2,
         boostat: 5,
         maxboostedstep: 10,
@@ -851,15 +854,16 @@ $(document).ready(function () {
                     min: -1000000000,
                     max: 1000000000,
                     stepinterval: 50,
+                    step: 0.01,
                     decimals: 2,
-                    maxboostedstep: 10000000,
+                    maxboostedstep: 10,
                     prefix: '$'
                 });
 
                 $('#rate_percent_value_' + markets[i].id + '_info').TouchSpin({
-                    min: 0,
+                    min: -100,
                     max: 100,
-                    step: 1,
+                    step: 0.01,
                     decimals: 2,
                     boostat: 5,
                     maxboostedstep: 10,
@@ -971,15 +975,16 @@ $(document).ready(function () {
         min: -1000000000,
         max: 1000000000,
         stepinterval: 50,
+        step: 0.01,
         decimals: 2,
-        maxboostedstep: 10000000,
+        maxboostedstep: 10,
         prefix: '$'
     });
 
     $('#rate_percent_value_1_edit').TouchSpin({
-        min: 0,
+        min: -100,
         max: 100,
-        step: 1,
+        step: 0.01,
         decimals: 2,
         boostat: 5,
         maxboostedstep: 10,
@@ -1046,15 +1051,16 @@ $(document).ready(function () {
                 min: -1000000000,
                 max: 1000000000,
                 stepinterval: 50,
+                step: 0.01,
                 decimals: 2,
-                maxboostedstep: 10000000,
+                maxboostedstep: 10,
                 prefix: '$'
             });
 
             $('#rate_percent_value_' + value + '_edit').TouchSpin({
-                min: 0,
+                min: -100,
                 max: 100,
-                step: 1,
+                step: 0.01,
                 decimals: 2,
                 boostat: 5,
                 maxboostedstep: 10,
@@ -1275,15 +1281,16 @@ $(document).ready(function () {
                     min: -1000000000,
                     max: 1000000000,
                     stepinterval: 50,
+                    step: 0.01,
                     decimals: 2,
-                    maxboostedstep: 10000000,
+                    maxboostedstep: 10,
                     prefix: '$'
                 });
 
                 $('#rate_percent_value_' + markets[i].id + '_edit').TouchSpin({
-                    min: 0,
+                    min: -100,
                     max: 100,
-                    step: 1,
+                    step: 0.01,
                     decimals: 2,
                     boostat: 5,
                     maxboostedstep: 10,
@@ -1438,14 +1445,14 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    var requestDelete;
+    var requestDelete = false;
     $('#table tbody').on( 'click', '.dt-delete', function (e) {
         if (!requestDelete) {
-            requestDelete = true;
             var data = table.row( $(this).parents('tr') ).data();
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
-                requestDelete = $.ajax({
+                requestDelete = true;
+                $.ajax({
                     url: routeDelete,
                     "type": "POST",
                     "data":  {
@@ -1455,7 +1462,7 @@ $(document).ready(function () {
                         App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
-                        requestDelete = null;
+                        requestDelete = false;
                         App.showMask(false, $('#table'));
                         if (xhr.status == '419') {
                             location.reload(true);
@@ -1954,14 +1961,14 @@ $(document).ready(function () {
         window.location = url;
     });
 
-    var requestDuplicate;
+    var requestDuplicate = false;
     $('#table tbody').on( 'click', '.dt-duplicate', function (e) {
         if (!requestDuplicate) {
-            requestDuplicate = true;
             var data = table.row( $(this).parents('tr') ).data();
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
-                requestDuplicate = $.ajax({
+                requestDuplicate = true;
+                $.ajax({
                     url: routeDuplicate,
                     "type": "POST",
                     "data":  {
@@ -1971,7 +1978,7 @@ $(document).ready(function () {
                         App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
-                        requestDuplicate = null;
+                        requestDuplicate = false;
                         App.showMask(false, $('#table'));
                         if (xhr.status == '419') {
                             location.reload(true);

@@ -156,6 +156,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-file-text-o"></i> General Data </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -205,6 +207,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-building-o"></i> Hotel </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="hotel-id">
@@ -283,6 +287,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-male"></i> Pax Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -328,6 +334,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-hotel"></i> Room Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -364,6 +372,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-cutlery"></i> Board Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -405,6 +415,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tag"></i> Price Rates </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -482,6 +494,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -530,6 +544,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-file-text-o"></i> General Data </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -579,6 +595,9 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-building-o"></i> Hotel </div>
+
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="hotel-id">
@@ -655,6 +674,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-male"></i> Pax Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -677,6 +698,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-hotel"></i> Room Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -705,6 +728,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-cutlery"></i> Board Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -725,6 +750,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tag"></i> Price Rates </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -785,6 +812,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -822,6 +851,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-file-text-o"></i> General Data </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -871,6 +902,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-building-o"></i> Hotel </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="id">
@@ -950,6 +983,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-male"></i> Pax Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -993,6 +1028,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-hotel"></i> Room Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -1024,6 +1061,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-cutlery"></i> Board Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -1063,6 +1102,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tag"></i> Price Rates </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
@@ -1145,6 +1186,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-tachometer"></i> Variables </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">

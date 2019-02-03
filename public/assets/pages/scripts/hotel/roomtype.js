@@ -63,6 +63,10 @@ $(document).ready(function () {
                         '<i class="glyphicon glyphicon-eye-open btn-action-icon"></i></a>'+
                         '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-edit" data-toggle="modal" href="#modal-edit">' +
                         '<i class="icon-pencil btn-action-icon"></i></a>' +
+                        /*'<a class="btn btn-default btn-circle btn-icon-only btn-action dt-delete">' +
+                        '<i class="icon-trash btn-action-icon"></i></a>' +
+                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-duplicate">' +
+                        '<i class="icon-docs btn-action-icon"></i></a>' +*/
                         '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-delete" href="javascript:;" data-popout="true" data-placement="left"' +
                         'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success"  data-btn-ok-icon-content="check" ' +
                         'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
@@ -497,14 +501,14 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    var requestDelete;
+    var requestDelete = false;
     $('#table tbody').on( 'click', '.dt-delete', function (e) {
         if (!requestDelete) {
-            requestDelete = true;
             var data = table.row( $(this).parents('tr') ).data();
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
-                requestDelete = $.ajax({
+                requestDelete = true;
+                $.ajax({
                     url: routeDelete,
                     "type": "POST",
                     "data":  {
@@ -514,7 +518,7 @@ $(document).ready(function () {
                         App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
-                        requestDelete = null;
+                        requestDelete = false;
                         App.showMask(false, $('#table'));
                         if (xhr.status == '419') {
                             location.reload(true);
@@ -539,14 +543,14 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    var requestDuplicate;
+    var requestDuplicate = false;
     $('#table tbody').on( 'click', '.dt-duplicate', function (e) {
         if (!requestDuplicate) {
-            requestDuplicate = true;
             var data = table.row( $(this).parents('tr') ).data();
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
-                requestDuplicate = $.ajax({
+                requestDuplicate = true;
+                $.ajax({
                     url: routeDuplicate,
                     "type": "POST",
                     "data":  {
@@ -556,7 +560,7 @@ $(document).ready(function () {
                         App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
-                        requestDuplicate = null;
+                        requestDuplicate = false;
                         App.showMask(false, $('#table'));
                         if (xhr.status == '419') {
                             location.reload(true);

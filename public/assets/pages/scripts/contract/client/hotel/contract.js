@@ -773,14 +773,14 @@ $(document).ready(function () {
         }
     });
 
-    var requestDelete;
+    var requestDelete = false;
     $('#table tbody').on( 'click', '.dt-delete', function (e) {
         if (!requestDelete) {
-            requestDelete = true;
             var data = table.row( $(this).parents('tr') ).data();
             $(this).confirmation('show');
             $(this).on('confirmed.bs.confirmation', function () {
-                requestDelete = $.ajax({
+                requestDelete = true;
+                $.ajax({
                     url: routeDelete,
                     "type": "POST",
                     "data":  {
@@ -790,7 +790,7 @@ $(document).ready(function () {
                         App.showMask(true, $('#table'));
                     },
                     "complete": function(xhr, textStatus) {
-                        requestDelete = null;
+                        requestDelete = false;
                         App.showMask(false, $('#table'));
                         if (xhr.status == '419') {
                             location.reload(true);

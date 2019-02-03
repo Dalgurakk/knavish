@@ -140,6 +140,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-file-text-o"></i> General Data </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -179,6 +181,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-building-o"></i> Hotel </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="row">
@@ -254,6 +258,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-male"></i> Pax Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -275,6 +281,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-hotel"></i> Room Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">
@@ -302,6 +310,8 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-cutlery"></i> Board Types </div>
+                        <div class="tools">
+                            <a href="javascript:;" class="collapse"> </a></div>
                     </div>
                     <div class="portlet-body">
                         <div class="form-group">

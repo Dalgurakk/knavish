@@ -180,19 +180,14 @@
 <div id="modal-setting" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="icon-settings"></i> Settings</h4>
+        <h4 class="modal-title"><i class="fa fa-hotel"></i><span class="room-name-header" style="margin-left: 5px;"> Settings</span></h4>
     </div>
     <form id="form-setting">
     <div class="modal-body" style="padding-bottom: 0;">
         <input type="hidden" name="contract-id" value="0">
         <input type="hidden" name="room-type-id" value="0">
         <input type="hidden" name="market-id" value="0">
-        <div class="row">
-            <div class="col-md-12" style="margin-bottom: 25px; display: inline-block; text-align: center;">
-                <div class="caption">
-                    <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
-                </div>
-            </div>
+        <div class="row" style="margin-top: 10px;">
             <div class="col-md-12 share-container" style="margin-bottom: 30px; display: inline-block; text-align: center;">
                 <label class="mt-checkbox mt-checkbox-outline no-margin-bottom share"> Share
                     <input type="checkbox" value="1" name="share"/>

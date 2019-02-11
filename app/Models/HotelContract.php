@@ -59,4 +59,8 @@ class HotelContract extends Model implements Auditable
     public function settings() {
         return $this->hasMany('App\Models\HotelContractSetting');
     }
+
+    public function offers() {
+        return $this->hasMany('App\Models\HotelOffer');
+    }
 }

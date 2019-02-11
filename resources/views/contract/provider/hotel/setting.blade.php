@@ -256,7 +256,7 @@
                 <div class="portlet box green porlet-setting">
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
-                            <i class="fa fa-calendar"></i>Range Date</div>
+                            <i class="fa fa-calendar"></i>Range</div>
                         <div class="tools tools-setting">
                             <a href="javascript:;" class="collapse"> </a></div>
                     </div>
@@ -343,23 +343,16 @@
 <div id="modal-import" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-import" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-download"></i> Import</h4>
+        <h4 class="modal-title"><i class="fa fa-download"></i> Import to <span class="room-name-header"></span></h4>
     </div>
     <form id="form-import">
     <div class="modal-body">
         <div class="row">
-            <div class="row">
-                <div class="col-md-12" style="margin-bottom: 25px; display: inline-block; text-align: center;">
-                    <div class="caption">
-                        <span class="caption-subject font-green-sharp bold uppercase room-name-header" style="font-size: 16px;"></span>
-                    </div>
-                </div>
-            </div>
             <div class="col-md-12 all-dates-container">
                 <div class="portlet box green porlet-setting">
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
-                            <i class="fa fa-calendar"></i>Ranges</div>
+                            <i class="fa fa-calendar"></i>Range Date</div>
                         <div class="tools tools-setting">
                             <a href="javascript:;" class="collapse"> </a></div>
                     </div>

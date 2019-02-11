@@ -1223,6 +1223,493 @@
     </div>
     </form>
 </div>
+
+<div id="modal-complements" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> <span class="contract-name"> Complements </span></h4>
+    </div>
+    <div class="modal-body">
+        <div class="tabbable-line">
+            <ul class="nav nav-tabs ">
+                <li class="active">
+                    <a href="#tab_offers" data-toggle="tab"> Offers </a>
+                </li>
+                <li>
+                    <a href="#tab_supplements" data-toggle="tab"> Supplements </a>
+                </li>
+                <li>
+                    <a href="#tab_restrictions" data-toggle="tab"> Restrictions </a>
+                </li>
+            </ul>
+            <div class="tab-content" style="padding: 10px 0;">
+                <div class="tab-pane active" id="tab_offers">
+                    <div class="actions" style="float: right; margin-bottom: 10px;">
+                        <!--a class="btn btn-circle btn-icon-only btn-default btn-table-header search" href="javascript:;">
+                            <i class="fa fa-search"></i>
+                        </a-->
+                        <a class="btn btn-circle btn-icon-only btn-default btn-table-header add-offer" data-toggle="modal" href="#modal-add-offer">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                        <a class="btn btn-circle btn-icon-only btn-default btn-table-header reload-offer" href="javascript:;">
+                            <i class="fa fa-refresh"></i>
+                        </a>
+                        <!--a class="btn btn-circle btn-icon-only btn-default btn-table-header excel" href="javascript:;">
+                            <i class="fa fa-file-excel-o"></i>
+                        </a-->
+                        <!--div class="btn-group">
+                            <a class="btn btn-circle btn-icon-only btn-default dropdown-toggle lenght btn-dropdown btn-table-header" data-toggle="dropdown" href="javascript:;">25</a>
+                            <ul class="dropdown-menu dropdown-options">
+                                <li>
+                                    <a href="javascript:;" class="lenght-option" data="10">10</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;" class="lenght-option" data="25">25</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;" class="lenght-option" data="50">50</a>
+                                </li>
+                            </ul>
+                        </div-->
+                    </div>
+                    <table id="table-offer" class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable" width="100%" cellspacing="0">
+                        <thead>
+                        <tr role="row" class="heading">
+                            <th class="">Id</th>
+                            <th class="">Denomination</th>
+                            <th class="">Type</th>
+                            <th class="">Enable</th>
+                            <th class="" style="min-width: 140px;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+
+                </div>
+                <div class="tab-pane" id="tab_supplements">
+                    <p> Developing Supplements. </p>
+                </div>
+                <div class="tab-pane" id="tab_restrictions">
+                    <p> Developing Restrictions. </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+</div>
+
+<div id="modal-add-offer" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Add Offer</h4>
+    </div>
+    <form id="form-add-offer">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 all-dates-container">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-calendar"></i>Range Date</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="row">
+                                <div class="range-container">
+                                    <div class="range">
+                                        <div class="col-md-5 col-sm-5 col-xs-5">
+                                            <div class="form-group">
+                                                <label>From</label>
+                                                <div class="input-icon left">
+                                                    <i class="fa fa-calendar"></i>
+                                                    <input type="text" class="form-control date-picker" name="valid-from">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 col-sm-5 col-xs-5">
+                                            <div class="form-group">
+                                                <label>To</label>
+                                                <div class="input-icon left">
+                                                    <i class="fa fa-calendar"></i>
+                                                    <input type="text" class="form-control date-picker" name="valid-to">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 col-xs-2">
+                                            <div class="form-group">
+                                                <a class="btn blue btn-outline add-row add-row-offer" href="javascript:;">
+                                                    <i class="fa fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 all-rooms-container">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-hotel"></i>Rooms</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="form-group">
+                                <input type="hidden" name="count-offer-room-type" class="hotel-type" value="0">
+                                <div id="search-section">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="search-code" placeholder="Code">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="search-name" placeholder="Denomination">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                <input type="checkbox" class="group-checkable" data-set=".table-room-type .checkboxes" />
+                                                <span></span>
+                                            </label>
+                                        </th>
+                                        <th> Id </th>
+                                        <th> Code </th>
+                                        <th> Denomination </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-file-text-o"></i>Offer Data</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Denomination</label>
+                                        <input type="text" class="form-control" placeholder="Denomination" name="name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Priority</label>
+                                        <input type="text" class="form-control" placeholder="Priority" name="priority" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Type</label>
+                                        <select class="form-control" name="offer-type">
+                                            <option value="">Select a Type</option>
+                                            @foreach($offerTypes as $item)
+                                                <option value="{{ $item->id }}" data-code="{{ $item->code }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="mt-checkbox-list margin-top-15">
+                                            <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                                                <input type="checkbox" value="1" name="active"/>
+                                                <span></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="offer-input-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn green" data="apply"><i class="fa fa-repeat"></i> Apply</button>
+            <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>
+            <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form-offer"><i class="fa fa-close"></i> Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div id="modal-edit-offer" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Edit Offer</h4>
+    </div>
+    <form id="form-edit-offer">
+        <input type="hidden" name="id" value="0">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12 all-dates-container">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-calendar"></i>Range Date</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="row">
+                                <div class="range-container">
+                                    <div class="range">
+                                        <div class="col-md-5 col-sm-5 col-xs-5">
+                                            <div class="form-group">
+                                                <label>From</label>
+                                                <div class="input-icon left">
+                                                    <i class="fa fa-calendar"></i>
+                                                    <input type="text" class="form-control date-picker" name="valid-from">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5 col-sm-5 col-xs-5">
+                                            <div class="form-group">
+                                                <label>To</label>
+                                                <div class="input-icon left">
+                                                    <i class="fa fa-calendar"></i>
+                                                    <input type="text" class="form-control date-picker" name="valid-to">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-sm-2 col-xs-2">
+                                            <div class="form-group">
+                                                <a class="btn blue btn-outline add-row add-row-offer" href="javascript:;">
+                                                    <i class="fa fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 all-rooms-container">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-hotel"></i>Rooms</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="form-group">
+                                <input type="hidden" name="count-offer-room-type" class="hotel-type" value="0">
+                                <div id="search-section">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="search-code" placeholder="Code">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="search-name" placeholder="Denomination">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                <input type="checkbox" class="group-checkable" data-set=".table-room-type .checkboxes" />
+                                                <span></span>
+                                            </label>
+                                        </th>
+                                        <th> Id </th>
+                                        <th> Code </th>
+                                        <th> Denomination </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-file-text-o"></i>Offer Data</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Denomination</label>
+                                        <input type="text" class="form-control" placeholder="Denomination" name="name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Priority</label>
+                                        <input type="text" class="form-control" placeholder="Priority" name="priority" value="0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Type</label>
+                                        <select class="form-control" name="offer-type">
+                                            <option value="">Select a Type</option>
+                                            @foreach($offerTypes as $item)
+                                                <option value="{{ $item->id }}" data-code="{{ $item->code }}">{{ $item->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="mt-checkbox-list margin-top-15">
+                                            <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                                                <input type="checkbox" value="1" name="active"/>
+                                                <span></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="offer-input-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>
+            <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form-offer"><i class="fa fa-close"></i> Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div id="modal-info-offer" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Offer Data</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12 all-dates-container">
+                <div class="portlet box green porlet-setting">
+                    <div class="portlet-title porlet-title-setting">
+                        <div class="caption caption-setting">
+                            <i class="fa fa-calendar"></i>Range Date</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="range-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 all-rooms-container">
+                <div class="portlet box green porlet-setting">
+                    <div class="portlet-title porlet-title-setting">
+                        <div class="caption caption-setting">
+                            <i class="fa fa-hotel"></i>Rooms</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="form-group">
+                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th> Code </th>
+                                    <th> Denomination </th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="portlet box green porlet-setting">
+                    <div class="portlet-title porlet-title-setting">
+                        <div class="caption caption-setting">
+                            <i class="fa fa-file-text-o"></i>Offer Data</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Denomination</label>
+                                    <input type="text" class="form-control" name="name" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Priority</label>
+                                    <input type="text" class="form-control" name="priority" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Type</label>
+                                    <input type="text" class="form-control" name="offer-type" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="mt-checkbox-list margin-top-15">
+                                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                                            <input type="checkbox" value="1" name="active" onclick="return false;"/>
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="offer-input-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form-offer"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+
+</div>
 @stop
 
 @section('page-plugins')
@@ -1254,6 +1741,10 @@
     var routeDelete = "{{ route('contract.provider.hotel.delete') }}";
     var routeExcel = "{{ route('contract.provider.hotel.excel') }}";
     var routeDuplicate = "{{ route('contract.provider.hotel.duplicate') }}";
+    var routeSaveOffer = "{{ route('contract.offer.create') }}";
+    var routeReadOffer = "{{ route('contract.offer.read') }}";
+    var routeDeleteOffer = "{{ route('contract.offer.delete') }}";
+    var routeUpdateOffer = "{{ route('contract.offer.update') }}";
 </script>
 @stop
 

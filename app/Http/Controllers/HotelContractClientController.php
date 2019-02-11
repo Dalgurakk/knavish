@@ -627,7 +627,7 @@ class HotelContractClientController extends Controller
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
                                         $newMeasure->id = 1000 + $x;
-                                        $newMeasure->name = 'Cost CH ' . $x;
+                                        $newMeasure->name = 'Cost Ch ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'cost_children_' . $x;
                                         $newMeasure->parent = 'cost-' . $roomTypes[$r]->id;
@@ -638,7 +638,7 @@ class HotelContractClientController extends Controller
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
                                         $newMeasure->id = 2000 + $x;
-                                        $newMeasure->name = 'Price CH ' . $x;
+                                        $newMeasure->name = 'Price Ch ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'price_children_' . $x;
                                         $newMeasure->parent = 'price-' . $roomTypes[$r]->id;
@@ -696,7 +696,7 @@ class HotelContractClientController extends Controller
                             if ($rows[$v]->code == 'cost' || $rows[$v]->code == 'price') {
                                 $table .=
                                     '<tr data-row="' . $rows[$v]->id . '">' .
-                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name . ' Ad');
+                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . $rows[$v]->name . ' Ad';
                                 if ($roomTypes[$r]->max_children > 0) {
                                     $table .= '<button class="measure-detail btn-default closed" data="' . $rows[$v]->code . '-' . $roomTypes[$r]->id .'" data-measure="' . $rows[$v]->code . '">+</button>';
                                 }
@@ -705,7 +705,7 @@ class HotelContractClientController extends Controller
                             else if ($rows[$v]->code == 'allotment') {
                                 $table .=
                                     '<tr data-row="' . $rows[$v]->id . '">' .
-                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name);
+                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . $rows[$v]->name;
                                 $table .= '<button class="measure-detail btn-default closed" data="' . $rows[$v]->code . '-' . $roomTypes[$r]->id .'" data-measure="' . $rows[$v]->code . '">+</button>';
                                 $table .= '</td>';
                             }
@@ -716,7 +716,7 @@ class HotelContractClientController extends Controller
                                     $table .= ' data-parent="' . $rows[$v]->parent . '" class="hidden"';
                                 }
                                 $table .=
-                                    '><td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
+                                    '><td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . $rows[$v]->name . '</td>';
 
                             }
                             $month = $m->format('d.m.Y');

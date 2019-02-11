@@ -121,3 +121,8 @@ Route::post('/client/hotel', 'ClientHotelController@getContract')->name('client.
 Route::post('/client/hotel/search', 'ClientHotelController@getByName')->name('client.hotel.search');
 Route::post('/client/hotel/settings/data', 'ClientHotelController@settingsHotelData')->name('client.hotel.settings.data');
 Route::get('/client/hotel/excel', 'ClientHotelController@toExcel')->name('client.hotel.excel');
+//HotelOffer
+Route::post('/contract/offer/read', 'HotelOfferController@read')->name('contract.offer.read');
+Route::post('/contract/offer/create', 'HotelOfferController@create')->name('contract.offer.create');
+Route::post('/contract/offer/update', 'HotelOfferController@update')->name('contract.offer.update');
+Route::post('/contract/offer/delete', 'HotelOfferController@delete')->name('contract.offer.delete');

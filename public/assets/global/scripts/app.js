@@ -410,6 +410,13 @@ var App = function() {
             placement: 'top'
         });
 
+        $('.dt-custom-datatable .dt-complements').tooltip({
+            trigger: 'hover',
+            container: 'body',
+            title: 'Complements',
+            placement: 'top'
+        });
+
         $('.dt-custom-datatable .dt-image').tooltip({
             trigger: 'hover',
             container: 'body',

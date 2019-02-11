@@ -11,6 +11,7 @@ use App\Models\HotelContractPrice;
 use App\Models\HotelContractRoomType;
 use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
+use App\Models\HotelOfferType;
 use App\Models\HotelPaxType;
 use App\Models\HotelRoomType;
 use App\Models\Location;
@@ -22,7 +23,6 @@ use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class HotelContractController extends Controller
 {
@@ -46,6 +46,7 @@ class HotelContractController extends Controller
         $measures = HotelMeasure::where('active', '1')->orderBy('id', 'asc')->get();
         //$measures = HotelMeasure::where('active', '1')->whereIn('code', ['cost', 'price'])->orderBy('id', 'asc')->get();
         $markets = Market::where('active', '1')->get();
+        $offerTypes = HotelOfferType::where('active', '1')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuContract'] = 'selected';
@@ -55,6 +56,7 @@ class HotelContractController extends Controller
         $data['boardTypes'] = $boardTypes;
         $data['measures'] = $measures;
         $data['markets'] = $markets;
+        $data['offerTypes'] = $offerTypes;
         $data['currentDate'] = parent::currentDate();
 
         return view('contract.provider.hotel.contract')->with($data);
@@ -910,9 +912,9 @@ class HotelContractController extends Controller
                 $start = Carbon::createFromFormat('d.m.Y', $range->from);
                 $end = Carbon::createFromFormat('d.m.Y', $range->to);
                 $now = Carbon::createFromFormat('d.m.Y', $this->currentDate());
-                if ($start->lessThan($now)) {
+                /*if ($start->lessThan($now)) {
                     throw new CustomException('Can not update dates less than ' . $now->format('d.m.Y') . '.');
-                }
+                }*/
                 for ($m = $start; $m->lessThanOrEqualTo($end); $m->addDay()) {
                     foreach ($roomTypes as $roomTypeId) {
                         $contractSetting = HotelContractSetting::with('prices', 'roomType')
@@ -1183,7 +1185,21 @@ class HotelContractController extends Controller
             },
             'markets' => function($query) use ($market) {
                 $query->where('market_id', $market);
-            }
+            },
+            'offers' => function($query) use ($start, $end) {
+                $query->whereHas('ranges', function ($query) use ($start, $end) {
+                    $query
+                        ->where('to', '>=', $start->format('Y-m-d'))
+                        ->where('from', '<=', $end->format('Y-m-d'));
+                });
+            },
+            'offers.rooms',
+            'offers.rooms.roomType',
+            'offers.ranges' => function($query) use ($start, $end) {
+                $query
+                    ->where('to', '>=', $start->format('Y-m-d'))
+                    ->where('from', '<=', $end->format('Y-m-d'));
+            },
         ])->where('id', $id)->first();
 
         $operateMeasures = $contract->measures;
@@ -1195,6 +1211,26 @@ class HotelContractController extends Controller
         else {
             $validFrom = Carbon::createFromFormat('!Y-m-d', $contract->valid_from);
             $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
+
+            $offerDates = array();
+            $offers = $contract->offers;
+            foreach ($offers as $offer) {
+                foreach ($offer->ranges as $range) {
+                    $startRange = Carbon::createFromFormat('!Y-m-d', $range->from);
+                    $endRange = Carbon::createFromFormat('!Y-m-d', $range->to);
+                    if ($start->greaterThanOrEqualTo($startRange)) {
+                        $startRange = $start;
+                    }
+                    if ($end->lessThanOrEqualTo($endRange)) {
+                        $endRange = $end;
+                    }
+                    for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {
+                        foreach ($offer->rooms as $room) {
+                            $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id] = $offer->id;
+                        }
+                    }
+                }
+            }
 
             $settings = array();
             if (isset($contract->priceRates) && count($contract->priceRates) > 0) {
@@ -1222,10 +1258,8 @@ class HotelContractController extends Controller
                         '<div class="portlet box green">' .
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                        /*<i class="fa fa-calendar"></i>' .*/
                         $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
                         '<div class="tools tools-setting">' .
-                        /*'<a href="" class="fullscreen"> </a>' .*/
                         '<a href="javascript:;" class="collapse"> </a>' .
                         '</div>' .
                         '</div>' .
@@ -1243,7 +1277,7 @@ class HotelContractController extends Controller
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
                                         $newMeasure->id = 1000 + $x;
-                                        $newMeasure->name = 'Cost CH ' . $x;
+                                        $newMeasure->name = 'Cost Ch ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'cost_children_' . $x;
                                         $newMeasure->parent = 'cost-' . $roomTypes[$r]->id;
@@ -1254,7 +1288,7 @@ class HotelContractController extends Controller
                                     for ($x = 1; $x <= $roomTypes[$r]->max_children; $x ++) {
                                         $newMeasure = new HotelMeasure();
                                         $newMeasure->id = 2000 + $x;
-                                        $newMeasure->name = 'Price CH ' . $x;
+                                        $newMeasure->name = 'Price Ch ' . $x;
                                         $newMeasure->active = 1;
                                         $newMeasure->code = 'price_children_' . $x;
                                         $newMeasure->parent = 'price-' . $roomTypes[$r]->id;
@@ -1312,7 +1346,7 @@ class HotelContractController extends Controller
                             if ($rows[$v]->code == 'cost' || $rows[$v]->code == 'price') {
                                 $table .=
                                 '<tr data-row="' . $rows[$v]->id . '">' .
-                                '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name . ' Ad');
+                                '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . $rows[$v]->name . ' Ad';
                                 if ($roomTypes[$r]->max_children > 0) {
                                     $table .= '<button class="measure-detail btn-default closed" data="' . $rows[$v]->code . '-' . $roomTypes[$r]->id .'" data-measure="' . $rows[$v]->code . '">+</button>';
                                 }
@@ -1321,7 +1355,7 @@ class HotelContractController extends Controller
                             else if ($rows[$v]->code == 'allotment') {
                                 $table .=
                                     '<tr data-row="' . $rows[$v]->id . '">' .
-                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name);
+                                    '<td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . $rows[$v]->name;
                                 $table .= '<button class="measure-detail btn-default closed" data="' . $rows[$v]->code . '-' . $roomTypes[$r]->id .'" data-measure="' . $rows[$v]->code . '">+</button>';
                                 $table .= '</td>';
                             }
@@ -1332,7 +1366,7 @@ class HotelContractController extends Controller
                                     $table .= ' data-parent="' . $rows[$v]->parent . '" class="hidden"';
                                 }
                                 $table .=
-                                '><td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . strtoupper($rows[$v]->name) . '</td>';
+                                '><td class="column-setting item-variable" data-measure-code="' . $rows[$v]->code . '">' . $rows[$v]->name . '</td>';
                             }
                             $month = $m->format('d.m.Y');
                             $monthStart = Carbon::createFromFormat('d.m.Y', $month)->startOfMonth();
@@ -1363,6 +1397,7 @@ class HotelContractController extends Controller
                                             else if ($rows[$v]->code == 'allotment_base') { $value = $object->allotment_base; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
                                             else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = ''; if ($object->stop_sale == 1) $showValue = '<span class="stop-sales">SS</span>'; else if ($object->stop_sale == 2) $showValue = '<span class="on-request">RQ</span>'; }
+                                            else if ($rows[$v]->code == 'offer') { $auxDate = $i->format('Y-m-d'); $auxRoomId = $roomTypes[$r]->id; $value = isset($offerDates[$auxDate][$auxRoomId]) ? $offerDates[$auxDate][$auxRoomId] : ''; if ($value != '') { $showValue = '<span class="has-offer">X</span>'; }}
                                         }
                                     }
                                 }

@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
+//use OwenIt\Auditing\Contracts\Auditable;
 
-class HotelOfferType extends Model implements Auditable
+class HotelOfferType extends Model //implements Auditable
 {
-    use \OwenIt\Auditing\Auditable;
-    protected $table = 'hotel_offer_types';
+    //use \OwenIt\Auditing\Auditable;
 
-    /*public function offers() {
-        return $this->hasMany('App\Models\HotelOffer');
-    }*/
+    protected $table = 'hotel_offer_types';
 }

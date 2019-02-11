@@ -62,7 +62,7 @@ class ClientHotelController extends Controller
             'hotelContract.roomTypes',
             'hotelContract.paxTypes',
             'hotelContract.boardTypes'
-        ])->where('client_id', Auth::user()->id);
+        ])->where('client_id', Auth::user()->id)->where('active', '1');
 
         if(isset($searchName) && $searchName != '') {
             $query->where('hotel_contract_clients.name', 'like', '%' . $searchName . '%');

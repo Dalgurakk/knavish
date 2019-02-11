@@ -20,6 +20,7 @@ class ClientHotelExport extends GeneralExport
             'hotelContract.hotel.city'
         ])
         ->where('client_id', Auth::user()->id)
+        ->where('active', '1')
         ->orderBy('name');
         if ($this->parameters['name'] != '') {
             $query->where('name', 'like', '%' . $this->parameters['name'] . '%');

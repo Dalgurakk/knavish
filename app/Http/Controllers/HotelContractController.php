@@ -46,7 +46,6 @@ class HotelContractController extends Controller
         $measures = HotelMeasure::where('active', '1')->orderBy('id', 'asc')->get();
         //$measures = HotelMeasure::where('active', '1')->whereIn('code', ['cost', 'price'])->orderBy('id', 'asc')->get();
         $markets = Market::where('active', '1')->get();
-        $offerTypes = HotelOfferType::where('active', '1')->get();
 
         $data['breadcrumb'] = $breadcrumb;
         $data['menuContract'] = 'selected';
@@ -56,7 +55,6 @@ class HotelContractController extends Controller
         $data['boardTypes'] = $boardTypes;
         $data['measures'] = $measures;
         $data['markets'] = $markets;
-        $data['offerTypes'] = $offerTypes;
         $data['currentDate'] = parent::currentDate();
 
         return view('contract.provider.hotel.contract')->with($data);
@@ -496,6 +494,8 @@ class HotelContractController extends Controller
             2 => 'Hotel'
         );
 
+        $offerTypes = HotelOfferType::where('active', '1')->get();
+
         $data['breadcrumb'] = $breadcrumb;
         $data['menuContract'] = 'selected';
         $data['submenuContractProvider'] = 'selected';
@@ -503,6 +503,7 @@ class HotelContractController extends Controller
         $data['breadcrumb'] = $breadcrumb;
         $data['contract_id'] = null;
         $data['currentDate'] = parent::currentDate();
+        $data['offerTypes'] = $offerTypes;
 
         $id = Input::get('id');
         if ($id != '') {
@@ -1191,7 +1192,7 @@ class HotelContractController extends Controller
                     $query
                         ->where('to', '>=', $start->format('Y-m-d'))
                         ->where('from', '<=', $end->format('Y-m-d'));
-                });
+                })->where('active', '1');
             },
             'offers.rooms',
             'offers.rooms.roomType',
@@ -1199,7 +1200,7 @@ class HotelContractController extends Controller
                 $query
                     ->where('to', '>=', $start->format('Y-m-d'))
                     ->where('from', '<=', $end->format('Y-m-d'));
-            },
+            }
         ])->where('id', $id)->first();
 
         $operateMeasures = $contract->measures;

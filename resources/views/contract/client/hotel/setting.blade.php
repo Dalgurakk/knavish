@@ -84,6 +84,8 @@
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
                                     <i class="fa fa-hotel"></i>Rooms</div>
+                                <div class="tools tools-setting">
+                                    <a href="javascript:;" class="tool-item check-all-rooms" data="check"> <i class="fa fa-check-square"></i></a></div>
                             </div>
                             <div class="portlet-body" style="padding-bottom: 8px;">
                                 <div class="scroller" style="height:200px">

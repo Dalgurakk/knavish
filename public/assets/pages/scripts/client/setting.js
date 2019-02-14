@@ -102,7 +102,7 @@ $(document).ready(function () {
             var from = moment($('input[name=from]').datepicker("getDate")).format('DD.MM.YYYY');
             var to = moment($('input[name=to]').datepicker("getDate")).format('DD.MM.YYYY');
             var roomTypes = [];
-            $('[name="room-selected"]:checked').each(function () {
+            $('.room-selected:checked').each(function () {
                 roomTypes.push($(this).val());
             });
             var rows = [];
@@ -152,6 +152,23 @@ $(document).ready(function () {
         }
     });
 
+    $('.check-all-rooms').on('click', function (e) {
+        e.preventDefault();
+        var option = $(this).attr('data');
+        if (option == 'check') {
+            $(this).attr('data', 'uncheck');
+            $('.room-selected').each(function () {
+                $(this).prop("checked", false);
+            });
+        }
+        else {
+            $(this).attr('data', 'check');
+            $('.room-selected').each(function () {
+                $(this).prop("checked", true);
+            });
+        }
+    });
+
     function fillContract(c) {
         var roomTypes = c.hotel_contract.room_types;
         var measures = c.hotel_contract.measures;
@@ -195,7 +212,7 @@ $(document).ready(function () {
         $.each(roomTypes, function (i, item) {
             var roomType =
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                '<input type="checkbox" name="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].code + ': ' + roomTypes[i].name +
+                '<input type="checkbox" class="room-selected" checked value="' + roomTypes[i].id + '"> ' + roomTypes[i].code + ': ' + roomTypes[i].name +
                 '<span></span>' +
                 '</label>';
             $('.room-types-list').append(roomType);

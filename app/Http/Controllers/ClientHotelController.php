@@ -292,6 +292,20 @@ class ClientHotelController extends Controller
             },
             'settings.clientSetttings' => function($query) use ($clientContract) {
                 $query->where('hotel_contract_client_id', $clientContract->id);
+            },
+            'offers' => function($query) use ($start, $end) {
+                $query->whereHas('ranges', function ($query) use ($start, $end) {
+                    $query
+                        ->where('to', '>=', $start->format('Y-m-d'))
+                        ->where('from', '<=', $end->format('Y-m-d'));
+                })->where('active', '1');
+            },
+            'offers.rooms',
+            'offers.rooms.roomType',
+            'offers.ranges' => function($query) use ($start, $end) {
+                $query
+                    ->where('to', '>=', $start->format('Y-m-d'))
+                    ->where('from', '<=', $end->format('Y-m-d'));
             }
         ])->where('id', $clientContract->hotel_contract_id)->first();
 
@@ -302,6 +316,26 @@ class ClientHotelController extends Controller
         else {
             $validFrom = Carbon::createFromFormat('!Y-m-d', $contract->valid_from);
             $validTo = Carbon::createFromFormat('!Y-m-d', $contract->valid_to);
+
+            $offerDates = array();
+            $offers = $contract->offers;
+            foreach ($offers as $offer) {
+                foreach ($offer->ranges as $range) {
+                    $startRange = Carbon::createFromFormat('!Y-m-d', $range->from);
+                    $endRange = Carbon::createFromFormat('!Y-m-d', $range->to);
+                    if ($start->greaterThanOrEqualTo($startRange)) {
+                        $startRange = $start;
+                    }
+                    if ($end->lessThanOrEqualTo($endRange)) {
+                        $endRange = $end;
+                    }
+                    for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {
+                        foreach ($offer->rooms as $room) {
+                            $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id] = $offer->id;
+                        }
+                    }
+                }
+            }
 
             $settings = array();
             if (isset($contract->priceRates) && count($contract->priceRates) > 0) {
@@ -472,6 +506,7 @@ class ClientHotelController extends Controller
                                             else if ($rows[$v]->code == 'allotment_sold') { $value = $object->allotment_sold; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
                                             else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = ''; if ($object->stop_sale == 1) $showValue = '<span class="stop-sales">SS</span>'; else if ($object->stop_sale == 2) $showValue = '<span class="on-request">RQ</span>'; }
+                                            else if ($rows[$v]->code == 'offer') { $auxDate = $i->format('Y-m-d'); $auxRoomId = $roomTypes[$r]->id; $value = isset($offerDates[$auxDate][$auxRoomId]) ? $offerDates[$auxDate][$auxRoomId] : ''; if ($value != '') { $showValue = '<span class="has-offer">X</span>'; }}
                                         }
                                     }
                                 }

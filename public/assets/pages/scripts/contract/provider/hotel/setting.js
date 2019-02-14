@@ -9,6 +9,7 @@ $(document).ready(function () {
      U = Sunday (That's right, U for Sunday).*/
 
     var needUpdate = false;
+    var needUpdateOffer = false;
     var formSearch = $('#search-accomodation');
     var contract = null;
     var operateMeasures = null;
@@ -38,11 +39,11 @@ $(document).ready(function () {
         orientation: "bottom"
     }).on('changeDate', function(e) {
         var end = $(this).val();
-        var start = $('input[name="setting-from"]').val();
+        var start = $('#modal-setting :input[name="setting-from"]').val();
         var startDate = moment(start, 'DD.MM.YYYY');
         var endDate = moment(end, 'DD.MM.YYYY');
         if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
-            $('input[name="setting-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+            $('#modal-setting :input[name="setting-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
         }
     });
 
@@ -70,11 +71,11 @@ $(document).ready(function () {
         orientation: "bottom"
     }).on('changeDate', function(e) {
         var end = $(this).val();
-        var start = $('input[name="import-from"]').val();
+        var start = $('#modal-import :input[name="import-from"]').val();
         var startDate = moment(start, 'DD.MM.YYYY');
         var endDate = moment(end, 'DD.MM.YYYY');
         if (start != 0 && start != '' && moment(endDate).isBefore(startDate)){
-            $('input[name="import-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+            $('#modal-import :input[name="import-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
         }
     });
 
@@ -356,12 +357,20 @@ $(document).ready(function () {
         var contract = c;
         var chain = contract.hotel.hotel_chain != null ? contract.hotel.hotel_chain.name : '';
         var status = contract.active == 1 ? 'Enabled' : 'Disabled';
+        var arrayComplements = [];
         $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
         $("#search-accomodation :input[name=hotel-chain]").val(chain);
         $("#search-accomodation :input[name=status]").val(status);
         $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
         $('.result-container').html('');
         $('.measures-list').html('');
+        $('.btn-complements').addClass('disabled');
+        $('.complement-link').each(function () {
+            $(this).addClass('hide');
+            var ref = $(this).children('a').attr('href');
+            $(ref).addClass('hide');
+        });
+        var isFirstTab = true;
         $.each(measures, function (i, item) {
             /*var measure =
                 '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
@@ -369,6 +378,15 @@ $(document).ready(function () {
                 '<span></span>' +
                 '</label>';
             $('.measures-list').append(measure);*/
+            if (measures[i].code == 'offer' || measures[i].code == 'supplement' || measures[i].code == 'restriction') {
+                arrayComplements.push(measures[i]);
+                $('.complement-link[data="' + measures[i].code + '"]').removeClass('hide');
+                $('.tab-pane[data="' + measures[i].code + '"]').removeClass('hide');
+                if(isFirstTab) {
+                    $('.complement-link[data="' + measures[i].code + '"]>a').click();
+                    isFirstTab = false;
+                }
+            }
             var measure =
                 '<div class="row">' +
                 '<div class="col-md-5">' +
@@ -391,6 +409,10 @@ $(document).ready(function () {
             $('.measures-list').append(measure);
 
         });
+
+        if (arrayComplements.length > 0) {
+            $('.btn-complements').removeClass('disabled');
+        }
 
         $('#market').empty();
         $.each(markets, function (i, item) {
@@ -448,7 +470,15 @@ $(document).ready(function () {
             '</div>';
         $('.datepicker-to-container').append(html);
 
-        $(".datepicker").datepicker({
+        $('input[name=from]').datepicker({
+            format: "MM yyyy",
+            viewMode: "months",
+            minViewMode: "months",
+            autoclose: true,
+            orientation: "bottom"
+        });
+
+        $('input[name=to]').datepicker({
             format: "MM yyyy",
             viewMode: "months",
             minViewMode: "months",
@@ -1199,7 +1229,21 @@ $(document).ready(function () {
         });
     }
 
+    function countSelectedRecords(table) {
+        var selected = $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).size();
+        return selected;
+    }
+
     function getSelectedRows(table) {
+        var rows = [];
+        $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).each(function() {
+            var data = table.api().row( $(this).parents('tr') ).data();
+            rows.push(data[1]);
+        });
+        return rows;
+    }
+
+    function getSelectedRooms(table) {
         var rows = [];
         var selected = tableShareRoomType.api().rows('.active').data();
         for (var i = 0; i < selected.length; i++) {
@@ -1211,6 +1255,10 @@ $(document).ready(function () {
     jQuery.validator.addMethod("validDate", function(value, element) {
         return this.optional(element) || moment(value,"DD.MM.YYYY",true).isValid();
     }, "Invalid date, use dd.mm.yyyy.");
+
+    $.validator.addMethod('greaterThanZero', function (value, element, param) {
+        return this.optional(element) || parseInt(value) > 0;
+    }, 'At least one element is required.');
 
     var formSetting = $('#form-setting');
     formSetting.validate({
@@ -1292,7 +1340,7 @@ $(document).ready(function () {
                     };
                     ranges.push(obj);
                 });
-                var rooms = getSelectedRows(tableShareRoomType);
+                var rooms = getSelectedRooms(tableShareRoomType);
                 var selected = $('input[name="room-type-id"]').val();
                 rooms.push(parseInt(selected));
                 formData.append('room-types', JSON.stringify(rooms));
@@ -1369,7 +1417,7 @@ $(document).ready(function () {
             '</div>';
         $('.range-container').append(range);
 
-        $('input[name="setting-from-' + time + '"]').datepicker({
+        $('#modal-setting :input[name="setting-from-' + time + '"]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
@@ -1377,15 +1425,15 @@ $(document).ready(function () {
             orientation: "bottom"
         }).on('changeDate', function(e) {
             var start = $(this).val();
-            var end = $('input[name="setting-to-' + time + '"]').val();
+            var end = $('modal-setting :input[name="setting-to-' + time + '"]').val();
             var startDate = moment(start, 'DD.MM.YYYY');
             var endDate = moment(end, 'DD.MM.YYYY');
             if (start != 0 && start != '' && (end == 0 || end == '' || moment(endDate).isBefore(startDate))) {
-                $('input[name="setting-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+                $('modal-setting :input[name="setting-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
             }
         });
 
-        $('input[name="setting-to-' + time + '"]').datepicker({
+        $('#modal-setting :input[name="setting-to-' + time + '"]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
@@ -1393,25 +1441,25 @@ $(document).ready(function () {
             orientation: "bottom"
         }).on('changeDate', function(e) {
             var end = $(this).val();
-            var start = $('input[name="setting-from-' + time + '"]').val();
+            var start = $('#modal-setting :input[name="setting-from-' + time + '"]').val();
             var startDate = moment(start, 'DD.MM.YYYY');
             var endDate = moment(end, 'DD.MM.YYYY');
             if (end != 0 && end != '' && (start == 0 || start == '' || moment(endDate).isBefore(startDate))) {
-                $('input[name="setting-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+                $('#modal-setting :input[name="setting-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
             }
         });
 
         var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
         var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
 
-        $('input[name="setting-from-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
-        $('input[name="setting-from-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
-        $('input[name="setting-to-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
-        $('input[name="setting-to-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+        $('#modal-setting :input[name="setting-from-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-setting :input[name="setting-from-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+        $('#modal-setting :input[name="setting-to-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-setting :input[name="setting-to-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
 
         formSetting.validate();
-        $('input[name="setting-from-' + time + '"]').rules('add', 'required');
-        $('input[name="setting-to-' + time + '"]').rules('add', 'required');
+        $('#modal-setting :input[name="setting-from-' + time + '"]').rules('add', 'required');
+        $('#modal-setting :input[name="setting-to-' + time + '"]').rules('add', 'required');
 
         $('.delete-row[data="' + time + '"]').on('click', function(e) {
             $('.range[data="' + time + '"]').remove();
@@ -1452,7 +1500,7 @@ $(document).ready(function () {
             '</div>';
         $('.import-range-container').append(range);
 
-        $('input[name="import-from-' + time + '"]').datepicker({
+        $('#modal-import :input[name="import-from-' + time + '"]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
@@ -1460,15 +1508,15 @@ $(document).ready(function () {
             orientation: "bottom"
         }).on('changeDate', function(e) {
             var start = $(this).val();
-            var end = $('input[name="import-to-' + time + '"]').val();
+            var end = $('#modal-import :input[name="import-to-' + time + '"]').val();
             var startDate = moment(start, 'DD.MM.YYYY');
             var endDate = moment(end, 'DD.MM.YYYY');
             if (start != 0 && start != '' && (end == 0 || end == '' || moment(endDate).isBefore(startDate))) {
-                $('input[name="import-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+                $('#modal-import :input[name="import-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
             }
         });
 
-        $('input[name="import-to-' + time + '"]').datepicker({
+        $('#modal-import :input[name="import-to-' + time + '"]').datepicker({
             rtl: App.isRTL(),
             orientation: "left",
             autoclose: true,
@@ -1476,25 +1524,25 @@ $(document).ready(function () {
             orientation: "bottom"
         }).on('changeDate', function(e) {
             var end = $(this).val();
-            var start = $('input[name="import-from-' + time + '"]').val();
+            var start = $('#modal-import :input[name="import-from-' + time + '"]').val();
             var startDate = moment(start, 'DD.MM.YYYY');
             var endDate = moment(end, 'DD.MM.YYYY');
             if (end != 0 && end != '' && (start == 0 || start == '' || moment(endDate).isBefore(startDate))) {
-                $('input[name="import-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+                $('#modal-import :input[name="import-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
             }
         });
 
         var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
         var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
 
-        $('input[name="import-from-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
-        $('input[name="import-from-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
-        $('input[name="import-to-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
-        $('input[name="import-to-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+        $('#modal-import :input[name="import-from-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-import :input[name="import-from-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+        $('#modal-import :input[name="import-to-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-import :input[name="import-to-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
 
         formImport.validate();
-        $('input[name="import-from-' + time + '"]').rules('add', 'required');
-        $('input[name="import-to-' + time + '"]').rules('add', 'required');
+        $('#modal-import :input[name="import-from-' + time + '"]').rules('add', 'required');
+        $('#modal-import :input[name="import-to-' + time + '"]').rules('add', 'required');
 
         $('.delete-row[data="' + time + '"]').on('click', function(e) {
             $('.range[data="' + time + '"]').remove();
@@ -1714,6 +1762,1260 @@ $(document).ready(function () {
                         }
                     }
                 }
+            });
+        }
+    });
+
+    $('#modal-add-offer :input[name=valid-from]').datepicker({
+        rtl: App.isRTL(),
+        orientation: "left",
+        autoclose: true,
+        format: 'dd.mm.yyyy',
+        orientation: "bottom"
+    }).on('changeDate', function(e) {
+        var start = $(this).val();
+        var end = $('#modal-add-offer :input[name=valid-to]').val();
+        var startDate = moment(start, 'DD.MM.YYYY');
+        var endDate = moment(end, 'DD.MM.YYYY');
+        if (end == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+            $('#modal-add-offer :input[name=valid-to]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+        }
+    });
+
+    $('#modal-add-offer :input[name=valid-to]').datepicker({
+        rtl: App.isRTL(),
+        orientation: "left",
+        autoclose: true,
+        format: 'dd.mm.yyyy',
+        orientation: "bottom"
+    }).on('changeDate', function(e) {
+        var end = $(this).val();
+        var start = $('#modal-add-offer :input[name="valid-from"]').val();
+        var startDate = moment(start, 'DD.MM.YYYY');
+        var endDate = moment(end, 'DD.MM.YYYY');
+        if (start == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+            $('#modal-add-offer :input[name="valid-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+        }
+    });
+
+    $('#modal-edit-offer :input[name=valid-from]').datepicker({
+        rtl: App.isRTL(),
+        orientation: "left",
+        autoclose: true,
+        format: 'dd.mm.yyyy',
+        orientation: "bottom"
+    }).on('changeDate', function(e) {
+        var start = $(this).val();
+        var end = $('#modal-edit-offer :input[name=valid-to]').val();
+        var startDate = moment(start, 'DD.MM.YYYY');
+        var endDate = moment(end, 'DD.MM.YYYY');
+        if (end == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+            $('#modal-edit-offer :input[name=valid-to]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+        }
+    });
+
+    $('#modal-edit-offer :input[name=valid-to]').datepicker({
+        rtl: App.isRTL(),
+        orientation: "left",
+        autoclose: true,
+        format: 'dd.mm.yyyy',
+        orientation: "bottom"
+    }).on('changeDate', function(e) {
+        var end = $(this).val();
+        var start = $('#modal-edit-offer :input[name="valid-from"]').val();
+        var startDate = moment(start, 'DD.MM.YYYY');
+        var endDate = moment(end, 'DD.MM.YYYY');
+        if (start == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+            $('#modal-edit-offer :input[name="valid-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+        }
+    });
+
+    $('#modal-add-offer :input[name=offer-type]').change(function () {
+        $('#modal-add-offer .offer-input-container').html('');
+        var optionSelected = $('#modal-add-offer :input[name=offer-type] option:selected').attr('data-code');
+        if (optionSelected == 'early_booking') {
+            var html =
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Non Refundable' +
+                '<input type="checkbox" value="1" name="non-refundable"/>' +
+                '<span></span>' +
+                '</label>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Apply with other offers' +
+                '<input type="checkbox" value="1" name="apply-with-other-offers"/>' +
+                '<span></span>' +
+                '</label>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Booking Date From</label>' +
+                '<input type="text" class="form-control" placeholder="Booking Date From" name="booking-date-from">' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Booking Date To</label>' +
+                '<input type="text" class="form-control" placeholder="Booking Date To" name="booking-date-to">' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Payment Date</label>' +
+                '<input type="text" class="form-control" placeholder="Payment Date" name="payment-date">' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Percentage Due</label>' +
+                '<input type="text" class="form-control" placeholder="Percentage Due" name="percentage-due">' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Discount</label>' +
+                '<input type="text" class="form-control" placeholder="Discount" name="discount">' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Discount Type</label>' +
+                '<select class="form-control" name="discount-type">' +
+                '<option value="1">Percent</option>' +
+                '<option value="2">Fee</option>' +
+                '</select>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Minimum Stay</label>' +
+                '<input type="text" class="form-control" placeholder="Minimum Stay" name="minimum-stay">' +
+                '</div>' +
+                '</div>' +
+                '</div>'
+            ;
+            $('#modal-add-offer .offer-input-container').append(html);
+
+            $('#modal-add-offer :input[name=booking-date-from]').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd.mm.yyyy',
+                orientation: "bottom"
+            }).on('changeDate', function(e) {
+                var start = $(this).val();
+                var end = $('#modal-add-offer :input[name=booking-date-to]').val();
+                var startDate = moment(start, 'DD.MM.YYYY');
+                var endDate = moment(end, 'DD.MM.YYYY');
+                if (end == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+                    $('#modal-add-offer :input[name=booking-date-to]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+                }
+            });
+
+            $('#modal-add-offer :input[name=booking-date-to]').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd.mm.yyyy',
+                orientation: "bottom"
+            }).on('changeDate', function(e) {
+                var end = $(this).val();
+                var start = $('#modal-add-offer :input[name="booking-date-from"]').val();
+                var startDate = moment(start, 'DD.MM.YYYY');
+                var endDate = moment(end, 'DD.MM.YYYY');
+                if (start == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+                    $('#modal-add-offer :input[name="booking-date-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+                }
+            });
+
+            $('#modal-add-offer :input[name=payment-date]').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd.mm.yyyy',
+                orientation: "bottom"
+            });
+        }
+    });
+
+    $('#modal-edit-offer :input[name=offer-type]').change(function () {
+        $('#modal-edit-offer .offer-input-container').html('');
+        var optionSelected = $('#modal-edit-offer :input[name=offer-type] option:selected').attr('data-code');
+        if (optionSelected == 'early_booking') {
+            var html =
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Non Refundable' +
+                '<input type="checkbox" value="1" name="non-refundable"/>' +
+                '<span></span>' +
+                '</label>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Apply with other offers' +
+                '<input type="checkbox" value="1" name="apply-with-other-offers"/>' +
+                '<span></span>' +
+                '</label>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Booking Date From</label>' +
+                '<input type="text" class="form-control" placeholder="Booking Date From" name="booking-date-from">' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Booking Date To</label>' +
+                '<input type="text" class="form-control" placeholder="Booking Date To" name="booking-date-to">' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Payment Date</label>' +
+                '<input type="text" class="form-control" placeholder="Payment Date" name="payment-date">' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Percentage Due</label>' +
+                '<input type="text" class="form-control" placeholder="Percentage Due" name="percentage-due">' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Discount</label>' +
+                '<input type="text" class="form-control" placeholder="Discount" name="discount">' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Discount Type</label>' +
+                '<select class="form-control" name="discount-type">' +
+                '<option value="1">Percent</option>' +
+                '<option value="2">Fee</option>' +
+                '</select>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Minimum Stay</label>' +
+                '<input type="text" class="form-control" placeholder="Minimum Stay" name="minimum-stay">' +
+                '</div>' +
+                '</div>' +
+                '</div>'
+            ;
+            $('#modal-edit-offer .offer-input-container').append(html);
+
+            $('#modal-edit-offer :input[name=booking-date-from]').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd.mm.yyyy',
+                orientation: "bottom"
+            }).on('changeDate', function(e) {
+                var start = $(this).val();
+                var end = $('#modal-edit-offer :input[name=booking-date-to]').val();
+                var startDate = moment(start, 'DD.MM.YYYY');
+                var endDate = moment(end, 'DD.MM.YYYY');
+                if (end == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+                    $('#modal-edit-offer :input[name=booking-date-to]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+                }
+            });
+
+            $('#modal-edit-offer :input[name=booking-date-to]').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd.mm.yyyy',
+                orientation: "bottom"
+            }).on('changeDate', function(e) {
+                var end = $(this).val();
+                var start = $('#modal-edit-offer :input[name="booking-date-from"]').val();
+                var startDate = moment(start, 'DD.MM.YYYY');
+                var endDate = moment(end, 'DD.MM.YYYY');
+                if (start == '' || (start != 0 && start != '' && moment(endDate).isBefore(startDate))){
+                    $('#modal-edit-offer :input[name="booking-date-from"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+                }
+            });
+
+            $('#modal-edit-offer :input[name=payment-date]').datepicker({
+                rtl: App.isRTL(),
+                orientation: "left",
+                autoclose: true,
+                format: 'dd.mm.yyyy',
+                orientation: "bottom"
+            });
+        }
+    });
+
+    var formAddOffer = $('#form-add-offer');
+    formAddOffer.validate({
+        errorElement: 'span',
+        errorClass: 'help-block help-block-error',
+        focusInvalid: false,
+        ignore: "",
+        rules: {
+            "valid-from" : {
+                required: true,
+                validDate: true
+            },
+            "valid-to" : {
+                required: true,
+                validDate: true
+            },
+            "count-offer-room-type": {
+                greaterThanZero: true
+            },
+            "name": {
+                required: true
+            },
+            "offer-type": {
+                required: true
+            },
+            "priority": {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
+                if (element.parents('.mt-radio-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-list')[0]);
+                }
+                if (element.parents('.mt-checkbox-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-list')[0]);
+                }
+            } else if (element.parents('.mt-radio-inline').size() > 0 || element.parents('.mt-checkbox-inline').size() > 0) {
+                if (element.parents('.mt-radio-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-inline')[0]);
+                }
+                if (element.parents('.mt-checkbox-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-inline')[0]);
+                }
+            } else if (element.parent(".input-group").size() > 0) {
+                error.insertAfter(element.parent(".input-group"));
+            } else if (element.attr("data-error-container")) {
+                error.appendTo(element.attr("data-error-container"));
+            }else if (element.hasClass("hotel-category")) {
+                error.insertAfter(element.next());
+            }else if (element.hasClass("hotel-type")) {
+                error.insertAfter(element.next().next());
+                $('#modal-add-offer :input[name=search-code]').css('border', '1px solid #c2cad8');
+                $('#modal-add-offer :input[name=search-name]').css('border', '1px solid #c2cad8');
+            }else if (element.hasClass("select-hotel")) {
+                error.insertAfter(element.next());
+            }else if (element.hasClass('market-rate-price-type')){
+                error.appendTo('.market-rate-container-error');
+                $('.market-rate-container-error > span').css('color', '#e73d4a');
+            }else {
+                error.insertAfter(element);
+            }
+        },
+        invalidHandler: function (event, validator) {
+            toastr['error']("Please check the entry fields.", "Error");
+        },
+        highlight: function (element) {
+            $(element)
+                .closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element)
+                .closest('.form-group').removeClass('has-error');
+        },
+        success: function (label) {
+            label
+                .closest('.form-group').removeClass('has-error');
+        },
+        submitHandler: function (form) {
+            //alert('send');
+            var option = $(form).find("button[type=submit]:focus").attr('data');
+            var formData = new FormData(formAddOffer[0]);
+            var contractId = contract.id;
+            var ranges = [];
+            $('#modal-add-offer .range').each(function () {
+                var obj = {
+                    from : $(this).find('input[name^="valid-from"]').val(),
+                    to : $(this).find('input[name^="valid-to"]').val()
+                };
+                ranges.push(obj);
+            });
+            var rooms = getSelectedRows(tableOfferRoomType);
+            formData.append('room-types', JSON.stringify(rooms));
+            formData.append('ranges', JSON.stringify(ranges));
+            formData.append('contractId', contractId);
+
+            $.ajax({
+                "url": routeSaveOffer,
+                "type": "POST",
+                "data": formData,
+                "contentType": false,
+                "processData": false,
+                "beforeSend": function() {
+                    App.showMask(true, formAddOffer);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formAddOffer);
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdateOffer = true;
+                            if (searched) {
+                                needUpdate = true;
+                            }
+                            if (option == 'accept') {
+                                $(form).find("button.cancel-form-offer").click();
+                                formAddOffer[0].reset();
+                            }
+                        }
+                        else {
+                            toastr['error'](response.message, "Error");
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    var formEditOffer = $('#form-edit-offer');
+    formEditOffer.validate({
+        errorElement: 'span',
+        errorClass: 'help-block help-block-error',
+        focusInvalid: false,
+        ignore: "",
+        rules: {
+            "valid-from" : {
+                required: true,
+                validDate: true
+            },
+            "valid-to" : {
+                required: true,
+                validDate: true
+            },
+            "count-offer-room-type": {
+                greaterThanZero: true
+            },
+            "name": {
+                required: true
+            },
+            "offer-type": {
+                required: true
+            },
+            "priority": {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
+                if (element.parents('.mt-radio-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-list')[0]);
+                }
+                if (element.parents('.mt-checkbox-list').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-list')[0]);
+                }
+            } else if (element.parents('.mt-radio-inline').size() > 0 || element.parents('.mt-checkbox-inline').size() > 0) {
+                if (element.parents('.mt-radio-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-radio-inline')[0]);
+                }
+                if (element.parents('.mt-checkbox-inline').size() > 0) {
+                    error.appendTo(element.parents('.mt-checkbox-inline')[0]);
+                }
+            } else if (element.parent(".input-group").size() > 0) {
+                error.insertAfter(element.parent(".input-group"));
+            } else if (element.attr("data-error-container")) {
+                error.appendTo(element.attr("data-error-container"));
+            }else if (element.hasClass("hotel-category")) {
+                error.insertAfter(element.next());
+            }else if (element.hasClass("hotel-type")) {
+                error.insertAfter(element.next().next());
+                $('#modal-edit-offer :input[name=search-code]').css('border', '1px solid #c2cad8');
+                $('#modal-edit-offer :input[name=search-name]').css('border', '1px solid #c2cad8');
+            }else if (element.hasClass("select-hotel")) {
+                error.insertAfter(element.next());
+            }else if (element.hasClass('market-rate-price-type')){
+                error.appendTo('.market-rate-container-error');
+                $('.market-rate-container-error > span').css('color', '#e73d4a');
+            }else {
+                error.insertAfter(element);
+            }
+        },
+        invalidHandler: function (event, validator) {
+            toastr['error']("Please check the entry fields.", "Error");
+        },
+        highlight: function (element) {
+            $(element)
+                .closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function (element) {
+            $(element)
+                .closest('.form-group').removeClass('has-error');
+        },
+        success: function (label) {
+            label
+                .closest('.form-group').removeClass('has-error');
+        },
+        submitHandler: function (form) {
+            var option = $(form).find("button[type=submit]:focus").attr('data');
+            var formData = new FormData(formEditOffer[0]);
+            var id = $('#modal-edit-offer :input[name=id]').val();
+            var ranges = [];
+            $('#modal-edit-offer .range').each(function () {
+                var obj = {
+                    from : $(this).find('input[name^="valid-from"]').val(),
+                    to : $(this).find('input[name^="valid-to"]').val()
+                };
+                ranges.push(obj);
+            });
+            var rooms = getSelectedRows(tableEditOfferRoomType);
+            formData.append('room-types', JSON.stringify(rooms));
+            formData.append('ranges', JSON.stringify(ranges));
+            formData.append('id', id);
+
+            $.ajax({
+                "url": routeUpdateOffer,
+                "type": "POST",
+                "data": formData,
+                "contentType": false,
+                "processData": false,
+                "beforeSend": function() {
+                    App.showMask(true, formEditOffer);
+                },
+                "complete": function(xhr, textStatus) {
+                    App.showMask(false, formEditOffer);
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            needUpdateOffer = true;
+                            if (searched) {
+                                needUpdate = true;
+                            }
+                            if (option == 'accept') {
+                                $(form).find("button.cancel-form-offer").click();
+                                formEditOffer[0].reset();
+                            }
+                        }
+                        else {
+                            toastr['error'](response.message, "Error");
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    $('#modal-add-offer .add-row-offer').on('click', function(e) {
+        e.preventDefault();
+        var time = $.now();
+        var range =
+            '<div class="range range-optional" data="' + time + '">' +
+            '<div class="col-md-5 col-sm-5 col-xs-5">' +
+            '<div class="form-group">' +
+            '<label>From</label>' +
+            '<div class="input-icon left">' +
+            '<i class="fa fa-calendar"></i>' +
+            '<input type="text" class="form-control date-picker" name="valid-from-' + time + '">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-5 col-sm-5 col-xs-5">' +
+            '<div class="form-group">' +
+            '<label>To</label>' +
+            '<div class="input-icon left">' +
+            '<i class="fa fa-calendar"></i>' +
+            '<input type="text" class="form-control date-picker" name="valid-to-' + time + '">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-2 col-sm-2 col-xs-2">' +
+            '<div class="form-group">' +
+            '<a class="btn red btn-outline delete-row delete-row-offer" href="#" data="' + time + '">' +
+            '<i class="fa fa-trash"></i>' +
+            '</a>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        $('#modal-add-offer .range-container').append(range);
+
+        $('#modal-add-offer :input[name="valid-from-' + time + '"]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        }).on('changeDate', function(e) {
+            var start = $(this).val();
+            var end = $('#modal-add-offer :input[name="valid-to-' + time + '"]').val();
+            var startDate = moment(start, 'DD.MM.YYYY');
+            var endDate = moment(end, 'DD.MM.YYYY');
+            if (start != 0 && start != '' && (end == 0 || end == '' || moment(endDate).isBefore(startDate))) {
+                $('#modal-add-offer :input[name="valid-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+            }
+        });
+
+        $('#modal-add-offer :input[name="valid-to-' + time + '"]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        }).on('changeDate', function(e) {
+            var end = $(this).val();
+            var start = $('#modal-add-offer :input[name="valid-from-' + time + '"]').val();
+            var startDate = moment(start, 'DD.MM.YYYY');
+            var endDate = moment(end, 'DD.MM.YYYY');
+            if (end != 0 && end != '' && (start == 0 || start == '' || moment(endDate).isBefore(startDate))) {
+                $('#modal-add-offer :input[name="valid-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+            }
+        });
+
+        var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
+        var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
+
+        $('#modal-add-offer :input[name="valid-from-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-add-offer :input[name="valid-from-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+        $('#modal-add-offer :input[name="valid-to-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-add-offer :input[name="valid-to-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+
+        formAddOffer.validate();
+        $('#modal-add-offer :input[name="valid-from-' + time + '"]').rules('add', 'required');
+        $('#modal-add-offer :input[name="valid-to-' + time + '"]').rules('add', 'required');
+
+        $('#modal-add-offer .delete-row-offer[data="' + time + '"]').on('click', function(e) {
+            $('#modal-add-offer .range[data="' + time + '"]').remove();
+            e.preventDefault();
+        });
+    });
+
+    $('#modal-edit-offer .add-row-offer').on('click', function(e) {
+        e.preventDefault();
+        var time = $.now();
+        var range =
+            '<div class="range range-optional" data="' + time + '">' +
+            '<div class="col-md-5 col-sm-5 col-xs-5">' +
+            '<div class="form-group">' +
+            '<label>From</label>' +
+            '<div class="input-icon left">' +
+            '<i class="fa fa-calendar"></i>' +
+            '<input type="text" class="form-control date-picker" name="valid-from-' + time + '">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-5 col-sm-5 col-xs-5">' +
+            '<div class="form-group">' +
+            '<label>To</label>' +
+            '<div class="input-icon left">' +
+            '<i class="fa fa-calendar"></i>' +
+            '<input type="text" class="form-control date-picker" name="valid-to-' + time + '">' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col-md-2 col-sm-2 col-xs-2">' +
+            '<div class="form-group">' +
+            '<a class="btn red btn-outline delete-row delete-row-offer" href="#" data="' + time + '">' +
+            '<i class="fa fa-trash"></i>' +
+            '</a>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+        $('#modal-edit-offer .range-container').append(range);
+
+        $('#modal-edit-offer :input[name="valid-from-' + time + '"]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        }).on('changeDate', function(e) {
+            var start = $(this).val();
+            var end = $('#modal-edit-offer :input[name="valid-to-' + time + '"]').val();
+            var startDate = moment(start, 'DD.MM.YYYY');
+            var endDate = moment(end, 'DD.MM.YYYY');
+            if (start != 0 && start != '' && (end == 0 || end == '' || moment(endDate).isBefore(startDate))) {
+                $('#modal-edit-offer :input[name="valid-to-' + time + '"]').datepicker( "setDate" , new Date(moment(start, 'DD.MM.YYYY')));
+            }
+        });
+
+        $('#modal-edit-offer :input[name="valid-to-' + time + '"]').datepicker({
+            rtl: App.isRTL(),
+            orientation: "left",
+            autoclose: true,
+            format: 'dd.mm.yyyy',
+            orientation: "bottom"
+        }).on('changeDate', function(e) {
+            var end = $(this).val();
+            var start = $('#modal-edit-offer :input[name="valid-from-' + time + '"]').val();
+            var startDate = moment(start, 'DD.MM.YYYY');
+            var endDate = moment(end, 'DD.MM.YYYY');
+            if (end != 0 && end != '' && (start == 0 || start == '' || moment(endDate).isBefore(startDate))) {
+                $('#modal-edit-offer :input[name="valid-from-' + time + '"]').datepicker( "setDate" , new Date(moment(end, 'DD.MM.YYYY')));
+            }
+        });
+
+        var startDate = moment(contract.valid_from, 'YYYY-MM-DD');
+        var endDate = moment(contract.valid_to, 'YYYY-MM-DD');
+
+        $('#modal-edit-offer :input[name="valid-from-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-edit-offer :input[name="valid-from-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+        $('#modal-edit-offer :input[name="valid-to-' + time + '"]').datepicker( "setStartDate" , new Date(startDate));
+        $('#modal-edit-offer :input[name="valid-to-' + time + '"]').datepicker( "setEndDate" , new Date(endDate));
+
+        formEditOffer.validate();
+        $('#modal-edit-offer :input[name="valid-from-' + time + '"]').rules('add', 'required');
+        $('#modal-edit-offer :input[name="valid-to-' + time + '"]').rules('add', 'required');
+
+        $('#modal-edit-offer .delete-row-offer[data="' + time + '"]').on('click', function(e) {
+            $('#modal-edit-offer .range[data="' + time + '"]').remove();
+            e.preventDefault();
+        });
+    });
+
+    $('.reload-offer').on('click', function (e) {
+        tableOffer.draw();
+    });
+
+    $('#table-offer tbody').on( 'click', '.dt-edit', function (e) {
+        $('#modal-edit-offer .delete-row-offer').each(function () {
+            $(this).click();
+        });
+        var data = tableOffer.row( $(this).parents('tr') ).data();
+        var offer = data['object'];
+        var roomTypes = contract.room_types;
+        var rooms = offer.rooms;
+        var ranges = offer.ranges;
+        var offerType = offer.offer_type;
+
+        for (var i = 0; i < ranges.length; i++) {
+            if (i == 0) {
+                $('#modal-edit-offer :input[name=valid-from]').datepicker("setDate" , new Date(moment(ranges[i].from, 'YYYY-MM-DD')));
+                $('#modal-edit-offer :input[name=valid-to]').datepicker("setDate" , new Date(moment(ranges[i].to, 'YYYY-MM-DD')));
+            }
+            else {
+                $('#modal-edit-offer .add-row-offer').click();
+                $('#modal-edit-offer :input[name^=valid-from-]').last().datepicker("setDate" , new Date(moment(ranges[i].from, 'YYYY-MM-DD')));
+                $('#modal-edit-offer :input[name^=valid-to-]').last().datepicker("setDate" , new Date(moment(ranges[i].to, 'YYYY-MM-DD')));
+            }
+        }
+
+        tableEditOfferRoomType.api().clear();
+        for (var i = 0; i < roomTypes.length; i++) {
+            tableEditOfferRoomType.api().row.add([
+                '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"> ' +
+                '<input type="checkbox" class="checkboxes" value="1" />' +
+                '<span></span>' +
+                '</label>',
+                roomTypes[i].id,
+                roomTypes[i].code,
+                roomTypes[i].name
+            ]).draw( false );
+        }
+        $('#modal-edit-offer :input[name=count-offer-room-type]').val(rooms.length);
+        tableEditOfferRoomType.api().columns.adjust().draw();
+
+        for (var i = 0; i < rooms.length; i++) {
+            $('tbody > tr > td:nth-child(1) input[type="checkbox"]', tableEditOfferRoomType).each(function() {
+                var data = tableEditOfferRoomType.api().row( $(this).parents('tr') ).data();
+                if (data[1] == rooms[i].hotel_room_type_id) {
+                    $(this).prop('checked', 'checked');
+                }
+            });
+        }
+
+        $('#modal-edit-offer :input[name=id]').val(offer.id);
+        $('#modal-edit-offer :input[name=name]').val(offer.name);
+        $('#modal-edit-offer :input[name=priority]').val(offer.priority);
+        if (offer.active == 1) {
+            $('#modal-edit-offer :input[name=active]').prop('checked', 'checked');
+            $('#modal-edit-offer :input[name=active]').val(1);
+        }
+        else {
+            $('#modal-edit-offer :input[name=active]').prop('checked', '');
+            $('#modal-edit-offer :input[name=active]').val(1);
+        }
+        $('#modal-edit-offer :input[name=offer-type]').val(offerType.id).change();
+        var optionSelected = $('#modal-edit-offer :input[name=offer-type] option:selected').attr('data-code');
+
+        if (optionSelected == 'early_booking') {
+            if (offer.apply_with_other_offers == 1) {
+                $('#modal-edit-offer :input[name="apply-with-other-offers"]').prop('checked', 'checked');
+                $('#modal-edit-offer :input[name="apply-with-other-offers"]').val(1);
+            }
+            else {
+                $('#modal-edit-offer :input[name="apply-with-other-offers"]').prop('checked', '');
+                $('#modal-edit-offer :input[name="apply-with-other-offers"]').val(1);
+            }
+            if (offer.non_refundable == 1) {
+                $('#modal-edit-offer :input[name="non-refundable"]').prop('checked', 'checked');
+                $('#modal-edit-offer :input[name="non-refundable"]').val(1);
+            }
+            else {
+                $('#modal-edit-offer :input[name="non-refundable"]').prop('checked', '');
+                $('#modal-edit-offer :input[name="non-refundable"]').val(1);
+            }
+            $('#modal-edit-offer :input[name=booking-date-from]').datepicker("update" , new Date(moment(offer.booking_date_from, 'YYYY-MM-DD')));
+            $('#modal-edit-offer :input[name=booking-date-to]').datepicker("update" , new Date(moment(offer.booking_date_to, 'YYYY-MM-DD')));
+            $('#modal-edit-offer :input[name=payment-date]').datepicker("setDate" , new Date(moment(offer.payment_date, 'YYYY-MM-DD')));
+            $('#modal-edit-offer :input[name=percentage-due]').val(offer.percentage_due);
+            $('#modal-edit-offer :input[name=discount]').val(offer.discount);
+            $('#modal-edit-offer :input[name=discount-type]').val(offer.discount_type);
+            $('#modal-edit-offer :input[name=minimum-stay]').val(offer.minimum_stay);
+        }
+    });
+
+    $('#table-offer tbody').on( 'click', '.dt-view', function (e) {
+        var data = tableOffer.row( $(this).parents('tr') ).data();
+        var offer = data['object'];
+        var rooms = offer.rooms;
+        var ranges = offer.ranges;
+        var offerType = offer.offer_type;
+
+        $('#modal-info-offer .range-container').html('');
+        for (var i = 0; i < ranges.length; i++) {
+            var html =
+                '<div class="range">' +
+                '<div class="col-md-6 col-sm-6 col-xs-6">' +
+                '<div class="form-group">' +
+                '<label>From</label>' +
+                '<div class="input-icon left">' +
+                '<i class="fa fa-calendar"></i>' +
+                '<input type="text" class="form-control date-picker" name="valid-from" value="' + moment(ranges[i].from, 'YYYY-MM-DD').format('DD.MM.YYYY') + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6 col-sm-6 col-xs-6">' +
+                '<div class="form-group">' +
+                '<label>To</label>' +
+                '<div class="input-icon left">' +
+                '<i class="fa fa-calendar"></i>' +
+                '<input type="text" class="form-control date-picker" name="valid-to" value="' + moment(ranges[i].to, 'YYYY-MM-DD').format('DD.MM.YYYY') + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+            $('#modal-info-offer .range-container').append(html);
+        }
+
+        tableInfoOfferRoomType.api().clear();
+        for (var i = 0; i < rooms.length; i++) {
+            tableInfoOfferRoomType.api().row.add([
+                rooms[i].room_type.code,
+                rooms[i].room_type.name
+            ]).draw( false );
+        }
+        tableInfoOfferRoomType.api().columns.adjust().draw();
+
+        $('#modal-info-offer :input[name=name]').val(offer.name);
+        $('#modal-info-offer :input[name=priority]').val(offer.priority);
+        if (offer.active == 1) {
+            $('#modal-info-offer :input[name=active]').prop('checked', 'checked');
+            $('#modal-info-offer :input[name=active]').val(1);
+        }
+        else {
+            $('#modal-info-offer :input[name=active]').prop('checked', '');
+            $('#modal-info-offer :input[name=active]').val(0);
+        }
+        $('#modal-info-offer :input[name=offer-type]').val(offerType.name);
+
+        $('#modal-info-offer .offer-input-container').html('');
+        if (offerType.code == 'early_booking') {
+            var bookingDateFrom = (offer.booking_date_from != '' && offer.booking_date_from != null) ? moment(offer.booking_date_from, 'YYYY-MM-DD').format('DD.MM.YYYY') : '';
+            var bookingDateTo = (offer.booking_date_to != '' && offer.booking_date_to != null) ? moment(offer.booking_date_to, 'YYYY-MM-DD').format('DD.MM.YYYY') : '';
+            var paymentDate = (offer.payment_date != '' && offer.payment_date != null) ? moment(offer.payment_date, 'YYYY-MM-DD').format('DD.MM.YYYY') : '';
+            var percentageDue = (offer.percentage_due != '' && offer.percentage_due != null) ? offer.percentage_due : '';
+            var discount = (offer.discount != '' && offer.discount != null) ? offer.discount : '';
+            var discountType = offer.discount_type == 1 ? 'Percent' : 'Fee';
+            var minimumStay = (offer.minimum_stay != '' && offer.minimum_stay != null) ? offer.minimum_stay : '';
+            var html =
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Non Refundable' +
+                '<input type="checkbox" value="1" name="non-refundable" onclick="return false;" ' + (offer.non_refundable == 1 ? 'checked' : '') + '/>' +
+                '<span></span>' +
+                '</label>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Apply with other offers' +
+                '<input type="checkbox" value="1" name="apply-with-other-offers" onclick="return false;" ' + (offer.apply_with_other_offers == 1 ? 'checked' : '')  + '/>' +
+                '<span></span>' +
+                '</label>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Booking Date From</label>' +
+                '<input type="text" class="form-control" name="booking-date-from" value="' + bookingDateFrom + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Booking Date To</label>' +
+                '<input type="text" class="form-control" name="booking-date-to" value="' + bookingDateTo + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Payment Date</label>' +
+                '<input type="text" class="form-control" name="payment-date" value="' + paymentDate + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Percentage Due</label>' +
+                '<input type="text" class="form-control" name="percentage-due" value="' + percentageDue + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Discount</label>' +
+                '<input type="text" class="form-control" name="discount" value="' + discount + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Discount Type</label>' +
+                '<input type="text" class="form-control" name="discount-type" value="' + discountType + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-6">' +
+                '<div class="form-group">' +
+                '<label>Minimum Stay</label>' +
+                '<input type="text" class="form-control" name="minimum-stay" value="' + minimumStay + '" readonly>' +
+                '</div>' +
+                '</div>' +
+                '</div>'
+            ;
+            $('#modal-info-offer .offer-input-container').append(html);
+        }
+    });
+
+    var tableOfferRoomType = $('#modal-add-offer .table-room-type').dataTable({
+        "sDom": "tip",
+        "autoWidth": false,
+        "columnDefs": [
+            { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
+            { 'visible': false, 'targets': [1] }
+        ],
+        "order": [[ 3, "asc" ]],
+        "lengthMenu": [[-1], ["All"]],
+        "pageLength": 10
+    });
+
+    tableOfferRoomType.find('.group-checkable').change(function () {
+        var set = jQuery(this).attr("data-set");
+        var checked = jQuery(this).is(":checked");
+        jQuery(set).each(function () {
+            if (checked) {
+                $(this).prop("checked", true);
+                $(this).parents('tr').addClass("active");
+            } else {
+                $(this).prop("checked", false);
+                $(this).parents('tr').removeClass("active");
+            }
+        });
+        $('#modal-add-offer :input[name=count-offer-room-type]').val(countSelectedRecords(tableOfferRoomType));
+    });
+
+    tableOfferRoomType.on('change', 'tbody tr .checkboxes', function () {
+        $(this).parents('tr').toggleClass("active");
+        $('#modal-add-offer :input[name=count-offer-room-type]').val(countSelectedRecords(tableOfferRoomType));
+    });
+
+    $('#modal-add-offer :input[name=search-code]').on('keyup', function() {
+        tableOfferRoomType.api()
+            .columns(2).search($('#modal-add-offer :input[name="search-code"]').val())
+            .columns(3).search($('#modal-add-offer :input[name="search-name"]').val())
+            .draw();
+    });
+
+    $('#modal-add-offer :input[name=search-name]').on('keyup', function() {
+        tableOfferRoomType.api()
+            .columns(2).search($('#modal-add-offer :input[name="search-code"]').val())
+            .columns(3).search($('#modal-add-offer :input[name="search-name"]').val())
+            .draw();
+    });
+
+    var tableInfoOfferRoomType = $('#modal-info-offer .table-room-type').dataTable({
+        "sDom": "tip",
+        "autoWidth": false,
+        "order": [[ 1, "asc" ]],
+        "lengthMenu": [[-1], ["All"]],
+        "pageLength": 10
+    });
+
+    var tableEditOfferRoomType = $('#modal-edit-offer .table-room-type').dataTable({
+        "sDom": "tip",
+        "autoWidth": false,
+        "columnDefs": [
+            { 'orderable': false, "className": "dt-center", 'targets': [0], "width": "20%" },
+            { 'visible': false, 'targets': [1] }
+        ],
+        "order": [[ 3, "asc" ]],
+        "lengthMenu": [[-1], ["All"]],
+        "pageLength": 10
+    });
+
+    tableEditOfferRoomType.find('.group-checkable').change(function () {
+        var set = jQuery(this).attr("data-set");
+        var checked = jQuery(this).is(":checked");
+        jQuery(set).each(function () {
+            if (checked) {
+                $(this).prop("checked", true);
+                $(this).parents('tr').addClass("active");
+            } else {
+                $(this).prop("checked", false);
+                $(this).parents('tr').removeClass("active");
+            }
+        });
+        $('#modal-edit-offer :input[name=count-offer-room-type]').val(countSelectedRecords(tableEditOfferRoomType));
+    });
+
+    tableEditOfferRoomType.on('change', 'tbody tr .checkboxes', function () {
+        $(this).parents('tr').toggleClass("active");
+        $('#modal-edit-offer :input[name=count-offer-room-type]').val(countSelectedRecords(tableEditOfferRoomType));
+    });
+
+    $('#modal-edit-offer :input[name=search-code]').on('keyup', function() {
+        tableEditOfferRoomType.api()
+            .columns(2).search($('#modal-edit-offer :input[name="search-code"]').val())
+            .columns(3).search($('#modal-edit-offer :input[name="search-name"]').val())
+            .draw();
+    });
+
+    $('#modal-edit-offer :input[name=search-name]').on('keyup', function() {
+        tableEditOfferRoomType.api()
+            .columns(2).search($('#modal-edit-offer :input[name="search-code"]').val())
+            .columns(3).search($('#modal-edit-offer :input[name="search-name"]').val())
+            .draw();
+    });
+
+    $('.add-offer').on('click', function (e) {
+        formAddOffer.validate().resetForm();
+        formAddOffer[0].reset();
+        $('#modal-add-offer .range-optional').each(function () {
+            $(this).remove();
+        });
+        /*var dateFrom = contract.valid_from;
+        var dateTo = contract.valid_to;
+        $('#modal-add-offer :input[name=valid-from]').datepicker("setDate" , new Date(moment(dateFrom, 'YYYY-MM-DD')));
+        $('#modal-add-offer :input[name=valid-to]').datepicker("setDate" , new Date(moment(dateTo, 'YYYY-MM-DD')));*/
+        var roomTypes = contract.room_types;
+        tableOfferRoomType.api().clear();
+        for (var i = 0; i < roomTypes.length; i++) {
+            tableOfferRoomType.api().row.add([
+                '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">' +
+                '<input type="checkbox" class="checkboxes" value="1" />' +
+                '<span></span>' +
+                '</label>',
+                roomTypes[i].id,
+                roomTypes[i].code,
+                roomTypes[i].name
+            ]).draw( false );
+        }
+        $('#modal-complements :input[name=count-room-type]').val(roomTypes.length);
+        tableOfferRoomType.api().columns.adjust().draw();
+    });
+
+    var requestDeleteOffer = false;
+    $('#table-offer tbody').on( 'click', '.dt-delete', function (e) {
+        if (!requestDeleteOffer) {
+            var data = tableOffer.row( $(this).parents('tr') ).data();
+            $(this).confirmation('show');
+            $(this).on('confirmed.bs.confirmation', function () {
+                requestDeleteOffer = true;
+                $.ajax({
+                    url: routeDeleteOffer,
+                    "type": "POST",
+                    "data":  {
+                        id: data['id']
+                    },
+                    "beforeSend": function() {
+                        App.showMask(true, $('#table-offer'));
+                    },
+                    "complete": function(xhr, textStatus) {
+                        requestDeleteOffer = false;
+                        App.showMask(false, $('#table-offer'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                        }
+                        else {
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                toastr['success'](response.message, "Success");
+                                tableOffer.draw();
+                                if (searched) {
+                                    needUpdate = true;
+                                }
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
+                        }
+                    }
+                });
+            });
+        }
+        e.preventDefault();
+    });
+
+    $('.cancel-form-offer').on('click', function(e) {
+        if(needUpdateOffer) {
+            tableOffer.draw();
+            needUpdateOffer = false;
+        }
+    });
+
+    $.fn.dataTable.ext.errMode = 'none';
+    var tableOffer = $('#table-offer').on('error.dt', function(e, settings, techNote, message) {
+
+    }).on( 'processing.dt', function ( e, settings, processing ) {
+        App.showMask(processing, $(this));
+        App.reloadToolTips();
+    }).on('init.dt', function() {
+
+    }).DataTable({
+        "processing": true,
+        "serverSide": true,
+        "sDom": "tip",
+        "iDisplayLength" : 10,
+        "ajax": {
+            "url": routeReadOffer,
+            "type": "POST",
+            "data": function ( d ) {
+                d.contractId = contract == null ? 0 : contract.id;
+                return d;
+            },
+            "complete": function(xhr, textStatus) {
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
+                    toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                }
+                $('.br-readonly').on('click', function(e) {
+                    e.preventDefault();
+                });
+            }
+        },
+        "order": [[ 1, "asc" ]],
+        columns: [
+            { data: 'id', name: 'id', visible: false },
+            { data: 'name', name: 'name', width: '35%' },
+            { data: 'type', name: 'type', orderable: false, width: '30%' },
+            {
+                data: 'active',
+                name: 'active',
+                "className": "dt-center",
+                "data": function ( row, type, val, meta ) {
+                    var data = '<span><i class="fa fa-close dt-active dt-active-0"></i></span>';
+                    if (row.active == 1)
+                        data = '<span><i class="fa fa-check dt-active dt-active-1"></i></span>';
+                    return data;
+                }
+            },
+            {
+                targets: 'actions',
+                orderable: false,
+                name: 'actions',
+                "className": "dt-center",
+                "data": function ( row, type, val, meta ) {
+                    //var contract = row.contract;
+                    var data =
+                        '<div class="dt-actions">' +
+                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info-offer">' +
+                        '<i class="glyphicon glyphicon-eye-open btn-action-icon"></i></a>'+
+                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-edit" data-toggle="modal" href="#modal-edit-offer">' +
+                        '<i class="icon-pencil btn-action-icon"></i></a>' +
+                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-delete" href="javascript:;" data-popout="true" data-placement="left"' +
+                        'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success"  data-btn-ok-icon-content="check" ' +
+                        'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
+                        '<i class="icon-trash btn-action-icon"></i></a>' +
+                        '</div>';
+                    return data;
+                }
+            }
+        ]
+    });
+
+    $('.btn-complements').on('click', function () {
+        $('#modal-complements .contract-name').html(contract.name);
+        tableOffer.draw();
+        $('#modal-complements').modal('show');
+    });
+
+    $('.check-all-rooms').on('click', function (e) {
+        e.preventDefault();
+        var option = $(this).attr('data');
+        if (option == 'check') {
+            $(this).attr('data', 'uncheck');
+            $('.room-selected').each(function () {
+                $(this).prop("checked", false);
+            });
+        }
+        else {
+            $(this).attr('data', 'check');
+            $('.room-selected').each(function () {
+                $(this).prop("checked", true);
             });
         }
     });

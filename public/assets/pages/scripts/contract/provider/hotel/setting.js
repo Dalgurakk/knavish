@@ -1230,8 +1230,10 @@ $(document).ready(function () {
     }
 
     function countSelectedRecords(table) {
-        var selected = $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).size();
-        return selected;
+        //var selected = $('tbody > tr > td:nth-child(1) input[type="checkbox"]:checked', table).size();
+        //return selected;
+        var selected = table.api().rows('.active').data();
+        return selected.length;
     }
 
     function getSelectedRows(table) {
@@ -1245,7 +1247,7 @@ $(document).ready(function () {
 
     function getSelectedRooms(table) {
         var rows = [];
-        var selected = tableShareRoomType.api().rows('.active').data();
+        var selected = table.api().rows('.active').data();
         for (var i = 0; i < selected.length; i++) {
             rows.push(selected[i][1]);
         }
@@ -2170,7 +2172,7 @@ $(document).ready(function () {
                 };
                 ranges.push(obj);
             });
-            var rooms = getSelectedRows(tableOfferRoomType);
+            var rooms = getSelectedRooms(tableOfferRoomType);
             formData.append('room-types', JSON.stringify(rooms));
             formData.append('ranges', JSON.stringify(ranges));
             formData.append('contractId', contractId);
@@ -2303,7 +2305,7 @@ $(document).ready(function () {
                 };
                 ranges.push(obj);
             });
-            var rooms = getSelectedRows(tableEditOfferRoomType);
+            var rooms = getSelectedRooms(tableEditOfferRoomType);
             formData.append('room-types', JSON.stringify(rooms));
             formData.append('ranges', JSON.stringify(ranges));
             formData.append('id', id);
@@ -2542,27 +2544,38 @@ $(document).ready(function () {
 
         tableEditOfferRoomType.api().clear();
         for (var i = 0; i < roomTypes.length; i++) {
-            tableEditOfferRoomType.api().row.add([
-                '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"> ' +
-                '<input type="checkbox" class="checkboxes" value="1" />' +
-                '<span></span>' +
-                '</label>',
-                roomTypes[i].id,
-                roomTypes[i].code,
-                roomTypes[i].name
-            ]).draw( false );
+            var selected = false;
+            for (var j = 0; j < rooms.length; j++) {
+                if (roomTypes[i].id == rooms[j].hotel_room_type_id) {
+                    selected = true;
+                    break;
+                }
+            }
+            if (selected) {
+                tableEditOfferRoomType.api().row.add([
+                    '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"> ' +
+                    '<input type="checkbox" class="checkboxes" value="1" checked />' +
+                    '<span></span>' +
+                    '</label>',
+                    roomTypes[i].id,
+                    roomTypes[i].code,
+                    roomTypes[i].name
+                ]).draw().nodes().to$().addClass("active");
+            }
+            else {
+                tableEditOfferRoomType.api().row.add([
+                    '<label class="mt-checkbox mt-checkbox-single mt-checkbox-outline"> ' +
+                    '<input type="checkbox" class="checkboxes" value="1"/>' +
+                    '<span></span>' +
+                    '</label>',
+                    roomTypes[i].id,
+                    roomTypes[i].code,
+                    roomTypes[i].name
+                ]).draw();
+            }
         }
         $('#modal-edit-offer :input[name=count-offer-room-type]').val(rooms.length);
         tableEditOfferRoomType.api().columns.adjust().draw();
-
-        for (var i = 0; i < rooms.length; i++) {
-            $('tbody > tr > td:nth-child(1) input[type="checkbox"]', tableEditOfferRoomType).each(function() {
-                var data = tableEditOfferRoomType.api().row( $(this).parents('tr') ).data();
-                if (data[1] == rooms[i].hotel_room_type_id) {
-                    $(this).prop('checked', 'checked');
-                }
-            });
-        }
 
         $('#modal-edit-offer :input[name=id]').val(offer.id);
         $('#modal-edit-offer :input[name=name]').val(offer.name);

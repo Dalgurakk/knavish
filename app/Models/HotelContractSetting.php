@@ -9,6 +9,8 @@ class HotelContractSetting extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
+    //public $timestamps = false;
+
     public function roomType()
     {
         return $this->hasOne('App\Models\HotelRoomType', 'id', 'hotel_room_type_id');

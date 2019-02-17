@@ -10,34 +10,25 @@ class HotelContract extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     public function paxTypes() {
-        return $this
-            ->belongsToMany('App\Models\HotelPaxType', 'hotel_contract_pax_type')
-            ->withTimestamps();
+        return $this->belongsToMany('App\Models\HotelPaxType', 'hotel_contract_pax_type');
     }
 
     public function boardTypes() {
-        return $this
-            ->belongsToMany('App\Models\HotelBoardType', 'hotel_contract_board_type')
-            ->withTimestamps();
+        return $this->belongsToMany('App\Models\HotelBoardType', 'hotel_contract_board_type');
     }
 
     public function roomTypes() {
-        return $this
-            ->belongsToMany('App\Models\HotelRoomType', 'hotel_contract_room_type')
-            ->withTimestamps();
+        return $this->belongsToMany('App\Models\HotelRoomType', 'hotel_contract_room_type');
     }
 
     public function measures() {
-        return $this
-            ->belongsToMany('App\Models\HotelMeasure', 'hotel_contract_measure')
-            ->withTimestamps();
+        return $this->belongsToMany('App\Models\HotelMeasure', 'hotel_contract_measure');
     }
 
     public function markets() {
         return $this
             ->belongsToMany('App\Models\Market')
-            ->withPivot('type', 'value', 'round')
-            ->withTimestamps();
+            ->withPivot('type', 'value', 'round');
     }
 
     public function priceRates() {

@@ -10,7 +10,7 @@ class Market extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     public function contracts() {
-        return $this->belongsToMany('App\Models\HotelContracts')->withTimestamps();
+        return $this->belongsToMany('App\Models\HotelContracts');
     }
 
     public function priceRates() {

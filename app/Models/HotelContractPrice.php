@@ -9,7 +9,9 @@ class HotelContractPrice extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
-    protected $table = 'hotel_contract_prices';
+    //protected $table = 'hotel_contract_prices';
+
+    public $timestamps = false;
 
     public function setting() {
         return $this->belongsTo('App\Models\HotelContractSetting', 'hotel_contract_setting_id', 'id');

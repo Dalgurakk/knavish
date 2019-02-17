@@ -9,10 +9,7 @@ class HotelMeasure extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
-    public function contracts()
-    {
-        return $this
-            ->belongsToMany('App\Models\HotelContract', 'hotel_contract_measure')
-            ->withTimestamps();
+    public function contracts() {
+        return $this->belongsToMany('App\Models\HotelContract', 'hotel_contract_measure');
     }
 }

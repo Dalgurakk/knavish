@@ -12,7 +12,6 @@ class HotelBoardType extends Model implements Auditable
     public function contracts()
     {
         return $this
-            ->belongsToMany('App\Models\HotelContract', 'hotel_contract_board_type')
-            ->withTimestamps();
+            ->belongsToMany('App\Models\HotelContract', 'hotel_contract_board_type');
     }
 }

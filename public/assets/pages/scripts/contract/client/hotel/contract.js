@@ -2,6 +2,39 @@ $(document).ready(function () {
     var needUpdate = false;
     var object = null;
 
+    $('#modal-add .btn-contract-details').on('click', function () {
+        $('#modal-add .contract-details').each(function () {
+            if ($(this).hasClass('hidden')) {
+                $(this).removeClass('hidden');
+            }
+            else {
+                $(this).addClass('hidden');
+            }
+        });
+    });
+
+    $('#modal-info .btn-contract-details').on('click', function () {
+        $('#modal-info .contract-details').each(function () {
+            if ($(this).hasClass('hidden')) {
+                $(this).removeClass('hidden');
+            }
+            else {
+                $(this).addClass('hidden');
+            }
+        });
+    });
+
+    $('#modal-edit .btn-contract-details').on('click', function () {
+        $('#modal-edit .contract-details').each(function () {
+            if ($(this).hasClass('hidden')) {
+                $(this).removeClass('hidden');
+            }
+            else {
+                $(this).addClass('hidden');
+            }
+        });
+    });
+
     $.fn.dataTable.ext.errMode = 'none';
     var table = $('#table').on('error.dt', function(e, settings, techNote, message) {
 
@@ -103,6 +136,11 @@ $(document).ready(function () {
     });
 
     $('.add').on('click', function () {
+        $('#modal-add .contract-details').each(function () {
+            if (!$(this).hasClass('hidden')) {
+                $(this).addClass('hidden');
+            }
+        });
         formAdd.validate().resetForm();
         formAdd[0].reset();
         $('#modal-add :input[name=category]').barrating('set', '');
@@ -838,6 +876,12 @@ $(document).ready(function () {
             method = ' (+ $' + priceRate.value + ')';
         priceRateString += method;
 
+        $('#modal-info .contract-details').each(function () {
+            if (!$(this).hasClass('hidden')) {
+                $(this).addClass('hidden');
+            }
+        });
+
         $('#modal-info :input[name=name]').val(contract.name);
         $('#modal-info :input[name=contract]').val(hotelContract.name);
         $('#modal-info :input[name=price-rate]').val(priceRateString);
@@ -923,6 +967,12 @@ $(document).ready(function () {
         var state = hotel.state != null ? hotel.state.name : '';
         var city = hotel.city != null ? hotel.city.name : '';
         var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
+
+        $('#modal-edit .contract-details').each(function () {
+            if (!$(this).hasClass('hidden')) {
+                $(this).addClass('hidden');
+            }
+        });
 
         $('#modal-edit :input[name="price-rate"]').empty();
         for (var i = 0; i < priceRates.length; i++) {

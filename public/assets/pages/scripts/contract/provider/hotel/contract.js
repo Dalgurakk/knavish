@@ -2,6 +2,40 @@ $(document).ready(function () {
     var needUpdate = false;
     var object = null;
 
+    $('#modal-add .btn-hotel-details').on('click', function () {
+        $('#modal-add .hotel-details').each(function () {
+            if ($(this).hasClass('hidden')) {
+                $(this).removeClass('hidden');
+            }
+            else {
+                $(this).addClass('hidden');
+            }
+        });
+    });
+
+    $('#modal-info .btn-hotel-details').on('click', function () {
+        $('#modal-info .hotel-details').each(function () {
+            if ($(this).hasClass('hidden')) {
+                $(this).removeClass('hidden');
+            }
+            else {
+                $(this).addClass('hidden');
+            }
+        });
+    });
+
+    $('#modal-edit .btn-hotel-details').on('click', function () {
+        $('#modal-edit .hotel-details').each(function () {
+            if ($(this).hasClass('hidden')) {
+                $(this).removeClass('hidden');
+            }
+            else {
+                $(this).addClass('hidden');
+            }
+        });
+    });
+
+
     $('#modal-add [id=rate_fee_value_1_add]').TouchSpin({
         min: -1000000000,
         max: 1000000000,
@@ -365,6 +399,12 @@ $(document).ready(function () {
             }
         });
         $('#modal-add .ms-elem-selectable').removeClass('ms-hover');
+
+        $('#modal-add .hotel-details').each(function () {
+            if (!$(this).hasClass('hidden')) {
+                $(this).addClass('hidden');
+            }
+        });
     });
 
     $('.lenght-option').on('click', function () {
@@ -768,6 +808,12 @@ $(document).ready(function () {
         var city = hotel.city != null ? hotel.city.name : '';
         var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
 
+        $('#modal-info .hotel-details').each(function () {
+            if (!$(this).hasClass('hidden')) {
+                $(this).addClass('hidden');
+            }
+        });
+
         $('#modal-info :input[name=name]').val(contract.name);
         $('#modal-info :input[name=valid-from]').val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY'));
         $('#modal-info :input[name=valid-to]').val(moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
@@ -1168,6 +1214,12 @@ $(document).ready(function () {
         var state = hotel.state != null ? hotel.state.name : '';
         var city = hotel.city != null ? hotel.city.name : '';
         var hotelChain = hotel.hotel_chain != null ? hotel.hotel_chain.name : '';
+
+        $('#modal-edit .hotel-details').each(function () {
+            if (!$(this).hasClass('hidden')) {
+                $(this).addClass('hidden');
+            }
+        });
 
         $('#modal-edit :input[name=id]').val(contract.id);
         $('#modal-edit :input[name=hotel-id]').val(hotel.id);

@@ -209,6 +209,10 @@
                             <i class="fa fa-building-o"></i> Hotel </div>
                         <div class="tools">
                             <a href="javascript:;" class="collapse"> </a></div>
+                        <div class="actions">
+                            <a href="javascript:;" class="btn btn-default btn-sm btn-hotel-details" style="margin-right: 5px;">
+                                <i class="fa fa-binoculars"></i> Details </a>
+                        </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="hotel-id">
@@ -220,29 +224,31 @@
                                         <select class="form-control select-hotel" name="hotel"></select>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Country</label>
-                                    <input type="text" class="form-control trigger-location" name="country-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>State</label>
-                                    <input type="text" class="form-control trigger-location" name="state-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>City</label>
-                                    <input type="text" class="form-control trigger-location" name="city-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <input type="text" class="form-control" name="address" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Postal Code</label>
-                                    <input type="text" class="form-control" name="postal-code" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Turistic License</label>
-                                    <input type="text" class="form-control" name="turistic-licence" readonly>
+                                <div class="hotel-details hidden">
+                                    <div class="form-group">
+                                        <label>Country</label>
+                                        <input type="text" class="form-control trigger-location" name="country-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <input type="text" class="form-control trigger-location" name="state-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" class="form-control trigger-location" name="city-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" class="form-control" name="address" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Postal Code</label>
+                                        <input type="text" class="form-control" name="postal-code" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Turistic License</label>
+                                        <input type="text" class="form-control" name="turistic-licence" readonly>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6">
@@ -259,25 +265,27 @@
                                       <option value="7">7</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label>Hotel Chain</label>
-                                    <input type="text" class="form-control" name="hotel-chain" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control" name="email" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Phone</label>
-                                    <input type="text" class="form-control" name="admin-phone" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Fax</label>
-                                    <input type="text" class="form-control" name="admin-fax" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Web Site</label>
-                                    <input type="text" class="form-control" name="web-site" readonly>
+                                <div class="hotel-details hidden">
+                                    <div class="form-group">
+                                        <label>Hotel Chain</label>
+                                        <input type="text" class="form-control" name="hotel-chain" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" name="email" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Admin. Phone</label>
+                                        <input type="text" class="form-control" name="admin-phone" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Admin. Fax</label>
+                                        <input type="text" class="form-control" name="admin-fax" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Web Site</label>
+                                        <input type="text" class="form-control" name="web-site" readonly>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -348,20 +356,20 @@
                         </div>
                         <div class="form-group">
                             <input type="hidden" name="count-room-type" class="hotel-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0" style="margin-top: 33px !important;">
+                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0" style="margin-top: 32px !important;">
                                 <thead>
-                                    <tr>
-                                        <th> Id </th>
-                                        <th> Room Type </th>
-                                        <th> Max Pax </th>
-                                        <th> Min Pax </th>
-                                        <th> Max AD </th>
-                                        <th> Min AD </th>
-                                        <th> Max CH </th>
-                                        <th> Min CH </th>
-                                        <th> Max INF </th>
-                                        <th> Min INF </th>
-                                    </tr>
+                                <tr>
+                                    <th> Id </th>
+                                    <th> Room Type </th>
+                                    <th> Max Pax </th>
+                                    <th> Min Pax </th>
+                                    <th> Max AD </th>
+                                    <th> Min AD </th>
+                                    <th> Max CH </th>
+                                    <th> Min CH </th>
+                                    <th> Max INF </th>
+                                    <th> Min INF </th>
+                                </tr>
                                 </thead>
                                 <tbody></tbody>
                             </table>
@@ -595,9 +603,12 @@
                     <div class="portlet-title">
                         <div class="caption">
                             <i class="fa fa-building-o"></i> Hotel </div>
-
                         <div class="tools">
                             <a href="javascript:;" class="collapse"> </a></div>
+                        <div class="actions">
+                            <a href="javascript:;" class="btn btn-default btn-sm btn-hotel-details" style="margin-right: 5px;">
+                                <i class="fa fa-binoculars"></i> Details </a>
+                        </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="hotel-id">
@@ -607,29 +618,31 @@
                                     <label>Hotel</label>
                                     <input type="text" class="form-control" name="hotel" readonly>
                                 </div>
-                                <div class="form-group">
-                                    <label>Country</label>
-                                    <input type="text" class="form-control" name="country-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>State</label>
-                                    <input type="text" class="form-control" name="state-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>City</label>
-                                    <input type="text" class="form-control" name="city-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <input type="text" class="form-control" name="address" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Postal Code</label>
-                                    <input type="text" class="form-control" name="postal-code" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Turistic License</label>
-                                    <input type="text" class="form-control" name="turistic-licence" readonly>
+                                <div class="hotel-details hidden">
+                                    <div class="form-group">
+                                        <label>Country</label>
+                                        <input type="text" class="form-control" name="country-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <input type="text" class="form-control" name="state-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" class="form-control" name="city-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" class="form-control" name="address" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Postal Code</label>
+                                        <input type="text" class="form-control" name="postal-code" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Turistic License</label>
+                                        <input type="text" class="form-control" name="turistic-licence" readonly>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6">
@@ -646,25 +659,27 @@
                                       <option value="7">7</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label>Hotel Chain</label>
-                                    <input type="text" class="form-control" name="hotel-chain" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control" name="email" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Phone</label>
-                                    <input type="text" class="form-control" name="admin-phone" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Fax</label>
-                                    <input type="text" class="form-control" name="admin-fax" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Web Site</label>
-                                    <input type="text" class="form-control" name="web-site" readonly>
+                                <div class="hotel-details hidden">
+                                    <div class="form-group">
+                                        <label>Hotel Chain</label>
+                                        <input type="text" class="form-control" name="hotel-chain" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" name="email" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Admin. Phone</label>
+                                        <input type="text" class="form-control" name="admin-phone" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Admin. Fax</label>
+                                        <input type="text" class="form-control" name="admin-fax" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Web Site</label>
+                                        <input type="text" class="form-control" name="web-site" readonly>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -904,6 +919,10 @@
                             <i class="fa fa-building-o"></i> Hotel </div>
                         <div class="tools">
                             <a href="javascript:;" class="collapse"> </a></div>
+                        <div class="actions">
+                            <a href="javascript:;" class="btn btn-default btn-sm btn-hotel-details" style="margin-right: 5px;">
+                                <i class="fa fa-binoculars"></i> Details </a>
+                        </div>
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="id">
@@ -916,29 +935,31 @@
                                         <select class="form-control select-hotel" name="hotel"></select>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Country</label>
-                                    <input type="text" class="form-control trigger-location" name="country-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>State</label>
-                                    <input type="text" class="form-control trigger-location" name="state-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>City</label>
-                                    <input type="text" class="form-control trigger-location" name="city-text" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <input type="text" class="form-control" name="address" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Postal Code</label>
-                                    <input type="text" class="form-control" name="postal-code" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Turistic License</label>
-                                    <input type="text" class="form-control" name="turistic-licence" readonly>
+                                <div class="hotel-details hidden">
+                                    <div class="form-group">
+                                        <label>Country</label>
+                                        <input type="text" class="form-control trigger-location" name="country-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>State</label>
+                                        <input type="text" class="form-control trigger-location" name="state-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>City</label>
+                                        <input type="text" class="form-control trigger-location" name="city-text" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" class="form-control" name="address" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Postal Code</label>
+                                        <input type="text" class="form-control" name="postal-code" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Turistic License</label>
+                                        <input type="text" class="form-control" name="turistic-licence" readonly>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-6">
@@ -955,25 +976,27 @@
                                       <option value="7">7</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label>Hotel Chain</label>
-                                    <input type="text" class="form-control" name="hotel-chain" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control" name="email" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Phone</label>
-                                    <input type="text" class="form-control" name="admin-phone" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Admin. Fax</label>
-                                    <input type="text" class="form-control" name="admin-fax" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label>Web Site</label>
-                                    <input type="text" class="form-control" name="web-site" readonly>
+                                <div class="hotel-details hidden">
+                                    <div class="form-group">
+                                        <label>Hotel Chain</label>
+                                        <input type="text" class="form-control" name="hotel-chain" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control" name="email" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Admin. Phone</label>
+                                        <input type="text" class="form-control" name="admin-phone" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Admin. Fax</label>
+                                        <input type="text" class="form-control" name="admin-fax" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Web Site</label>
+                                        <input type="text" class="form-control" name="web-site" readonly>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -237,7 +237,7 @@ class HotelContractController extends Controller
                 foreach ($paxTypes as $paxType) {
                     if ($paxType->type == 1) {
                         $acceptInfant = true;
-                    } if ($paxType->type == 2) {
+                    } else if ($paxType->type == 2) {
                         $acceptChildren = true;
                     } else if ($paxType->type == 3) {
                         $acceptAdult = true;
@@ -349,7 +349,7 @@ class HotelContractController extends Controller
                     foreach ($paxTypes as $paxType) {
                         if ($paxType->type == 1) {
                             $acceptInfant = true;
-                        } if ($paxType->type == 2) {
+                        } else if ($paxType->type == 2) {
                             $acceptChildren = true;
                         } else if ($paxType->type == 3) {
                             $acceptAdult = true;

@@ -312,5 +312,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/hotel/paxtype.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/hotel/paxtype.min.js') }}" type="text/javascript"></script>
 @stop

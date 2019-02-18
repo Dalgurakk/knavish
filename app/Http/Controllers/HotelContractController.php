@@ -227,6 +227,35 @@ class HotelContractController extends Controller
                 $markets = json_decode(Input::get('markets'));
                 $measures = json_decode(Input::get('measures'));
 
+                $paxTypes = HotelPaxType::whereIn('id', $paxTypes)->get();
+                $roomTypes = HotelRoomType::whereIn('id', $roomTypes)->get();
+
+                $acceptInfant = false;
+                $acceptChildren = false;
+                $acceptAdult = false;
+
+                foreach ($paxTypes as $paxType) {
+                    if ($paxType->type == 1) {
+                        $acceptInfant = true;
+                    } if ($paxType->type == 2) {
+                        $acceptChildren = true;
+                    } else if ($paxType->type == 3) {
+                        $acceptAdult = true;
+                    }
+                }
+
+                foreach ($roomTypes as $roomType) {
+                    if(!$acceptInfant && $roomType->max_infant > 0) {
+                        throw new CustomException('The contract not allow infants, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
+                    }
+                    else if(!$acceptChildren && $roomType->max_children > 0) {
+                        throw new CustomException('The contract not allow childrens, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
+                    }
+                    else if(!$acceptAdult && $roomType->max_adult > 0) {
+                        throw new CustomException('The contract not allow adults, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
+                    }
+                }
+
                 foreach ($roomTypes as $r) {
                     $contract->roomTypes()->attach($r);
                 }
@@ -250,6 +279,11 @@ class HotelContractController extends Controller
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Contract ' . $contract->name . ' created successfully.';
                 $this->response['data'] = $contract;
+            }
+            catch (CustomException $e) {
+                DB::rollBack();
+                $this->response['status'] = 'error';
+                $this->response['message'] = $e->getMessage();
             }
             catch (\Exception $e) {
                 DB::rollBack();
@@ -305,6 +339,35 @@ class HotelContractController extends Controller
                     $paxTypes = json_decode(Input::get('paxTypes'));
                     $measures = json_decode(Input::get('measures'));
 
+                    $paxTypes = HotelPaxType::whereIn('id', $paxTypes)->get();
+                    $roomTypes = HotelRoomType::whereIn('id', $roomTypes)->get();
+
+                    $acceptInfant = false;
+                    $acceptChildren = false;
+                    $acceptAdult = false;
+
+                    foreach ($paxTypes as $paxType) {
+                        if ($paxType->type == 1) {
+                            $acceptInfant = true;
+                        } if ($paxType->type == 2) {
+                            $acceptChildren = true;
+                        } else if ($paxType->type == 3) {
+                            $acceptAdult = true;
+                        }
+                    }
+
+                    foreach ($roomTypes as $roomType) {
+                        if(!$acceptInfant && $roomType->max_infant > 0) {
+                            throw new CustomException('The contract not allow infants, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
+                        }
+                        else if(!$acceptChildren && $roomType->max_children > 0) {
+                            throw new CustomException('The contract not allow childrens, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
+                        }
+                        else if(!$acceptAdult && $roomType->max_adult > 0) {
+                            throw new CustomException('The contract not allow adults, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
+                        }
+                    }
+
                     $syncMarkets = array();
                     foreach ($markets as $k) {
                         $syncMarkets[$k->market_id] = array(
@@ -348,6 +411,11 @@ class HotelContractController extends Controller
                     $this->response['status'] = 'success';
                     $this->response['message'] = 'Contract updated successfully.';
                     $this->response['data'] = $contract;
+                }
+                catch (CustomException $e) {
+                    DB::rollBack();
+                    $this->response['status'] = 'error';
+                    $this->response['message'] = $e->getMessage();
                 }
                 catch (\Exception $e) {
                     DB::rollBack();

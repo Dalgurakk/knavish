@@ -203,9 +203,9 @@ class HotelPaxTypeController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $settings = array(
-            'headerRange' => 'A4:F4',
+            'headerRange' => 'A4:G4',
             'headerText' => 'Pax Types',
-            'cellRange' => 'A6:F6'
+            'cellRange' => 'A6:G6'
         );
 
         $parameters = array(

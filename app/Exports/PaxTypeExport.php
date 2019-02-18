@@ -20,10 +20,16 @@ class PaxTypeExport extends GeneralExport
         $items = $query->get();
         $filtered = $items->map(function ($item, $index) {
             $this->records = $index + 1;
+            $type = 'Adult';
+            if ($item->type == 1)
+                $type = 'Infant';
+            else if ($item->type == 2)
+                $type = 'Children';
             return [
                 'index' => $index + 1,
                 'code' => $item->code,
                 'denomination' => $item->name,
+                'type' => $type,
                 'agefrom' => $item->agefrom,
                 'ageto' => $item->ageto,
                 'enabled' => $item->active == '1' ? 'Yes' : 'No'
@@ -39,6 +45,7 @@ class PaxTypeExport extends GeneralExport
             'Number',
             'Code',
             'Denomination',
+            'Type',
             'Age From',
             'Age To',
             'Enabled',

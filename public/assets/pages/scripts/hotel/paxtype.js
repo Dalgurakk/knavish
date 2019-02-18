@@ -28,11 +28,12 @@ $(document).ready(function () {
                 }
             }
         },
-        "order": [[ 3, "asc" ]],
+        "order": [[ 2, "asc" ]],
         columns: [
             {data: 'id', name: 'id', visible: false},
             {data: 'code', name: 'code'},
             {data: 'name', name: 'name'},
+            {data: 'type', name: 'type'},
             {data: 'agefrom', name: 'agefrom'},
             {data: 'ageto', name: 'ageto'},
             {
@@ -120,6 +121,12 @@ $(document).ready(function () {
                 min:0,
                 max: 99,
                 greaterThan: '#modal-add :input[name=agefrom]'
+            },
+            type: {
+                required: true,
+                number: true,
+                min: 1,
+                max: 3
             }
         },
         messages: {
@@ -234,6 +241,12 @@ $(document).ready(function () {
                 min:0,
                 max: 99,
                 greaterThan: '#modal-edit :input[name=agefrom]'
+            },
+            type: {
+                required: true,
+                number: true,
+                min: 1,
+                max: 3
             }
         },
         messages: {
@@ -319,6 +332,7 @@ $(document).ready(function () {
         var data = table.row( $(this).parents('tr') ).data();
         $('#modal-info :input[name=code]').val(data['code']);
         $('#modal-info :input[name=name]').val(data['name']);
+        $('#modal-info :input[name=type]').val(data['type']);
         $('#modal-info :input[name=agefrom]').val(data['agefrom']);
         $('#modal-info :input[name=ageto]').val(data['ageto']);
         if (data['active'] == 1) {
@@ -340,6 +354,7 @@ $(document).ready(function () {
         $('#modal-edit :input[name=id]').val(data['id']);
         $('#modal-edit :input[name=code]').val(data['code']);
         $('#modal-edit :input[name=name]').val(data['name']);
+        $('#modal-edit :input[name=type]').val(object.type).change();
         $('#modal-edit :input[name=agefrom]').val(data['agefrom']);
         $('#modal-edit :input[name=ageto]').val(data['ageto']);
 

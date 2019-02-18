@@ -38,7 +38,7 @@ class HotelPaxTypeController extends Controller
 
         $limit = Input::get('length');
         $offset = Input::get('start') ? Input::get('start') : 0;
-        $columns = array('hotel_pax_types.id', 'hotel_pax_types.code', 'hotel_pax_types.name', 'hotel_pax_types.agefrom', 'hotel_pax_types.ageto', 'hotel_pax_types.active');
+        $columns = array('hotel_pax_types.id', 'hotel_pax_types.code', 'hotel_pax_types.name', 'hotel_pax_types.type', 'hotel_pax_types.agefrom', 'hotel_pax_types.ageto', 'hotel_pax_types.active');
         $orderBy = Input::get('order')['0']['column'];
         $orderDirection = Input::get('order')['0']['dir'];
         $searchCode = Input::get('columns')['1']['search']['value'];
@@ -66,10 +66,16 @@ class HotelPaxTypeController extends Controller
         $result = $query->get();
 
         foreach ($result as $r) {
+            $type = 'Adult';
+            if ($r->type == 1)
+                $type = 'Infant';
+            else if ($r->type == 2)
+                $type = 'Children';
             $item = array(
                 'id' => $r->id,
                 'code' => $r->code,
                 'name' => $r->name,
+                'type' => $type,
                 'agefrom' => $r->agefrom,
                 'ageto' => $r->ageto,
                 'active' => $r->active,
@@ -96,7 +102,8 @@ class HotelPaxTypeController extends Controller
             'code' => 'required',
             'name' => 'required',
             'agefrom' => 'required|numeric|min:0|max:99',
-            'ageto' => 'required|numeric|min:' . (Input::get('agefrom')) . '|max:99'
+            'ageto' => 'required|numeric|min:' . (Input::get('agefrom')) . '|max:99',
+            'type' => 'required|numeric|min:1|max:3'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -113,6 +120,7 @@ class HotelPaxTypeController extends Controller
             $paxType->ageto = Input::get('ageto');
             $paxType->description = null;
             $paxType->active = Input::get('active') == 1 ? 1 : 0;
+            $paxType->type = Input::get('type');
 
             try {
                 $paxType->save();
@@ -137,7 +145,8 @@ class HotelPaxTypeController extends Controller
             'code' => 'required',
             'name' => 'required',
             'agefrom' => 'required|numeric|min:0|max:99',
-            'ageto' => 'required|numeric|min:' . (Input::get('agefrom')) . '|max:99'
+            'ageto' => 'required|numeric|min:' . (Input::get('agefrom')) . '|max:99',
+            'type' => 'required|numeric|min:1|max:3'
         );
         $validator = Validator::make(Input::all(), $rules);
 
@@ -153,6 +162,7 @@ class HotelPaxTypeController extends Controller
             $paxType->agefrom = Input::get('agefrom');
             $paxType->ageto = Input::get('ageto');
             $paxType->active = Input::get('active') == 1 ? 1 : 0;
+            $paxType->type = Input::get('type');
 
             try {
                 $paxType->save();

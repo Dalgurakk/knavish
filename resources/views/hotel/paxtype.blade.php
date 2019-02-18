@@ -86,6 +86,7 @@
                             <th class="">Id</th>
                             <th class="">Code</th>
                             <th class="">Denomination</th>
+                            <th class="">Type</th>
                             <th class="">Age From</th>
                             <th class="">Age To</th>
                             <th class="">Enable</th>
@@ -107,16 +108,42 @@
     <form id="form-add">
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Code</label>
                     <input type="text" class="form-control" placeholder="Code" name="code">
                 </div>
+            </div>
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Denomination</label>
                     <input type="text" class="form-control" placeholder="Denomination" name="name">
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select class="form-control" name="type">
+                        <option value="1">Infant</option>
+                        <option value="2">Children</option>
+                        <option value="3">Adult</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group no-margin-bottom">
+                    <div class="mt-checkbox-list margin-top-15">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Age From</label>
@@ -127,16 +154,6 @@
                 <div class="form-group">
                     <label>Age To</label>
                     <input type="text" class="form-control" placeholder="Age To" name="ageto">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group no-margin-bottom">
-                    <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
-                            <input type="checkbox" value="1" name="active"/>
-                            <span></span>
-                        </label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -156,16 +173,38 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Code</label>
                     <input type="text" class="form-control" name="code" readonly>
                 </div>
+            </div>
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Denomination</label>
                     <input type="text" class="form-control" name="name" readonly>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Type</label>
+                    <input type="text" class="form-control" name="type" readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group no-margin-bottom">
+                    <div class="mt-checkbox-list margin-top-15">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                            <input type="checkbox" value="1" name="active" onclick="return false;"/>
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Age From</label>
@@ -176,16 +215,6 @@
                 <div class="form-group">
                     <label>Age To</label>
                     <input type="text" class="form-control" name="ageto" readonly>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group no-margin-bottom">
-                    <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
-                            <input type="checkbox" value="1" name="active" onclick="return false;"/>
-                            <span></span>
-                        </label>
-                    </div>
                 </div>
             </div>
         </div>
@@ -204,16 +233,42 @@
     <div class="modal-body">
         <div class="row">
             <input type="hidden" name="id">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Code</label>
                     <input type="text" class="form-control" placeholder="Code" name="code">
                 </div>
+            </div>
+            <div class="col-md-6">
                 <div class="form-group">
                     <label>Denomination</label>
                     <input type="text" class="form-control" placeholder="Denomination" name="name">
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select class="form-control" name="type">
+                        <option value="1">Infant</option>
+                        <option value="2">Children</option>
+                        <option value="3">Adult</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group no-margin-bottom">
+                    <div class="mt-checkbox-list margin-top-15">
+                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
+                            <input type="checkbox" value="1" name="active"/>
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Age From</label>
@@ -226,20 +281,9 @@
                     <input type="text" class="form-control" placeholder="Age To" name="ageto">
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="form-group no-margin-bottom">
-                    <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Enabled
-                            <input type="checkbox" value="1" name="active"/>
-                            <span></span>
-                        </label>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="modal-footer">
-        <!--button type="submit" class="btn green" data="apply"><i class="fa fa-repeat"></i> Apply</button-->
         <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>
         <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
     </div>
@@ -268,5 +312,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/hotel/paxtype.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/hotel/paxtype.js') }}" type="text/javascript"></script>
 @stop

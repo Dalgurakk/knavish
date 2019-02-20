@@ -76,8 +76,8 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label>Hotel Chain</label>
-                                                <input type="text" class="form-control" name="hotel-chain" readonly style="background-color: #fff;">
+                                                <label>Board Type</label>
+                                                <select class="form-control" name="board-type" id="board-type"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -189,6 +189,7 @@
         <input type="hidden" name="contract-id" value="0">
         <input type="hidden" name="room-type-id" value="0">
         <input type="hidden" name="market-id" value="0">
+        <input type="hidden" name="board-type-id" value="0">
         <div class="row" style="margin-top: 10px;">
             <div class="col-md-12 share-container" style="margin-bottom: 30px; display: inline-block; text-align: center;">
                 <label class="mt-checkbox mt-checkbox-outline no-margin-bottom share"> Share
@@ -511,6 +512,7 @@
     </div>
     </form>
 </div>
+
 <div id="modal-complements" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>

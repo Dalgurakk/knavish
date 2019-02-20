@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class HotelContractRoomType extends Model
 {
-
     protected $table = 'hotel_contract_room_type';
 
     public function settings() {

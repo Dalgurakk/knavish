@@ -241,6 +241,7 @@ $(document).ready(function () {
             var from = moment($('input[name=from]').datepicker("getDate")).format('DD.MM.YYYY');
             var to = moment($('input[name=to]').datepicker("getDate")).format('DD.MM.YYYY');
             var market = $('#market').val();
+            var boardType = $('#board-type').val();
             var roomTypes = [];
             $('.room-selected:checked').each(function () {
                 roomTypes.push($(this).val());
@@ -257,6 +258,7 @@ $(document).ready(function () {
                     from:  from,
                     to: to,
                     market: market,
+                    boardType: boardType,
                     rooms: JSON.stringify(roomTypes),
                     rows: JSON.stringify(rows)
                 },
@@ -352,6 +354,7 @@ $(document).ready(function () {
 
     function fillContract(c) {
         var roomTypes = c.room_types;
+        var boardTypes = c.board_types;
         var measures = c.measures;
         var markets = c.markets;
         var contract = c;
@@ -418,6 +421,12 @@ $(document).ready(function () {
         $.each(markets, function (i, item) {
             var option = '<option value="' + markets[i].id + '"> ' + markets[i].name + '</option>';
             $('#market').append(option);
+        });
+
+        $('#board-type').empty();
+        $.each(boardTypes, function (i, item) {
+            var option = '<option value="' + boardTypes[i].id + '"> ' + boardTypes[i].code + ': ' + boardTypes[i].name + '</option>';
+            $('#board-type').append(option);
         });
 
         updateImport(markets);
@@ -1130,6 +1139,7 @@ $(document).ready(function () {
             }
             $("#modal-setting :input[name=contract-id]").val(contract.id);
             $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
+            $("#modal-setting :input[name=board-type-id]").val($('#board-type').val());
 
             var measures = operateMeasures;
             if (room.max_children > 0 && room.max_children < 3) {
@@ -1566,6 +1576,12 @@ $(document).ready(function () {
         updateImport(contract.markets);
     });
 
+    $('#board-type').change(function() {
+        if(searched) {
+            $('.btn-search-submit').click();
+        }
+    });
+
     $('input[name=share]').change(function () {
         if ($(this).is(':checked'))
             $('.share-rooms').show();
@@ -1720,6 +1736,7 @@ $(document).ready(function () {
             var contractId = $('#modal-setting :input[name="contract-id"]').val();
             var roomTypeId = $('#modal-setting :input[name="room-type-id"]').val();
             var marketId = $('#modal-setting :input[name="market-id"]').val();
+            var boardTypeId = $('#modal-setting :input[name="board-type-id"]').val();
             var formData = new FormData(formImport[0]);
             var ranges = [];
             $('#modal-import .range').each(function () {
@@ -1733,6 +1750,7 @@ $(document).ready(function () {
             formData.append('contract-id', contractId);
             formData.append('room-type-id', roomTypeId);
             formData.append('market-id', marketId);
+            formData.append('board-type-id', boardTypeId);
             $.ajax({
                 "url": routeImportCostFromRoomtype,
                 "type": "POST",

@@ -44,16 +44,33 @@
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-sm-3">
                                                 <div class="form-group">
+                                                    <label>Client</label>
+                                                    <input type="text" class="form-control" name="client" readonly style="background-color: #fff;">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                                <div class="form-group">
+                                                    <label>Board Type</label>
+                                                    <select class="form-control" name="board-type" id="board-type"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px;">
+                                            <div class="col-lg-3 col-md-3 col-sm-3">
+                                                <div class="form-group">
                                                     <label>Period</label>
                                                     <input type="text" class="form-control" name="period" readonly style="background-color: #fff;">
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-sm-3">
                                                 <div class="form-group">
-                                                    <label>Client</label>
-                                                    <input type="text" class="form-control" name="client" readonly style="background-color: #fff;">
+                                                    <label>Hotel Chain</label>
+                                                    <input type="text" class="form-control" name="hotel-chain" readonly style="background-color: #fff;">
                                                 </div>
                                             </div>
+                                            <!--div class="col-lg-3 col-md-3 col-sm-3">
+                                                <a class="btn green btn-complements" style="margin-top:25px;" href="javascript:;"> <i class="fa fa-briefcase"></i> Complements</a>
+                                            </div-->
                                         </div>
                                     </div>
                                 </div>

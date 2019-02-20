@@ -3,6 +3,13 @@ $(document).ready(function () {
     var formSearch = $('#search-accomodation');
     var contract = null;
     var operateMeasures = null;
+    var searched = false;
+
+    $('#board-type').change(function() {
+        if(searched) {
+            $('.btn-search-submit').click();
+        }
+    });
 
     function searchFormat(repo) {
         if (repo.loading) return repo.text;
@@ -54,6 +61,7 @@ $(document).ready(function () {
         var value = e.params.data;
         if(value.selected) {
             contract = value;
+            searched = false;
             fillContract(value);
             var url = window.location.href;
             if (url.indexOf("?") > 0) {
@@ -304,6 +312,7 @@ $(document).ready(function () {
             var from = moment($('input[name=from]').datepicker("getDate")).format('DD.MM.YYYY');
             var to = moment($('input[name=to]').datepicker("getDate")).format('DD.MM.YYYY');
             var roomTypes = [];
+            var boardType = $('#board-type').val();
             $('.room-selected:checked').each(function () {
                 roomTypes.push($(this).val());
             });
@@ -318,6 +327,7 @@ $(document).ready(function () {
                     id: contract.id,
                     from:  from,
                     to: to,
+                    boardType: boardType,
                     rooms: JSON.stringify(roomTypes),
                     rows: JSON.stringify(rows)
                 },
@@ -333,6 +343,7 @@ $(document).ready(function () {
                         toastr['error']("Please check your connection and try again.", "Error on loading the content");
                     }
                     else {
+                        searched = true;
                         var response = $.parseJSON(xhr.responseText);
                         if (response.status == 'success') {
                             var table = response.table;
@@ -516,11 +527,22 @@ $(document).ready(function () {
 
     function fillContract(c) {
         var roomTypes = c.hotel_contract.room_types;
+        var boardTypes = c.hotel_contract.board_types;
         var measures = c.hotel_contract.measures;
         var contract = c.hotel_contract;
+        var hotelChain = c.hotel_contract.hotel.hotel_chain;
         var client = c.client;
         var status = contract.active == 1 ? 'Enabled' : 'Disabled';
+        var priceRate = c.price_rate.market.name;
+        if (c.price_rate.type == 1) {
+            priceRate += ' (+ ' + c.price_rate.value + '%)';
+        }
+        else {
+            priceRate += ' (+ $' + c.price_rate.value + ')'
+        }
         $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
+        $("#search-accomodation :input[name=hotel-chain]").val(hotelChain.name);
+        $("#search-accomodation :input[name=price-rate]").val(priceRate);
         $("#search-accomodation :input[name=status]").val(status);
         $("#search-accomodation :input[name=client]").val(client.name);
         $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
@@ -552,6 +574,12 @@ $(document).ready(function () {
             measure += '</div>';
 
             $('.measures-list').append(measure);
+        });
+
+        $('#board-type').empty();
+        $.each(boardTypes, function (i, item) {
+            var option = '<option value="' + boardTypes[i].id + '"> ' + boardTypes[i].code + ': ' + boardTypes[i].name + '</option>';
+            $('#board-type').append(option);
         });
 
         $('.room-types-list').html('');

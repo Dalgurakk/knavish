@@ -325,12 +325,18 @@ class HotelContractClientController extends Controller
         $query = HotelContractClient::with([
             'hotelContract',
             'hotelContract.hotel',
+            'hotelContract.hotel.hotelChain',
+            'priceRate',
+            'priceRate.market',
             'client',
             'hotelContract.roomTypes' => function($query) {
                 $query->orderBy('name', 'asc');
             },
             'hotelContract.measures' => function($query) {
                 $query->orderBy('id', 'asc');
+            },
+            'hotelContract.boardTypes' => function($query) {
+                $query->orderBy('name', 'asc');
             }
         ]);
 
@@ -362,12 +368,18 @@ class HotelContractClientController extends Controller
         $contracts = HotelContractClient::with([
             'hotelContract',
             'hotelContract.hotel',
+            'hotelContract.hotel.hotelChain',
+            'priceRate',
+            'priceRate.market',
             'client',
             'hotelContract.roomTypes' => function($query) {
                 $query->orderBy('name', 'asc');
             },
             'hotelContract.measures' => function($query) {
                 $query->orderBy('id', 'asc');
+            },
+            'hotelContract.boardTypes' => function($query) {
+                $query->orderBy('name', 'asc');
             }
         ])
             ->where('name', 'like', $string)
@@ -501,6 +513,7 @@ class HotelContractClientController extends Controller
         $id = Input::get('id');
         $from = Input::get('from');
         $to = Input::get('to');
+        $boardType = Input::get('boardType');
         $roomTypes = json_decode(Input::get('rooms'));
         $measures = json_decode(Input::get('rows'));
         $start = Carbon::createFromFormat('d.m.Y', $from)->startOfMonth();
@@ -515,6 +528,9 @@ class HotelContractClientController extends Controller
                     ->whereIn('hotel_measure_id', $measures)
                     ->orderBy('id', 'asc');
             },
+            'boardTypes' => function($query) use ($boardType) {
+                $query->where('hotel_board_types.id', $boardType);
+            },
             'roomTypes' => function($query) use ($roomTypes) {
                 $query
                     ->whereIn('hotel_room_type_id', $roomTypes)
@@ -526,8 +542,10 @@ class HotelContractClientController extends Controller
                     ->where('date', '>=', $start->format('Y-m-d'))
                     ->where('date', '<=', $end->format('Y-m-d'));
             },
-            'settings.prices' => function($query) use ($market) {
-                $query->where('market_id', $market);
+            'settings.prices' => function($query) use ($market, $boardType) {
+                $query
+                    ->where('market_id', $market)
+                    ->where('hotel_board_type_id', $boardType);
             },
             'settings.clientSetttings' => function($query) use ($clientContract) {
                 $query->where('hotel_contract_client_id', $clientContract->id);
@@ -643,7 +661,7 @@ class HotelContractClientController extends Controller
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
                         /*<i class="fa fa-calendar"></i>' .*/
-                        $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
+                        $m->format("F Y") . ' - ' . $contract->markets[0]->name . ' - ' . $contract->boardTypes[0]->name . '</div>' .
                         '<div class="tools tools-setting">' .
                         /*'<a href="" class="fullscreen"> </a>' .*/
                         '<a href="javascript:;" class="collapse"> </a>' .

@@ -21,8 +21,4 @@ class HotelContractMarket extends Model implements Auditable
     public function market() {
         return $this->belongsTo('App\Models\Market');
     }
-
-    public function settingsOrigin() {
-        return $this->hasMany('App\Models\HotelContractSettingOrigin');
-    }
 }

@@ -6,6 +6,7 @@ use App\Exceptions\CustomException;
 use App\Exports\HotelContractExport;
 use App\Models\HotelBoardType;
 use App\Models\HotelContract;
+use App\Models\HotelContractBoardType;
 use App\Models\HotelContractMarket;
 use App\Models\HotelContractPrice;
 use App\Models\HotelContractRoomType;
@@ -587,6 +588,9 @@ class HotelContractController extends Controller
         $query = HotelContract::with([
             'hotel',
             'hotel.hotelChain',
+            'boardTypes' => function($query) {
+                $query->orderBy('name', 'asc');
+            },
             'roomTypes' => function($query) {
                 $query->orderBy('name', 'asc');
             },
@@ -626,6 +630,9 @@ class HotelContractController extends Controller
         $contracts = HotelContract::with([
             'hotel',
             'hotel.hotelChain',
+            'boardTypes' => function($query) {
+                $query->orderBy('name', 'asc');
+            },
             'roomTypes' => function($query) {
                 $query->orderBy('name', 'asc');
             },
@@ -960,6 +967,7 @@ class HotelContractController extends Controller
 
         $contractId = Input::get('contract-id');
         $marketId = Input::get('market-id');
+        $boardTypeId = Input::get('board-type-id');
         $setPrice = Input::get('set-price');
         $setCost = Input::get('set-cost');
         $setAllotment = Input::get('set-allotment');
@@ -977,6 +985,9 @@ class HotelContractController extends Controller
         DB::beginTransaction();
         try {
             $marketRate = HotelContractMarket::where('market_id', $marketId)->where('hotel_contract_id', $contractId)->first();
+            $hotelContractBoardType = HotelContractBoardType::with('boardType')
+                ->where('hotel_board_type_id', $boardTypeId)
+                ->where('hotel_contract_id', $contractId)->first();
             foreach($ranges as $range) {
                 $start = Carbon::createFromFormat('d.m.Y', $range->from);
                 $end = Carbon::createFromFormat('d.m.Y', $range->to);
@@ -1067,7 +1078,7 @@ class HotelContractController extends Controller
                             else if($setCost != '' || $setPrice != '') {
                                 $price = null;
                                 foreach($contractSetting->prices as $item) {
-                                    if($item->hotel_contract_setting_id == $contractSetting->id && $item->market_id == $marketRate->market_id) {
+                                    if($item->hotel_contract_setting_id == $contractSetting->id && $item->market_id == $marketRate->market_id && $item->hotel_board_type_id == $hotelContractBoardType->hotel_board_type_id) {
                                         $price = $item;
                                         break;
                                     }
@@ -1076,6 +1087,8 @@ class HotelContractController extends Controller
                                     $price = new HotelContractPrice();
                                     $price->market_id = $marketRate->market_id;
                                     $price->price_rate_id = $marketRate->id;
+                                    $price->hotel_contract_board_type_id = $hotelContractBoardType->id;
+                                    $price->hotel_board_type_id = $hotelContractBoardType->hotel_board_type_id;
                                 }
                                 $price->hotel_contract_setting_id = $contractSetting->id;
                                 $roomType = $contractSetting->roomType;
@@ -1224,6 +1237,7 @@ class HotelContractController extends Controller
         $from = Input::get('from');
         $to = Input::get('to');
         $market = Input::get('market');
+        $boardType = Input::get('boardType');
         $roomTypes = json_decode(Input::get('rooms'));
         $measures = json_decode(Input::get('rows'));
         $start = Carbon::createFromFormat('d.m.Y', $from)->startOfMonth();
@@ -1234,6 +1248,9 @@ class HotelContractController extends Controller
                 $query
                     ->whereIn('hotel_measure_id', $measures)
                     ->orderBy('id', 'asc');
+            },
+            'boardTypes' => function($query) use ($boardType) {
+                $query->where('hotel_board_types.id', $boardType);
             },
             'roomTypes' => function($query) use ($roomTypes) {
                 $query
@@ -1249,8 +1266,10 @@ class HotelContractController extends Controller
                     ->where('date', '>=', $start->format('Y-m-d'))
                     ->where('date', '<=', $end->format('Y-m-d'));
             },
-            'settings.prices' => function($query) use ($market) {
-                $query->where('market_id', $market);
+            'settings.prices' => function($query) use ($market, $boardType) {
+                $query
+                    ->where('market_id', $market)
+                    ->where('hotel_board_type_id', $boardType);
             },
             'markets' => function($query) use ($market) {
                 $query->where('market_id', $market);
@@ -1329,7 +1348,7 @@ class HotelContractController extends Controller
                         '<div class="portlet box green">' .
                         '<div class="portlet-title porlet-title-setting">' .
                         '<div class="caption caption-setting">' .
-                        $m->format("F Y") . ' - ' . $contract->markets[0]->name . '</div>' .
+                        $m->format("F Y") . ' - ' . $contract->markets[0]->name . ' - ' . $contract->boardTypes[0]->name . '</div>' .
                         '<div class="tools tools-setting">' .
                         '<a href="javascript:;" class="collapse"> </a>' .
                         '</div>' .

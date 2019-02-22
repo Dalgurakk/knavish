@@ -192,10 +192,6 @@ $(document).ready(function () {
         select.change();
     });
 
-    $.validator.addMethod('greaterThanZero', function (value, element, param) {
-        return this.optional(element) || parseInt(value) > 0;
-    }, 'At least one element is required.');
-
     var formAdd = $('#form-add');
     formAdd.validate({
         errorElement: 'span',

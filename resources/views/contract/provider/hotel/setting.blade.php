@@ -118,7 +118,7 @@
                         <div class="portlet box green porlet-setting">
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
-                                    <i class="fa fa-calendar"></i>Range Date</div>
+                                    <i class="fa fa-calendar"></i>Range</div>
                             </div>
                             <div class="portlet-body" style="padding-bottom: 8px;">
                                 <div class="scroller" style="height:200px">
@@ -259,7 +259,7 @@
                 <div class="portlet box green porlet-setting">
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
-                            <i class="fa fa-calendar"></i>Range</div>
+                            <i class="fa fa-calendar"></i>Ranges</div>
                         <div class="tools tools-setting">
                             <a href="javascript:;" class="collapse"> </a></div>
                     </div>
@@ -355,7 +355,7 @@
                 <div class="portlet box green porlet-setting">
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
-                            <i class="fa fa-calendar"></i>Range Date</div>
+                            <i class="fa fa-calendar"></i>Ranges</div>
                         <div class="tools tools-setting">
                             <a href="javascript:;" class="collapse"> </a></div>
                     </div>
@@ -580,7 +580,7 @@
                     <div class="portlet box green porlet-setting">
                         <div class="portlet-title porlet-title-setting">
                             <div class="caption caption-setting">
-                                <i class="fa fa-calendar"></i>Range Date</div>
+                                <i class="fa fa-calendar"></i>Ranges</div>
                             <div class="tools tools-setting">
                                 <a href="javascript:;" class="collapse"> </a></div>
                         </div>
@@ -650,6 +650,37 @@
                                         <th>
                                             <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
                                                 <input type="checkbox" class="group-checkable" data-set=".table-room-type .checkboxes" />
+                                                <span></span>
+                                            </label>
+                                        </th>
+                                        <th> Id </th>
+                                        <th> Code </th>
+                                        <th> Denomination </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 all-board_types-container">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-cutlery"></i>Board Types</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="form-group">
+                                <input type="hidden" name="count-offer-board-type" class="add-offer" value="0">
+                                <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-board-type" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                <input type="checkbox" class="group-checkable" data-set=".table-board-type .checkboxes" />
                                                 <span></span>
                                             </label>
                                         </th>
@@ -737,7 +768,7 @@
                     <div class="portlet box green porlet-setting">
                         <div class="portlet-title porlet-title-setting">
                             <div class="caption caption-setting">
-                                <i class="fa fa-calendar"></i>Range Date</div>
+                                <i class="fa fa-calendar"></i>Ranges</div>
                             <div class="tools tools-setting">
                                 <a href="javascript:;" class="collapse"> </a></div>
                         </div>
@@ -807,6 +838,37 @@
                                         <th>
                                             <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
                                                 <input type="checkbox" class="group-checkable" data-set=".table-room-type .checkboxes" />
+                                                <span></span>
+                                            </label>
+                                        </th>
+                                        <th> Id </th>
+                                        <th> Code </th>
+                                        <th> Denomination </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 all-board_types-container">
+                    <div class="portlet box green porlet-setting">
+                        <div class="portlet-title porlet-title-setting">
+                            <div class="caption caption-setting">
+                                <i class="fa fa-cutlery"></i>Board Types</div>
+                            <div class="tools tools-setting">
+                                <a href="javascript:;" class="collapse"> </a></div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="form-group">
+                                <input type="hidden" name="count-offer-board-type" class="edit-offer" value="0">
+                                <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-board-type" width="100%" cellspacing="0">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                <input type="checkbox" class="group-checkable" data-set=".table-board-type .checkboxes" />
                                                 <span></span>
                                             </label>
                                         </th>
@@ -891,7 +953,7 @@
                 <div class="portlet box green porlet-setting">
                     <div class="portlet-title porlet-title-setting">
                         <div class="caption caption-setting">
-                            <i class="fa fa-calendar"></i>Range Date</div>
+                            <i class="fa fa-calendar"></i>Ranges</div>
                         <div class="tools tools-setting">
                             <a href="javascript:;" class="collapse"> </a></div>
                     </div>
@@ -913,6 +975,29 @@
                     <div class="portlet-body">
                         <div class="form-group">
                             <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th> Code </th>
+                                    <th> Denomination </th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 all-board_types-container">
+                <div class="portlet box green porlet-setting">
+                    <div class="portlet-title porlet-title-setting">
+                        <div class="caption caption-setting">
+                            <i class="fa fa-cutlery"></i>Board Types</div>
+                        <div class="tools tools-setting">
+                            <a href="javascript:;" class="collapse"> </a></div>
+                    </div>
+                    <div class="portlet-body">
+                        <div class="form-group">
+                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-board-type" width="100%" cellspacing="0">
                                 <thead>
                                 <tr>
                                     <th> Code </th>

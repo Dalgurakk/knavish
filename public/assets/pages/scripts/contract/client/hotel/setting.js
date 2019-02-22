@@ -375,10 +375,6 @@ $(document).ready(function () {
         return rows;
     }
 
-    jQuery.validator.addMethod("validDate", function(value, element) {
-        return this.optional(element) || moment(value,"DD.MM.YYYY",true).isValid();
-    }, "Invalid date, use dd.mm.yyyy.");
-
     var formSetting = $('#form-setting');
     formSetting.validate({
         errorElement: 'span',

@@ -550,14 +550,20 @@ class HotelContractClientController extends Controller
             'settings.clientSetttings' => function($query) use ($clientContract) {
                 $query->where('hotel_contract_client_id', $clientContract->id);
             },
-            'offers' => function($query) use ($start, $end) {
+            'offers' => function($query) use ($start, $end, $boardType) {
                 $query->whereHas('ranges', function ($query) use ($start, $end) {
                     $query
                         ->where('to', '>=', $start->format('Y-m-d'))
                         ->where('from', '<=', $end->format('Y-m-d'));
                 })->where('active', '1');
+                $query->whereHas('boards', function ($query) use ($boardType) {
+                    $query->where('hotel_board_type_id', $boardType);
+                });
             },
             'offers.rooms',
+            'offers.boards' => function($query) use ($boardType) {
+                $query->where('hotel_board_type_id', $boardType);
+            },
             'offers.rooms.roomType',
             'offers.ranges' => function($query) use ($start, $end) {
                 $query

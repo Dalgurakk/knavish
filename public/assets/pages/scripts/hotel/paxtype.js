@@ -92,10 +92,6 @@ $(document).ready(function () {
         select.change();
     });
 
-    $.validator.addMethod('greaterThan', function (value, element, param) {
-        return this.optional(element) || parseInt(value) > parseInt($(param).val());
-    }, 'Invalid value.');
-
     var formAdd = $('#form-add');
     formAdd.validate({
         errorElement: 'span',

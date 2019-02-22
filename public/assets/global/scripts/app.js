@@ -1091,3 +1091,23 @@ var App = function() {
 jQuery(document).ready(function() {
     App.init(); // init metronic core componets
 });
+
+$.validator.addMethod('notGreaterThan', function (value, element, param) {
+    return this.optional(element) || parseInt(value) <= parseInt($(param).val());
+}, 'Invalid value.');
+
+$.validator.addMethod('notLessThan', function (value, element, param) {
+    return this.optional(element) || parseInt(value) >= parseInt($(param).val());
+}, 'Invalid value.');
+
+$.validator.addMethod('greaterThanZero', function (value, element, param) {
+    return this.optional(element) || parseInt(value) > 0;
+}, 'At least one element is required.');
+
+jQuery.validator.addMethod("validDate", function(value, element) {
+    return this.optional(element) || moment(value,"DD.MM.YYYY",true).isValid();
+}, "Invalid date, use dd.mm.yyyy.");
+
+$.validator.addMethod('greaterThan', function (value, element, param) {
+    return this.optional(element) || parseInt(value) > parseInt($(param).val());
+}, 'Invalid value.');

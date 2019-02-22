@@ -79,7 +79,7 @@
                                 <div class="portlet box green porlet-setting">
                                     <div class="portlet-title porlet-title-setting">
                                         <div class="caption caption-setting">
-                                            <i class="fa fa-calendar"></i>Range Date</div>
+                                            <i class="fa fa-calendar"></i>Range</div>
                                     </div>
                                     <div class="portlet-body" style="padding-bottom: 8px;">
                                         <div class="scroller" style="height:200px">

@@ -415,14 +415,6 @@ $(document).ready(function () {
         select.change();
     });
 
-    $.validator.addMethod('greaterThanZero', function (value, element, param) {
-        return this.optional(element) || parseInt(value) > 0;
-    }, 'At least one element is required.');
-
-    jQuery.validator.addMethod("validDate", function(value, element) {
-        return this.optional(element) || moment(value,"DD.MM.YYYY",true).isValid();
-    }, "Invalid date, use dd.mm.yyyy.");
-
     $.validator.addMethod('validMarketPriceRate', function (value, element, param) {
         var valid = true;
         $('#modal-add [name^="rate_type_"]').each(function () {

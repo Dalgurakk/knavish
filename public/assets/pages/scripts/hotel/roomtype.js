@@ -105,10 +105,6 @@ $(document).ready(function () {
         select.change();
     });
 
-    $.validator.addMethod('notGreaterThan', function (value, element, param) {
-        return this.optional(element) || parseInt(value) <= parseInt($(param).val());
-    }, 'Invalid value.');
-
     $.validator.addMethod('addTotalPaxValue', function (value, element) {
         var ad = $.isNumeric($('#modal-add :input[name=minadult]').val()) ? parseInt($('#modal-add :input[name=minadult]').val()) : 0;
         var ch = $.isNumeric($('#modal-add :input[name=minchildren]').val()) ? parseInt($('#modal-add :input[name=minchildren]').val()) : 0;

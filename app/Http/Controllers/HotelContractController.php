@@ -742,6 +742,8 @@ class HotelContractController extends Controller
                         $newPrice->cost_children_3_use_adult_type = $price->cost_children_3_use_adult_type;
                         $newPrice->cost_children_3_use_adult_rate = $price->cost_children_3_use_adult_rate;
                     }
+                    $newPrice->hotel_contract_board_type_id = $price->hotel_contract_board_type_id;
+                    $newPrice->hotel_board_type_id = $price->hotel_board_type_id;
                     $newPrice->save();
                 }
                 $this->response['status'] = 'success';
@@ -883,6 +885,8 @@ class HotelContractController extends Controller
                                 $contractPrice->hotel_contract_setting_id = $setting->id;
                                 $contractPrice->price_rate_id = $priceRate->id;
                                 $contractPrice->market_id = $price->market_id;
+                                $contractPrice->hotel_contract_board_type_id = $price->hotel_contract_board_type_id;
+                                $contractPrice->hotel_board_type_id = $price->hotel_board_type_id;
                             }
                             else {
                                 $contractPrice = HotelContractPrice::where('hotel_contract_setting_id', $setting->id)
@@ -892,6 +896,8 @@ class HotelContractController extends Controller
                                     $contractPrice->hotel_contract_setting_id = $setting->id;
                                     $contractPrice->price_rate_id = $priceRate->id;
                                     $contractPrice->market_id = $price->market_id;
+                                    $contractPrice->hotel_contract_board_type_id = $price->hotel_contract_board_type_id;
+                                    $contractPrice->hotel_board_type_id = $price->hotel_board_type_id;
                                 }
                             }
                             if (!is_null($price->cost_adult)) {
@@ -1274,15 +1280,22 @@ class HotelContractController extends Controller
             'markets' => function($query) use ($market) {
                 $query->where('market_id', $market);
             },
-            'offers' => function($query) use ($start, $end) {
+            'offers' => function($query) use ($start, $end, $boardType) {
                 $query->whereHas('ranges', function ($query) use ($start, $end) {
                     $query
                         ->where('to', '>=', $start->format('Y-m-d'))
                         ->where('from', '<=', $end->format('Y-m-d'));
                 })->where('active', '1');
+                $query->whereHas('boards', function ($query) use ($boardType) {
+                    $query->where('hotel_board_type_id', $boardType);
+                });
             },
             'offers.rooms',
             'offers.rooms.roomType',
+            'offers.boards' => function($query) use ($boardType) {
+                $query->where('hotel_board_type_id', $boardType);
+            },
+            'offers.boards.boardType',
             'offers.ranges' => function($query) use ($start, $end) {
                 $query
                     ->where('to', '>=', $start->format('Y-m-d'))

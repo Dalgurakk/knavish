@@ -25,4 +25,8 @@ class HotelOffer extends Model implements Auditable
     public function rooms() {
         return $this->hasMany('App\Models\HotelOfferContractRoomType');
     }
+
+    public function boards() {
+        return $this->hasMany('App\Models\HotelOfferContractBoardType');
+    }
 }

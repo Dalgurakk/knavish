@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HotelContractBoardType;
 use App\Models\HotelContractRoomType;
 use App\Models\HotelOffer;
+use App\Models\HotelOfferContractBoardType;
 use App\Models\HotelOfferContractRoomType;
 use App\Models\HotelOfferRange;
 use App\Models\HotelOfferType;
@@ -36,7 +38,9 @@ class HotelOfferController extends Controller
             'offerType',
             'ranges',
             'rooms',
-            'rooms.roomType'
+            'rooms.roomType',
+            'boards',
+            'boards.boardType'
         ])
             ->where('hotel_contract_id', $contractId);
         $records = $query->count();
@@ -87,6 +91,7 @@ class HotelOfferController extends Controller
         }
         else {
             $roomTypes = json_decode(Input::get('room-types'), true);
+            $boardTypes = json_decode(Input::get('board-types'), true);
             $ranges = Input::get('ranges');
             $ranges = json_decode($ranges);
 
@@ -99,24 +104,28 @@ class HotelOfferController extends Controller
             $offer->active = Input::get('active') == 1 ? 1 : 0;
 
             if ($offer->hotel_offer_type_id == 1) {
-                $bookingDateFrom = Input::get('booking-date-from');
-                $bookingDateTo = Input::get('booking-date-to');
-                $paymentDate = Input::get('payment-date');
-                if ($bookingDateFrom != '') {
-                    $offer->booking_date_from = Carbon::createFromFormat('!d.m.Y', $bookingDateFrom)->format('Y-m-d');
-                }
-                if ($bookingDateTo != '') {
-                    $offer->booking_date_to = Carbon::createFromFormat('!d.m.Y', $bookingDateTo)->format('Y-m-d');
-                }
-                if ($paymentDate != '') {
-                    $offer->payment_date = Carbon::createFromFormat('!d.m.Y', $paymentDate)->format('Y-m-d');
-                }
                 $offer->non_refundable = Input::get('non-refundable') == 1 ? 1 : 0;
                 $offer->apply_with_other_offers = Input::get('apply-with-other-offers') == 1 ? 1 : 0;
+                $offer->minimum_stay = Input::get('minimum-stay');
+                $offer->booking_type = Input::get('booking-type');
+                if ($offer->booking_type == 1) {
+                    $bookingDateFrom = Input::get('booking-date-from');
+                    $bookingDateTo = Input::get('booking-date-to');
+                    if (!is_null($bookingDateFrom))
+                        $offer->booking_date_from = Carbon::createFromFormat('!d.m.Y', $bookingDateFrom)->format('Y-m-d');
+                    if (!is_null($bookingDateTo))
+                        $offer->booking_date_to = Carbon::createFromFormat('!d.m.Y', $bookingDateTo)->format('Y-m-d');
+                }
+                else {
+                    $offer->days_prior_from = Input::get('days-from');
+                    $offer->days_prior_to = Input::get('days-to');
+                }
+                $paymentDate = Input::get('payment-date');
+                if (!is_null($paymentDate))
+                    $offer->payment_date = Carbon::createFromFormat('!d.m.Y', $paymentDate)->format('Y-m-d');
                 $offer->percentage_due = Input::get('percentage-due');
                 $offer->discount = Input::get('discount');
                 $offer->discount_type = Input::get('discount-type');
-                $offer->minimum_stay = Input::get('minimum-stay');
             }
 
             DB::beginTransaction();
@@ -139,6 +148,15 @@ class HotelOfferController extends Controller
                     $offerContractRoomtype->hotel_contract_room_type_id = $contractRoomType->id;
                     $offerContractRoomtype->hotel_room_type_id = $contractRoomType->hotel_room_type_id;
                     $offerContractRoomtype->save();
+                }
+                foreach($boardTypes as $boardType) {
+                    $contractBoardType = HotelContractBoardType::where('hotel_contract_id', $offer->hotel_contract_id)
+                        ->where('hotel_board_type_id', $boardType)->first();
+                    $offerContractBoardtype = new HotelOfferContractBoardType();
+                    $offerContractBoardtype->hotel_offer_id = $offer->id;
+                    $offerContractBoardtype->hotel_contract_board_type_id = $contractBoardType->id;
+                    $offerContractBoardtype->hotel_board_type_id = $contractBoardType->hotel_board_type_id;
+                    $offerContractBoardtype->save();
                 }
                 DB::commit();
                 $this->response['status'] = 'success';
@@ -174,36 +192,53 @@ class HotelOfferController extends Controller
         }
         else {
             $roomTypes = json_decode(Input::get('room-types'), true);
+            $boardTypes = json_decode(Input::get('board-types'), true);
             $ranges = Input::get('ranges');
             $ranges = json_decode($ranges);
 
             $offer = HotelOffer::where('id', $id)->first();
-
             $offer->hotel_offer_type_id = Input::get('offer-type');
             $offer->priority = Input::get('priority');
             $offer->name = Input::get('name');
             $offer->description = Input::get('description');
             $offer->active = Input::get('active') == 1 ? 1 : 0;
 
+            $offer->non_refundable = null;
+            $offer->apply_with_other_offers = null;
+            $offer->minimum_stay = null;
+            $offer->booking_type = null;
+            $offer->booking_date_from = null;
+            $offer->booking_date_to = null;
+            $offer->days_prior_from = null;
+            $offer->days_prior_to = null;
+            $offer->payment_date = null;
+            $offer->percentage_due = null;
+            $offer->discount = null;
+            $offer->discount_type = null;
+
             if ($offer->hotel_offer_type_id == 1) {
-                $bookingDateFrom = Input::get('booking-date-from');
-                $bookingDateTo = Input::get('booking-date-to');
-                $paymentDate = Input::get('payment-date');
-                if ($bookingDateFrom != '') {
-                    $offer->booking_date_from = Carbon::createFromFormat('!d.m.Y', $bookingDateFrom)->format('Y-m-d');
-                }
-                if ($bookingDateTo != '') {
-                    $offer->booking_date_to = Carbon::createFromFormat('!d.m.Y', $bookingDateTo)->format('Y-m-d');
-                }
-                if ($paymentDate != '') {
-                    $offer->payment_date = Carbon::createFromFormat('!d.m.Y', $paymentDate)->format('Y-m-d');
-                }
                 $offer->non_refundable = Input::get('non-refundable') == 1 ? 1 : 0;
                 $offer->apply_with_other_offers = Input::get('apply-with-other-offers') == 1 ? 1 : 0;
+                $offer->minimum_stay = Input::get('minimum-stay');
+                $offer->booking_type = Input::get('booking-type');
+                if ($offer->booking_type == 1) {
+                    $bookingDateFrom = Input::get('booking-date-from');
+                    $bookingDateTo = Input::get('booking-date-to');
+                    if (!is_null($bookingDateFrom))
+                        $offer->booking_date_from = Carbon::createFromFormat('!d.m.Y', $bookingDateFrom)->format('Y-m-d');
+                    if (!is_null($bookingDateTo))
+                        $offer->booking_date_to = Carbon::createFromFormat('!d.m.Y', $bookingDateTo)->format('Y-m-d');
+                }
+                else {
+                    $offer->days_prior_from = Input::get('days-from');
+                    $offer->days_prior_to = Input::get('days-to');
+                }
+                $paymentDate = Input::get('payment-date');
+                if (!is_null($paymentDate))
+                    $offer->payment_date = Carbon::createFromFormat('!d.m.Y', $paymentDate)->format('Y-m-d');
                 $offer->percentage_due = Input::get('percentage-due');
                 $offer->discount = Input::get('discount');
                 $offer->discount_type = Input::get('discount-type');
-                $offer->minimum_stay = Input::get('minimum-stay');
             }
 
             DB::beginTransaction();
@@ -211,6 +246,7 @@ class HotelOfferController extends Controller
                 $offer->save();
                 HotelOfferRange::where('hotel_offer_id', $offer->id)->delete();
                 HotelOfferContractRoomType::where('hotel_offer_id', $offer->id)->delete();
+                HotelOfferContractBoardType::where('hotel_offer_id', $offer->id)->delete();
                 foreach($ranges as $range) {
                     $start = Carbon::createFromFormat('d.m.Y', $range->from);
                     $end = Carbon::createFromFormat('d.m.Y', $range->to);
@@ -228,6 +264,15 @@ class HotelOfferController extends Controller
                     $offerContractRoomtype->hotel_contract_room_type_id = $contractRoomType->id;
                     $offerContractRoomtype->hotel_room_type_id = $contractRoomType->hotel_room_type_id;
                     $offerContractRoomtype->save();
+                }
+                foreach($boardTypes as $boardType) {
+                    $contractBoardType = HotelContractBoardType::where('hotel_contract_id', $offer->hotel_contract_id)
+                        ->where('hotel_board_type_id', $boardType)->first();
+                    $offerContractBoardtype = new HotelOfferContractBoardType();
+                    $offerContractBoardtype->hotel_offer_id = $offer->id;
+                    $offerContractBoardtype->hotel_contract_board_type_id = $contractBoardType->id;
+                    $offerContractBoardtype->hotel_board_type_id = $contractBoardType->hotel_board_type_id;
+                    $offerContractBoardtype->save();
                 }
                 DB::commit();
                 $this->response['status'] = 'success';

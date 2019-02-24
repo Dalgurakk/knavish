@@ -337,7 +337,9 @@ class HotelContractClientController extends Controller
             },
             'hotelContract.boardTypes' => function($query) {
                 $query->orderBy('name', 'asc');
-            }
+            },
+            'hotelContract.offers',
+            'hotelContract.offers.offerType'
         ]);
 
         if($id != '') {
@@ -380,7 +382,9 @@ class HotelContractClientController extends Controller
             },
             'hotelContract.boardTypes' => function($query) {
                 $query->orderBy('name', 'asc');
-            }
+            },
+            'hotelContract.offers',
+            'hotelContract.offers.offerType'
         ])
             ->where('name', 'like', $string)
             ->orderBy('name', 'asc')
@@ -598,7 +602,12 @@ class HotelContractClientController extends Controller
                     }
                     for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {
                         foreach ($offer->rooms as $room) {
-                            $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id] = $offer->id;
+                            $offersInDay = array();
+                            if (isset($offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id])) {
+                                $offersInDay = $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id];
+                            }
+                            $offersInDay[] = $offer->id;
+                            $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id] = $offersInDay;
                         }
                     }
                 }
@@ -807,7 +816,16 @@ class HotelContractClientController extends Controller
                                             else if ($rows[$v]->code == 'allotment_base') { $value = $object->allotment_base; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; $fromProvider = $object->release_from_provider; }
                                             else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = ''; if ($object->stop_sale == 1) $showValue = '<span class="stop-sales">SS</span>'; else if ($object->stop_sale == 2) $showValue = '<span class="on-request">RQ</span>'; }
-                                            else if ($rows[$v]->code == 'offer') { $auxDate = $i->format('Y-m-d'); $auxRoomId = $roomTypes[$r]->id; $value = isset($offerDates[$auxDate][$auxRoomId]) ? $offerDates[$auxDate][$auxRoomId] : ''; if ($value != '') { $showValue = '<span class="has-offer">X</span>'; }}
+                                            else if ($rows[$v]->code == 'offer') {
+                                                $auxDate = $i->format('Y-m-d');
+                                                $auxRoomId = $roomTypes[$r]->id;
+                                                $value = isset($offerDates[$auxDate][$auxRoomId]) ? $offerDates[$auxDate][$auxRoomId] : '';
+                                                if ($value != '') {
+                                                    $showValue = '<span class="has-offer">X</span>';
+                                                    $value = implode(',', $value);
+                                                }
+                                                $usableClass .= ' complement';
+                                            }
                                         }
                                     }
                                 }
@@ -816,6 +834,7 @@ class HotelContractClientController extends Controller
                                     'data="' . $value . '" ' .
                                     'data-date="' . $i->format('Y-m-d') . '" ' .
                                     'data-measure-id="' . $rows[$v]->id . '"' .
+                                    'data-measure-code="' . $rows[$v]->code . '"' .
                                     'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
                                     'data-market-id="' . $market . '" ' .
                                     'data-from-provider="' . $fromProvider . '" ' .

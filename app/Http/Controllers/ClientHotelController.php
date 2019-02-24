@@ -205,7 +205,9 @@ class ClientHotelController extends Controller
             'hotelContract.measures' => function($query) {
                 $query->whereNotIn('code', ['cost']);
                 $query->orderBy('id', 'asc');
-            }
+            },
+            'hotelContract.offers',
+            'hotelContract.offers.offerType'
         ]);
 
         $query
@@ -251,7 +253,9 @@ class ClientHotelController extends Controller
             'hotelContract.measures' => function($query) {
                 $query->whereNotIn('code', ['cost']);
                 $query->orderBy('id', 'asc');
-            }
+            },
+            'hotelContract.offers',
+            'hotelContract.offers.offerType'
         ])
             ->where('name', 'like', $string)
             ->where('client_id', Auth::user()->id)
@@ -353,7 +357,12 @@ class ClientHotelController extends Controller
                     }
                     for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {
                         foreach ($offer->rooms as $room) {
-                            $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id] = $offer->id;
+                            $offersInDay = array();
+                            if (isset($offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id])) {
+                                $offersInDay = $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id];
+                            }
+                            $offersInDay[] = $offer->id;
+                            $offerDates[$o->format('Y-m-d')][$room->hotel_room_type_id] = $offersInDay;
                         }
                     }
                 }
@@ -528,7 +537,16 @@ class ClientHotelController extends Controller
                                             else if ($rows[$v]->code == 'allotment_sold') { $value = $object->allotment_sold; $showValue = $value; }
                                             else if ($rows[$v]->code == 'release') { $value = $object->release; $showValue = $value; }
                                             else if ($rows[$v]->code == 'stop_sale') { $value = $object->stop_sale; $showValue = ''; if ($object->stop_sale == 1) $showValue = '<span class="stop-sales">SS</span>'; else if ($object->stop_sale == 2) $showValue = '<span class="on-request">RQ</span>'; }
-                                            else if ($rows[$v]->code == 'offer') { $auxDate = $i->format('Y-m-d'); $auxRoomId = $roomTypes[$r]->id; $value = isset($offerDates[$auxDate][$auxRoomId]) ? $offerDates[$auxDate][$auxRoomId] : ''; if ($value != '') { $showValue = '<span class="has-offer">X</span>'; }}
+                                            else if ($rows[$v]->code == 'offer') {
+                                                $auxDate = $i->format('Y-m-d');
+                                                $auxRoomId = $roomTypes[$r]->id;
+                                                $value = isset($offerDates[$auxDate][$auxRoomId]) ? $offerDates[$auxDate][$auxRoomId] : '';
+                                                if ($value != '') {
+                                                    $showValue = '<span class="has-offer">X</span>';
+                                                    $value = implode(',', $value);
+                                                }
+                                                $usableClass .= ' complement';
+                                            }
                                         }
                                     }
                                 }
@@ -537,6 +555,7 @@ class ClientHotelController extends Controller
                                     'data="' . $value . '" ' .
                                     'data-date="' . $i->format('Y-m-d') . '" ' .
                                     'data-measure-id="' . $rows[$v]->id . '"' .
+                                    'data-measure-code="' . $rows[$v]->code . '"' .
                                     'data-room-type-id="' . $roomTypes[$r]->id . '" ' .
                                     'data-market-id="' . $market . '" ' .
                                     '>' . $showValue . '</td>';

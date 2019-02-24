@@ -287,6 +287,47 @@ $(document).ready(function () {
                             $('.result-container').append(table);
                             operateMeasures = response.operateMeasures;
                             operateTable(response.from, response.to, contract);
+
+                            var offers = contract.offers;
+
+                            $('.complement').each(function () {
+                                var code = $(this).attr('data-measure-code');
+                                var data = $(this).attr('data');
+                                if (code == 'offer' && data != '') {
+                                    var offersInDay = JSON.parse("[" + data + "]");
+                                    var table =
+                                        '<table class="table table-striped table-complement" width="100%" cellspacing="0" style="margin-bottom: 0">' +
+                                        '<thead>' +
+                                        '<tr>' +
+                                        '<th> # </th>' +
+                                        '<th> Denomination </th>' +
+                                        '<th> Type </th>' +
+                                        '</thead>' +
+                                        '<tbody>';
+                                    for (var i = 0; i < offersInDay.length; i++) {
+                                        for (var j = 0; j < offers.length; j++) {
+                                            if (offersInDay[i] == offers[j].id) {
+                                                table +=
+                                                    '<tr><td>' + (i + 1) + '</td><td>' + offers[j].name + '</td><td>' + offers[j].offer_type.name + '</td></tr>';
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    table +=
+                                        '</tbody>' +
+                                        '</table>';
+                                    $(this).popover({
+                                        trigger: 'hover',
+                                        container: 'body',
+                                        placement : 'top',
+                                        title: 'Offers',
+                                        content: table,
+                                        delay: { "show": 500, "hide": 100 },
+                                        html: true,
+                                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title porlet-title-setting"></h3><div class="popover-content" style="padding: 5px;"></div></div>'
+                                    });
+                                }
+                            });
                         }
                         else {
                             toastr['error'](response.message, "Error");
@@ -361,6 +402,7 @@ $(document).ready(function () {
         var chain = contract.hotel.hotel_chain != null ? contract.hotel.hotel_chain.name : '';
         var status = contract.active == 1 ? 'Enabled' : 'Disabled';
         var arrayComplements = [];
+
         $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
         $("#search-accomodation :input[name=hotel-chain]").val(chain);
         $("#search-accomodation :input[name=status]").val(status);
@@ -684,541 +726,549 @@ $(document).ready(function () {
     function operateTable(from, to, contract) {
         var roomTypes = contract.room_types;
         $('.item-setting').on('click', function() {
-            $('input[name^="cost"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="price"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="allotment"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="release"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="stop_sale"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('#modal-setting .expand').each(function () {
-                $(this).click();
-            });
-
-            var selectedRoomId = $(this).attr('data-room-type-id');
-            $("#modal-setting :input[name=room-type-id]").val(selectedRoomId);
-            var room = null;
-            var measures = operateMeasures;
-            for (var j = 0; j < roomTypes.length; j++) {
-                if (roomTypes[j].id == selectedRoomId) {
-                    room = roomTypes[j];
-                    break;
-                }
+            if ($(this).hasClass('complement')) {
+                /*var offers = contract.offers;
+                var array = JSON.parse("[" + $(this).attr('data') + "]");
+                console.log(array);*/
             }
-            $('.measures-container').html('');
-            for (var i = 0; i < measures.length; i++) {
-                if (measures[i].code != 'offer' && measures[i].code != 'supplement' && measures[i].code != 'restriction') {
-                    if (measures[i].code == 'cost') {
-                        var html =
-                            '<div class="row">' +
-                                '<div class="col-md-12">' +
-                                    '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                                        '<div class="form-group">' +
-                                            '<label>' + measures[i].name + ' Adult</label>' +
-                                            '<input type="text" class="form-control measure-input" name="' + measures[i].code + '" readonly>' +
-                                        '</div>' +
-                                    '</div>' +
-                                    '<div class="col-md-7 col-sm-7 col-xs-7">' +
-                                        '<div class="mt-checkbox-inline">' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                                                '<input type="checkbox" class="set" value="1" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
-                                                '<span></span>' +
-                                            '</label>' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Unset' +
-                                                '<input type="checkbox" class="set" value="0" name="unset-cost" />' +
-                                                '<span></span>' +
-                                            '</label>' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15"> Import' +
-                                                '<input type="checkbox" class="set" value="0" name="import-cost" />' +
-                                                '<span></span>' +
-                                            '</label>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                            '</div>';
-                        $('.measures-container').append(html);
-                        if (room != null && room.max_children > 0 && room.max_children <= 3) {
-                            for (var j = 1; j <= room.max_children; j++) {
-                                var htmlPlus =
-                            '<div class="row">' +
-                                '<div class="col-md-12">' +
-                                    '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                                        '<div class="form-group">' +
-                                            '<label>' + measures[i].name + ' Children ' + j + '</label>' +
-                                            '<input type="text" class="form-control measure-input" name="' + measures[i].code + '_children_' + j + '" readonly>' +
-                                        '</div>' +
-                                    '</div>' +
-                                    '<div class="col-md-7 col-sm-7 col-xs-7 label_contentainer" style="display: none;">' +
-                                        '<div class="mt-checkbox-inline">' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"><p class="label_' + measures[i].code + '_children_' + j + '">From Adult</p>' +
-                                                '<input type="checkbox" class="set use-adult" value="1" name="use-adult-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '"/>' +
-                                                '<span></span>' +
-                                            '</label>' +
-                                            '<input type="hidden" value="" name="use-adult-rate-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '" data-type="rate"/>' +
-                                            '<input type="hidden" value="" name="use-adult-type-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '" data-type="type"/>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                            '</div>';
-                                $('.measures-container').append(htmlPlus);
-                            }
-                        }
+            else {
+                $('input[name^="cost"]').each(function(i) {
+                    $(this).rules('remove', 'required');
+                });
+                $('input[name^="price"]').each(function(i) {
+                    $(this).rules('remove', 'required');
+                });
+                $('input[name^="allotment"]').each(function(i) {
+                    $(this).rules('remove', 'required');
+                });
+                $('input[name^="release"]').each(function(i) {
+                    $(this).rules('remove', 'required');
+                });
+                $('input[name^="stop_sale"]').each(function(i) {
+                    $(this).rules('remove', 'required');
+                });
+                $('#modal-setting .expand').each(function () {
+                    $(this).click();
+                });
 
-                        $('input[name=import-cost]').change(function () {
-                            if ($(this).is(':checked')) {
-                                $('input[name="set-cost"]').prop('checked', '');
-                                $('input[name="unset-cost"]').prop('checked', '');
-                                formImport.validate().resetForm();
-                                formImport[0].reset();
-                                var dateFrom = contract.valid_from;
-                                var dateTo = contract.valid_to;
-                                $('#modal-import :input[name=import-from]').datepicker("setDate" , new Date(moment(dateFrom, 'YYYY-MM-DD')));
-                                $('#modal-import :input[name=import-to]').datepicker("setDate" , new Date(moment(dateTo, 'YYYY-MM-DD')));
-                                $('input[name=add-value]').prop('checked', '');
-                                $('input[name="rate_fee_value"]').attr('disabled', 'disabled').val('');
-                                $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
-                                $('input[data-target="rate_fee_value"]').prop('checked', true).attr('disabled', 'disabled');
-                                $('input[data-target="rate_percent_value"]').attr('disabled', 'disabled');
-                                $('.add-value-container').hide();
-                                $('#modal-import .range-optional').each(function () {
-                                    $(this).remove();
-                                });
-                                $('#modal-import .expand').each(function () {
-                                    $(this).click();
-                                });
-                                $('#modal-import').modal('show');
-                            }
-                        });
-
-                        $('.use-adult').on('click', function(e) {
-                            e.preventDefault();
-                            var dataSet = $(this).attr('data-set');
-                            $('.from-adult-content').html('');
-                            var id = $("#modal-setting :input[name=room-type-id]").val();
-                            var rooms = contract.room_types;
-                            var room = null;
-                            for (var i = 0; i < rooms.length; i++) {
-                                if (id == rooms[i].id) {
-                                    room = rooms[i];
-                                    break;
+                var selectedRoomId = $(this).attr('data-room-type-id');
+                $("#modal-setting :input[name=room-type-id]").val(selectedRoomId);
+                var room = null;
+                var measures = operateMeasures;
+                for (var j = 0; j < roomTypes.length; j++) {
+                    if (roomTypes[j].id == selectedRoomId) {
+                        room = roomTypes[j];
+                        break;
+                    }
+                }
+                $('.measures-container').html('');
+                for (var i = 0; i < measures.length; i++) {
+                    if (measures[i].code != 'offer' && measures[i].code != 'supplement' && measures[i].code != 'restriction') {
+                        if (measures[i].code == 'cost') {
+                            var html =
+                                '<div class="row">' +
+                                '<div class="col-md-12">' +
+                                '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                                '<div class="form-group">' +
+                                '<label>' + measures[i].name + ' Adult</label>' +
+                                '<input type="text" class="form-control measure-input" name="' + measures[i].code + '" readonly>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="col-md-7 col-sm-7 col-xs-7">' +
+                                '<div class="mt-checkbox-inline">' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
+                                '<input type="checkbox" class="set" value="1" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
+                                '<span></span>' +
+                                '</label>' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Unset' +
+                                '<input type="checkbox" class="set" value="0" name="unset-cost" />' +
+                                '<span></span>' +
+                                '</label>' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15"> Import' +
+                                '<input type="checkbox" class="set" value="0" name="import-cost" />' +
+                                '<span></span>' +
+                                '</label>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+                            $('.measures-container').append(html);
+                            if (room != null && room.max_children > 0 && room.max_children <= 3) {
+                                for (var j = 1; j <= room.max_children; j++) {
+                                    var htmlPlus =
+                                        '<div class="row">' +
+                                        '<div class="col-md-12">' +
+                                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                                        '<div class="form-group">' +
+                                        '<label>' + measures[i].name + ' Children ' + j + '</label>' +
+                                        '<input type="text" class="form-control measure-input" name="' + measures[i].code + '_children_' + j + '" readonly>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<div class="col-md-7 col-sm-7 col-xs-7 label_contentainer" style="display: none;">' +
+                                        '<div class="mt-checkbox-inline">' +
+                                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"><p class="label_' + measures[i].code + '_children_' + j + '">From Adult</p>' +
+                                        '<input type="checkbox" class="set use-adult" value="1" name="use-adult-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '"/>' +
+                                        '<span></span>' +
+                                        '</label>' +
+                                        '<input type="hidden" value="" name="use-adult-rate-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '" data-type="rate"/>' +
+                                        '<input type="hidden" value="" name="use-adult-type-' + measures[i].code + '_children_' + j + '" data-set="' + measures[i].code + '_children_' + j + '" data-type="type"/>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>';
+                                    $('.measures-container').append(htmlPlus);
                                 }
                             }
-                            for (var i = 1; i <= room.max_children; i++) {
-                                var html = '';
-                                if (i > 1)
-                                    html = '<hr>';
-                                html +=
-                                '<div class="children-setting" style="margin-bottom: 10px;margin-top: 10px;">' +
-                                    '<div class="row">' +
-                                        '<div class="col-md-12">' +
-                                            '<div class="row">' +
-                                                '<div class="col-md-12">' +
-                                                    '<label class=""> Cost Children ' + i + '</label>' +
-                                                '</div>' +
-                                            '</div>' +
-                                        '</div>' +
-                                        '<div class="col-md-12" style="margin-top: 10px;">' +
-                                            '<div class="row" style="margin-top: 5px;">' +
-                                                '<div class="col-md-4">' +
-                                                    '<div class="form-group">' +
-                                                        '<label>Rate</label>' +
-                                                        '<input type="text" class="form-control use-adult-input-rate" name="cost_children_' + i + '_rate">' +
-                                                    '</div>' +
-                                                '</div>' +
-                                                '<div class="col-md-4">' +
-                                                    '<label>Type</label>' +
-                                                    '<div class="form-group">' +
-                                                        '<select class="form-control" name="cost_children_' + i + '_type" id="cost_children_' + i + '_type">' +
-                                                            '<option value="1">Percent</option>' +
-                                                            '<option value="2">Fee</option>' +
-                                                        '</select>' +
-                                                    '</div>' +
-                                                '</div>' +
-                                                '<div class="col-md-4">' +
-                                                    '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 24px;"> Enable' +
-                                                        '<input class="active-use-adult" type="checkbox" value="1" name="cost_children_' + i + '_active" data-set="cost_children_' + i + '"/>' +
-                                                        '<span></span>' +
-                                                    '</label>' +
-                                                '</div>' +
-                                                /*'<div class="col-md-4">' +
-                                                    '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 24px;"> Update Related' +
-                                                        '<input type="checkbox" value="1" name="cost_children_' + i + '_update_related"/>' +
-                                                        '<span></span>' +
-                                                    '</label>' +
-                                                '</div>' +*/
-                                            '</div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>';
-                                $('.from-adult-content').append(html);
-                                $('input[name="cost_children_' + i + '_active"]').on('click', function() {
-                                    var rowPref = $(this).attr('data-set');
-                                    if ($(this).prop('checked')) {
-                                        $('input[name="' + rowPref + '_rate"]').rules('add', 'required');
-                                    }
-                                    else {
-                                        $('input[name="' + rowPref + '_rate"]').rules('remove', 'required');
-                                    }
-                                });
-                            }
-                            $('.use-adult').each(function() {
-                                $('.active-use-adult').each(function() {
-                                    var auxRow = $(this).attr('data-set');
-                                    $('input[name="' + auxRow + '_rate"]').rules('remove', 'required');
-                                    $('input[name="' + auxRow + '_active"]').rules('remove', 'required');
-                                    //$('input[name="' + auxRow + '_update_related"]').rules('remove', 'required');
-                                });
-                                var rowPref = $(this).attr('data-set');
-                                var rate = $('[data-set="' + rowPref + '"][data-type="rate"]').val();
-                                var type = $('[data-set="' + rowPref + '"][data-type="type"]').val();
-                                if (rate != '' && type != '') {
-                                    $('input[name="' + rowPref + '_rate"]').val(rate);
-                                    $('#' + rowPref + '_type').val(type);
-                                    $('input[name="' + rowPref + '_active"]').prop('checked', true);
+
+                            $('input[name=import-cost]').change(function () {
+                                if ($(this).is(':checked')) {
+                                    $('input[name="set-cost"]').prop('checked', '');
+                                    $('input[name="unset-cost"]').prop('checked', '');
+                                    formImport.validate().resetForm();
+                                    formImport[0].reset();
+                                    var dateFrom = contract.valid_from;
+                                    var dateTo = contract.valid_to;
+                                    $('#modal-import :input[name=import-from]').datepicker("setDate" , new Date(moment(dateFrom, 'YYYY-MM-DD')));
+                                    $('#modal-import :input[name=import-to]').datepicker("setDate" , new Date(moment(dateTo, 'YYYY-MM-DD')));
+                                    $('input[name=add-value]').prop('checked', '');
+                                    $('input[name="rate_fee_value"]').attr('disabled', 'disabled').val('');
+                                    $('input[name="rate_percent_value"]').attr('disabled', 'disabled').val('');
+                                    $('input[data-target="rate_fee_value"]').prop('checked', true).attr('disabled', 'disabled');
+                                    $('input[data-target="rate_percent_value"]').attr('disabled', 'disabled');
+                                    $('.add-value-container').hide();
+                                    $('#modal-import .range-optional').each(function () {
+                                        $(this).remove();
+                                    });
+                                    $('#modal-import .expand').each(function () {
+                                        $(this).click();
+                                    });
+                                    $('#modal-import').modal('show');
                                 }
                             });
-                            $('input[name="' + dataSet + '_rate"]').rules('add', 'required');
-                            $('input[name="' + dataSet + '_active"]').prop('checked', true);
-                            $('#modal-use-adult').modal('show');
-                        });
 
-                        $('.cancel-import').on('click', function(e) {
-                            $('input[name="import-cost"]').prop('checked', '');
-                            $('input[name="import-cost"]').val(0);
-                        });
-                    }
-                    else if (measures[i].code == 'price') {
-                        var html =
-                            '<div class="row">' +
-                                '<div class="col-md-12">' +
-                                    '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                                        '<div class="form-group">' +
-                                            '<label>' + measures[i].name + ' Adult</label>' +
-                                            '<input type="text" class="form-control measure-input" name="' + measures[i].code + '" readonly>' +
+                            $('.use-adult').on('click', function(e) {
+                                e.preventDefault();
+                                var dataSet = $(this).attr('data-set');
+                                $('.from-adult-content').html('');
+                                var id = $("#modal-setting :input[name=room-type-id]").val();
+                                var rooms = contract.room_types;
+                                var room = null;
+                                for (var i = 0; i < rooms.length; i++) {
+                                    if (id == rooms[i].id) {
+                                        room = rooms[i];
+                                        break;
+                                    }
+                                }
+                                for (var i = 1; i <= room.max_children; i++) {
+                                    var html = '';
+                                    if (i > 1)
+                                        html = '<hr>';
+                                    html +=
+                                        '<div class="children-setting" style="margin-bottom: 10px;margin-top: 10px;">' +
+                                        '<div class="row">' +
+                                        '<div class="col-md-12">' +
+                                        '<div class="row">' +
+                                        '<div class="col-md-12">' +
+                                        '<label class=""> Cost Children ' + i + '</label>' +
                                         '</div>' +
-                                    '</div>' +
-                                    '<div class="col-md-7 col-sm-7 col-xs-7">' +
-                                        '<div class="mt-checkbox-inline">' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                                                '<input type="checkbox" class="set" value="1" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<div class="col-md-12" style="margin-top: 10px;">' +
+                                        '<div class="row" style="margin-top: 5px;">' +
+                                        '<div class="col-md-4">' +
+                                        '<div class="form-group">' +
+                                        '<label>Rate</label>' +
+                                        '<input type="text" class="form-control use-adult-input-rate" name="cost_children_' + i + '_rate">' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<div class="col-md-4">' +
+                                        '<label>Type</label>' +
+                                        '<div class="form-group">' +
+                                        '<select class="form-control" name="cost_children_' + i + '_type" id="cost_children_' + i + '_type">' +
+                                        '<option value="1">Percent</option>' +
+                                        '<option value="2">Fee</option>' +
+                                        '</select>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<div class="col-md-4">' +
+                                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 24px;"> Enable' +
+                                        '<input class="active-use-adult" type="checkbox" value="1" name="cost_children_' + i + '_active" data-set="cost_children_' + i + '"/>' +
+                                        '<span></span>' +
+                                        '</label>' +
+                                        '</div>' +
+                                        /*'<div class="col-md-4">' +
+                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom" style="width: 100%; margin-top: 24px;"> Update Related' +
+                                                '<input type="checkbox" value="1" name="cost_children_' + i + '_update_related"/>' +
                                                 '<span></span>' +
                                             '</label>' +
+                                        '</div>' +*/
                                         '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                            '</div>';
-                        $('.measures-container').append(html);
-                        if (room != null && room.max_children > 0 && room.max_children <= 3) {
-                            for (var j = 1; j <= room.max_children; j++) {
-                                var htmlPlus =
-                            '<div class="row">' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>';
+                                    $('.from-adult-content').append(html);
+                                    $('input[name="cost_children_' + i + '_active"]').on('click', function() {
+                                        var rowPref = $(this).attr('data-set');
+                                        if ($(this).prop('checked')) {
+                                            $('input[name="' + rowPref + '_rate"]').rules('add', 'required');
+                                        }
+                                        else {
+                                            $('input[name="' + rowPref + '_rate"]').rules('remove', 'required');
+                                        }
+                                    });
+                                }
+                                $('.use-adult').each(function() {
+                                    $('.active-use-adult').each(function() {
+                                        var auxRow = $(this).attr('data-set');
+                                        $('input[name="' + auxRow + '_rate"]').rules('remove', 'required');
+                                        $('input[name="' + auxRow + '_active"]').rules('remove', 'required');
+                                        //$('input[name="' + auxRow + '_update_related"]').rules('remove', 'required');
+                                    });
+                                    var rowPref = $(this).attr('data-set');
+                                    var rate = $('[data-set="' + rowPref + '"][data-type="rate"]').val();
+                                    var type = $('[data-set="' + rowPref + '"][data-type="type"]').val();
+                                    if (rate != '' && type != '') {
+                                        $('input[name="' + rowPref + '_rate"]').val(rate);
+                                        $('#' + rowPref + '_type').val(type);
+                                        $('input[name="' + rowPref + '_active"]').prop('checked', true);
+                                    }
+                                });
+                                $('input[name="' + dataSet + '_rate"]').rules('add', 'required');
+                                $('input[name="' + dataSet + '_active"]').prop('checked', true);
+                                $('#modal-use-adult').modal('show');
+                            });
+
+                            $('.cancel-import').on('click', function(e) {
+                                $('input[name="import-cost"]').prop('checked', '');
+                                $('input[name="import-cost"]').val(0);
+                            });
+                        }
+                        else if (measures[i].code == 'price') {
+                            var html =
+                                '<div class="row">' +
                                 '<div class="col-md-12">' +
-                                    '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                                        '<div class="form-group">' +
-                                            '<label>' + measures[i].name + ' Children ' + j + '</label>' +
-                                            '<input type="text" class="form-control measure-input" name="' + measures[i].code + '_children_' + j + '" readonly>' +
-                                        '</div>' +
-                                    '</div>' +
+                                '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                                '<div class="form-group">' +
+                                '<label>' + measures[i].name + ' Adult</label>' +
+                                '<input type="text" class="form-control measure-input" name="' + measures[i].code + '" readonly>' +
                                 '</div>' +
-                            '</div>';
-                                $('.measures-container').append(htmlPlus);
+                                '</div>' +
+                                '<div class="col-md-7 col-sm-7 col-xs-7">' +
+                                '<div class="mt-checkbox-inline">' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
+                                '<input type="checkbox" class="set" value="1" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
+                                '<span></span>' +
+                                '</label>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+                            $('.measures-container').append(html);
+                            if (room != null && room.max_children > 0 && room.max_children <= 3) {
+                                for (var j = 1; j <= room.max_children; j++) {
+                                    var htmlPlus =
+                                        '<div class="row">' +
+                                        '<div class="col-md-12">' +
+                                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                                        '<div class="form-group">' +
+                                        '<label>' + measures[i].name + ' Children ' + j + '</label>' +
+                                        '<input type="text" class="form-control measure-input" name="' + measures[i].code + '_children_' + j + '" readonly>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>';
+                                    $('.measures-container').append(htmlPlus);
+                                }
                             }
                         }
-                    }
-                    else if (measures[i].code == 'stop_sale') {
-                        var html =
-                            '<div class="row">' +
+                        else if (measures[i].code == 'stop_sale') {
+                            var html =
+                                '<div class="row">' +
                                 '<div class="col-md-12">' +
-                                    '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                                        '<div class="form-group">' +
-                                            '<label>' + measures[i].name + '</label>' +
-                                            '<select id="select-stop-sale" class="form-control measure-input" name="' + measures[i].code + '" readonly="" disabled="disabled">' +
-                                                '<option value="0">Open Sales</option>' +
-                                                '<option value="1">Stop Sales</option>' +
-                                                '<option value="2">On Request</option>' +
-                                            '</select>' +
-                                        '</div>' +
-                                    '</div>' +
-                                    '<div class="col-md-7 col-sm-7 col-xs-7">' +
-                                        '<div class="mt-checkbox-inline">' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                                                '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
-                                                '<span></span>' +
-                                            '</label>' +
-                                            /*'<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Unset' +
-                                                '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
-                                                '<span></span>' +
-                                            '</label>' +*/
-                                        '</div>' +
-                                    '</div>' +
+                                '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                                '<div class="form-group">' +
+                                '<label>' + measures[i].name + '</label>' +
+                                '<select id="select-stop-sale" class="form-control measure-input" name="' + measures[i].code + '" readonly="" disabled="disabled">' +
+                                '<option value="0">Open Sales</option>' +
+                                '<option value="1">Stop Sales</option>' +
+                                '<option value="2">On Request</option>' +
+                                '</select>' +
                                 '</div>' +
-                            '</div>';
-                        $('.measures-container').append(html);
-                        $('#select-stop-sale').val(0).change();
-                        $('input[name="set-' + measures[i].code + '"]').change(function() {
-                            var code = $(this).attr('data-set');
-                            if($(this).is(":checked")) {
-                                $('#select-stop-sale').removeAttr('readonly', '');
-                                $('input[name="unset-' + code + '"]').prop('checked', '');
-                                $('#select-stop-sale').removeAttr('disabled');
-                                $(this).val(1);
-                            }
-                            else {
-                                $('#select-stop-sale').attr('readonly', true);
-                                $('#select-stop-sale').attr('disabled', 'disabled');
-                            }
+                                '</div>' +
+                                '<div class="col-md-7 col-sm-7 col-xs-7">' +
+                                '<div class="mt-checkbox-inline">' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
+                                '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
+                                '<span></span>' +
+                                '</label>' +
+                                /*'<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Unset' +
+                                    '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
+                                    '<span></span>' +
+                                '</label>' +*/
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+                            $('.measures-container').append(html);
+                            $('#select-stop-sale').val(0).change();
+                            $('input[name="set-' + measures[i].code + '"]').change(function() {
+                                var code = $(this).attr('data-set');
+                                if($(this).is(":checked")) {
+                                    $('#select-stop-sale').removeAttr('readonly', '');
+                                    $('input[name="unset-' + code + '"]').prop('checked', '');
+                                    $('#select-stop-sale').removeAttr('disabled');
+                                    $(this).val(1);
+                                }
+                                else {
+                                    $('#select-stop-sale').attr('readonly', true);
+                                    $('#select-stop-sale').attr('disabled', 'disabled');
+                                }
+                            });
+                            $('input[name="unset-' + measures[i].code + '"]').change(function() {
+                                var code = $(this).attr('data-unset');
+                                if($(this).is(":checked")) {
+                                    $('input[name=' + code + ']').prop('readonly', true);
+                                    //$('input[name=' + code + ']').val('');
+                                    $('input[name="set-' + code + '"]').prop('checked', '');
+                                    $(this).val($(this).attr('data-measure-id'));
+                                    $('#select-stop-sale').attr('disabled', 'disabled');
+                                }
+                                else {
+                                    $(this).val('0');
+                                }
+                            });
+                        }
+                        else {
+                            var name = measures[i].code == 'allotment' ? 'Allotment Base' : measures[i].name;
+                            var html =
+                                '<div class="row">' +
+                                '<div class="col-md-12">' +
+                                '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                                '<div class="form-group">' +
+                                '<label>' + name + '</label>' +
+                                '<input type="text" class="form-control measure-input" name="' + measures[i].code + '" readonly>' +
+                                '</div>' +
+                                '</div>' +
+                                '<div class="col-md-7 col-sm-7 col-xs-7">' +
+                                '<div class="mt-checkbox-inline">' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
+                                '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
+                                '<span></span>' +
+                                '</label>' +
+                                '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Unset' +
+                                '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
+                                '<span></span>' +
+                                '</label>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+                            $('.measures-container').append(html);
+                            $('input[name="set-' + measures[i].code + '"]').change(function() {
+                                var code = $(this).attr('data-set');
+                                if($(this).is(":checked")) {
+                                    $('input[name=' + code + ']').prop('readonly', '');
+                                    $('input[name=' + code + ']').rules('add', 'required');
+                                    $(this).val($(this).attr('data-measure-id'));
+                                    $('input[name="unset-' + code + '"]').prop('checked', '');
+                                    $(this).val(1);
+                                }
+                                else {
+                                    $('input[name=' + code + ']').prop('readonly', true);
+                                    $('input[name=' + code + ']').rules('remove', 'required');
+                                    //$('input[name=' + name + ']').val('');
+                                }
+                            });
+                            $('input[name="unset-' + measures[i].code + '"]').change(function() {
+                                var code = $(this).attr('data-unset');
+                                if($(this).is(":checked")) {
+                                    $('input[name=' + code + ']').prop('readonly', true);
+                                    $('input[name=' + code + ']').rules('remove', 'required');
+                                    //$('input[name=' + code + ']').val('');
+                                    $('input[name="set-' + code + '"]').prop('checked', '');
+                                    $(this).val($(this).attr('data-measure-id'));
+                                }
+                                else {
+                                    $(this).val('0');
+                                }
+                            });
+                        }
+                    }
+                }
+
+                $('input[name="set-cost"]').change(function() {
+                    if($(this).is(":checked")) {
+                        $('input[name^="cost"]').each(function(i) {
+                            $(this).rules('add', 'required');
+                            var code = $(this).attr('name');
+                            if ($('.use-adult[data-set="' + code + '"]').prop('checked') == false || code == 'cost')
+                                $(this).prop('readonly', '');
                         });
-                        $('input[name="unset-' + measures[i].code + '"]').change(function() {
-                            var code = $(this).attr('data-unset');
-                            if($(this).is(":checked")) {
-                                $('input[name=' + code + ']').prop('readonly', true);
-                                //$('input[name=' + code + ']').val('');
-                                $('input[name="set-' + code + '"]').prop('checked', '');
-                                $(this).val($(this).attr('data-measure-id'));
-                                $('#select-stop-sale').attr('disabled', 'disabled');
-                            }
-                            else {
-                                $(this).val('0');
-                            }
+                        $('.label_contentainer').show();
+                        $('input[name="unset-cost"]').prop('checked', '');
+                        $('input[name="import-cost"]').prop('checked', '');
+                    }
+                    else {
+                        $('input[name^="cost"]').each(function(i) {
+                            $(this).rules('remove', 'required');
+                            $(this).prop('readonly', true);
+                        });
+                        $('.label_contentainer').hide();
+                        $('input[name="unset-cost"]').prop('checked', '');
+                        $('input[name="import-cost"]').prop('checked', '');
+                    }
+                });
+
+                $('input[name="unset-cost"]').change(function() {
+                    if($(this).is(":checked")) {
+                        $('input[name^="cost"]').each(function(i) {
+                            $(this).rules('remove', 'required');
+                            $(this).prop('readonly', true);
+                            //$(this).val('');
+                            $('input[name="set-price"]').prop('checked', '');
+                            $('input[name=set-cost]').prop('checked', '');
+                            $('input[name="import-cost"]').prop('checked', '');
+                        });
+                        $('input[name^="price"]').each(function(i) {
+                            $(this).rules('remove', 'required');
+                            $(this).prop('readonly', true);
+                            //$(this).val('');
+                        });
+                        $('.label_contentainer').hide();
+                    }
+                });
+
+                $('input[name="set-price"]').change(function() {
+                    if($(this).is(":checked")) {
+                        $('input[name^="cost"]').each(function(i) {
+                            $(this).rules('add', 'required');
+                            //$(this).prop('readonly', '');
+                        });
+                        $('input[name^="price"]').each(function(i) {
+                            $(this).rules('add', 'required');
+                            $(this).prop('readonly', '');
                         });
                     }
                     else {
-                        var name = measures[i].code == 'allotment' ? 'Allotment Base' : measures[i].name;
-                        var html =
-                            '<div class="row">' +
-                                '<div class="col-md-12">' +
-                                    '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                                        '<div class="form-group">' +
-                                            '<label>' + name + '</label>' +
-                                            '<input type="text" class="form-control measure-input" name="' + measures[i].code + '" readonly>' +
-                                        '</div>' +
-                                    '</div>' +
-                                    '<div class="col-md-7 col-sm-7 col-xs-7">' +
-                                        '<div class="mt-checkbox-inline">' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                                                '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
-                                                '<span></span>' +
-                                            '</label>' +
-                                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Unset' +
-                                                '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
-                                                '<span></span>' +
-                                            '</label>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</div>' +
-                            '</div>';
-                        $('.measures-container').append(html);
-                        $('input[name="set-' + measures[i].code + '"]').change(function() {
-                            var code = $(this).attr('data-set');
-                            if($(this).is(":checked")) {
-                                $('input[name=' + code + ']').prop('readonly', '');
-                                $('input[name=' + code + ']').rules('add', 'required');
-                                $(this).val($(this).attr('data-measure-id'));
-                                $('input[name="unset-' + code + '"]').prop('checked', '');
-                                $(this).val(1);
-                            }
-                            else {
-                                $('input[name=' + code + ']').prop('readonly', true);
-                                $('input[name=' + code + ']').rules('remove', 'required');
-                                //$('input[name=' + name + ']').val('');
-                            }
-                        });
-                        $('input[name="unset-' + measures[i].code + '"]').change(function() {
-                            var code = $(this).attr('data-unset');
-                            if($(this).is(":checked")) {
-                                $('input[name=' + code + ']').prop('readonly', true);
-                                $('input[name=' + code + ']').rules('remove', 'required');
-                                //$('input[name=' + code + ']').val('');
-                                $('input[name="set-' + code + '"]').prop('checked', '');
-                                $(this).val($(this).attr('data-measure-id'));
-                            }
-                            else {
-                                $(this).val('0');
-                            }
+                        $('input[name^="price"]').each(function(i) {
+                            $(this).rules('remove', 'required');
+                            $(this).prop('readonly', true);
                         });
                     }
-                }
-            }
+                });
 
-            $('input[name="set-cost"]').change(function() {
-                if($(this).is(":checked")) {
-                    $('input[name^="cost"]').each(function(i) {
-                        $(this).rules('add', 'required');
-                        var code = $(this).attr('name');
-                        if ($('.use-adult[data-set="' + code + '"]').prop('checked') == false || code == 'cost')
-                            $(this).prop('readonly', '');
-                    });
-                    $('.label_contentainer').show();
-                    $('input[name="unset-cost"]').prop('checked', '');
-                    $('input[name="import-cost"]').prop('checked', '');
-                }
-                else {
-                    $('input[name^="cost"]').each(function(i) {
-                        $(this).rules('remove', 'required');
-                        $(this).prop('readonly', true);
-                    });
-                    $('.label_contentainer').hide();
-                    $('input[name="unset-cost"]').prop('checked', '');
-                    $('input[name="import-cost"]').prop('checked', '');
-                }
-            });
+                formSetting.validate();
+                //$('input[name="cost"]').rules('add', 'required');
+                formSetting.validate().resetForm();
+                formSetting[0].reset();
+                //var room = $(this).parents('table').find('th:first').html();
+                $('#modal-setting .room-name-header').html(room.code + ': ' + room.name);
+                $('#modal-import .room-name-header').html(room.code + ': ' + room.name);
 
-            $('input[name="unset-cost"]').change(function() {
-                if($(this).is(":checked")) {
-                    $('input[name^="cost"]').each(function(i) {
-                        $(this).rules('remove', 'required');
-                        $(this).prop('readonly', true);
-                        //$(this).val('');
-                        $('input[name="set-price"]').prop('checked', '');
-                        $('input[name=set-cost]').prop('checked', '');
-                        $('input[name="import-cost"]').prop('checked', '');
-                    });
-                    $('input[name^="price"]').each(function(i) {
-                        $(this).rules('remove', 'required');
-                        $(this).prop('readonly', true);
-                        //$(this).val('');
-                    });
-                    $('.label_contentainer').hide();
-                }
-            });
-
-            $('input[name="set-price"]').change(function() {
-                if($(this).is(":checked")) {
-                    $('input[name^="cost"]').each(function(i) {
-                        $(this).rules('add', 'required');
-                        //$(this).prop('readonly', '');
-                    });
-                    $('input[name^="price"]').each(function(i) {
-                        $(this).rules('add', 'required');
-                        $(this).prop('readonly', '');
-                    });
-                }
-                else {
-                    $('input[name^="price"]').each(function(i) {
-                        $(this).rules('remove', 'required');
-                        $(this).prop('readonly', true);
-                    });
-                }
-            });
-
-            formSetting.validate();
-            //$('input[name="cost"]').rules('add', 'required');
-            formSetting.validate().resetForm();
-            formSetting[0].reset();
-            //var room = $(this).parents('table').find('th:first').html();
-            $('#modal-setting .room-name-header').html(room.code + ': ' + room.name);
-            $('#modal-import .room-name-header').html(room.code + ': ' + room.name);
-
-            var date = $(this).attr('data-date');
-            $('#modal-setting :input[name=setting-from]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
-            $('#modal-setting :input[name=setting-to]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
-
-            $('#modal-setting .measures-container :input').prop('readonly', true);
-            $('#modal-setting .measures-container :input').prop('checked', '');
-
-            var measure = $(this).parents('tr').find('td:first').attr('data-measure-code');
-            if (measure.substr(0, 4) == 'cost') {
-                $('#modal-setting :input[data-set=cost]').click();
-            }
-            else if (measure.substr(0, 5) == 'price') {
-                $('#modal-setting :input[data-set=price]').click();
-            }
-            else if (measure.substr(0, 9) == 'allotment') {
-                $('#modal-setting :input[data-set=allotment]').click();
-            }
-            else {
-                $('#modal-setting :input[data-set=' + measure + ']').click();
-            }
-            $("#modal-setting :input[name=contract-id]").val(contract.id);
-            $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
-            $("#modal-setting :input[name=board-type-id]").val($('#board-type').val());
-
-            var measures = operateMeasures;
-            if (room.max_children > 0 && room.max_children < 3) {
-                var measuresTemp = measures;
-                measures = [];
-                for (var i = 0; i < measuresTemp.length; i ++) {
-                    measures.push(measuresTemp[i]);
-                    if (measuresTemp[i].code == 'cost') {
-                        for (var j = 1; j <= room.max_children; j ++) {
-                            var obj = {
-                                id: 1000 + j,
-                                name: 'Cost CH ' + j,
-                                active: 1,
-                                code: 'cost_children_' + j
-                            }
-                            measures.push(obj);
-                        }
-                    }
-                    else if (measuresTemp[i].code == 'price') {
-                        for (var j = 1; j <= room.max_children; j ++) {
-                            var obj = {
-                                id: 2000 + j,
-                                name: 'Price CH ' + j,
-                                active: 1,
-                                code: 'price_children_' + j
-                            }
-                            measures.push(obj);
-                        }
-                    }
-                }
-            }
-
-            for (var i = 0; i < measures.length; i++) {
                 var date = $(this).attr('data-date');
-                var measureId = measures[i].id;
-                var item = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]');
-                var value = item.attr('data');
-                var code = item.attr('data-measure-code');
-                if (code == 'cost_children_1' || code == 'cost_children_2' || code == 'cost_children_3') {
-                    var type = item.attr('data-use-adult-type');
-                    var rate = item.attr('data-use-adult-rate');
-                    var bonus = '';
-                    if (type == 1)
-                        bonus = '(' + rate + '%)';
-                    else
-                        bonus = '($' + rate + ')';
-                    if (type != ''){
-                        $('.use-adult[data-set="' + code + '"]').prop('checked', true);
-                        $('.label_' + code).html('From Adult ' + bonus);
-                        $('[data-set="' + code + '"][data-type="rate"]').val(rate);
-                        $('[data-set="' + code + '"][data-type="type"]').val(type);
-                        $('input[name="' + code + '"]').prop('readonly', true);
-                        $('input[name="' + code + '"]').rules('remove', 'required');
-                    }
-                    $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                $('#modal-setting :input[name=setting-from]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
+                $('#modal-setting :input[name=setting-to]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
+
+                $('#modal-setting .measures-container :input').prop('readonly', true);
+                $('#modal-setting .measures-container :input').prop('checked', '');
+
+                var measure = $(this).parents('tr').find('td:first').attr('data-measure-code');
+                if (measure.substr(0, 4) == 'cost') {
+                    $('#modal-setting :input[data-set=cost]').click();
                 }
-                else if (measures[i].code == 'stop_sale') {
-                    value = value == '' ? 0 : value;
-                    $('#select-stop-sale').val(value).change();
+                else if (measure.substr(0, 5) == 'price') {
+                    $('#modal-setting :input[data-set=price]').click();
                 }
-                else if (measures[i].code == 'allotment') {
-                    value = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="3002"]').attr('data');
-                    $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                else if (measure.substr(0, 9) == 'allotment') {
+                    $('#modal-setting :input[data-set=allotment]').click();
                 }
                 else {
-                    $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                    $('#modal-setting :input[data-set=' + measure + ']').click();
                 }
+                $("#modal-setting :input[name=contract-id]").val(contract.id);
+                $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
+                $("#modal-setting :input[name=board-type-id]").val($('#board-type').val());
+
+                var measures = operateMeasures;
+                if (room.max_children > 0 && room.max_children < 3) {
+                    var measuresTemp = measures;
+                    measures = [];
+                    for (var i = 0; i < measuresTemp.length; i ++) {
+                        measures.push(measuresTemp[i]);
+                        if (measuresTemp[i].code == 'cost') {
+                            for (var j = 1; j <= room.max_children; j ++) {
+                                var obj = {
+                                    id: 1000 + j,
+                                    name: 'Cost CH ' + j,
+                                    active: 1,
+                                    code: 'cost_children_' + j
+                                }
+                                measures.push(obj);
+                            }
+                        }
+                        else if (measuresTemp[i].code == 'price') {
+                            for (var j = 1; j <= room.max_children; j ++) {
+                                var obj = {
+                                    id: 2000 + j,
+                                    name: 'Price CH ' + j,
+                                    active: 1,
+                                    code: 'price_children_' + j
+                                }
+                                measures.push(obj);
+                            }
+                        }
+                    }
+                }
+
+                for (var i = 0; i < measures.length; i++) {
+                    var date = $(this).attr('data-date');
+                    var measureId = measures[i].id;
+                    var item = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]');
+                    var value = item.attr('data');
+                    var code = item.attr('data-measure-code');
+                    if (code == 'cost_children_1' || code == 'cost_children_2' || code == 'cost_children_3') {
+                        var type = item.attr('data-use-adult-type');
+                        var rate = item.attr('data-use-adult-rate');
+                        var bonus = '';
+                        if (type == 1)
+                            bonus = '(' + rate + '%)';
+                        else
+                            bonus = '($' + rate + ')';
+                        if (type != ''){
+                            $('.use-adult[data-set="' + code + '"]').prop('checked', true);
+                            $('.label_' + code).html('From Adult ' + bonus);
+                            $('[data-set="' + code + '"][data-type="rate"]').val(rate);
+                            $('[data-set="' + code + '"][data-type="type"]').val(type);
+                            $('input[name="' + code + '"]').prop('readonly', true);
+                            $('input[name="' + code + '"]').rules('remove', 'required');
+                        }
+                        $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                    }
+                    else if (measures[i].code == 'stop_sale') {
+                        value = value == '' ? 0 : value;
+                        $('#select-stop-sale').val(value).change();
+                    }
+                    else if (measures[i].code == 'allotment') {
+                        value = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="3002"]').attr('data');
+                        $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                    }
+                    else {
+                        $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                    }
+                }
+
+                $('#modal-setting .range-optional').each(function() {
+                    $(this).remove();
+                });
+
+                updateImport(contract.markets);
+                updateShare();
+                updateImportCost(contract.room_types);
+
+                $('#modal-setting').modal('show');
             }
-
-            $('#modal-setting .range-optional').each(function() {
-                $(this).remove();
-            });
-
-            updateImport(contract.markets);
-            updateShare();
-            updateImportCost(contract.room_types);
-
-            $('#modal-setting').modal('show');
         });
+
         $('.measure-detail').on('click', function () {
             var parent = $(this).attr('data');
             if ($(this).hasClass('closed')) {

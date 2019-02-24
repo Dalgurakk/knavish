@@ -47,7 +47,7 @@
 .margin-right-30 { margin-right: 30px !important; }
 .stop-sales { color: #ed3723; font-weight: bold; font-size: 11px; }
 .on-request { color: orange; font-weight: bold; font-size: 11px; }
-.has-offer { color: rgb(53, 152, 220);; font-weight: bold; font-size: 11px; }
+.has-offer { color: #3598dc; font-weight: bold; font-size: 11px; }
 .measure-detail { padding: 0px 0px; margin-left: 5px; border: 1px solid #c7c7c7; min-width: 13px; line-height: 12px; border-radius: 3px !important; }
 .sunday { color: #1d66d2; background-color: #f0f0f0; }
 .no-padding { padding: 0 !important; }
@@ -56,5 +56,9 @@
 .tool-item { font-size: 17px;color: #fff; line-height: 1px; }
 .tool-item:hover { color: #f2f2f2; }
 .tool-item:focus { color: #fff; }
+.table-complement thead tr th { font-size: 11px; font-weight: 600; }
+.table-complement td, .table th { font-size: 11px; }
+.table-complement > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th { padding: 5px; line-height: 1.42857; vertical-align: top; border-top: 1px solid #e7ecf1; }
+.porlet-title-setting { background-color: #3598dc; color: #fff; border-radius: unset; padding: 6px 10px; font-size: 13px; font-weight: 600; }
 /*.sub-name { display: inline-block }
 .sub-name { display: inline-block }*/

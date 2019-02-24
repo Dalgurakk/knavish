@@ -353,9 +353,50 @@ $(document).ready(function () {
                                 '<p>Costing and pricing are all per person per night.</p>' +
                                 '</div>'
                             );
-                            $('.result-container').append(table);//console.log(contract);
+                            $('.result-container').append(table);
                             operateMeasures = response.operateMeasures;
                             operateTable(response.from, response.to, contract);
+
+                            var offers = contract.hotel_contract.offers;
+
+                            $('.complement').each(function () {
+                                var code = $(this).attr('data-measure-code');
+                                var data = $(this).attr('data');
+                                if (code == 'offer' && data != '') {
+                                    var offersInDay = JSON.parse("[" + data + "]");
+                                    var table =
+                                        '<table class="table table-striped table-complement" width="100%" cellspacing="0" style="margin-bottom: 0">' +
+                                        '<thead>' +
+                                        '<tr>' +
+                                        '<th> # </th>' +
+                                        '<th> Denomination </th>' +
+                                        '<th> Type </th>' +
+                                        '</thead>' +
+                                        '<tbody>';
+                                    for (var i = 0; i < offersInDay.length; i++) {
+                                        for (var j = 0; j < offers.length; j++) {
+                                            if (offersInDay[i] == offers[j].id) {
+                                                table +=
+                                                    '<tr><td>' + (i + 1) + '</td><td>' + offers[j].name + '</td><td>' + offers[j].offer_type.name + '</td></tr>';
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    table +=
+                                        '</tbody>' +
+                                        '</table>';
+                                    $(this).popover({
+                                        trigger: 'hover',
+                                        container: 'body',
+                                        placement : 'top',
+                                        title: 'Offers',
+                                        content: table,
+                                        delay: { "show": 500, "hide": 100 },
+                                        html: true,
+                                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title porlet-title-setting"></h3><div class="popover-content" style="padding: 5px;"></div></div>'
+                                    });
+                                }
+                            });
                         }
                         else {
                             toastr['error'](response.message, "Error");

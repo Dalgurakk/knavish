@@ -7,6 +7,7 @@ use App\Exports\HotelContractExport;
 use App\Models\HotelBoardType;
 use App\Models\HotelContract;
 use App\Models\HotelContractBoardType;
+use App\Models\HotelContractClient;
 use App\Models\HotelContractMarket;
 use App\Models\HotelContractPrice;
 use App\Models\HotelContractRoomType;
@@ -243,8 +244,8 @@ class HotelContractController extends Controller
                     } else if ($paxType->type == 3) {
                         $acceptAdult = true;
                     }
+                    $contract->paxTypes()->attach($paxType);
                 }
-
                 foreach ($roomTypes as $roomType) {
                     if(!$acceptInfant && $roomType->max_infant > 0) {
                         throw new CustomException('The contract not allow infants, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
@@ -255,25 +256,19 @@ class HotelContractController extends Controller
                     else if(!$acceptAdult && $roomType->max_adult > 0) {
                         throw new CustomException('The contract not allow adults, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
                     }
+                    $contract->roomTypes()->attach($roomType);
                 }
-
-                foreach ($roomTypes as $r) {
-                    $contract->roomTypes()->attach($r);
+                foreach ($boardTypes as $boardType) {
+                    $contract->boardTypes()->attach($boardType);
                 }
-                foreach ($paxTypes as $p) {
-                    $contract->paxTypes()->attach($p);
+                foreach ($measures as $measure) {
+                    $contract->measures()->attach($measure);
                 }
-                foreach ($boardTypes as $b) {
-                    $contract->boardTypes()->attach($b);
-                }
-                foreach ($measures as $m) {
-                    $contract->measures()->attach($m);
-                }
-                foreach ($markets as $k) {
-                    $contract->markets()->attach($k->market_id, [
-                        'type' => $k->rate_type,
-                        'value' => $k->value,
-                        'round' => $k->round_type
+                foreach ($markets as $market) {
+                    $contract->markets()->attach($market->market_id, [
+                        'type' => $market->rate_type,
+                        'value' => $market->value,
+                        'round' => $market->round_type
                     ]);
                 }
                 DB::commit();
@@ -356,7 +351,6 @@ class HotelContractController extends Controller
                             $acceptAdult = true;
                         }
                     }
-
                     foreach ($roomTypes as $roomType) {
                         if(!$acceptInfant && $roomType->max_infant > 0) {
                             throw new CustomException('The contract not allow infants, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
@@ -368,20 +362,19 @@ class HotelContractController extends Controller
                             throw new CustomException('The contract not allow adults, please check the room type ' . $roomType->code . ': ' . $roomType->name . '.');
                         }
                     }
-
                     $syncMarkets = array();
-                    foreach ($markets as $k) {
-                        $syncMarkets[$k->market_id] = array(
-                            'type' => $k->rate_type,
-                            'value' => $k->value,
-                            'round' => $k->round_type
+                    foreach ($markets as $market) {
+                        $syncMarkets[$market->market_id] = array(
+                            'type' => $market->rate_type,
+                            'value' => $market->value,
+                            'round' => $market->round_type
                         );
                         $priceRate = new HotelContractMarket();
-                        $priceRate->type = $k->rate_type;
-                        $priceRate->value = $k->value;
-                        $priceRate->round = $k->round_type;
-                        if ($k->update_price == '1') {
-                            $query = HotelContractPrice::where('market_id', $k->market_id)
+                        $priceRate->type = $market->rate_type;
+                        $priceRate->value = $market->value;
+                        $priceRate->round = $market->round_type;
+                        if ($market->update_price == '1') {
+                            $query = HotelContractPrice::where('market_id', $market->market_id)
                                 ->whereHas('setting', function ($query) use ($contract) {
                                     $query->where('hotel_contract_id', $contract->id);
                                 });
@@ -401,11 +394,8 @@ class HotelContractController extends Controller
                     $contract->save();
 
                     if ($contract->active != 1) {
-                        $clientContracts = $contract->clientContracts;
-                        foreach ($clientContracts as $c) {
-                            $c->active = false;
-                            $c->save();
-                        }
+                        HotelContractClient::where('hotel_contract_id', $contract->id)
+                            ->update(['active' => 0]);
                     }
 
                     DB::commit();
@@ -601,7 +591,12 @@ class HotelContractController extends Controller
                 $query->orderBy('id', 'asc');
             },
             'offers',
-            'offers.offerType'
+            'offers.offerType',
+            'offers.rooms',
+            'offers.rooms.roomType',
+            'offers.boards',
+            'offers.boards.boardType',
+            'offers.ranges'
         ]);
 
         if($id != '') {
@@ -645,7 +640,12 @@ class HotelContractController extends Controller
                 $query->orderBy('id', 'asc');
             },
             'offers',
-            'offers.offerType'
+            'offers.offerType',
+            'offers.rooms',
+            'offers.rooms.roomType',
+            'offers.boards',
+            'offers.boards.boardType',
+            'offers.ranges'
         ])
         ->where('name', 'like', $string)
         ->orderBy('name', 'asc')

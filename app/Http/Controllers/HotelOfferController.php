@@ -23,6 +23,19 @@ class HotelOfferController extends Controller
         $this->middleware('auth');
     }
 
+    public function getByContractId($contractId) {
+        $query = HotelOffer::with([
+            'offerType',
+            'ranges',
+            'rooms',
+            'rooms.roomType',
+            'boards',
+            'boards.boardType'
+        ])
+            ->where('hotel_contract_id', $contractId);
+        return $query->get();
+    }
+
     public function read(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
@@ -158,10 +171,11 @@ class HotelOfferController extends Controller
                     $offerContractBoardtype->hotel_board_type_id = $contractBoardType->hotel_board_type_id;
                     $offerContractBoardtype->save();
                 }
+                $offers = $this->getByContractId($offer->hotel_contract_id);
                 DB::commit();
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Offer created successfully.';
-                $this->response['data'] = $offer;
+                $this->response['data'] = $offers;
             }
             catch (\Exception $e) {
                 DB::rollBack();
@@ -274,10 +288,12 @@ class HotelOfferController extends Controller
                     $offerContractBoardtype->hotel_board_type_id = $contractBoardType->hotel_board_type_id;
                     $offerContractBoardtype->save();
                 }
+                $offers = $this->getByContractId($offer->hotel_contract_id);
                 DB::commit();
+
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Offer updated successfully.';
-                $this->response['data'] = $offer;
+                $this->response['data'] = $offers;
             }
             catch (\Exception $e) {
                 DB::rollBack();
@@ -297,9 +313,10 @@ class HotelOfferController extends Controller
 
         try {
             $offer->delete();
+            $offers = $this->getByContractId($offer->hotel_contract_id);
             $this->response['status'] = 'success';
             $this->response['message'] = 'Offer ' . $offer->name . ' deleted successfully.';
-            $this->response['data'] = $offer;
+            $this->response['data'] = $offers;
         }
         catch (\Exception $e) {
             $this->response['status'] = 'error';

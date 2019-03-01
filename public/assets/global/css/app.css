@@ -56,9 +56,9 @@
 .tool-item { font-size: 17px;color: #fff; line-height: 1px; }
 .tool-item:hover { color: #f2f2f2; }
 .tool-item:focus { color: #fff; }
-.table-complement thead tr th { font-size: 11px; font-weight: 600; }
-.table-complement td, .table th { font-size: 11px; }
-.table-complement > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th { padding: 5px; line-height: 1.42857; vertical-align: top; border-top: 1px solid #e7ecf1; }
+.table-complement thead tr th { font-size: 11px; font-weight: 600; padding: 5px; line-height: 1.42857; }
+.table-complement td { font-size: 11px; }
+.table-complement > tbody > tr > td { padding: 5px; line-height: 1.42857; vertical-align: top; border-top: 1px solid #e7ecf1; }
 .porlet-title-setting { background-color: #3598dc; color: #fff; border-radius: unset; padding: 6px 10px; font-size: 13px; font-weight: 600; }
 /*.sub-name { display: inline-block }
 .sub-name { display: inline-block }*/

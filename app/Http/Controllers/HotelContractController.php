@@ -624,32 +624,9 @@ class HotelContractController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $string = '%' . Input::get('q') . '%';
-        $contracts = HotelContract::with([
-            'hotel',
-            'hotel.hotelChain',
-            'boardTypes' => function($query) {
-                $query->orderBy('name', 'asc');
-            },
-            'roomTypes' => function($query) {
-                $query->orderBy('name', 'asc');
-            },
-            'markets' => function($query) {
-                $query->orderBy('name', 'asc');
-            },
-            'measures' => function($query) {
-                $query->orderBy('id', 'asc');
-            },
-            'offers',
-            'offers.offerType',
-            'offers.rooms',
-            'offers.rooms.roomType',
-            'offers.boards',
-            'offers.boards.boardType',
-            'offers.ranges'
-        ])
-        ->where('name', 'like', $string)
-        ->orderBy('name', 'asc')
-        ->get();
+        $contracts = HotelContract::where('name', 'like', $string)
+            ->orderBy('name', 'asc')
+            ->get();
         echo json_encode($contracts);
     }
 
@@ -1324,11 +1301,9 @@ class HotelContractController extends Controller
                     $startRange = Carbon::createFromFormat('!Y-m-d', $range->from);
                     $endRange = Carbon::createFromFormat('!Y-m-d', $range->to);
                     if ($start->greaterThanOrEqualTo($startRange)) {
-                        //$startRange = $start;
                         $startRange = Carbon::createFromFormat('!Y-m-d', $start->format('Y-m-d'));
                     }
                     if ($end->lessThanOrEqualTo($endRange)) {
-                        //$endRange = $end;
                         $endtRange = Carbon::createFromFormat('!Y-m-d', $end->format('Y-m-d'));
                     }
                     for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {

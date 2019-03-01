@@ -321,6 +321,7 @@ class ClientHotelController extends Controller
                     $query->where('hotel_board_type_id', $boardType);
                 });
             },
+            'offers.offerType',
             'offers.rooms',
             'offers.boards' => function($query) use ($boardType) {
                 $query->where('hotel_board_type_id', $boardType);
@@ -348,11 +349,9 @@ class ClientHotelController extends Controller
                     $startRange = Carbon::createFromFormat('!Y-m-d', $range->from);
                     $endRange = Carbon::createFromFormat('!Y-m-d', $range->to);
                     if ($start->greaterThanOrEqualTo($startRange)) {
-                        //$startRange = $start;
                         $startRange = Carbon::createFromFormat('!Y-m-d', $start->format('Y-m-d'));
                     }
                     if ($end->lessThanOrEqualTo($endRange)) {
-                        //$endRange = $end;
                         $endtRange = Carbon::createFromFormat('!Y-m-d', $end->format('Y-m-d'));
                     }
                     for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {
@@ -576,6 +575,7 @@ class ClientHotelController extends Controller
                 $this->response['status'] = 'success';
                 $this->response['from'] = $from;
                 $this->response['to'] = $to;
+                $this->response['offers'] = $offers;
                 $this->response['table'] = $tables;
             }
             else {

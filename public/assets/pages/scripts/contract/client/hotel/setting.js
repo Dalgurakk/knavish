@@ -5,6 +5,47 @@ $(document).ready(function () {
     var operateMeasures = null;
     var searched = false;
 
+    getContract();
+
+    function getContract() {
+        $.ajax({
+            "url": routeContract,
+            "type": "POST",
+            "data": {
+                contractId: contractId
+            },
+            "beforeSend": function() {
+                App.showMask(true, formSearch);
+            },
+            "complete": function(xhr, textStatus) {
+                App.showMask(false, formSearch);
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
+                    toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                }
+                else {
+                    var response = JSON.parse(xhr.responseText);
+                    contract = response.data;
+                    if (contract == null) {
+                        toastr['warning'](response.message, "Warning");
+                    }
+                    else {
+                        $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
+                        fillContract(contract);
+                        $('.filter-content').show();
+                    }
+                }
+            }
+        });
+    }
+
+    $('.btn-refresh').on('click', function () {
+        getContract();
+        searched = false;
+    });
+
     $('#board-type').change(function() {
         if(searched) {
             $('.btn-search-submit').click();
@@ -60,9 +101,10 @@ $(document).ready(function () {
     $("#search-accomodation :input[name=contract]").on('select2:select select2:unselect', function (e) {
         var value = e.params.data;
         if(value.selected) {
-            contract = value;
             searched = false;
-            fillContract(value);
+            contractId = value.id;
+            getContract();
+            fillContract(contract);
             var url = window.location.href;
             if (url.indexOf("?") > 0) {
                 var updatedUri = url.substring(0, url.indexOf("?"));
@@ -184,38 +226,6 @@ $(document).ready(function () {
             $('.range[data="' + time + '"]').remove();
             e.preventDefault();
         });
-    });
-
-    $.ajax({
-        "url": routeContract,
-        "type": "POST",
-        "data": {
-            contractId: contractId
-        },
-        "beforeSend": function() {
-            App.showMask(true, formSearch);
-        },
-        "complete": function(xhr, textStatus) {
-            App.showMask(false, formSearch);
-            if (xhr.status == '419') {
-                location.reload(true);
-            }
-            else if (xhr.status != '200') {
-                toastr['error']("Please check your connection and try again.", "Error on loading the content");
-            }
-            else {
-                var response = JSON.parse(xhr.responseText);
-                contract = response.data;
-                if (contract == null) {
-                    toastr['warning'](response.message, "Warning");
-                }
-                else {
-                    $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
-                    fillContract(contract);
-                    $('.filter-content').show();
-                }
-            }
-        }
     });
 
     $('#modal-change :input[name="change-room"]').select2({
@@ -354,10 +364,12 @@ $(document).ready(function () {
                                 '</div>'
                             );
                             $('.result-container').append(table);
+
+                            var offers = response.offers;
+                            contract.hotel_contract.offers = offers;
+
                             operateMeasures = response.operateMeasures;
                             operateTable(response.from, response.to, contract);
-
-                            var offers = contract.hotel_contract.offers;
 
                             $('.complement').each(function () {
                                 var code = $(this).attr('data-measure-code');
@@ -563,10 +575,10 @@ $(document).ready(function () {
     });
 
     function fillContract(c) {
-        var roomTypes = c.hotel_contract.room_types;
-        var boardTypes = c.hotel_contract.board_types;
-        var measures = c.hotel_contract.measures;
         var contract = c.hotel_contract;
+        var roomTypes = contract.room_types;
+        var boardTypes = contract.board_types;
+        var measures = contract.measures;
         var hotelChain = c.hotel_contract.hotel.hotel_chain;
         var client = c.client;
         var status = contract.active == 1 ? 'Enabled' : 'Disabled';
@@ -585,12 +597,8 @@ $(document).ready(function () {
         $("#search-accomodation :input[name=period]").val(moment(contract.valid_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(contract.valid_to, 'YYYY-MM-DD').format('DD.MM.YYYY'));
         $('.result-container').html('');
         $('.measures-list').html('');
+
         $.each(measures, function (i, item) {
-            /*var measure =
-                '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                '<input type="checkbox" name="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
-                '<span></span>' +
-                '</label>';*/
             var measure =
                 '<div class="row">' +
                 '<div class="col-md-5">' +
@@ -712,6 +720,8 @@ $(document).ready(function () {
         $('#modal-setting :input[name=setting-from]').datepicker( "setEndDate" , new Date(endDate));
         $('#modal-setting :input[name=setting-to]').datepicker( "setStartDate" , new Date(startDate));
         $('#modal-setting :input[name=setting-to]').datepicker( "setEndDate" , new Date(endDate));
+
+        App.reloadToolTips();
     }
 
     function updateShare() {
@@ -746,212 +756,153 @@ $(document).ready(function () {
         var roomTypes = contract.hotel_contract.room_types;
         var contractMeasures = contract.hotel_contract.measures;
         $('.item-setting').on('click', function() {
-            var haasStopSale = false;
-            for (var i = 0; i < contractMeasures.length; i++) {
-                if (contractMeasures[i].code == 'stop_sale') {
-                    haasStopSale = true;
-                    break;
-                }
+            if ($(this).hasClass('complement')) {
+                /*var offers = contract.offers;
+                var array = JSON.parse("[" + $(this).attr('data') + "]");
+                console.log(array);*/
             }
-            if (!haasStopSale)
-                return false;
-
-            $('input[name^="cost"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="price"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="allotment"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="release"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('input[name^="stop_sale"]').each(function(i) {
-                $(this).rules('remove', 'required');
-            });
-            $('#modal-setting .expand').each(function () {
-                $(this).click();
-            });
-
-            var selectedRoomId = $(this).attr('data-room-type-id');
-            $("#modal-setting :input[name=room-type-id]").val(selectedRoomId);
-            var room = null;
-            var measures = operateMeasures;
-            for (var j = 0; j < roomTypes.length; j++) {
-                if (roomTypes[j].id == selectedRoomId) {
-                    room = roomTypes[j];
-                    break;
-                }
-            }
-            $('.cost-price-container').html('');
-            $('.measures-container').html('');
-            for (var i = 0; i < measures.length; i++) {
-                if (measures[i].code == 'stop_sale') {
-                    var html =
-                        '<div class="row">' +
-                        '<div class="col-md-12">' +
-                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                        '<div class="form-group">' +
-                        '<label>' + measures[i].name + '</label>' +
-                        '<select id="select-stop-sale" class="form-control measure-input" name="' + measures[i].code + '" readonly="" disabled="disabled">' +
-                        '<option value="0">Open Sales</option>' +
-                        '<option value="1">Stop Sales</option>' +
-                        '<option value="2">On Request</option>' +
-                        '</select>' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="col-md-7 col-sm-7 col-xs-7">' +
-                        '<div class="mt-checkbox-inline">' +
-                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                        '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
-                        '<span></span>' +
-                        '</label>' +
-                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Use From The Provider' +
-                        '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
-                        '<span></span>' +
-                        '</label>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>';
-                    $('.measures-container').append(html);
-                    $('#select-stop-sale').val(0).change();
-                    $('input[name="set-' + measures[i].code + '"]').change(function() {
-                        var code = $(this).attr('data-set');
-                        if($(this).is(":checked")) {
-                            $('#select-stop-sale').removeAttr('readonly', '');
-                            $('input[name="unset-' + code + '"]').prop('checked', '');
-                            $('#select-stop-sale').removeAttr('disabled');
-                            $(this).val(1);
-                        }
-                        else {
-                            $('#select-stop-sale').attr('readonly', true);
-                            $('#select-stop-sale').attr('disabled', 'disabled');
-                        }
-                    });
-                    $('input[name="unset-' + measures[i].code + '"]').change(function() {
-                        var code = $(this).attr('data-unset');
-                        if($(this).is(":checked")) {
-                            $('input[name=' + code + ']').prop('readonly', true);
-                            $('input[name="set-' + code + '"]').prop('checked', '');
-                            $(this).val($(this).attr('data-measure-id'));
-                            $('#select-stop-sale').attr('disabled', 'disabled');
-                        }
-                        else {
-                            $(this).val('0');
-                        }
-                    });
-                }
-                /*else if (measures[i].code != 'cost' && measures[i].code != 'price') {
-                    var html =
-                        '<div class="row">' +
-                        '<div class="col-md-12">' +
-                        '<div class="col-md-5 col-sm-5 col-xs-5">' +
-                        '<div class="form-group">' +
-                        '<label>' + measures[i].name + '</label>' +
-                        '<input type="text" class="form-control measure-input" name="' + measures[i].code + '" readonly>' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="col-md-7 col-sm-7 col-xs-7">' +
-                        '<div class="mt-checkbox-inline">' +
-                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
-                        '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
-                        '<span></span>' +
-                        '</label>' +
-                        '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Use From The Provider' +
-                        '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
-                        '<span></span>' +
-                        '</label>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>';
-                    $('.measures-container').append(html);
-                    $('input[name="set-' + measures[i].code + '"]').change(function() {
-                        var code = $(this).attr('data-set');
-                        if($(this).is(":checked")) {
-                            $('input[name=' + code + ']').prop('readonly', '');
-                            $('input[name=' + code + ']').rules('add', 'required');
-                            $(this).val($(this).attr('data-measure-id'));
-                            $('input[name="unset-' + code + '"]').prop('checked', '');
-                            $(this).val(1);
-                        }
-                        else {
-                            $('input[name=' + code + ']').prop('readonly', true);
-                            $('input[name=' + code + ']').rules('remove', 'required');
-                        }
-                    });
-                    $('input[name="unset-' + measures[i].code + '"]').change(function() {
-                        var code = $(this).attr('data-unset');
-                        if($(this).is(":checked")) {
-                            $('input[name=' + code + ']').prop('readonly', true);
-                            $('input[name=' + code + ']').rules('remove', 'required');
-                            $('input[name="set-' + code + '"]').prop('checked', '');
-                            $(this).val($(this).attr('data-measure-id'));
-                        }
-                        else {
-                            $(this).val('0');
-                        }
-                    });
-                }*/
-            }
-
-            formSetting.validate();
-            formSetting.validate().resetForm();
-            formSetting[0].reset();
-
-            $('#modal-setting .room-name-header').html(room.code + ': ' + room.name);
-
-            var date = $(this).attr('data-date');
-            $('#modal-setting :input[name=setting-from]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
-            $('#modal-setting :input[name=setting-to]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
-
-            $('#modal-setting .measures-container :input').prop('readonly', true);
-            $('#modal-setting .measures-container :input').prop('checked', '');
-
-            var measure = $(this).parents('tr').find('td:first').attr('data-measure-code');
-            //$('#modal-setting :input[data-set=' + measure + ']').click();
-
-            $("#modal-setting :input[name=contract-id]").val(contract.hotel_contract.id);
-            $("#modal-setting :input[name=contract-client-id]").val(contract.id);
-            $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
-
-            var measures = operateMeasures;
-
-            for (var i = 0; i < measures.length; i++) {
-                var date = $(this).attr('data-date');
-                var measureId = measures[i].id;
-                var item = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]');
-                var value = item.attr('data');
-
-                if (measures[i].code == 'stop_sale' || measures[i].code == 'allotment' || measures[i].code == 'release') {
-                    var fromProvider = item.attr('data-from-provider');
-                    if (fromProvider == 1) {
-                        $('#modal-setting :input[name=unset-' + measures[i].code + ']').click();
+            else {
+                var hasStopSale = false;
+                for (var i = 0; i < contractMeasures.length; i++) {
+                    if (contractMeasures[i].code == 'stop_sale') {
+                        hasStopSale = true;
+                        break;
                     }
-                    else {
-                        $('#modal-setting :input[name=set-' + measures[i].code + ']').click();
+                }
+                if (!hasStopSale)
+                    return false;
+
+                $('#modal-setting .expand').each(function () {
+                    $(this).click();
+                });
+
+                var selectedRoomId = $(this).attr('data-room-type-id');
+                $("#modal-setting :input[name=room-type-id]").val(selectedRoomId);
+                var room = null;
+                var measures = operateMeasures;
+                for (var j = 0; j < roomTypes.length; j++) {
+                    if (roomTypes[j].id == selectedRoomId) {
+                        room = roomTypes[j];
+                        break;
                     }
+                }
+                $('.cost-price-container').html('');
+                $('.measures-container').html('');
+                for (var i = 0; i < measures.length; i++) {
                     if (measures[i].code == 'stop_sale') {
-                        value = value == '' ? 0 : value;
-                        $('#select-stop-sale').val(value).change();
-                    }
-                    else {
-                        $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                        var html =
+                            '<div class="row">' +
+                            '<div class="col-md-12">' +
+                            '<div class="col-md-5 col-sm-5 col-xs-5">' +
+                            '<div class="form-group">' +
+                            '<label>' + measures[i].name + '</label>' +
+                            '<select id="select-stop-sale" class="form-control measure-input" name="' + measures[i].code + '" readonly="" disabled="disabled">' +
+                            '<option value="0">Open Sales</option>' +
+                            '<option value="1">Stop Sales</option>' +
+                            '<option value="2">On Request</option>' +
+                            '</select>' +
+                            '</div>' +
+                            '</div>' +
+                            '<div class="col-md-7 col-sm-7 col-xs-7">' +
+                            '<div class="mt-checkbox-inline">' +
+                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-40"> Set' +
+                            '<input type="checkbox" class="set" value="" name="set-' + measures[i].code + '" data-set="' + measures[i].code + '" data-measure-id="' + measures[i].id + '" />' +
+                            '<span></span>' +
+                            '</label>' +
+                            '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom margin-top-15 margin-right-30"> Use From The Provider' +
+                            '<input type="checkbox" class="set" value="0" name="unset-' + measures[i].code + '" data-unset="' + measures[i].code + '" data-measure-id="' + measures[i].id + '"/>' +
+                            '<span></span>' +
+                            '</label>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>';
+                        $('.measures-container').append(html);
+                        $('#select-stop-sale').val(0).change();
+                        $('input[name="set-' + measures[i].code + '"]').change(function() {
+                            var code = $(this).attr('data-set');
+                            if($(this).is(":checked")) {
+                                $('#select-stop-sale').removeAttr('readonly', '');
+                                $('input[name="unset-' + code + '"]').prop('checked', '');
+                                $('#select-stop-sale').removeAttr('disabled');
+                                $(this).val(1);
+                            }
+                            else {
+                                $('#select-stop-sale').attr('readonly', true);
+                                $('#select-stop-sale').attr('disabled', 'disabled');
+                            }
+                        });
+                        $('input[name="unset-' + measures[i].code + '"]').change(function() {
+                            var code = $(this).attr('data-unset');
+                            if($(this).is(":checked")) {
+                                $('input[name=' + code + ']').prop('readonly', true);
+                                $('input[name="set-' + code + '"]').prop('checked', '');
+                                $(this).val($(this).attr('data-measure-id'));
+                                $('#select-stop-sale').attr('disabled', 'disabled');
+                            }
+                            else {
+                                $(this).val('0');
+                            }
+                        });
                     }
                 }
+
+                formSetting.validate();
+                formSetting.validate().resetForm();
+                formSetting[0].reset();
+
+                $('#modal-setting .room-name-header').html(room.code + ': ' + room.name);
+
+                var date = $(this).attr('data-date');
+                $('#modal-setting :input[name=setting-from]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
+                $('#modal-setting :input[name=setting-to]').datepicker("setDate" , new Date(moment(date, 'YYYY-MM-DD')));
+
+                $('#modal-setting .measures-container :input').prop('readonly', true);
+                $('#modal-setting .measures-container :input').prop('checked', '');
+
+                var measure = $(this).parents('tr').find('td:first').attr('data-measure-code');
+                //$('#modal-setting :input[data-set=' + measure + ']').click();
+
+                $("#modal-setting :input[name=contract-id]").val(contract.hotel_contract.id);
+                $("#modal-setting :input[name=contract-client-id]").val(contract.id);
+                $("#modal-setting :input[name=market-id]").val($(this).attr('data-market-id'));
+
+                var measures = operateMeasures;
+
+                for (var i = 0; i < measures.length; i++) {
+                    var date = $(this).attr('data-date');
+                    var measureId = measures[i].id;
+                    var item = $(this).parents('table').find('td[data-date="' + date + '"][data-measure-id="' + measureId + '"]');
+                    var value = item.attr('data');
+
+                    if (measures[i].code == 'stop_sale' || measures[i].code == 'allotment' || measures[i].code == 'release') {
+                        var fromProvider = item.attr('data-from-provider');
+                        if (fromProvider == 1) {
+                            $('#modal-setting :input[name=unset-' + measures[i].code + ']').click();
+                        }
+                        else {
+                            $('#modal-setting :input[name=set-' + measures[i].code + ']').click();
+                        }
+                        if (measures[i].code == 'stop_sale') {
+                            value = value == '' ? 0 : value;
+                            $('#select-stop-sale').val(value).change();
+                        }
+                        else {
+                            $('#modal-setting :input[name="' + measures[i].code + '"]').val(value);
+                        }
+                    }
+                }
+
+                $('#modal-setting .range-optional').each(function() {
+                    $(this).remove();
+                });
+
+                updateShare();
+
+                $('#modal-setting').modal('show');
             }
-
-            $('#modal-setting .range-optional').each(function() {
-                $(this).remove();
-            });
-
-            updateShare();
-
-            $('#modal-setting').modal('show');
         });
+
         $('.measure-detail').on('click', function () {
             var parent = $(this).attr('data');
             if ($(this).hasClass('closed')) {
@@ -967,6 +918,7 @@ $(document).ready(function () {
                 $('tr[data-parent="' + parent + '"]').addClass('hidden');
             }
         });
+
         $('.row-expanded:checked').each(function () {
             $('.measure-detail[data-measure="' + $(this).val() + '"]').click();
         });

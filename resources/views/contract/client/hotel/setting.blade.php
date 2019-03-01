@@ -29,6 +29,8 @@
                             <div class="portlet-title porlet-title-setting">
                                 <div class="caption caption-setting">
                                     <i class="fa fa-building-o"></i>Contract</div>
+                                <div class="tools tools-setting">
+                                    <a href="javascript:;" class="reload btn-refresh"> </a></div>
                             </div>
                             <div class="portlet-body">
                                 <div class="row" style="margin-top: 10px;">
@@ -57,7 +59,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" style="margin-top: 10px;">
+                                <div class="row">
                                     <div class="col-lg-3 col-md-3 col-sm-3">
                                         <div class="form-group">
                                             <label>Period</label>
@@ -76,9 +78,6 @@
                                             <select class="form-control" name="board-type" id="board-type"></select>
                                         </div>
                                     </div>
-                                    <!--div class="col-lg-3 col-md-3 col-sm-3">
-                                        <a class="btn green btn-complements" style="margin-top:25px;" href="javascript:;"> <i class="fa fa-briefcase"></i> Complements</a>
-                                    </div-->
                                 </div>
                             </div>
                         </div>
@@ -321,8 +320,6 @@
 <script src="{{ asset('assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/global/plugins/jquery-validation/js/jquery.validate.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/global/plugins/jquery-validation/js/additional-methods.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/scripts/datatable.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/datatables/datatables.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js') }}" type="text/javascript"></script>

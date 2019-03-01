@@ -338,8 +338,13 @@ class HotelContractClientController extends Controller
             'hotelContract.boardTypes' => function($query) {
                 $query->orderBy('name', 'asc');
             },
-            'hotelContract.offers',
-            'hotelContract.offers.offerType'
+            /*'hotelContract.offers',
+            'hotelContract.offers.offerType',
+            'hotelContract.offers.rooms',
+            'hotelContract.offers.rooms.roomType',
+            'hotelContract.offers.boards',
+            'hotelContract.offers.boards.boardType',
+            'hotelContract.offers.ranges'*/
         ]);
 
         if($id != '') {
@@ -367,26 +372,7 @@ class HotelContractClientController extends Controller
         $request->user()->authorizeRoles(['administrator', 'commercial']);
 
         $string = '%' . Input::get('q') . '%';
-        $contracts = HotelContractClient::with([
-            'hotelContract',
-            'hotelContract.hotel',
-            'hotelContract.hotel.hotelChain',
-            'priceRate',
-            'priceRate.market',
-            'client',
-            'hotelContract.roomTypes' => function($query) {
-                $query->orderBy('name', 'asc');
-            },
-            'hotelContract.measures' => function($query) {
-                $query->orderBy('id', 'asc');
-            },
-            'hotelContract.boardTypes' => function($query) {
-                $query->orderBy('name', 'asc');
-            },
-            'hotelContract.offers',
-            'hotelContract.offers.offerType'
-        ])
-            ->where('name', 'like', $string)
+        $contracts = HotelContractClient::where('name', 'like', $string)
             ->orderBy('name', 'asc')
             ->get();
         echo json_encode($contracts);
@@ -564,6 +550,7 @@ class HotelContractClientController extends Controller
                     $query->where('hotel_board_type_id', $boardType);
                 });
             },
+            'offers.offerType',
             'offers.rooms',
             'offers.boards' => function($query) use ($boardType) {
                 $query->where('hotel_board_type_id', $boardType);
@@ -857,6 +844,7 @@ class HotelContractClientController extends Controller
                 $this->response['from'] = $from;
                 $this->response['to'] = $to;
                 $this->response['operateMeasures'] = $operateMeasures;
+                $this->response['offers'] = $offers;
                 $this->response['table'] = $tables;
             }
             else {

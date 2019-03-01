@@ -154,7 +154,8 @@ $(document).ready(function () {
                             $('.result-container').append(table);
                             operateTable(response.from, response.to, contract);
 
-                            var offers = contract.hotel_contract.offers;
+                            var offers = response.offers;
+                            contract.hotel_contract.offers = offers;
 
                             $('.complement').each(function () {
                                 var code = $(this).attr('data-measure-code');
@@ -236,11 +237,6 @@ $(document).ready(function () {
         $('.result-container').html('');
         $('.measures-list').html('');
         $.each(measures, function (i, item) {
-            /*var measure =
-                '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                '<input type="checkbox" name="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
-                '<span></span>' +
-                '</label>';*/
             var measure =
                 '<div class="row">' +
                 '<div class="col-md-5">' +

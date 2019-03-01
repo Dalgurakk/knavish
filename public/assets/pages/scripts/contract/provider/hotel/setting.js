@@ -9,11 +9,12 @@ $(document).ready(function () {
      U = Sunday (That's right, U for Sunday).*/
 
     var needUpdate = false;
-    var needUpdateOffer = false;
     var formSearch = $('#search-accomodation');
     var contract = null;
     var operateMeasures = null;
     var searched = false;
+
+    getContract();
 
     $('#modal-setting :input[name=setting-from]').datepicker({
         rtl: App.isRTL(),
@@ -128,9 +129,10 @@ $(document).ready(function () {
     $("#search-accomodation :input[name=contract]").on('select2:select select2:unselect', function (e) {
         var value = e.params.data;
         if(value.selected) {
-            contract = value;
             searched = false;
-            fillContract(value);
+            contractId = value.id;
+            getContract();
+            fillContract(contract);
             var url = window.location.href;
             if (url.indexOf("?") > 0) {
                 var updatedUri = url.substring(0, url.indexOf("?"));
@@ -139,36 +141,9 @@ $(document).ready(function () {
         }
     });
 
-    $.ajax({
-        "url": routeContract,
-        "type": "POST",
-        "data": {
-            contractId: contractId
-        },
-        "beforeSend": function() {
-            App.showMask(true, formSearch);
-        },
-        "complete": function(xhr, textStatus) {
-            App.showMask(false, formSearch);
-            if (xhr.status == '419') {
-                location.reload(true);
-            }
-            else if (xhr.status != '200') {
-                toastr['error']("Please check your connection and try again.", "Error on loading the content");
-            }
-            else {
-                var response = JSON.parse(xhr.responseText);
-                contract = response.data;
-                if (contract == null) {
-                    toastr['warning'](response.message, "Warning");
-                }
-                else {
-                    $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
-                    fillContract(contract);
-                    $('.filter-content').show();
-                }
-            }
-        }
+    $('.btn-refresh').on('click', function () {
+        getContract();
+        searched = false;
     });
 
     $('.btn-import').on('click', function(e) {
@@ -294,6 +269,7 @@ $(document).ready(function () {
                                 var code = $(this).attr('data-measure-code');
                                 var data = $(this).attr('data');
                                 if (code == 'offer' && data != '') {
+                                    var found = false;
                                     var offersInDay = JSON.parse("[" + data + "]");
                                     var table =
                                         '<table class="table table-striped table-complement" width="100%" cellspacing="0" style="margin-bottom: 0">' +
@@ -307,6 +283,7 @@ $(document).ready(function () {
                                     for (var i = 0; i < offersInDay.length; i++) {
                                         for (var j = 0; j < offers.length; j++) {
                                             if (offersInDay[i] == offers[j].id) {
+                                                found = true;
                                                 table +=
                                                     '<tr><td>' + (i + 1) + '</td><td>' + offers[j].name + '</td><td>' + offers[j].offer_type.name + '</td></tr>';
                                                 break;
@@ -316,16 +293,18 @@ $(document).ready(function () {
                                     table +=
                                         '</tbody>' +
                                         '</table>';
-                                    $(this).popover({
-                                        trigger: 'hover',
-                                        container: 'body',
-                                        placement : 'top',
-                                        title: 'Offers',
-                                        content: table,
-                                        delay: { "show": 500, "hide": 100 },
-                                        html: true,
-                                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title porlet-title-setting"></h3><div class="popover-content" style="padding: 5px;"></div></div>'
-                                    });
+                                    if (found) {
+                                        $(this).popover({
+                                            trigger: 'hover',
+                                            container: 'body',
+                                            placement : 'top',
+                                            title: 'Offers',
+                                            content: table,
+                                            delay: { "show": 500, "hide": 100 },
+                                            html: true,
+                                            template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title porlet-title-setting"></h3><div class="popover-content" style="padding: 5px;"></div></div>'
+                                        });
+                                    }
                                 }
                             });
                         }
@@ -393,15 +372,81 @@ $(document).ready(function () {
         width: "off"
     });
 
+    function getContract() {
+        $.ajax({
+            "url": routeContract,
+            "type": "POST",
+            "data": {
+                contractId: contractId
+            },
+            "beforeSend": function() {
+                App.showMask(true, formSearch);
+            },
+            "complete": function(xhr, textStatus) {
+                App.showMask(false, formSearch);
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
+                    toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                }
+                else {
+                    var response = JSON.parse(xhr.responseText);
+                    contract = response.data;
+                    if (contract == null) {
+                        toastr['warning'](response.message, "Warning");
+                    }
+                    else {
+                        $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
+                        fillContract(contract);
+                        $('.filter-content').show();
+                    }
+                }
+            }
+        });
+    }
+
+    function loadOffers(offers) {
+        contract.offers = offers;
+        tableOffer.api().clear();
+        for (var i = 0; i < offers.length; i++) {
+            var options =
+                '<div class="dt-actions">' +
+                '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info-offer">' +
+                '<i class="glyphicon glyphicon-eye-open btn-action-icon"></i></a>'+
+                '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-edit" data-toggle="modal" href="#modal-edit-offer">' +
+                '<i class="icon-pencil btn-action-icon"></i></a>' +
+                '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-delete" href="javascript:;" data-popout="true" data-placement="left"' +
+                'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success"  data-btn-ok-icon-content="check" ' +
+                'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
+                '<i class="icon-trash btn-action-icon"></i></a>' +
+                '</div>';
+            var active = '<span><i class="fa fa-close dt-active dt-active-0"></i></span>';
+            if (offers[i].active == 1)
+                active = '<span><i class="fa fa-check dt-active dt-active-1"></i></span>';
+            tableOffer.api().row.add([
+                offers[i].id,
+                offers[i].name,
+                offers[i].offer_type.name,
+                active,
+                options,
+                offers[i]
+            ]).draw( false );
+        }
+        tableOffer.api().columns.adjust().draw();
+    }
+
     function fillContract(c) {
         var roomTypes = c.room_types;
         var boardTypes = c.board_types;
         var measures = c.measures;
         var markets = c.markets;
+        var offers = c.offers;
+        var supplements = [];
+        var restrictions = [];
         var contract = c;
         var chain = contract.hotel.hotel_chain != null ? contract.hotel.hotel_chain.name : '';
         var status = contract.active == 1 ? 'Enabled' : 'Disabled';
-        var arrayComplements = [];
 
         $("#search-accomodation :input[name=hotel]").val(contract.hotel.name);
         $("#search-accomodation :input[name=hotel-chain]").val(chain);
@@ -415,16 +460,14 @@ $(document).ready(function () {
             var ref = $(this).children('a').attr('href');
             $(ref).addClass('hide');
         });
+
+        $('#modal-complements .contract-name').html(contract.name);
+
+        loadOffers(offers);
+
         var isFirstTab = true;
         $.each(measures, function (i, item) {
-            /*var measure =
-                '<label class="mt-checkbox mt-checkbox-outline mt-checkbox-row">' +
-                '<input type="checkbox" name="row-selected" checked value="' + measures[i].id + '"> ' + measures[i].name +
-                '<span></span>' +
-                '</label>';
-            $('.measures-list').append(measure);*/
             if (measures[i].code == 'offer' || measures[i].code == 'supplement' || measures[i].code == 'restriction') {
-                arrayComplements.push(measures[i]);
                 $('.complement-link[data="' + measures[i].code + '"]').removeClass('hide');
                 $('.tab-pane[data="' + measures[i].code + '"]').removeClass('hide');
                 if(isFirstTab) {
@@ -450,12 +493,10 @@ $(document).ready(function () {
                 '</div>';
             }
             measure += '</div>';
-
             $('.measures-list').append(measure);
-
         });
 
-        if (arrayComplements.length > 0) {
+        if (offers.length > 0 || supplements.length > 0 || restrictions.length > 0) {
             $('.btn-complements').removeClass('disabled');
         }
 
@@ -580,6 +621,8 @@ $(document).ready(function () {
         $('#modal-import :input[name=import-from]').datepicker( "setEndDate" , new Date(endDate));
         $('#modal-import :input[name=import-to]').datepicker( "setStartDate" , new Date(startDate));
         $('#modal-import :input[name=import-to]').datepicker( "setEndDate" , new Date(endDate));
+
+        App.reloadToolTips();
     }
 
     function updateShare() {
@@ -724,7 +767,6 @@ $(document).ready(function () {
     });
 
     function operateTable(from, to, contract) {
-        var roomTypes = contract.room_types;
         $('.item-setting').on('click', function() {
             if ($(this).hasClass('complement')) {
                 /*var offers = contract.offers;
@@ -732,6 +774,7 @@ $(document).ready(function () {
                 console.log(array);*/
             }
             else {
+                var roomTypes = contract.room_types;
                 $('input[name^="cost"]').each(function(i) {
                     $(this).rules('remove', 'required');
                 });
@@ -1611,6 +1654,13 @@ $(document).ready(function () {
         }
     });
 
+    $('.cancel-supplements').on('click', function(e) {
+        if(needUpdate) {
+            $(".btn-search-submit").click();
+            needUpdate = false;
+        }
+    });
+
     $('#market').change(function() {
         if(searched) {
             $('.btn-search-submit').click();
@@ -1907,7 +1957,7 @@ $(document).ready(function () {
                 '<div class="row">' +
                 '<div class="col-md-6">' +
                 '<div class="form-group">' +
-                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<div class="mt-checkbox-list">' +
                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Non Refundable' +
                 '<input type="checkbox" value="1" name="non-refundable"/>' +
                 '<span></span>' +
@@ -1917,7 +1967,7 @@ $(document).ready(function () {
                 '</div>' +
                 '<div class="col-md-6">' +
                 '<div class="form-group">' +
-                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<div class="mt-checkbox-list">' +
                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Apply with other offers' +
                 '<input type="checkbox" value="1" name="apply-with-other-offers"/>' +
                 '<span></span>' +
@@ -2127,7 +2177,7 @@ $(document).ready(function () {
                 '<div class="row">' +
                 '<div class="col-md-6">' +
                 '<div class="form-group">' +
-                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<div class="mt-checkbox-list">' +
                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Non Refundable' +
                 '<input type="checkbox" value="1" name="non-refundable"/>' +
                 '<span></span>' +
@@ -2137,7 +2187,7 @@ $(document).ready(function () {
                 '</div>' +
                 '<div class="col-md-6">' +
                 '<div class="form-group">' +
-                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<div class="mt-checkbox-list">' +
                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Apply with other offers' +
                 '<input type="checkbox" value="1" name="apply-with-other-offers"/>' +
                 '<span></span>' +
@@ -2457,15 +2507,16 @@ $(document).ready(function () {
                     else {
                         var response = $.parseJSON(xhr.responseText);
                         if (response.status == 'success') {
+                            var offers =response.data;
+                            loadOffers(offers);
                             toastr['success'](response.message, "Success");
-                            needUpdateOffer = true;
                             if (searched) {
                                 needUpdate = true;
                             }
                             if (option == 'accept') {
                                 $(form).find("button.cancel-form-offer").click();
-                                formAddOffer[0].reset();
                             }
+                            resetAddOffer();
                         }
                         else {
                             toastr['error'](response.message, "Error");
@@ -2595,8 +2646,9 @@ $(document).ready(function () {
                     else {
                         var response = $.parseJSON(xhr.responseText);
                         if (response.status == 'success') {
+                            var offers = response.data;
+                            loadOffers(offers);
                             toastr['success'](response.message, "Success");
-                            needUpdateOffer = true;
                             if (searched) {
                                 needUpdate = true;
                             }
@@ -2780,22 +2832,39 @@ $(document).ready(function () {
         });
     });
 
-    $('.reload-offer').on('click', function (e) {
-        tableOffer.draw();
+    $.fn.dataTable.ext.errMode = 'none';
+    var tableOffer = $('#table-offer').dataTable({
+        "sDom": "tip",
+        "autoWidth": false,
+        "columnDefs": [
+            { 'visible': false, 'targets': [0], name: 'id' },
+            { 'targets': [1], name: 'id', "width": "40%" },
+            { targets: [3], className: "dt-center nobreakline", orderable: false, name: 'name' },
+            { targets: [4], className: "dt-center nobreakline", orderable: false, name: 'type' },
+            { 'visible': false, 'targets': [5], name: 'object' }
+        ],
+        "order": [[ 1, "asc" ]],
+        "lengthMenu": [[-1], ["All"]],
+        "pageLength": 10
     });
 
     $('#table-offer tbody').on( 'click', '.dt-edit', function (e) {
         $('#modal-edit-offer .delete-row-offer').each(function () {
             $(this).click();
         });
-        var data = tableOffer.row( $(this).parents('tr') ).data();
-        var offer = data['object'];
+        var data = tableOffer.api().row( $(this).parents('tr') ).data();
+        var offer = data['5'];
         var roomTypes = contract.room_types;
         var boardTypes = contract.board_types;
         var rooms = offer.rooms;
         var boards = offer.boards;
         var ranges = offer.ranges;
         var offerType = offer.offer_type;
+
+        $('#modal-edit-offer .expand').each(function () {
+            $(this).click();
+        });
+
 
         for (var i = 0; i < ranges.length; i++) {
             if (i == 0) {
@@ -2925,12 +2994,16 @@ $(document).ready(function () {
     });
 
     $('#table-offer tbody').on( 'click', '.dt-view', function (e) {
-        var data = tableOffer.row( $(this).parents('tr') ).data();
-        var offer = data['object'];
+        var data = tableOffer.api().row( $(this).parents('tr') ).data();
+        var offer = data['5'];
         var rooms = offer.rooms;
         var boards = offer.boards;
         var ranges = offer.ranges;
         var offerType = offer.offer_type;
+
+        $('#modal-info-offer .expand').each(function () {
+            $(this).click();
+        });
 
         $('#modal-info-offer .range-container').html('');
         for (var i = 0; i < ranges.length; i++) {
@@ -3043,7 +3116,7 @@ $(document).ready(function () {
                 '<div class="row">' +
                 '<div class="col-md-6">' +
                 '<div class="form-group">' +
-                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<div class="mt-checkbox-list">' +
                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Non Refundable' +
                 '<input type="checkbox" value="1" name="non-refundable" onclick="return false;" ' + (offer.non_refundable == 1 ? 'checked' : '') + '/>' +
                 '<span></span>' +
@@ -3053,7 +3126,7 @@ $(document).ready(function () {
                 '</div>' +
                 '<div class="col-md-6">' +
                 '<div class="form-group">' +
-                '<div class="mt-checkbox-list /*margin-top-15*/">' +
+                '<div class="mt-checkbox-list">' +
                 '<label class="mt-checkbox mt-checkbox-outline no-margin-bottom"> Apply with other offers' +
                 '<input type="checkbox" value="1" name="apply-with-other-offers" onclick="return false;" ' + (offer.apply_with_other_offers == 1 ? 'checked' : '')  + '/>' +
                 '<span></span>' +
@@ -3275,7 +3348,7 @@ $(document).ready(function () {
             }
         });
         $('#modal-edit-offer :input[name=count-offer-board-type]').val(countSelectedRecords(tableEditOfferBoardType));
-    })
+    });
 
     tableEditOfferBoardType.on('change', 'tbody tr .checkboxes', function () {
         $(this).parents('tr').toggleClass("active");
@@ -3283,10 +3356,85 @@ $(document).ready(function () {
     });
 
     $('.add-offer').on('click', function (e) {
+        resetAddOffer();
+    });
+
+    var requestDeleteOffer = false;
+    $('#table-offer tbody').on( 'click', '.dt-delete', function (e) {
+        if (!requestDeleteOffer) {
+            var data = tableOffer.api().row( $(this).parents('tr') ).data();
+            $(this).confirmation('show');
+            $(this).on('confirmed.bs.confirmation', function () {
+                requestDeleteOffer = true;
+                $.ajax({
+                    url: routeDeleteOffer,
+                    "type": "POST",
+                    "data":  {
+                        id: data['0']
+                    },
+                    "beforeSend": function() {
+                        App.showMask(true, $('#table-offer'));
+                    },
+                    "complete": function(xhr, textStatus) {
+                        requestDeleteOffer = false;
+                        App.showMask(false, $('#table-offer'));
+                        if (xhr.status == '419') {
+                            location.reload(true);
+                        }
+                        else if (xhr.status != '200') {
+                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                        }
+                        else {
+                            var response = $.parseJSON(xhr.responseText);
+                            if (response.status == 'success') {
+                                if (searched) {
+                                    needUpdate = true;
+                                }
+                                var offers = response.data;
+                                loadOffers(offers);
+                                toastr['success'](response.message, "Success");
+                            }
+                            else {
+                                toastr['error'](response.message, "Error");
+                            }
+                        }
+                    }
+                });
+            });
+        }
+        e.preventDefault();
+    });
+
+    $('.btn-complements').on('click', function () {
+        $('#modal-complements').modal('show');
+    });
+
+    $('.check-all-rooms').on('click', function (e) {
+        e.preventDefault();
+        var option = $(this).attr('data');
+        if (option == 'check') {
+            $(this).attr('data', 'uncheck');
+            $('.room-selected').each(function () {
+                $(this).prop("checked", false);
+            });
+        }
+        else {
+            $(this).attr('data', 'check');
+            $('.room-selected').each(function () {
+                $(this).prop("checked", true);
+            });
+        }
+    });
+
+    function resetAddOffer() {
         formAddOffer.validate().resetForm();
         formAddOffer[0].reset();
         $('#modal-add-offer .range-optional').each(function () {
             $(this).remove();
+        });
+
+        $('#modal-add-offer .expand').each(function () {
+            $(this).click();
         });
 
         /*var dateFrom = contract.valid_from;
@@ -3327,152 +3475,5 @@ $(document).ready(function () {
         }
         $('#modal-complements :input[name=count-offer-board-type]').val(0);
         tableOfferBoardType.api().columns.adjust().draw();
-    });
-
-    var requestDeleteOffer = false;
-    $('#table-offer tbody').on( 'click', '.dt-delete', function (e) {
-        if (!requestDeleteOffer) {
-            var data = tableOffer.row( $(this).parents('tr') ).data();
-            $(this).confirmation('show');
-            $(this).on('confirmed.bs.confirmation', function () {
-                requestDeleteOffer = true;
-                $.ajax({
-                    url: routeDeleteOffer,
-                    "type": "POST",
-                    "data":  {
-                        id: data['id']
-                    },
-                    "beforeSend": function() {
-                        App.showMask(true, $('#table-offer'));
-                    },
-                    "complete": function(xhr, textStatus) {
-                        requestDeleteOffer = false;
-                        App.showMask(false, $('#table-offer'));
-                        if (xhr.status == '419') {
-                            location.reload(true);
-                        }
-                        else if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                        }
-                        else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                tableOffer.draw();
-                                if (searched) {
-                                    needUpdate = true;
-                                }
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
-                        }
-                    }
-                });
-            });
-        }
-        e.preventDefault();
-    });
-
-    $('.cancel-form-offer').on('click', function(e) {
-        if(needUpdateOffer) {
-            tableOffer.draw();
-            needUpdateOffer = false;
-        }
-    });
-
-    $.fn.dataTable.ext.errMode = 'none';
-    var tableOffer = $('#table-offer').on('error.dt', function(e, settings, techNote, message) {
-
-    }).on( 'processing.dt', function ( e, settings, processing ) {
-        App.showMask(processing, $(this));
-        App.reloadToolTips();
-    }).on('init.dt', function() {
-
-    }).DataTable({
-        "processing": true,
-        "serverSide": true,
-        "sDom": "tip",
-        "iDisplayLength" : 10,
-        "ajax": {
-            "url": routeReadOffer,
-            "type": "POST",
-            "data": function ( d ) {
-                d.contractId = contract == null ? 0 : contract.id;
-                return d;
-            },
-            "complete": function(xhr, textStatus) {
-                if (xhr.status == '419') {
-                    location.reload(true);
-                }
-                else if (xhr.status != '200') {
-                    toastr['error']("Please check your connection and try again.", "Error on loading the content");
-                }
-                $('.br-readonly').on('click', function(e) {
-                    e.preventDefault();
-                });
-            }
-        },
-        "order": [[ 1, "asc" ]],
-        columns: [
-            { data: 'id', name: 'id', visible: false },
-            { data: 'name', name: 'name', width: '35%' },
-            { data: 'type', name: 'type', orderable: false, width: '30%' },
-            {
-                data: 'active',
-                name: 'active',
-                "className": "dt-center",
-                "data": function ( row, type, val, meta ) {
-                    var data = '<span><i class="fa fa-close dt-active dt-active-0"></i></span>';
-                    if (row.active == 1)
-                        data = '<span><i class="fa fa-check dt-active dt-active-1"></i></span>';
-                    return data;
-                }
-            },
-            {
-                targets: 'actions',
-                orderable: false,
-                name: 'actions',
-                "className": "dt-center",
-                "data": function ( row, type, val, meta ) {
-                    //var contract = row.contract;
-                    var data =
-                        '<div class="dt-actions">' +
-                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view" data-toggle="modal" href="#modal-info-offer">' +
-                        '<i class="glyphicon glyphicon-eye-open btn-action-icon"></i></a>'+
-                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-edit" data-toggle="modal" href="#modal-edit-offer">' +
-                        '<i class="icon-pencil btn-action-icon"></i></a>' +
-                        '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-delete" href="javascript:;" data-popout="true" data-placement="left"' +
-                        'data-btn-ok-label="Yes" data-btn-ok-class="btn-sm btn-success"  data-btn-ok-icon-content="check" ' +
-                        'data-btn-cancel-label="No" data-btn-cancel-class="btn-sm btn-danger" data-btn-cancel-icon-content="close" data-title="Are you sure?" data-content="">' +
-                        '<i class="icon-trash btn-action-icon"></i></a>' +
-                        '</div>';
-                    return data;
-                }
-            }
-        ]
-    });
-
-    $('.btn-complements').on('click', function () {
-        $('#modal-complements .contract-name').html(contract.name);
-        tableOffer.draw();
-        $('#modal-complements').modal('show');
-    });
-
-    $('.check-all-rooms').on('click', function (e) {
-        e.preventDefault();
-        var option = $(this).attr('data');
-        if (option == 'check') {
-            $(this).attr('data', 'uncheck');
-            $('.room-selected').each(function () {
-                $(this).prop("checked", false);
-            });
-        }
-        else {
-            $(this).attr('data', 'check');
-            $('.room-selected').each(function () {
-                $(this).prop("checked", true);
-            });
-        }
-    });
+    }
 });

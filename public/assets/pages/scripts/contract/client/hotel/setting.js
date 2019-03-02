@@ -757,9 +757,183 @@ $(document).ready(function () {
         var contractMeasures = contract.hotel_contract.measures;
         $('.item-setting').on('click', function() {
             if ($(this).hasClass('complement')) {
-                /*var offers = contract.offers;
-                var array = JSON.parse("[" + $(this).attr('data') + "]");
-                console.log(array);*/
+                var code = $(this).attr('data-measure-code');
+                if (code == 'offer') {
+                    var data = $(this).attr('data');
+                    var offersInDay = JSON.parse("[" + $(this).attr('data') + "]");
+                    if (offersInDay.length > 0) {
+                        var offers = contract.hotel_contract.offers;
+                        $('#modal-offers .offers-container').html('');
+                        var content = '';
+                        for (var i = 0; i < offersInDay.length; i++) {
+                            for (var j = 0; j < offers.length; j++) {
+                                if (offersInDay[i] == offers[j].id) {
+                                    var rooms = offers[j].rooms;
+                                    var roomsStr = '';
+                                    for (var r = 0; r < rooms.length; r++) {
+                                        if (r == 0) {
+                                            roomsStr += rooms[r].room_type.code + ': ' + rooms[r].room_type.name;
+                                        }
+                                        else {
+                                            roomsStr += ', ' + rooms[r].room_type.code + ': ' + rooms[r].room_type.name;
+                                        }
+                                    }
+                                    var boards = offers[j].boards;
+                                    var boardsStr = '';
+                                    for (var r = 0; r < boards.length; r++) {
+                                        if (r == 0) {
+                                            boardsStr += boards[r].board_type.code + ': ' + boards[r].board_type.name;
+                                        }
+                                        else {
+                                            boardsStr += ', ' + boards[r].board_type.code + ': ' + boards[r].board_type.name;
+                                        }
+                                    }
+                                    var ranges = offers[j].ranges;
+                                    var rangesStr = '';
+                                    for (var r = 0; r < ranges.length; r++) {
+                                        var from = moment(ranges[r].from, 'YYYY-MM-DD').format('DD.MM.YYYY');
+                                        var to = moment(ranges[r].to, 'YYYY-MM-DD').format('DD.MM.YYYY');
+                                        if (r == 0) {
+                                            if (from == to)
+                                                rangesStr += from;
+                                            else
+                                                rangesStr += from + ' - ' + to;
+                                        }
+                                        else {
+                                            if (from == to)
+                                                rangesStr += ', ' + from;
+                                            else
+                                                rangesStr += ', ' + from + ' - ' + to;
+                                        }
+                                    }
+                                    var details = '';
+                                    var detailContent = '';
+                                    var time = $.now();
+                                    if (offers[j].offer_type.code == 'early_booking') {
+                                        details =
+                                            '<div class="actions">' +
+                                            '<a href="javascript:;" class="btn btn-default btn-sm btn-offer-details" data="' + time + '" style="margin-right: 5px;">' +
+                                            '<i class="fa fa-binoculars"></i> Details </a>' +
+                                            '</div>';
+                                        if (offers[j].discount != null) {
+                                            detailContent +=
+                                                '<div class="row static-info">' +
+                                                '<div class="col-md-3 name"> Discount: </div>';
+                                            if (offers[j].discount_type == 1) {
+                                                detailContent +=
+                                                    '<div class="col-md-9 value"> ' + offers[j].discount + '%</div>' +
+                                                    '</div>';
+                                            }
+                                            else {
+                                                detailContent +=
+                                                    '<div class="col-md-9 value">$' + offers[j].discount + ' </div>' +
+                                                    '</div>';
+                                            }
+                                        }
+                                        if (offers[j].booking_type != null) {
+                                            var bookingDateStr = '';
+                                            if (offers[j].booking_type == 1) {
+                                                if (offers[j].booking_date_from == offers[j].booking_date_to)
+                                                    bookingDateStr = moment(offers[j].booking_date_from, 'YYYY-MM-DD').format('DD.MM.YYYY');
+                                                else {
+                                                    bookingDateStr = moment(offers[j].booking_date_from, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' - ' + moment(offers[j].booking_date_to, 'YYYY-MM-DD').format('DD.MM.YYYY');
+                                                }
+                                            }
+                                            else if (offers[j].booking_type == 2) {
+                                                if (offers[j].days_prior_from == offers[j].days_prior_to)
+                                                    bookingDateStr = offers[j].days_prior_from + ' days prior to the check-in';
+                                                else {
+                                                    bookingDateStr = offers[j].days_prior_from + ' - ' + offers[j].days_prior_to + ' days prior to the check-in';
+                                                }
+                                            }
+                                            detailContent +=
+                                                '<div class="row static-info">' +
+                                                '<div class="col-md-3 name"> Booking Date: </div>' +
+                                                '<div class="col-md-9 value"> ' + bookingDateStr + ' </div>' +
+                                                '</div>';
+                                        }
+                                        if (offers[j].payment_date != null) {
+                                            detailContent +=
+                                                '<div class="row static-info">' +
+                                                '<div class="col-md-3 name"> Payment Date: </div>' +
+                                                '<div class="col-md-9 value"> ' + moment(offers[j].payment_date, 'YYYY-MM-DD').format('DD.MM.YYYY') + ' </div>' +
+                                                '</div>' +
+                                                '<div class="row static-info">' +
+                                                '<div class="col-md-3 name"> Percentage Due: </div>' +
+                                                '<div class="col-md-9 value"> ' + offers[j].percentage_due + '%</div>' +
+                                                '</div>';
+                                        }
+                                        if (offers[j].minimum_stay != null) {
+                                            detailContent +=
+                                                '<div class="row static-info">' +
+                                                '<div class="col-md-3 name"> Minimum Stay: </div>' +
+                                                '<div class="col-md-9 value"> ' + offers[j].minimum_stay + ' </div>' +
+                                                '</div>';
+                                        }
+                                        var nonRefundable = offers[j].non_refundable == 1 ? 'Yes' : 'No';
+                                        detailContent +=
+                                            '<div class="row static-info">' +
+                                            '<div class="col-md-3 name"> Non Refundable: </div>' +
+                                            '<div class="col-md-9 value"> ' + nonRefundable + ' </div>' +
+                                            '</div>';
+
+                                    }
+                                    content +=
+                                        '<div class="col-md-12">' +
+                                        '<div class="portlet box blue">' +
+                                        '<div class="portlet-title">' +
+                                        '<div class="caption">' +
+                                        '<i class="fa fa-cogs"></i>' + offers[j].name + '</div>' +
+                                        '<div class="tools">' +
+                                        '<a href="javascript:;" class="collapse"> </a></div>' + details +
+                                        '</div>' +
+                                        '<div class="portlet-body">' +
+                                        '<div class="row static-info">' +
+                                        '<div class="col-md-3 name"> Denomination: </div>' +
+                                        '<div class="col-md-9 value"> ' + offers[j].name + '</div>' +
+                                        '</div>' +
+                                        '<div class="row static-info">' +
+                                        '<div class="col-md-3 name"> Type: </div>' +
+                                        '<div class="col-md-9 value"> ' + offers[j].offer_type.name + ' </div>' +
+                                        '</div>' +
+                                        '<div class="row static-info">' +
+                                        '<div class="col-md-3 name"> Ranges: </div>' +
+                                        '<div class="col-md-9 value"> ' + rangesStr + ' </div>' +
+                                        '</div>' +
+                                        '<div class="row static-info">' +
+                                        '<div class="col-md-3 name"> Board Types: </div>' +
+                                        '<div class="col-md-9 value"> ' + boardsStr + ' </div>' +
+                                        '</div>' +
+                                        '<div class="row static-info">' +
+                                        '<div class="col-md-3 name"> Rooms: </div>' +
+                                        '<div class="col-md-9 value"> ' + roomsStr + ' </div>' +
+                                        '</div>' +
+                                        '<div class="offer-detail-container hidden" data="' + time + '">' +
+                                        detailContent +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '</div>';
+                                    break;
+                                }
+                            }
+                        }
+                        $('#modal-offers .offers-container').append(content);
+                        $('.btn-offer-details').on('click', function () {
+                            var data = $(this).attr('data');
+                            if ($('.offer-detail-container[data="' + data + '"]').hasClass('hidden')) {
+                                $('.offer-detail-container[data="' + data + '"]').removeClass('hidden');
+                            }
+                            else {
+                                $('.offer-detail-container[data="' + data + '"]').addClass('hidden');
+                            }
+                        });
+                        $('#modal-offers').modal('show');
+                    }
+                    else {
+                        return false;
+                    }
+                }
             }
             else {
                 var hasStopSale = false;

@@ -326,6 +326,7 @@ class ClientHotelController extends Controller
             'offers.boards' => function($query) use ($boardType) {
                 $query->where('hotel_board_type_id', $boardType);
             },
+            'offers.boards.boardType',
             'offers.rooms.roomType',
             'offers.ranges' => function($query) use ($start, $end) {
                 $query

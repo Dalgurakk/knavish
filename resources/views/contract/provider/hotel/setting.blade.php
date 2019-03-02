@@ -1062,6 +1062,20 @@
         <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form-offer"><i class="fa fa-close"></i> Cancel</button>
     </div>
 </div>
+
+<div id="modal-offers" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Offers </h4>
+    </div>
+    <div class="modal-body">
+        <div class="row offers-container"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form-offer"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+</div>
+
 @stop
 
 @section('page-plugins')

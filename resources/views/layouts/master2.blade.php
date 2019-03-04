@@ -1,22 +1,7 @@
 <!DOCTYPE html>
-<!-- 
-Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.3.7
-Version: 4.7.5
-Author: KeenThemes
-Website: http://www.keenthemes.com/
-Contact: support@keenthemes.com
-Follow: www.twitter.com/keenthemes
-Dribbble: www.dribbble.com/keenthemes
-Like: www.facebook.com/keenthemes
-Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
-Renew Support: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
-License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
--->
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
-<!--[if !IE]><!-->
 <html lang="{{ app()->getLocale() }}">
-    <!--<![endif]-->
     <!-- BEGIN HEAD -->
     <head>
         <meta charset="utf-8" />
@@ -27,7 +12,7 @@ License: You must have a valid license purchased only from themeforest(the above
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <meta content="Royal Team" name="author" />
         <!-- BEGIN GLOBAL MANDATORY STYLES -->
-        <!--link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" /-->
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/global/plugins/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/global/plugins/simple-line-icons/simple-line-icons.min.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/global/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
@@ -70,7 +55,6 @@ License: You must have a valid license purchased only from themeforest(the above
                 <!-- BEGIN RESPONSIVE MENU TOGGLER -->
                 <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
                 <!-- END RESPONSIVE MENU TOGGLER -->
-
                 <!-- BEGIN PAGE TOP -->
                 <div class="page-top" style="/*height: 45px;*/">
                     <div class="master-logo-container">
@@ -124,16 +108,7 @@ License: You must have a valid license purchased only from themeforest(the above
             <!-- BEGIN SIDEBAR -->
             <div class="page-sidebar-wrapper">
                 <!-- END SIDEBAR -->
-                <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
-                <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
                 <div class="page-sidebar navbar-collapse collapse">
-                    <!-- BEGIN SIDEBAR MENU -->
-                    <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
-                    <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
-                    <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
-                    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
-                    <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
-                    <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
                     <ul class="page-sidebar-menu  page-header-fixed page-sidebar-menu-hover-submenu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
                     @if(Auth::user()->hasRole('client'))
                         <li class="nav-item {{ isset($menuContract) ? 'active open' : '' }}">

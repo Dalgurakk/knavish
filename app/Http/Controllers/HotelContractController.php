@@ -11,6 +11,7 @@ use App\Models\HotelContractClient;
 use App\Models\HotelContractMarket;
 use App\Models\HotelContractPrice;
 use App\Models\HotelContractRoomType;
+use App\Models\HotelContractRoomTypePaxType;
 use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
 use App\Models\HotelOfferType;
@@ -220,8 +221,8 @@ class HotelContractController extends Controller
             $contract->active = Input::get('active') == 1 ? 1 : 0;
             $contract->status = Input::get('status');
 
-            DB::beginTransaction();
             try {
+                DB::beginTransaction();
                 $contract->save();
                 $roomTypes = json_decode(Input::get('roomTypes'), true);
                 $boardTypes = json_decode(Input::get('boardTypes'));
@@ -270,6 +271,23 @@ class HotelContractController extends Controller
                         'value' => $market->value,
                         'round' => $market->round_type
                     ]);
+                }
+                foreach ($contract->roomTypeRelations as $roomTypeRelation) {
+                    foreach ($contract->paxTypeRelations as $paxTypeRelation) {
+                        if (
+                            ($roomTypeRelation->roomTypeRelated->max_infant > 0 && $paxTypeRelation->paxTypeRelated->type == 1) ||
+                            ($roomTypeRelation->roomTypeRelated->max_children > 0 && $paxTypeRelation->paxTypeRelated->type == 2) ||
+                            ($roomTypeRelation->roomTypeRelated->max_adult > 0 && $paxTypeRelation->paxTypeRelated->type == 3)
+                        ) {
+                            $contractRoomTypePaxType = new HotelContractRoomTypePaxType();
+                            $contractRoomTypePaxType->hotel_contract_id = $contract->id;
+                            $contractRoomTypePaxType->hotel_contract_room_type_id = $roomTypeRelation->id;
+                            $contractRoomTypePaxType->hotel_room_type_id = $roomTypeRelation->hotel_room_type_id;
+                            $contractRoomTypePaxType->hotel_contract_pax_type_id = $paxTypeRelation->id;
+                            $contractRoomTypePaxType->hotel_pax_type_id = $paxTypeRelation->hotel_pax_type_id;
+                            $contractRoomTypePaxType->save();
+                        }
+                    }
                 }
                 DB::commit();
                 $this->response['status'] = 'success';
@@ -327,8 +345,8 @@ class HotelContractController extends Controller
                 $contract->active = Input::get('active') == 1 ? 1 : 0;
                 $contract->status = Input::get('status');
 
-                DB::beginTransaction();
                 try {
+                    DB::beginTransaction();
                     $roomTypes = json_decode(Input::get('roomTypes'), true);
                     $boardTypes = json_decode(Input::get('boardTypes'));
                     $markets = json_decode(Input::get('markets'));
@@ -385,19 +403,36 @@ class HotelContractController extends Controller
                             }
                         }
                     }
-
                     $contract->markets()->sync($syncMarkets);
                     $contract->roomTypes()->sync($roomTypes);
                     $contract->boardTypes()->sync($boardTypes);
                     $contract->paxTypes()->sync($paxTypes);
                     $contract->measures()->sync($measures);
-                    $contract->save();
 
-                    if ($contract->active != 1) {
-                        HotelContractClient::where('hotel_contract_id', $contract->id)
-                            ->update(['active' => 0]);
+                    $roomTypePaxTypeRelations = array();
+                    foreach ($contract->roomTypePaxTypeRelations as $roomTypePaxTypeRelation) {
+                        $roomTypePaxTypeRelations[$roomTypePaxTypeRelation->hotel_contract_room_type_id][$roomTypePaxTypeRelation->hotel_contract_pax_type_id] = $roomTypePaxTypeRelation;
                     }
 
+                    foreach ($contract->roomTypeRelations as $roomTypeRelation) {
+                        foreach ($contract->paxTypeRelations as $paxTypeRelation) {
+                            if (
+                                ($roomTypeRelation->roomTypeRelated->max_infant > 0 && $paxTypeRelation->paxTypeRelated->type == 1 && !isset($roomTypePaxTypeRelations[$roomTypeRelation->id][$paxTypeRelation->id])) ||
+                                ($roomTypeRelation->roomTypeRelated->max_children > 0 && $paxTypeRelation->paxTypeRelated->type == 2 && !isset($roomTypePaxTypeRelations[$roomTypeRelation->id][$paxTypeRelation->id])) ||
+                                ($roomTypeRelation->roomTypeRelated->max_adult > 0 && $paxTypeRelation->paxTypeRelated->type == 3 && !isset($roomTypePaxTypeRelations[$roomTypeRelation->id][$paxTypeRelation->id]))
+                            ) {
+                                $contractRoomTypePaxType = new HotelContractRoomTypePaxType();
+                                $contractRoomTypePaxType->hotel_contract_id = $contract->id;
+                                $contractRoomTypePaxType->hotel_contract_room_type_id = $roomTypeRelation->id;
+                                $contractRoomTypePaxType->hotel_room_type_id = $roomTypeRelation->hotel_room_type_id;
+                                $contractRoomTypePaxType->hotel_contract_pax_type_id = $paxTypeRelation->id;
+                                $contractRoomTypePaxType->hotel_pax_type_id = $paxTypeRelation->hotel_pax_type_id;
+                                $contractRoomTypePaxType->save();
+                            }
+                        }
+                    }
+
+                    $contract->save();
                     DB::commit();
                     $this->response['status'] = 'success';
                     $this->response['message'] = 'Contract updated successfully.';
@@ -1301,10 +1336,12 @@ class HotelContractController extends Controller
                     $startRange = Carbon::createFromFormat('!Y-m-d', $range->from);
                     $endRange = Carbon::createFromFormat('!Y-m-d', $range->to);
                     if ($start->greaterThanOrEqualTo($startRange)) {
-                        $startRange = Carbon::createFromFormat('!Y-m-d', $start->format('Y-m-d'));
+                        //$startRange = Carbon::createFromFormat('!Y-m-d', $start->format('Y-m-d'));
+                        $startRange = clone $start;
                     }
                     if ($end->lessThanOrEqualTo($endRange)) {
-                        $endtRange = Carbon::createFromFormat('!Y-m-d', $end->format('Y-m-d'));
+                        //$endtRange = Carbon::createFromFormat('!Y-m-d', $end->format('Y-m-d'));
+                        $endtRange = clone $end;
                     }
                     for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {
                         foreach ($offer->rooms as $room) {
@@ -1511,7 +1548,6 @@ class HotelContractController extends Controller
                                     'data-use-adult-type="' . $useAdultType . '" ' .
                                     'data-use-adult-rate="' . $useAdultRate . '" ';
                                 }
-
                                 $table .=
                                     '>' . $showValue . '</td>';
                             }
@@ -1561,5 +1597,74 @@ class HotelContractController extends Controller
             'settings' => $settings
         );
         return Excel::download(new HotelContractExport($parameters), 'Hotel Contracts.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+
+    public function getPaxTypesByRoomType(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        $contractId = Input::get('contractId');
+        $roomTypeId = Input::get('roomTypeId');
+
+        try {
+            $paxTypes = HotelPaxType::with([
+                'contractPaxTypes' => function($query) use ($contractId) {
+                    $query
+                        ->where('hotel_contract_id', $contractId);
+                },
+                'contractPaxTypes.roomPaxTypeRelations' => function($query) use ($contractId, $roomTypeId) {
+                    $query
+                        ->where('hotel_room_type_id', $roomTypeId);
+                },
+            ])
+                ->whereHas('contractPaxTypes', function ($query) use ($contractId, $roomTypeId) {
+                    $query->whereHas('roomPaxTypeRelations', function ($query) use ($roomTypeId) {
+                        $query->where('hotel_room_type_id', $roomTypeId);
+                    })->where('hotel_contract_id', $contractId);
+                })->get();
+
+            if (!is_null($paxTypes)) {
+                $this->response['status'] = 'success';
+                $this->response['data'] = $paxTypes;
+            }
+            else {
+                $this->response['status'] = 'warning';
+                $this->response['message'] = 'There are no results.';
+            }
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
+        }
+        echo json_encode($this->response);
+    }
+
+    public function updatePaxTypesByRoomType(Request $request) {
+        $request->user()->authorizeRoles(['administrator', 'commercial']);
+
+        //$contractId = Input::get('contractId');
+        $relationId = Input::get('relationId');
+        $active = Input::get('active') == 'true' ? 1 : 0;
+
+        try {
+            $contractRelation = HotelContractRoomTypePaxType::where('id', $relationId)->first();
+            if (is_null($contractRelation)) {
+                $this->response['status'] = 'error';
+                $this->response['message'] = 'Element not found.';
+            }
+            else {
+                $contractRelation->active = $active;
+                $contractRelation->save();
+                $this->response['status'] = 'success';
+            }
+        }
+        catch (\Exception $e) {
+            DB::rollBack();
+            $this->response['status'] = 'error';
+            $this->response['message'] = 'Something was wrong, please contact the system administrator.';
+            $this->response['errors'] = $e->getMessage();
+        }
+        echo json_encode($this->response);
     }
 }

@@ -101,6 +101,8 @@ Route::post('/contract/provider/hotel/settings/import/costFromRoomType', 'HotelC
 Route::post('/contract/provider/hotel/search/active', 'HotelContractController@getActivesByName')->name('contract.provider.hotel.search.active');
 Route::get('/contract/provider/hotel/search/excel', 'HotelContractController@toExcel')->name('contract.provider.hotel.excel');
 Route::post('/contract/provider/hotel/duplicate', 'HotelContractController@duplicate')->name('contract.provider.hotel.duplicate');
+Route::post('/contract/provider/room-pax/read', 'HotelContractController@getPaxTypesByRoomType')->name('contract.provider.hotel.room_pax_type.read');
+Route::post('/contract/provider/room-pax/update', 'HotelContractController@updatePaxTypesByRoomType')->name('contract.provider.hotel.room_pax_type.update');
 //HotelContractClient
 Route::get('/contract/client/hotel', 'HotelContractClientController@index')->name('contract.client.hotel.index');
 Route::post('/contract/client/hotel/create', 'HotelContractClientController@create')->name('contract.client.hotel.create');

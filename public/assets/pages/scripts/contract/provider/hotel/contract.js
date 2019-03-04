@@ -1448,6 +1448,10 @@ $(document).ready(function () {
         var initials = [];
         tableEditRoomType.api().clear();
         for (var i = 0; i < roomTypes.length; i++) {
+            var viewPaxTypes = '<div class="dt-actions">' +
+                '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view-pax-type" data="' + roomTypes[i].id + '" data-toggle="modal" href="#modal-view-pax-type" style="margin-right: 0">' +
+                '<i class="fa fa-male"></i></a>'+
+                '</div>';
             tableEditRoomType.api().row.add([
                 roomTypes[i].id,
                 roomTypes[i].code + ': ' + roomTypes[i].name,
@@ -1458,7 +1462,8 @@ $(document).ready(function () {
                 roomTypes[i].max_children,
                 roomTypes[i].min_children,
                 roomTypes[i].max_infant,
-                roomTypes[i].min_infant
+                roomTypes[i].min_infant,
+                viewPaxTypes
             ]).draw( false );
 
             initials.push({id: roomTypes[i].id, code: roomTypes[i].code, name: roomTypes[i].name});
@@ -1875,7 +1880,8 @@ $(document).ready(function () {
         "autoWidth": false,
         "columnDefs": [
             { 'visible': false, 'targets': [0] },
-            { 'width': '35%', 'targets': [1] }
+            { 'width': '35%', 'targets': [1] },
+            { 'className': 'dt-center', 'targets': [10] }
         ],
         "language": {
             "emptyTable": "No room type selected"
@@ -2108,5 +2114,128 @@ $(document).ready(function () {
             });
         }
         e.preventDefault();
+    });
+
+    var tableViewPaxType = $('#table-view-pax-type').dataTable({
+        "sDom": "tip",
+        "autoWidth": false,
+        "columnDefs": [
+            { 'visible': false, 'targets': [0] },
+            { 'orderable': false, 'targets': [6] },
+            { 'visible': false, 'targets': [7] },
+        ],
+        "order": [[ 2, "asc" ]],
+        "lengthMenu": [[-1], ["All"]],
+        "pageLength": 100
+    });
+
+    $('#modal-edit .table-room-type tbody').on( 'click', '.dt-view-pax-type', function (e) {
+        e.preventDefault();
+        var roomTypeId = $(this).attr('data');
+        $.ajax({
+            url: routeRoomPaxTypes,
+            "type": "POST",
+            "data":  {
+                contractId: object.id,
+                roomTypeId: roomTypeId
+            },
+            "beforeSend": function() {
+                App.showMask(true, $('#table-view-pax-type'));
+            },
+            "complete": function(xhr, textStatus) {
+                App.showMask(false, $('#table-view-pax-type'));
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
+                    toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                }
+                else {
+                    var response = $.parseJSON(xhr.responseText);
+                    if (response.status == 'success') {
+                        var paxTypes = response.data;
+                        tableViewPaxType.api().clear();
+                        for (var i = 0; i < paxTypes.length; i++) {
+                            var type = '';
+                            if (paxTypes[i].type == 1)
+                                type = 'Infant';
+                            else if (paxTypes[i].type == 2)
+                                type = 'Children';
+                            else if (paxTypes[i].type == 3)
+                                type = 'Adult';
+
+                            var relation = paxTypes[i].contract_pax_types[0].room_pax_type_relations[0];
+                            var roomPaxTypeId = relation.id;
+                            var activeSelector = '<input class="active-selector" type="checkbox" name="active" data="' + roomPaxTypeId + '"';
+
+                            if (relation.active == 1)
+                                activeSelector += ' checked ';
+                            activeSelector += '>';
+
+                            tableViewPaxType.api().row.add([
+                                paxTypes[i].id,
+                                paxTypes[i].code,
+                                paxTypes[i].name,
+                                type,
+                                paxTypes[i].agefrom,
+                                paxTypes[i].ageto,
+                                activeSelector,
+                                roomPaxTypeId
+                            ]).draw( false );
+
+                            $('.active-selector[data=' + roomPaxTypeId + ']').bootstrapSwitch({
+                                size: 'mini',
+                                onColor: 'success',
+                                offColor: 'danger'
+                            });
+                        }
+                        tableViewPaxType.api().columns.adjust().draw();
+                        var requestUpdateRelation = false;
+                        $('.active-selector').on('switchChange.bootstrapSwitch', function (event, state) {
+                            var relationId = $(this).attr('data');
+                            if (!requestUpdateRelation) {
+                                requestUpdateRelation = true;
+                                $.ajax({
+                                    url: routeUpdateRoomPaxTypes,
+                                    "type": "POST",
+                                    "data":  {
+                                        //contractId: object.id,
+                                        relationId: relationId,
+                                        active: state
+                                    },
+                                    "beforeSend": function() {
+                                        App.showMask(true, $('#table-view-pax-type'));
+                                    },
+                                    "complete": function(xhr, textStatus) {
+                                        App.showMask(false, $('#table-view-pax-type'));
+                                        if (xhr.status == '419') {
+                                            location.reload(true);
+                                        }
+                                        else if (xhr.status != '200') {
+                                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                                            requestUpdateRelation = false;
+                                        }
+                                        else {
+                                            var response = $.parseJSON(xhr.responseText);
+                                            if (response.status == 'error') {
+                                                toastr['error'](response.message, "Error");
+                                                $('.active-selector[data=' + relationId + ']').bootstrapSwitch('toggleState');
+                                            }
+                                            requestUpdateRelation = false;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else if (response.status == 'warning'){
+                        toastr['warning'](response.message, "Warning");
+                    }
+                    else {
+                        toastr['error'](response.message, "Error");
+                    }
+                }
+            }
+        });
     });
 });

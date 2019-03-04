@@ -19,4 +19,8 @@ class HotelContractRoomType extends Model
     public function roomType() {
         return $this->belongsTo('App\Models\HotelRoomType');
     }
+
+    public function roomTypeRelated() {
+        return $this->hasOne('App\Models\HotelRoomType', 'id', 'hotel_room_type_id');
+    }
 }

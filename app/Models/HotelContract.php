@@ -43,6 +43,10 @@ class HotelContract extends Model implements Auditable
         return $this->hasMany('App\Models\HotelContractBoardType');
     }
 
+    public function paxTypeRelations() {
+        return $this->hasMany('App\Models\HotelContractPaxType');
+    }
+
     public function hotel() {
         return $this->belongsTo('App\Models\Hotel');
     }
@@ -57,5 +61,9 @@ class HotelContract extends Model implements Auditable
 
     public function offers() {
         return $this->hasMany('App\Models\HotelOffer');
+    }
+
+    public function roomTypePaxTypeRelations() {
+        return $this->hasMany('App\Models\HotelContractRoomTypePaxType');
     }
 }

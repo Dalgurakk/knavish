@@ -356,7 +356,7 @@
                         </div>
                         <div class="form-group">
                             <input type="hidden" name="count-room-type" class="hotel-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0" style="margin-top: 32px !important;">
+                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type detail-table" width="100%" cellspacing="0" style="margin-top: 32px !important;">
                                 <thead>
                                 <tr>
                                     <th> Id </th>
@@ -719,7 +719,7 @@
                     <div class="portlet-body">
                         <div class="form-group">
                             <input type="hidden" name="count-room-type" class="hotel-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0">
+                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type detail-table" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
                                         <th> Id </th>
@@ -1060,7 +1060,7 @@
                         </div>
                         <div class="form-group">
                             <input type="hidden" name="count-room-type" class="hotel-type" value="0">
-                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type" width="100%" cellspacing="0" style="margin-top: 33px !important;">
+                            <table class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable table-room-type detail-table" width="100%" cellspacing="0" style="margin-top: 33px !important;">
                                 <thead>
                                     <tr>
                                         <th> Id </th>
@@ -1073,6 +1073,7 @@
                                         <th> Min CH </th>
                                         <th> Max INF </th>
                                         <th> Min INF </th>
+                                        <th> Pax Types </th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -1240,12 +1241,39 @@
         </div>
     </div>
     <div class="modal-footer">
-        <!--button type="submit" class="btn green" data="apply"><i class="fa fa-repeat"></i> Apply</button-->
         <button type="submit" class="btn green" data="accept"><i class="fa fa-check"></i> Accept</button>
         <button type="button" data-dismiss="modal" class="btn btn-outline dark cancel-form"><i class="fa fa-close"></i> Cancel</button>
     </div>
     </form>
 </div>
+
+<div id="modal-view-pax-type" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-male"></i> Pax types</h4>
+    </div>
+    <div class="modal-body">
+        <table id="table-view-pax-type" class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable" width="100%" cellspacing="0">
+            <thead>
+            <tr role="row" class="heading">
+                <th class="">Id</th>
+                <th class="">Code</th>
+                <th class="">Denomination</th>
+                <th class="">Type</th>
+                <th class="">Age From</th>
+                <th class="">Age To</th>
+                <th class="">Enable</th>
+                <th class="">Id</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+</div>
+
 @stop
 
 @section('page-plugins')
@@ -1275,6 +1303,8 @@
     var routeDelete = "{{ route('contract.provider.hotel.delete') }}";
     var routeExcel = "{{ route('contract.provider.hotel.excel') }}";
     var routeDuplicate = "{{ route('contract.provider.hotel.duplicate') }}";
+    var routeRoomPaxTypes = "{{ route('contract.provider.hotel.room_pax_type.read') }}";
+    var routeUpdateRoomPaxTypes = "{{ route('contract.provider.hotel.room_pax_type.update') }}";
 </script>
 @stop
 

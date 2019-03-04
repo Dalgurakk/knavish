@@ -581,10 +581,12 @@ class HotelContractClientController extends Controller
                     $startRange = Carbon::createFromFormat('!Y-m-d', $range->from);
                     $endRange = Carbon::createFromFormat('!Y-m-d', $range->to);
                     if ($start->greaterThanOrEqualTo($startRange)) {
-                        $startRange = Carbon::createFromFormat('!Y-m-d', $start->format('Y-m-d'));
+                        //$startRange = Carbon::createFromFormat('!Y-m-d', $start->format('Y-m-d'));
+                        $startRange = clone $start;
                     }
                     if ($end->lessThanOrEqualTo($endRange)) {
-                        $endtRange = Carbon::createFromFormat('!Y-m-d', $end->format('Y-m-d'));
+                        //$endtRange = Carbon::createFromFormat('!Y-m-d', $end->format('Y-m-d'));
+                        $endtRange = clone $end;
                     }
                     for ($o = $startRange; $o->lessThanOrEqualTo($endRange); $o->addDay()) {
                         foreach ($offer->rooms as $room) {

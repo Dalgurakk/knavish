@@ -60,5 +60,6 @@
 .table-complement td { font-size: 11px; }
 .table-complement > tbody > tr > td { padding: 5px; line-height: 1.42857; vertical-align: top; border-top: 1px solid #e7ecf1; }
 .porlet-title-setting { background-color: #3598dc; color: #fff; border-radius: unset; padding: 6px 10px; font-size: 13px; font-weight: 600; }
+table.detail-table thead th { padding: 10px 10px; }
 /*.sub-name { display: inline-block }
 .sub-name { display: inline-block }*/

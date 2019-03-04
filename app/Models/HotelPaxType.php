@@ -12,4 +12,8 @@ class HotelPaxType extends Model implements Auditable
     public function contracts() {
         return $this->belongsToMany('App\Models\HotelContract', 'hotel_contract_pax_type');
     }
+
+    public function contractPaxTypes() {
+        return $this->hasMany('App\Models\HotelContractPaxType');
+    }
 }

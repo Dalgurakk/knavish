@@ -379,7 +379,7 @@
             @yield('page-plugins')
             <!-- END PAGE LEVEL PLUGINS -->
             <!-- BEGIN THEME GLOBAL SCRIPTS -->
-            <script src="{{ asset('assets/global/scripts/app.js') }}" type="text/javascript"></script>
+            <script src="{{ asset('assets/global/scripts/app.min.js') }}" type="text/javascript"></script>
             <!-- END THEME GLOBAL SCRIPTS -->
             <!-- BEGIN PAGE LEVEL SCRIPTS -->
             @yield('page-script')

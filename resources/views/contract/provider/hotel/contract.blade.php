@@ -1250,9 +1250,10 @@
 <div id="modal-view-pax-type" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-male"></i> Pax types</h4>
+        <h4 class="modal-title"><i class="fa fa-hotel"></i> <span class="custom-header"></span></h4>
     </div>
     <div class="modal-body">
+        <h4>Pax Types</h4>
         <table id="table-view-pax-type" class="table table-striped table-bordered table-hover dt-responsive dt-custom-datatable" width="100%" cellspacing="0">
             <thead>
             <tr role="row" class="heading">

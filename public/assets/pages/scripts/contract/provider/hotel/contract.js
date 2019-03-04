@@ -1449,8 +1449,8 @@ $(document).ready(function () {
         tableEditRoomType.api().clear();
         for (var i = 0; i < roomTypes.length; i++) {
             var viewPaxTypes = '<div class="dt-actions">' +
-                '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-view-pax-type" data="' + roomTypes[i].id + '" data-toggle="modal" href="#modal-view-pax-type" style="margin-right: 0">' +
-                '<i class="fa fa-male"></i></a>'+
+                '<a class="btn btn-default btn-circle btn-icon-only btn-action dt-pax-type" data="' + roomTypes[i].id + '" data-toggle="modal" href="#modal-view-pax-type" style="margin-right: 0">' +
+                '<i class="fa fa-male btn-action-icon"></i></a>'+
                 '</div>';
             tableEditRoomType.api().row.add([
                 roomTypes[i].id,
@@ -1554,6 +1554,7 @@ $(document).ready(function () {
             $('#modal-edit :input[name=count-room-type]').val(tableEditRoomType.api().rows().count());
         });
         $("#modal-edit .js-data-ajax").val(selected).trigger('change');
+        App.reloadToolTips();
         e.preventDefault();
     });
 
@@ -2121,7 +2122,7 @@ $(document).ready(function () {
         "autoWidth": false,
         "columnDefs": [
             { 'visible': false, 'targets': [0] },
-            { 'orderable': false, 'targets': [6] },
+            { 'className': 'dt-center', 'orderable': false, 'targets': [6] },
             { 'visible': false, 'targets': [7] },
         ],
         "order": [[ 2, "asc" ]],
@@ -2129,8 +2130,12 @@ $(document).ready(function () {
         "pageLength": 100
     });
 
-    $('#modal-edit .table-room-type tbody').on( 'click', '.dt-view-pax-type', function (e) {
+    $('#modal-edit .table-room-type tbody').on( 'click', '.dt-pax-type', function (e) {
         e.preventDefault();
+        tableViewPaxType.api().clear();
+        var data = tableEditRoomType.api().row( $(this).parents('tr') ).data();
+        var roomName = data[1];
+        $('#modal-view-pax-type .custom-header').html(roomName);
         var roomTypeId = $(this).attr('data');
         $.ajax({
             url: routeRoomPaxTypes,
@@ -2154,7 +2159,6 @@ $(document).ready(function () {
                     var response = $.parseJSON(xhr.responseText);
                     if (response.status == 'success') {
                         var paxTypes = response.data;
-                        tableViewPaxType.api().clear();
                         for (var i = 0; i < paxTypes.length; i++) {
                             var type = '';
                             if (paxTypes[i].type == 1)

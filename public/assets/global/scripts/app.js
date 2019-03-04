@@ -430,6 +430,13 @@ var App = function() {
             title: 'Settings',
             placement: 'top'
         });
+
+        $('.dt-custom-datatable .dt-pax-type').tooltip({
+            trigger: 'hover',
+            container: 'body',
+            title: 'Pax Types',
+            placement: 'top'
+        });
     };
 
     // Handles Bootstrap Dropdowns

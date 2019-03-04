@@ -886,7 +886,7 @@ $(document).ready(function () {
                                             '<div class="portlet box blue">' +
                                                 '<div class="portlet-title">' +
                                                     '<div class="caption">' +
-                                                        '<i class="fa fa-cogs"></i>' + offers[j].name + '</div>' +
+                                                        '<i class="fa fa-gift"></i>' + offers[j].name + '</div>' +
                                                     '<div class="tools">' +
                                                         '<a href="javascript:;" class="collapse"> </a></div>' + details +
                                                 '</div>' +

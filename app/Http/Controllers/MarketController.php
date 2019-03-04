@@ -21,7 +21,7 @@ class MarketController extends Controller
         $request->user()->authorizeRoles(['administrator']);
 
         $breadcrumb = array(
-            0 => 'Administration',
+            0 => 'Nomenclators',
             1 => 'Price Rates'
         );
 

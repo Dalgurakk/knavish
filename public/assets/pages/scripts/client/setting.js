@@ -1,4 +1,4 @@
-$(document).ready(function () {alert('asdasdasd');
+$(document).ready(function () {
     var formSearch = $('#search-accomodation');
     var contract = null;
     var searched = false;

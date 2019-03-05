@@ -1,7 +1,43 @@
-$(document).ready(function () {
+$(document).ready(function () {alert('asdasdasd');
     var formSearch = $('#search-accomodation');
     var contract = null;
     var searched = false;
+
+    getContract();
+
+    function getContract() {
+        $.ajax({
+            "url": routeContract,
+            "type": "POST",
+            "data": {
+                contractId: contractId
+            },
+            "beforeSend": function() {
+                App.showMask(true, formSearch);
+            },
+            "complete": function(xhr, textStatus) {
+                App.showMask(false, formSearch);
+                if (xhr.status == '419') {
+                    location.reload(true);
+                }
+                else if (xhr.status != '200') {
+                    toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                }
+                else {
+                    var response = JSON.parse(xhr.responseText);
+                    contract = response.data;
+                    if (contract == null) {
+                        toastr['warning'](response.message, "Warning");
+                    }
+                    else {
+                        $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
+                        fillContract(contract);
+                        $('.filter-content').show();
+                    }
+                }
+            }
+        });
+    }
 
     function searchFormat(repo) {
         if (repo.loading) return repo.text;
@@ -52,45 +88,14 @@ $(document).ready(function () {
     $("#search-accomodation :input[name=contract]").on('select2:select select2:unselect', function (e) {
         var value = e.params.data;
         if(value.selected) {
-            contract = value;
             searched = false;
-            fillContract(value);
+            contractId = value.id;
+            getContract();
+            fillContract(contract);
             var url = window.location.href;
             if (url.indexOf("?") > 0) {
                 var updatedUri = url.substring(0, url.indexOf("?"));
                 window.history.replaceState({}, document.title, updatedUri);
-            }
-        }
-    });
-
-    $.ajax({
-        "url": routeContract,
-        "type": "POST",
-        "data": {
-            contractId: contractId
-        },
-        "beforeSend": function() {
-            App.showMask(true, formSearch);
-        },
-        "complete": function(xhr, textStatus) {
-            App.showMask(false, formSearch);
-            if (xhr.status == '419') {
-                location.reload(true);
-            }
-            else if (xhr.status != '200') {
-                toastr['error']("Please check your connection and try again.", "Error on loading the content");
-            }
-            else {
-                var response = JSON.parse(xhr.responseText);
-                contract = response.data;
-                if (contract == null) {
-                    toastr['warning'](response.message, "Warning");
-                }
-                else {
-                    $("#search-accomodation :input[name=contract]").next().find(".select2-selection__rendered").html(contract.name + '<span class="select2-selection__placeholder"></span>');
-                    fillContract(contract);
-                    $('.filter-content').show();
-                }
             }
         }
     });

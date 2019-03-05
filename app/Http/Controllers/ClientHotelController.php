@@ -62,7 +62,12 @@ class ClientHotelController extends Controller
             'hotelContract.roomTypes',
             'hotelContract.paxTypes',
             'hotelContract.boardTypes'
-        ])->where('client_id', Auth::user()->id)->where('active', '1');
+        ])
+            ->where('client_id', Auth::user()->id)
+            ->where('active', '1')
+            ->whereHas('hotelContract', function ($query) {
+                $query->where('active', '1');
+            });
 
         if(isset($searchName) && $searchName != '') {
             $query->where('hotel_contract_clients.name', 'like', '%' . $searchName . '%');
@@ -212,7 +217,10 @@ class ClientHotelController extends Controller
 
         $query
             ->where('client_id', Auth::user()->id)
-            ->where('active', '1');
+            ->where('active', '1')
+            ->whereHas('hotelContract', function ($query) {
+                $query->where('active', '1');
+            });
 
         if($id != '') {
             $query->where('id', $id);
@@ -239,27 +247,12 @@ class ClientHotelController extends Controller
         $request->user()->authorizeRoles(['client']);
 
         $string = '%' . Input::get('q') . '%';
-        $contracts = HotelContractClient::with([
-            'hotelContract',
-            'hotelContract.hotel',
-            'hotelContract.hotel.hotelChain',
-            'hotelContract.boardTypes' => function($query) {
-                $query->orderBy('name', 'asc');
-            },
-            'client',
-            'hotelContract.roomTypes' => function($query) {
-                $query->orderBy('name', 'asc');
-            },
-            'hotelContract.measures' => function($query) {
-                $query->whereNotIn('code', ['cost']);
-                $query->orderBy('id', 'asc');
-            },
-            'hotelContract.offers',
-            'hotelContract.offers.offerType'
-        ])
-            ->where('name', 'like', $string)
+        $contracts = HotelContractClient::where('name', 'like', $string)
             ->where('client_id', Auth::user()->id)
             ->where('active', '1')
+            ->whereHas('hotelContract', function ($query) {
+                $query->where('active', '1');
+            })
             ->orderBy('name', 'asc')
             ->get();
         echo json_encode($contracts);
@@ -333,7 +326,7 @@ class ClientHotelController extends Controller
                     ->where('to', '>=', $start->format('Y-m-d'))
                     ->where('from', '<=', $end->format('Y-m-d'));
             }
-        ])->where('id', $clientContract->hotel_contract_id)->first();
+        ])->where('id', $clientContract->hotel_contract_id)->where('active', '1')->first();
 
         if ($contract === null) {
             $this->response['status'] = 'error';

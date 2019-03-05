@@ -98,6 +98,13 @@
                             <div class="col-lg-3 col-md-4 col-sm-6">
                                 <div class="form-group">
                                     <div class="input-icon">
+                                        <i class="fa fa-hotel"></i>
+                                        <input type="text" class="form-control" name="room-type" placeholder="Room Type"> </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                <div class="form-group">
+                                    <div class="input-icon">
                                         <i class="fa fa-globe"></i>
                                         <input type="text" class="form-control" name="location" placeholder="Location"> </div>
                                 </div>

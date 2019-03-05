@@ -1615,6 +1615,7 @@ $(document).ready(function () {
         $('#search-section :input[name=valid-from]').val('');
         $('#search-section :input[name=valid-to]').val('');
         $('#search-section :input[name=location]').val('');
+        $('#search-section :input[name=room-type]').val('');
     });
 
     $('.btn-search-cancel').on('click', function (e) {
@@ -1631,6 +1632,7 @@ $(document).ready(function () {
             .columns('valid_to:name').search($('#search-section :input[name=valid-to]').val())
             .columns('active:name').search($('#search-section :input[name=active]').val())
             .columns('location:name').search($('#search-section :input[name=location]').val())
+            .columns('actions:name').search($('#search-section :input[name=room-type]').val())
             .draw();
     });
 

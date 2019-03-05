@@ -77,6 +77,7 @@ class HotelContractController extends Controller
         $searchValidFrom = Input::get('columns')['4']['search']['value'];
         $searchValidTo = Input::get('columns')['5']['search']['value'];
         $searchActive = Input::get('columns')['7']['search']['value'];
+        $searchRoomType = Input::get('columns')['8']['search']['value'];
         $contracts = array();
 
         $query = HotelContract::with([
@@ -130,6 +131,13 @@ class HotelContractController extends Controller
                     ->orWhereHas('city', function ($query) use ($allLocationIds) {
                         $query->whereIn('id', $allLocationIds);
                     });
+            });
+        }
+        if(isset($searchRoomType) && $searchRoomType != '') {
+            $query->whereHas('roomTypes', function ($query) use ($searchRoomType) {
+                $query
+                    ->where('name', 'like', '%' . $searchRoomType . '%')
+                    ->orWhere('code', 'like', '%' . $searchRoomType . '%');
             });
         }
 

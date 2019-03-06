@@ -497,6 +497,7 @@ class HotelContractController extends Controller
             'measures',
             'priceRates',
             'roomTypeRelations',
+            'boardTypeRelations',
             'settings',
             'settings.prices'
         ])->find($id);
@@ -517,11 +518,16 @@ class HotelContractController extends Controller
                 foreach ($contract->paxTypes as $item) {
                     $newContract->paxTypes()->attach($item->id);
                 }
-                foreach ($contract->boardTypes as $item) {
-                    $newContract->boardTypes()->attach($item->id);
-                }
                 foreach ($contract->measures as $item) {
                     $newContract->measures()->attach($item->id);
+                }
+                $contractBoardTypes = array();
+                foreach ($contract->boardTypeRelations as $item) {
+                    $contractBoardType = new HotelContractBoardType();
+                    $contractBoardType->hotel_contract_id = $newContract->id;
+                    $contractBoardType->hotel_board_type_id = $item->hotel_board_type_id;
+                    $contractBoardType->save();
+                    $contractBoardTypes[$item->id] = $contractBoardType->id;
                 }
                 $contractRoomTypes = array();
                 foreach ($contract->roomTypeRelations as $item) {
@@ -583,6 +589,8 @@ class HotelContractController extends Controller
                         $newPrice->price_children_2 = $price->price_children_2;
                         $newPrice->cost_children_3 = $price->cost_children_3;
                         $newPrice->price_children_3 = $price->price_children_3;
+                        $newPrice->hotel_contract_board_type_id = $contractBoardTypes[$price->hotel_contract_board_type_id];
+                        $newPrice->hotel_board_type_id = $price->hotel_board_type_id;
                         $newPrice->save();
                     }
                 }

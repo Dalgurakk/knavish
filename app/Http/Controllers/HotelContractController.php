@@ -203,8 +203,8 @@ class HotelContractController extends Controller
         $rules = array(
             'name' => 'required',
             'hotel-id' => 'required',
-            'valid-from' => 'required|date|date_format:"d.m.Y"|before:valid-to',
-            'valid-to' => 'required|date|date_format:"d.m.Y"|after:valid-from',
+            'valid-from' => 'required|date|date_format:"d.m.Y"|before_or_equal:valid-to',
+            'valid-to' => 'required|date|date_format:"d.m.Y"|after_or_equal:valid-from',
             'hotel' => 'required',
             'roomTypes' => 'required|json',
             'boardTypes' => 'required|json',
@@ -325,8 +325,8 @@ class HotelContractController extends Controller
             'name' => 'required',
             'id' => 'required',
             'hotel-id' => 'required',
-            'valid-from' => 'required|date|date_format:"d.m.Y"|before:valid-to',
-            'valid-to' => 'required|date|date_format:"d.m.Y"|after:valid-from',
+            'valid-from' => 'required|date|date_format:"d.m.Y"|before_or_equal:valid-to',
+            'valid-to' => 'required|date|date_format:"d.m.Y"|after_or_equal:valid-from',
             'roomTypes' => 'required|json',
             'boardTypes' => 'required|json',
             'paxTypes' => 'required|json',
@@ -530,6 +530,23 @@ class HotelContractController extends Controller
                     $contractRoomType->hotel_room_type_id = $item->hotel_room_type_id;
                     $contractRoomType->save();
                     $contractRoomTypes[$item->id] = $contractRoomType->id;
+                }
+                foreach ($newContract->roomTypeRelations as $roomTypeRelation) {
+                    foreach ($newContract->paxTypeRelations as $paxTypeRelation) {
+                        if (
+                            ($roomTypeRelation->roomTypeRelated->max_infant > 0 && $paxTypeRelation->paxTypeRelated->type == 1) ||
+                            ($roomTypeRelation->roomTypeRelated->max_children > 0 && $paxTypeRelation->paxTypeRelated->type == 2) ||
+                            ($roomTypeRelation->roomTypeRelated->max_adult > 0 && $paxTypeRelation->paxTypeRelated->type == 3)
+                        ) {
+                            $contractRoomTypePaxType = new HotelContractRoomTypePaxType();
+                            $contractRoomTypePaxType->hotel_contract_id = $newContract->id;
+                            $contractRoomTypePaxType->hotel_contract_room_type_id = $roomTypeRelation->id;
+                            $contractRoomTypePaxType->hotel_room_type_id = $roomTypeRelation->hotel_room_type_id;
+                            $contractRoomTypePaxType->hotel_contract_pax_type_id = $paxTypeRelation->id;
+                            $contractRoomTypePaxType->hotel_pax_type_id = $paxTypeRelation->hotel_pax_type_id;
+                            $contractRoomTypePaxType->save();
+                        }
+                    }
                 }
                 $priceRates = array();
                 foreach ($contract->priceRates as $item) {

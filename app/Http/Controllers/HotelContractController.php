@@ -511,8 +511,8 @@ class HotelContractController extends Controller
             $newContract->active = $contract->active;
             $newContract->status = $contract->status;
 
-            DB::beginTransaction();
             try {
+                DB::beginTransaction();
                 $newContract->save();
 
                 foreach ($contract->paxTypes as $item) {
@@ -591,6 +591,12 @@ class HotelContractController extends Controller
                         $newPrice->price_children_3 = $price->price_children_3;
                         $newPrice->hotel_contract_board_type_id = $contractBoardTypes[$price->hotel_contract_board_type_id];
                         $newPrice->hotel_board_type_id = $price->hotel_board_type_id;
+                        $newPrice->cost_children_1_use_adult_type = $price->cost_children_1_use_adult_type;
+                        $newPrice->cost_children_1_use_adult_rate = $price->cost_children_1_use_adult_rate;
+                        $newPrice->cost_children_2_use_adult_type = $price->cost_children_2_use_adult_type;
+                        $newPrice->cost_children_2_use_adult_rate = $price->cost_children_2_use_adult_rate;
+                        $newPrice->cost_children_3_use_adult_type = $price->cost_children_3_use_adult_type;
+                        $newPrice->cost_children_3_use_adult_rate = $price->cost_children_3_use_adult_rate;
                         $newPrice->save();
                     }
                 }

@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use Config;
+use PDO;
 
 class HotelContractController extends Controller
 {
@@ -572,9 +574,10 @@ class HotelContractController extends Controller
                     $newSetting->hotel_room_type_id = $setting->hotel_room_type_id;
                     $newSetting->date = $setting->date;
                     $newSetting->allotment_base = $setting->allotment_base;
-                    $newSetting->allotment = $setting->allotment;
+                    $newSetting->allotment = $setting->allotment_base;
                     $newSetting->release = $setting->release;
                     $newSetting->stop_sale = $setting->stop_sale;
+                    $newSetting->allotment_sold = 0;
                     $newSetting->save();
                     foreach ($setting->prices as $price) {
                         $newPrice = new HotelContractPrice();
@@ -600,6 +603,12 @@ class HotelContractController extends Controller
                         $newPrice->save();
                     }
                 }
+
+                /*$db = new PDO('mysql:host='.Config::get('database.connections.mysql.host').';dbname='.Config::get('database.connections.mysql.database').';charset=utf8', Config::get('database.connections.mysql.username'), Config::get('database.connections.mysql.password'));
+                $call = $db->prepare("CALL duplicateContractContent($contract->id, $newContract->id)");
+                $call->execute();
+                $call = $call->fetch(PDO::FETCH_ASSOC);*/
+
                 DB::commit();
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Contract ' . $contract->name . ' duplicated successfully.';

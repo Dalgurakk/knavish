@@ -435,6 +435,7 @@ $(document).ready(function () {
         var offers = c.offers;
         var supplements = [];
         var restrictions = [];
+        var hasComplements = false;
         var contract = c;
         var chain = contract.hotel.hotel_chain != null ? contract.hotel.hotel_chain.name : '';
         var status = contract.active == 1 ? 'Enabled' : 'Disabled';
@@ -459,6 +460,7 @@ $(document).ready(function () {
         var isFirstTab = true;
         $.each(measures, function (i, item) {
             if (measures[i].code == 'offer' || measures[i].code == 'supplement' || measures[i].code == 'restriction') {
+                hasComplements = true;
                 $('.complement-link[data="' + measures[i].code + '"]').removeClass('hide');
                 $('.tab-pane[data="' + measures[i].code + '"]').removeClass('hide');
                 if(isFirstTab) {
@@ -487,7 +489,7 @@ $(document).ready(function () {
             $('.measures-list').append(measure);
         });
 
-        if (offers.length > 0 || supplements.length > 0 || restrictions.length > 0) {
+        if (hasComplements) {
             $('.btn-complements').removeClass('disabled');
         }
 

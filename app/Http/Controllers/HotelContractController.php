@@ -14,6 +14,10 @@ use App\Models\HotelContractRoomType;
 use App\Models\HotelContractRoomTypePaxType;
 use App\Models\HotelContractSetting;
 use App\Models\HotelMeasure;
+use App\Models\HotelOffer;
+use App\Models\HotelOfferContractBoardType;
+use App\Models\HotelOfferContractRoomType;
+use App\Models\HotelOfferRange;
 use App\Models\HotelOfferType;
 use App\Models\HotelPaxType;
 use App\Models\HotelRoomType;
@@ -501,7 +505,11 @@ class HotelContractController extends Controller
             'roomTypeRelations',
             'boardTypeRelations',
             'settings',
-            'settings.prices'
+            'settings.prices',
+            'offers',
+            'offers.rooms',
+            'offers.boards',
+            'offers.ranges'
         ])->find($id);
 
         if (!is_null($contract)) {
@@ -566,6 +574,53 @@ class HotelContractController extends Controller
                     $priceRate->round = $item->round;
                     $priceRate->save();
                     $priceRates[$item->id] = $priceRate->id;
+                }
+                foreach ($contract->offers as $offer) {
+                    $newOffer = new HotelOffer();
+                    $newOffer->hotel_contract_id = $newContract->id;
+                    $newOffer->hotel_offer_type_id = $offer->hotel_offer_type_id;
+                    $newOffer->priority = $offer->priority;
+                    $newOffer->name = $offer->name;
+                    $newOffer->description = $offer->description;
+                    $newOffer->active = $offer->active;
+                    $newOffer->non_refundable = $offer->non_refundable;
+                    $newOffer->apply_with_other_offers = $offer->apply_with_other_offers;
+                    $newOffer->minimum_stay = $offer->minimum_stay;
+                    $newOffer->booking_type = $offer->booking_type;
+                    $newOffer->booking_date_from = $offer->booking_date_from;
+                    $newOffer->booking_date_to = $offer->booking_date_to;
+                    $newOffer->days_prior_from = $offer->days_prior_from;
+                    $newOffer->days_prior_to = $offer->days_prior_to;
+                    $newOffer->payment_date = $offer->payment_date;
+                    $newOffer->percentage_due = $offer->percentage_due;
+                    $newOffer->discount = $offer->discount;
+                    $newOffer->discount_type = $offer->discount_type;
+                    $newOffer->save();
+                    foreach ($offer->ranges as $range) {
+                        $offerRange = new HotelOfferRange();
+                        $offerRange->hotel_offer_id = $newOffer->id;
+                        $offerRange->from = $range->from;
+                        $offerRange->to = $range->to;
+                        $offerRange->save();
+                    }
+                    foreach ($offer->rooms as $room) {
+                        $contractRoomType = HotelContractRoomType::where('hotel_contract_id', $newOffer->hotel_contract_id)
+                            ->where('hotel_room_type_id', $room->hotel_room_type_id)->first();
+                        $offerContractRoomtype = new HotelOfferContractRoomType();
+                        $offerContractRoomtype->hotel_offer_id = $newOffer->id;
+                        $offerContractRoomtype->hotel_contract_room_type_id = $contractRoomType->id;
+                        $offerContractRoomtype->hotel_room_type_id = $contractRoomType->hotel_room_type_id;
+                        $offerContractRoomtype->save();
+                    }
+                    foreach($offer->boards as $board) {
+                        $contractBoardType = HotelContractBoardType::where('hotel_contract_id', $newOffer->hotel_contract_id)
+                            ->where('hotel_board_type_id', $board->hotel_board_type_id)->first();
+                        $offerContractBoardtype = new HotelOfferContractBoardType();
+                        $offerContractBoardtype->hotel_offer_id = $newOffer->id;
+                        $offerContractBoardtype->hotel_contract_board_type_id = $contractBoardType->id;
+                        $offerContractBoardtype->hotel_board_type_id = $contractBoardType->hotel_board_type_id;
+                        $offerContractBoardtype->save();
+                    }
                 }
                 foreach ($contract->settings as $setting) {
                     $newSetting = new HotelContractSetting();

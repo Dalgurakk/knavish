@@ -26,8 +26,8 @@ use Illuminate\Support\Facades\DB;
 use Image;
 use Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-use Config;
-use PDO;
+/*use Config;
+use PDO;*/
 
 class HotelContractController extends Controller
 {

@@ -401,11 +401,11 @@ $(document).ready(function () {
                                         trigger: 'hover',
                                         container: 'body',
                                         placement : 'top',
-                                        title: 'Offers',
+                                        title: '<i class="fa fa-gift"></i> Offers',
                                         content: table,
                                         delay: { "show": 500, "hide": 100 },
                                         html: true,
-                                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title porlet-title-setting"></h3><div class="popover-content" style="padding: 5px;"></div></div>'
+                                        template: '<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title porlet-title-setting" style="height: unset;"></h3><div class="popover-content" style="padding: 5px;"></div></div>'
                                     });
                                 }
                             });
@@ -883,7 +883,7 @@ $(document).ready(function () {
                                         '<div class="portlet box blue">' +
                                         '<div class="portlet-title">' +
                                         '<div class="caption">' +
-                                        '<i class="fa fa-cogs"></i>' + offers[j].name + '</div>' +
+                                        '<i class="fa fa-gift"></i>' + offers[j].name + '</div>' +
                                         '<div class="tools">' +
                                         '<a href="javascript:;" class="collapse"> </a></div>' + details +
                                         '</div>' +

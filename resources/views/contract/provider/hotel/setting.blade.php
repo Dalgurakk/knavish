@@ -572,7 +572,7 @@
 <div id="modal-add-offer" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Add Offer</h4>
+        <h4 class="modal-title"><i class="fa fa-gift"></i> Add Offer</h4>
     </div>
     <form id="form-add-offer">
         <div class="modal-body">
@@ -759,7 +759,7 @@
 <div id="modal-edit-offer" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Edit Offer</h4>
+        <h4 class="modal-title"><i class="fa fa-gift"></i> Edit Offer</h4>
     </div>
     <form id="form-edit-offer">
         <input type="hidden" name="id" value="0">
@@ -946,7 +946,7 @@
 <div id="modal-info-offer" class="modal fade custom-container" tabindex="-1" data-width="650" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Offer Data</h4>
+        <h4 class="modal-title"><i class="fa fa-gift"></i> Offer Data</h4>
     </div>
     <div class="modal-body">
         <div class="row">
@@ -1066,7 +1066,7 @@
 <div id="modal-offers" class="modal fade custom-container" tabindex="-1" data-width="760" data-backdrop="static" data-keyboard="false">
     <div class="modal-header">
         <button type="button" class="close cancel-form-offer" data-dismiss="modal" aria-hidden="true"></button>
-        <h4 class="modal-title"><i class="fa fa-file-text-o"></i> Offers </h4>
+        <h4 class="modal-title"><i class="fa fa-gift"></i> Offers </h4>
     </div>
     <div class="modal-body">
         <div class="row offers-container"></div>
@@ -1107,5 +1107,5 @@
 @stop
 
 @section('custom-scripts')
-<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/pages/scripts/contract/provider/hotel/setting.js') }}" type="text/javascript"></script>
 @stop

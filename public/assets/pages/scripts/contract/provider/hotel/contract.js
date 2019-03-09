@@ -2077,46 +2077,54 @@ $(document).ready(function () {
         window.location = url;
     });
 
-    var requestDuplicate = false;
+
     $('#table tbody').on( 'click', '.dt-duplicate', function (e) {
+        var data = table.row($(this).parents('tr')).data();
+        $('#modal-duplicate-confirmation [name=duplicate-id]').val(data['id']);
+        $('#modal-duplicate-confirmation .duplicate-contract-name').html(data['name']);
+        $('#modal-duplicate-confirmation').modal('show');
+        e.preventDefault();
+    });
+
+    var requestDuplicate = false;
+    $('.btn-duplicate').on('click', function () {
         if (!requestDuplicate) {
-            var data = table.row( $(this).parents('tr') ).data();
-            $(this).confirmation('show');
-            $(this).on('confirmed.bs.confirmation', function () {
-                requestDuplicate = true;
-                $.ajax({
-                    url: routeDuplicate,
-                    "type": "POST",
-                    "data":  {
-                        id: data['id']
-                    },
-                    "beforeSend": function() {
-                        App.showMask(true, $('#table'));
-                    },
-                    "complete": function(xhr, textStatus) {
-                        requestDuplicate = false;
-                        App.showMask(false, $('#table'));
-                        if (xhr.status == '419') {
-                            location.reload(true);
-                        }
-                        else if (xhr.status != '200') {
-                            toastr['error']("Please check your connection and try again.", "Error on loading the content");
+            var id = $('#modal-duplicate-confirmation [name=duplicate-id]').val();
+            var mode = $(this).attr('data');
+            requestDuplicate = true;
+            $.ajax({
+                url: routeDuplicate,
+                "type": "POST",
+                "data": {
+                    id: id,
+                    mode: mode
+                },
+                "beforeSend": function () {
+                    App.showMask(true, $('#modal-duplicate-confirmation .modal-body'));
+                },
+                "complete": function (xhr, textStatus) {
+                    requestDuplicate = false;
+                    App.showMask(false, $('#modal-duplicate-confirmation .modal-body'));
+                    if (xhr.status == '419') {
+                        location.reload(true);
+                    }
+                    else if (xhr.status != '200') {
+                        toastr['error']("Please check your connection and try again.", "Error on loading the content");
+                    }
+                    else {
+                        var response = $.parseJSON(xhr.responseText);
+                        if (response.status == 'success') {
+                            toastr['success'](response.message, "Success");
+                            table.draw();
                         }
                         else {
-                            var response = $.parseJSON(xhr.responseText);
-                            if (response.status == 'success') {
-                                toastr['success'](response.message, "Success");
-                                table.draw();
-                            }
-                            else {
-                                toastr['error'](response.message, "Error");
-                            }
+                            toastr['error'](response.message, "Error");
                         }
                     }
-                });
+                    $('#modal-duplicate-confirmation .cancel-form').click();
+                }
             });
         }
-        e.preventDefault();
     });
 
     var tableViewPaxType = $('#table-view-pax-type').dataTable({

@@ -494,7 +494,7 @@ class HotelContractController extends Controller
 
     public function duplicate(Request $request) {
         $request->user()->authorizeRoles(['administrator', 'commercial']);
-
+        $mode = Input::get('mode');
         $id = Input::get('id');
         $contract = HotelContract::with([
             'paxTypes',
@@ -575,95 +575,95 @@ class HotelContractController extends Controller
                     $priceRate->save();
                     $priceRates[$item->id] = $priceRate->id;
                 }
-                foreach ($contract->offers as $offer) {
-                    $newOffer = new HotelOffer();
-                    $newOffer->hotel_contract_id = $newContract->id;
-                    $newOffer->hotel_offer_type_id = $offer->hotel_offer_type_id;
-                    $newOffer->priority = $offer->priority;
-                    $newOffer->name = $offer->name;
-                    $newOffer->description = $offer->description;
-                    $newOffer->active = $offer->active;
-                    $newOffer->non_refundable = $offer->non_refundable;
-                    $newOffer->apply_with_other_offers = $offer->apply_with_other_offers;
-                    $newOffer->minimum_stay = $offer->minimum_stay;
-                    $newOffer->booking_type = $offer->booking_type;
-                    $newOffer->booking_date_from = $offer->booking_date_from;
-                    $newOffer->booking_date_to = $offer->booking_date_to;
-                    $newOffer->days_prior_from = $offer->days_prior_from;
-                    $newOffer->days_prior_to = $offer->days_prior_to;
-                    $newOffer->payment_date = $offer->payment_date;
-                    $newOffer->percentage_due = $offer->percentage_due;
-                    $newOffer->discount = $offer->discount;
-                    $newOffer->discount_type = $offer->discount_type;
-                    $newOffer->save();
-                    foreach ($offer->ranges as $range) {
-                        $offerRange = new HotelOfferRange();
-                        $offerRange->hotel_offer_id = $newOffer->id;
-                        $offerRange->from = $range->from;
-                        $offerRange->to = $range->to;
-                        $offerRange->save();
+                if ($mode == 'full') {
+                    /*$db = new PDO('mysql:host='.Config::get('database.connections.mysql.host').';dbname='.Config::get('database.connections.mysql.database').';charset=utf8', Config::get('database.connections.mysql.username'), Config::get('database.connections.mysql.password'));
+                    $call = $db->prepare("CALL duplicateContractContent($contract->id, $newContract->id)");
+                    $call->execute();
+                    $call = $call->fetch(PDO::FETCH_ASSOC);*/
+                    foreach ($contract->offers as $offer) {
+                        $newOffer = new HotelOffer();
+                        $newOffer->hotel_contract_id = $newContract->id;
+                        $newOffer->hotel_offer_type_id = $offer->hotel_offer_type_id;
+                        $newOffer->priority = $offer->priority;
+                        $newOffer->name = $offer->name;
+                        $newOffer->description = $offer->description;
+                        $newOffer->active = $offer->active;
+                        $newOffer->non_refundable = $offer->non_refundable;
+                        $newOffer->apply_with_other_offers = $offer->apply_with_other_offers;
+                        $newOffer->minimum_stay = $offer->minimum_stay;
+                        $newOffer->booking_type = $offer->booking_type;
+                        $newOffer->booking_date_from = $offer->booking_date_from;
+                        $newOffer->booking_date_to = $offer->booking_date_to;
+                        $newOffer->days_prior_from = $offer->days_prior_from;
+                        $newOffer->days_prior_to = $offer->days_prior_to;
+                        $newOffer->payment_date = $offer->payment_date;
+                        $newOffer->percentage_due = $offer->percentage_due;
+                        $newOffer->discount = $offer->discount;
+                        $newOffer->discount_type = $offer->discount_type;
+                        $newOffer->save();
+                        foreach ($offer->ranges as $range) {
+                            $offerRange = new HotelOfferRange();
+                            $offerRange->hotel_offer_id = $newOffer->id;
+                            $offerRange->from = $range->from;
+                            $offerRange->to = $range->to;
+                            $offerRange->save();
+                        }
+                        foreach ($offer->rooms as $room) {
+                            $contractRoomType = HotelContractRoomType::where('hotel_contract_id', $newOffer->hotel_contract_id)
+                                ->where('hotel_room_type_id', $room->hotel_room_type_id)->first();
+                            $offerContractRoomtype = new HotelOfferContractRoomType();
+                            $offerContractRoomtype->hotel_offer_id = $newOffer->id;
+                            $offerContractRoomtype->hotel_contract_room_type_id = $contractRoomType->id;
+                            $offerContractRoomtype->hotel_room_type_id = $contractRoomType->hotel_room_type_id;
+                            $offerContractRoomtype->save();
+                        }
+                        foreach($offer->boards as $board) {
+                            $contractBoardType = HotelContractBoardType::where('hotel_contract_id', $newOffer->hotel_contract_id)
+                                ->where('hotel_board_type_id', $board->hotel_board_type_id)->first();
+                            $offerContractBoardtype = new HotelOfferContractBoardType();
+                            $offerContractBoardtype->hotel_offer_id = $newOffer->id;
+                            $offerContractBoardtype->hotel_contract_board_type_id = $contractBoardType->id;
+                            $offerContractBoardtype->hotel_board_type_id = $contractBoardType->hotel_board_type_id;
+                            $offerContractBoardtype->save();
+                        }
                     }
-                    foreach ($offer->rooms as $room) {
-                        $contractRoomType = HotelContractRoomType::where('hotel_contract_id', $newOffer->hotel_contract_id)
-                            ->where('hotel_room_type_id', $room->hotel_room_type_id)->first();
-                        $offerContractRoomtype = new HotelOfferContractRoomType();
-                        $offerContractRoomtype->hotel_offer_id = $newOffer->id;
-                        $offerContractRoomtype->hotel_contract_room_type_id = $contractRoomType->id;
-                        $offerContractRoomtype->hotel_room_type_id = $contractRoomType->hotel_room_type_id;
-                        $offerContractRoomtype->save();
-                    }
-                    foreach($offer->boards as $board) {
-                        $contractBoardType = HotelContractBoardType::where('hotel_contract_id', $newOffer->hotel_contract_id)
-                            ->where('hotel_board_type_id', $board->hotel_board_type_id)->first();
-                        $offerContractBoardtype = new HotelOfferContractBoardType();
-                        $offerContractBoardtype->hotel_offer_id = $newOffer->id;
-                        $offerContractBoardtype->hotel_contract_board_type_id = $contractBoardType->id;
-                        $offerContractBoardtype->hotel_board_type_id = $contractBoardType->hotel_board_type_id;
-                        $offerContractBoardtype->save();
+                    foreach ($contract->settings as $setting) {
+                        $newSetting = new HotelContractSetting();
+                        $newSetting->hotel_contract_id = $newContract->id;
+                        $newSetting->hotel_contract_room_type_id = $contractRoomTypes[$setting->hotel_contract_room_type_id];
+                        $newSetting->hotel_room_type_id = $setting->hotel_room_type_id;
+                        $newSetting->date = $setting->date;
+                        $newSetting->allotment_base = $setting->allotment_base;
+                        $newSetting->allotment = $setting->allotment_base;
+                        $newSetting->release = $setting->release;
+                        $newSetting->stop_sale = $setting->stop_sale;
+                        $newSetting->allotment_sold = 0;
+                        $newSetting->save();
+                        foreach ($setting->prices as $price) {
+                            $newPrice = new HotelContractPrice();
+                            $newPrice->hotel_contract_setting_id = $newSetting->id;
+                            $newPrice->price_rate_id = $priceRates[$price->price_rate_id];
+                            $newPrice->market_id = $price->market_id;
+                            $newPrice->cost_adult = $price->cost_adult;
+                            $newPrice->price_adult = $price->price_adult;
+                            $newPrice->cost_children_1 = $price->cost_children_1;
+                            $newPrice->price_children_1 = $price->price_children_1;
+                            $newPrice->cost_children_2 = $price->cost_children_2;
+                            $newPrice->price_children_2 = $price->price_children_2;
+                            $newPrice->cost_children_3 = $price->cost_children_3;
+                            $newPrice->price_children_3 = $price->price_children_3;
+                            $newPrice->hotel_contract_board_type_id = $contractBoardTypes[$price->hotel_contract_board_type_id];
+                            $newPrice->hotel_board_type_id = $price->hotel_board_type_id;
+                            $newPrice->cost_children_1_use_adult_type = $price->cost_children_1_use_adult_type;
+                            $newPrice->cost_children_1_use_adult_rate = $price->cost_children_1_use_adult_rate;
+                            $newPrice->cost_children_2_use_adult_type = $price->cost_children_2_use_adult_type;
+                            $newPrice->cost_children_2_use_adult_rate = $price->cost_children_2_use_adult_rate;
+                            $newPrice->cost_children_3_use_adult_type = $price->cost_children_3_use_adult_type;
+                            $newPrice->cost_children_3_use_adult_rate = $price->cost_children_3_use_adult_rate;
+                            $newPrice->save();
+                        }
                     }
                 }
-                foreach ($contract->settings as $setting) {
-                    $newSetting = new HotelContractSetting();
-                    $newSetting->hotel_contract_id = $newContract->id;
-                    $newSetting->hotel_contract_room_type_id = $contractRoomTypes[$setting->hotel_contract_room_type_id];
-                    $newSetting->hotel_room_type_id = $setting->hotel_room_type_id;
-                    $newSetting->date = $setting->date;
-                    $newSetting->allotment_base = $setting->allotment_base;
-                    $newSetting->allotment = $setting->allotment_base;
-                    $newSetting->release = $setting->release;
-                    $newSetting->stop_sale = $setting->stop_sale;
-                    $newSetting->allotment_sold = 0;
-                    $newSetting->save();
-                    foreach ($setting->prices as $price) {
-                        $newPrice = new HotelContractPrice();
-                        $newPrice->hotel_contract_setting_id = $newSetting->id;
-                        $newPrice->price_rate_id = $priceRates[$price->price_rate_id];
-                        $newPrice->market_id = $price->market_id;
-                        $newPrice->cost_adult = $price->cost_adult;
-                        $newPrice->price_adult = $price->price_adult;
-                        $newPrice->cost_children_1 = $price->cost_children_1;
-                        $newPrice->price_children_1 = $price->price_children_1;
-                        $newPrice->cost_children_2 = $price->cost_children_2;
-                        $newPrice->price_children_2 = $price->price_children_2;
-                        $newPrice->cost_children_3 = $price->cost_children_3;
-                        $newPrice->price_children_3 = $price->price_children_3;
-                        $newPrice->hotel_contract_board_type_id = $contractBoardTypes[$price->hotel_contract_board_type_id];
-                        $newPrice->hotel_board_type_id = $price->hotel_board_type_id;
-                        $newPrice->cost_children_1_use_adult_type = $price->cost_children_1_use_adult_type;
-                        $newPrice->cost_children_1_use_adult_rate = $price->cost_children_1_use_adult_rate;
-                        $newPrice->cost_children_2_use_adult_type = $price->cost_children_2_use_adult_type;
-                        $newPrice->cost_children_2_use_adult_rate = $price->cost_children_2_use_adult_rate;
-                        $newPrice->cost_children_3_use_adult_type = $price->cost_children_3_use_adult_type;
-                        $newPrice->cost_children_3_use_adult_rate = $price->cost_children_3_use_adult_rate;
-                        $newPrice->save();
-                    }
-                }
-
-                /*$db = new PDO('mysql:host='.Config::get('database.connections.mysql.host').';dbname='.Config::get('database.connections.mysql.database').';charset=utf8', Config::get('database.connections.mysql.username'), Config::get('database.connections.mysql.password'));
-                $call = $db->prepare("CALL duplicateContractContent($contract->id, $newContract->id)");
-                $call->execute();
-                $call = $call->fetch(PDO::FETCH_ASSOC);*/
-
                 DB::commit();
                 $this->response['status'] = 'success';
                 $this->response['message'] = 'Contract ' . $contract->name . ' duplicated successfully.';

@@ -435,9 +435,6 @@
                     </div>
                     <div class="portlet-body">
                         <input type="hidden" name="market-rate-price" class="market-rate-price-type" value="0">
-                        <!--div class="note note-info">
-                            <p>The contract base price rate is included by default.</p>
-                        </div-->
                         <div class="row">
                             <div class="form-group">
                                 <div class="col-md-12">
@@ -1282,6 +1279,26 @@
     </div>
 </div>
 
+<div id="modal-duplicate-confirmation" class="modal fade custom-container" tabindex="-1" data-width="550" data-backdrop="static" data-keyboard="false">
+    <input type="hidden" name="duplicate-id" value="">
+    <div class="modal-header">
+        <button type="button" class="close cancel-form" data-dismiss="modal" aria-hidden="true"></button>
+        <h4 class="modal-title"><i class="fa fa-question-circle"></i> Confirmation</h4>
+    </div>
+    <div class="modal-body custom-container">
+        Are you sure you want to duplicate the contract: <span class="duplicate-contract-name"></span>?
+        <div class="note note-info" style="margin-top: 20px;">
+            <p>The basic mode does not include complements, settings and prices.
+            <p>The full mode may take a while.
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn green btn-duplicate" data="basic"><i class="fa fa-check"></i> Yes, Basic Mode</button>
+        <button type="submit" class="btn green btn-duplicate" data="full"><i class="fa fa-check"></i> Yes, Full Mode</button>
+        <button type="button" data-dismiss="modal" class="btn btn-outline dark"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+</div>
+
 @stop
 
 @section('page-plugins')
@@ -1301,6 +1318,7 @@
 <script src="{{ asset('assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/fuelux/js/spinner.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}" type="text/javascript"></script>
 <script>
     var routeRead = "{{ route('contract.provider.hotel.read') }}";
     var routeSetting = "{{ route('contract.provider.hotel.settings') }}";

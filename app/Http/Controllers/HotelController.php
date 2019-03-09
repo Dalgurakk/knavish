@@ -255,7 +255,9 @@ class HotelController extends Controller
                     $hotelImage->size = $file->getClientSize();
                     $path = public_path('assets/pages/img/hotel/uploads/thumbnails/' . $hotelImage->image);
                     $thumbnail = Image::make($file->getRealPath());
-                    $thumbnail->resize(100, 78)->save($path);
+                    $thumbnail->resize(100, 78, function ($constraint) {
+                        $constraint->aspectRatio();
+                    })->save($path);
                     $hotelImage->mime = $thumbnail->mime();
                     $hotelImage->save();
                     $file->move($this->uploadPath, $hotelImage->image);

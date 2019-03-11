@@ -1,0 +1,65 @@
+.btn-action { height: 22px !important; width: 22px !important; padding: 0; }
+.btn-action-icon { font-size: 12px; color: #666; }
+.dt-active { font-size: 16px; }
+.dt-active-1{ color: #36c6d3; }
+.dt-active-0{ color: #ed6b75; }
+.no-margin-bottom { margin-bottom: 0; }
+.search-footer { text-align: right; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+.search-section { display: none; margin-bottom: 20px; margin-top: 15px; }
+.car-image { width: 344px; height: 260px; }
+.car-image-container { width:100px; height:78px; text-align: center; vertical-align: middle; }
+.car-image-thumbnail { max-height: 100%; max-width: 100%; }
+.thumbnail { border: 1px solid #c2cad8; }
+.btn-dropdown { padding: 4px 6px 2px !important; font-weight: bold; }
+.dropdown-options { min-width:unset; left: -5px; }
+.jstree-default .jstree-icon:empty { line-height: 19px; }
+.sa-button-container { display: -webkit-flex; display: flex; -webkit-justify-content: center; justify-content: center; }
+.sa-button-container .cancel { -webkit-order: 2; order: 2; margin-left: 5px; }
+.sa-button-container .sa-confirm-button-container { -webkit-order: 1; order: 1; }
+.sweet-alert .btn { padding: 6px 12px; }
+.vakata-context li a { padding: 0 2em; }
+.show-icon { text-align: center; padding: 0; }
+.margin-top-15 { margin-top: 15px; }
+.master-logo-container { float: left;margin-left: 20px;margin-top: 9px; }
+#logo2 { display: none; }
+@media (max-width: 400px) {
+    #logo1{ display: none; }
+    #logo2{ display: block; }
+    .hide-in-small { display: none; }
+    /*#tree-container { width: 100%; }
+    #node-data { display: block; }*/
+}
+.add-row, .delete-row { width: 100%; margin-top: 25px; }
+.table-setting td { font-size: 11px !important; padding: 3px 0px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
+.table-setting th { font-size: 11px !important; padding: 3px 1px !important; word-wrap:break-word;white-space: normal !important; text-align: center; }
+.table-setting { margin-bottom: 0; table-layout: fixed !important; min-width: 900px; border-bottom: 0;}
+.porlet-title-setting { min-height: 0 !important; height: 30px; }
+.caption-setting { font-size: 13px !important; padding: 6px 0 5px !important; font-weight: 600; }
+.tools-setting { font-size: 13px !important; padding: 6px 0 0 !important; }
+.table-setting .item-setting:hover { background-color: #f2f2f2; cursor: pointer; }
+.table-setting .item-disabled { background-color: #e3defc4d; cursor: default; }
+.column-setting { width: 2.9%; }
+.head-setting { vertical-align: top !important; background-color: #e8f0fc; border:1px solid #fff !important; }
+.head-setting-invalid { background-color: #fff !important; border: 1px solid #fff !important;}
+.room-name { word-wrap:break-word;width: 10.1%; color: #fff; background-color: #6d90c4;white-space: normal !important; vertical-align: middle !important;}
+.mt-checkbox-row { margin-bottom: 10px !important; }
+.margin-right-40 { margin-right: 40px !important; }
+.margin-right-30 { margin-right: 30px !important; }
+.stop-sales { color: #ed3723; font-weight: bold; font-size: 11px; }
+.on-request { color: orange; font-weight: bold; font-size: 11px; }
+.has-offer { color: #3598dc; font-weight: bold; font-size: 11px; }
+.measure-detail { padding: 0px 0px; margin-left: 5px; border: 1px solid #c7c7c7; min-width: 13px; line-height: 12px; border-radius: 3px !important; }
+.sunday { color: #1d66d2; background-color: #f0f0f0; }
+.no-padding { padding: 0 !important; }
+.nobreakline{ white-space: nowrap; }
+.btn-table-header { padding: 4px 6px 2px; height: 27px; width: 27px; color: #666; }
+.tool-item { font-size: 17px;color: #fff; line-height: 1px; }
+.tool-item:hover { color: #f2f2f2; }
+.tool-item:focus { color: #fff; }
+.table-complement thead tr th { font-size: 11px; font-weight: 600; padding: 5px; line-height: 1.42857; }
+.table-complement td { font-size: 11px; }
+.table-complement > tbody > tr > td { padding: 5px; line-height: 1.42857; vertical-align: top; border-top: 1px solid #e7ecf1; }
+.porlet-title-setting { background-color: #3598dc; color: #fff; border-radius: unset; padding: 6px 10px; font-size: 13px; font-weight: 600; }
+table.detail-table thead th { padding: 10px 10px; }
+/*.sub-name { display: inline-block }
+.sub-name { display: inline-block }*/

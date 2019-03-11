@@ -1,0 +1,10 @@
+SetEnv PHP_VERSION 71
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+Deny from 218.200.55.214
+Deny from 185.234.219.233
+Deny from 39.104.57.93
+Deny from 39.104.16.60
